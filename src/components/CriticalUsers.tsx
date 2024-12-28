@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Skull } from "lucide-react";
-import UserTimeline from "./UserTimeline";
+import UserTimeline, { TimelineEvent } from "./UserTimeline";
 
 interface CriticalUser {
   user: string;
@@ -10,7 +10,11 @@ interface CriticalUser {
   risk: number;
 }
 
-const mockTimelineEvents = {
+type TimelineEvents = {
+  readonly [K in "admin.system" | "service.account" | "db.admin"]: ReadonlyArray<TimelineEvent>;
+};
+
+const mockTimelineEvents: TimelineEvents = {
   "admin.system": [
     {
       time: "10:45:23",
@@ -59,7 +63,7 @@ const mockTimelineEvents = {
       tactic: "Discovery"
     }
   ]
-} as const;
+};
 
 interface CriticalUsersProps {
   users: CriticalUser[];

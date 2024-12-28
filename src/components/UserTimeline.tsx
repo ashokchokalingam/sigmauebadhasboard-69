@@ -1,7 +1,7 @@
 import React from "react";
 import { Activity, AlertTriangle, Shield, Skull } from "lucide-react";
 
-interface TimelineEvent {
+export interface TimelineEvent {
   time: string;
   event: string;
   severity: "critical" | "high" | "medium";
@@ -10,7 +10,7 @@ interface TimelineEvent {
 
 interface UserTimelineProps {
   username: string;
-  events: TimelineEvent[];
+  events: ReadonlyArray<TimelineEvent>;
 }
 
 const UserTimeline = ({ username, events }: UserTimelineProps) => {
