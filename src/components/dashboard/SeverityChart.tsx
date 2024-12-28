@@ -3,19 +3,19 @@ import { AlertTriangle } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const severityData = [
-  { name: "Critical", value: 45, color: "#8B5CF6" },
-  { name: "High", value: 35, color: "#7E69AB" },
-  { name: "Medium", value: 15, color: "#6E59A5" },
-  { name: "Low", value: 5, color: "#E5DEFF" },
+  { name: "Critical", value: 45, color: "#EF4444" },
+  { name: "High", value: 35, color: "#F97316" },
+  { name: "Medium", value: 15, color: "#FBBF24" },
+  { name: "Low", value: 5, color: "#34D399" },
 ];
 
 const SeverityChart = () => {
   return (
-    <Card className="bg-black/40 border-[#9b87f5]/10 hover:bg-black/50 transition-all duration-300">
+    <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-[#E5DEFF]/90">
-          <AlertTriangle className="h-5 w-5 text-[#9b87f5]" />
-          Alert Severity Distribution
+        <CardTitle className="flex items-center gap-2 text-blue-100">
+          <AlertTriangle className="h-5 w-5 text-blue-500" />
+          Risk Distribution
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -39,7 +39,7 @@ const SeverityChart = () => {
                 contentStyle={{ 
                   backgroundColor: 'rgba(26, 31, 44, 0.95)',
                   borderRadius: '8px',
-                  border: '1px solid #9b87f5',
+                  border: '1px solid #3B82F6',
                   color: '#E5DEFF',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                 }}
@@ -53,7 +53,7 @@ const SeverityChart = () => {
                   className="w-3 h-3 rounded-full" 
                   style={{ backgroundColor: entry.color }} 
                 />
-                <span className="text-xs text-[#E5DEFF]/70">{entry.name}</span>
+                <span className="text-xs text-blue-200">{entry.name}</span>
               </div>
             ))}
           </div>
