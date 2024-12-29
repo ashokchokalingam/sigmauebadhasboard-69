@@ -16,7 +16,13 @@ const TacticsChart = ({ alerts }: TacticsChartProps) => {
     
     alerts.forEach(alert => {
       if (alert.tags) {
-        const tactics = alert.tags.split(',').map(t => t.trim());
+        const tags = alert.tags.split(',').map(t => t.trim());
+        // Filter to include only tactics (tags starting with 'attack.' but not containing 't1' or 'T1')
+        const tactics = tags.filter(tag => 
+          tag.startsWith('attack.') && 
+          !tag.toLowerCase().includes('t1')
+        ).map(tag => tag.replace('attack.', ''));
+        
         tactics.forEach(tactic => {
           tacticsCount[tactic] = (tacticsCount[tactic] || 0) + 1;
         });
