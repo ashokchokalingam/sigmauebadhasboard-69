@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { User, Monitor, Activity, X } from "lucide-react";
 import { Alert } from "./types";
 import { getRiskScore } from "./utils";
-import TimelineView from "./TimelineView";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface RiskyEntity {
   id: string;
@@ -11,6 +11,7 @@ interface RiskyEntity {
   eventCount: number;
   uniqueTitles: Set<string>;
   lastWeekRiskScore: number;
+  hourlyData: { time: string; count: number }[];
 }
 
 interface RiskyEntitiesProps {
@@ -19,9 +20,33 @@ interface RiskyEntitiesProps {
 }
 
 const RiskyEntities = ({ alerts, type }: RiskyEntitiesProps) => {
-  const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
+  const [expandedEntity, setExpandedEntity] = useState<string | null>(null);
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const processHourlyData = (entityAlerts: Alert[]) => {
+    const hourlyData: { [key: string]: { time: string; count: number } } = {};
+    
+    // Initialize all hours
+    for (let i = 0; i < 24; i++) {
+      const hour = i.toString().padStart(2, '0');
+      hourlyData[hour] = {
+        time: `${hour}:00`,
+        count: 0
+      };
+    }
+
+    // Count alerts per hour
+    entityAlerts.forEach(alert => {
+      const date = new Date(alert.system_time);
+      const hour = date.getHours().toString().padStart(2, '0');
+      if (hourlyData[hour]) {
+        hourlyData[hour].count++;
+      }
+    });
+
+    return Object.values(hourlyData).sort((a, b) => a.time.localeCompare(b.time));
+  };
 
   const calculateRiskyEntities = () => {
     const entities: { [key: string]: RiskyEntity } = {};
@@ -34,15 +59,19 @@ const RiskyEntities = ({ alerts, type }: RiskyEntitiesProps) => {
       const isWithinLastWeek = alertDate >= sevenDaysAgo;
       
       if (!entities[entityId]) {
+        const entityAlerts = alerts.filter(a => 
+          type === "users" ? a.user_id === entityId : a.computer_name === entityId
+        );
+        
         entities[entityId] = {
           id: entityId,
           riskScore: getRiskScore(alert),
           eventCount: 1,
           uniqueTitles: new Set([alert.title]),
-          lastWeekRiskScore: isWithinLastWeek ? getRiskScore(alert) : 0
+          lastWeekRiskScore: isWithinLastWeek ? getRiskScore(alert) : 0,
+          hourlyData: processHourlyData(entityAlerts)
         };
       } else {
-        // Only update risk score if this is a unique alert title
         if (!entities[entityId].uniqueTitles.has(alert.title)) {
           entities[entityId].uniqueTitles.add(alert.title);
           if (isWithinLastWeek) {
@@ -70,50 +99,82 @@ const RiskyEntities = ({ alerts, type }: RiskyEntitiesProps) => {
   const EntityIcon = type === "users" ? User : Monitor;
 
   const handleEntityClick = (entityId: string) => {
-    setSelectedEntity(entityId);
+    setExpandedEntity(expandedEntity === entityId ? null : entityId);
   };
 
   return (
     <div className="space-y-4">
-      {selectedEntity ? (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-          <div className="bg-[#1A1F2C] rounded-lg w-full max-w-6xl max-h-[90vh] overflow-auto">
-            <TimelineView
-              alerts={alerts.filter(alert => 
-                type === "users" ? alert.user_id === selectedEntity : alert.computer_name === selectedEntity
-              )}
-              entityType={type === "users" ? "user" : "computer"}
-              entityId={selectedEntity}
-              onClose={() => setSelectedEntity(null)}
-            />
-          </div>
-        </div>
-      ) : null}
-      
       {topRiskyEntities.map((entity) => (
         <div 
-          key={entity.id} 
-          className="flex items-center justify-between p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/50 transition-all duration-300 cursor-pointer"
-          onClick={() => handleEntityClick(entity.id)}
+          key={entity.id}
+          className="flex flex-col rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/50 transition-all duration-300 cursor-pointer overflow-hidden"
         >
-          <div className="flex items-center gap-3">
-            <EntityIcon className={`h-8 w-8 ${type === "users" ? "text-blue-400" : "text-orange-400"}`} />
-            <div className="flex flex-col">
-              <span className="font-mono text-sm text-blue-100">{entity.id}</span>
-              <div className="flex items-center gap-2 mt-1">
-                <Activity className="h-3 w-3 text-blue-400" />
-                <span className="text-xs text-blue-300">{entity.uniqueTitles.size} unique alerts</span>
-                <span className="text-xs text-blue-300">•</span>
-                <span className="text-xs text-blue-300">{entity.eventCount} events</span>
+          <div 
+            className="flex items-center justify-between p-4"
+            onClick={() => handleEntityClick(entity.id)}
+          >
+            <div className="flex items-center gap-3">
+              <EntityIcon className={`h-8 w-8 ${type === "users" ? "text-blue-400" : "text-orange-400"}`} />
+              <div className="flex flex-col">
+                <span className="font-mono text-sm text-blue-100">{entity.id}</span>
+                <div className="flex items-center gap-2 mt-1">
+                  <Activity className="h-3 w-3 text-blue-400" />
+                  <span className="text-xs text-blue-300">{entity.uniqueTitles.size} unique alerts</span>
+                  <span className="text-xs text-blue-300">•</span>
+                  <span className="text-xs text-blue-300">{entity.eventCount} events</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="flex flex-col items-end">
-            <div className={`text-2xl font-bold ${getRiskColor(entity.lastWeekRiskScore)}`}>
-              {entity.lastWeekRiskScore.toFixed(1)}
+            <div className="flex flex-col items-end">
+              <div className={`text-2xl font-bold ${getRiskColor(entity.lastWeekRiskScore)}`}>
+                {entity.lastWeekRiskScore.toFixed(1)}
+              </div>
+              <span className="text-xs text-blue-300">Risk Score</span>
             </div>
-            <span className="text-xs text-blue-300">Risk Score</span>
           </div>
+
+          {expandedEntity === entity.id && (
+            <div className="px-4 pb-4 pt-2 border-t border-blue-500/10">
+              <div className="w-full h-[120px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart
+                    data={entity.hourlyData}
+                    margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#2a3441" />
+                    <XAxis 
+                      dataKey="time" 
+                      stroke="#4b5563"
+                      tick={{ fill: '#4b5563', fontSize: 10 }}
+                      interval={2}
+                    />
+                    <YAxis 
+                      stroke="#4b5563"
+                      tick={{ fill: '#4b5563', fontSize: 10 }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#1a2234',
+                        border: '1px solid #3b82f6',
+                        borderRadius: '8px',
+                      }}
+                      labelStyle={{ color: '#93c5fd' }}
+                      itemStyle={{ color: '#93c5fd' }}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="count"
+                      name="Events"
+                      stroke="#3b82f6"
+                      strokeWidth={2}
+                      dot={{ fill: '#3b82f6', r: 2 }}
+                      activeDot={{ r: 4, fill: '#60a5fa' }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
         </div>
       ))}
       {topRiskyEntities.length === 0 && (
