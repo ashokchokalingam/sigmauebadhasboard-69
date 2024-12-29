@@ -82,7 +82,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
       <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-8">
         <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">
-          MITRE Anomaly Detection Dashboard
+          Exabeam Anomaly Hunter Dashboard
         </h1>
         <div className="flex items-center gap-4">
           <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
