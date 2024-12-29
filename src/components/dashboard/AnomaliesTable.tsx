@@ -41,7 +41,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
 
   return (
     <div className="relative flex gap-4">
-      <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300 flex-1">
+      <Card className={`bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300 ${selectedAlert ? 'flex-[0.6]' : 'flex-1'}`}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-blue-100">
             <AlertTriangle className="h-5 w-5 text-blue-500" />
@@ -80,13 +80,17 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
         </CardContent>
       </Card>
 
-      {selectedAlert && (
-        <Card className="w-[600px] bg-black/40 border-blue-500/10 h-fit sticky top-6">
-          <CardContent className="p-6">
-            <AlertDetailsView alert={selectedAlert} />
-          </CardContent>
-        </Card>
-      )}
+      <div className={`fixed top-0 right-0 h-screen w-[600px] bg-black/90 transform transition-all duration-300 ease-in-out overflow-y-auto ${
+        selectedAlert ? 'translate-x-0' : 'translate-x-full'
+      }`}>
+        {selectedAlert && (
+          <Card className="h-full bg-transparent border-none">
+            <CardContent className="p-6">
+              <AlertDetailsView alert={selectedAlert} />
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
       {timelineView && (
         <TimelineView
