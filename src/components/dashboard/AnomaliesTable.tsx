@@ -50,6 +50,25 @@ const getRiskColor = (score: number) => {
   return "text-green-500";
 };
 
+const extractTacticsAndTechniques = (tags: string) => {
+  const tagArray = tags.split(',').map(t => t.trim());
+  const tactics: string[] = [];
+  const techniques: string[] = [];
+
+  tagArray.forEach(tag => {
+    if (tag.includes('t1') || tag.includes('T1')) {
+      techniques.push(tag.toUpperCase());
+    } else if (tag.includes('attack.')) {
+      tactics.push(tag.replace('attack.', '').toLowerCase());
+    }
+  });
+
+  return {
+    tactics: tactics.join(', '),
+    techniques: techniques.join(', ')
+  };
+};
+
 const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const sortedAlerts = [...alerts]
@@ -70,49 +89,64 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-blue-950/30">
-                  <TableHead className="text-blue-300">Risk Score</TableHead>
-                  <TableHead className="text-blue-300">Title</TableHead>
+                  <TableHead className="text-blue-300">Time</TableHead>
                   <TableHead className="text-blue-300">User</TableHead>
                   <TableHead className="text-blue-300">Computer</TableHead>
+                  <TableHead className="text-blue-300">Title</TableHead>
+                  <TableHead className="text-blue-300">Tactics</TableHead>
+                  <TableHead className="text-blue-300">Techniques</TableHead>
+                  <TableHead className="text-blue-300">Risk Score</TableHead>
                   <TableHead className="text-blue-300">Outlier</TableHead>
-                  <TableHead className="text-blue-300">Time</TableHead>
                   <TableHead className="text-blue-300 w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedAlerts.map((alert) => (
-                  <TableRow 
-                    key={alert.id} 
-                    className="hover:bg-blue-950/30 cursor-pointer"
-                    onClick={() => setSelectedAlert(alert)}
-                  >
-                    <TableCell className={`font-mono font-bold ${getRiskColor(getRiskScore(alert))}`}>
-                      {getRiskScore(alert).toFixed(1)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        <span className="text-blue-100">{alert.title}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-blue-100">{alert.user_id}</TableCell>
-                    <TableCell className="text-blue-100">{alert.computer_name}</TableCell>
-                    <TableCell>
-                      {alert.dbscan_cluster === -1 && (
-                        <span className="px-2 py-1 bg-red-500/10 text-red-400 text-xs rounded-full border border-red-500/20">
-                          DBSCAN -1
+                {sortedAlerts.map((alert) => {
+                  const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
+                  return (
+                    <TableRow 
+                      key={alert.id} 
+                      className="hover:bg-blue-950/30 cursor-pointer"
+                      onClick={() => setSelectedAlert(alert)}
+                    >
+                      <TableCell className="font-mono text-blue-300 text-sm whitespace-nowrap">
+                        {new Date(alert.system_time).toLocaleTimeString()}
+                      </TableCell>
+                      <TableCell className="text-blue-100 whitespace-nowrap">{alert.user_id}</TableCell>
+                      <TableCell className="text-blue-100 whitespace-nowrap">{alert.computer_name}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          <span className="text-blue-100">{alert.title}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
+                          {tactics || 'N/A'}
                         </span>
-                      )}
-                    </TableCell>
-                    <TableCell className="font-mono text-blue-300 text-sm">
-                      {new Date(alert.system_time).toLocaleTimeString()}
-                    </TableCell>
-                    <TableCell>
-                      <button className="p-2 hover:bg-blue-500/10 rounded-full transition-colors">
-                        <ChevronRight className="h-4 w-4 text-blue-400" />
-                      </button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      </TableCell>
+                      <TableCell>
+                        <span className="px-2 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20">
+                          {techniques || 'N/A'}
+                        </span>
+                      </TableCell>
+                      <TableCell className={`font-mono font-bold ${getRiskColor(getRiskScore(alert))}`}>
+                        {getRiskScore(alert).toFixed(1)}
+                      </TableCell>
+                      <TableCell>
+                        {alert.dbscan_cluster === -1 && (
+                          <span className="px-2 py-1 bg-red-500/10 text-red-400 text-xs rounded-full border border-red-500/20">
+                            DBSCAN -1
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <button className="p-2 hover:bg-blue-500/10 rounded-full transition-colors">
+                          <ChevronRight className="h-4 w-4 text-blue-400" />
+                        </button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
