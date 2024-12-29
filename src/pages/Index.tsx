@@ -7,6 +7,7 @@ import SeverityChart from "@/components/dashboard/SeverityChart";
 import AnomaliesTable from "@/components/dashboard/AnomaliesTable";
 import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
 import CriticalUsers from "@/components/CriticalUsers";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Alert {
   id: number;
@@ -39,10 +40,19 @@ const fetchAlerts = async (): Promise<Alert[]> => {
 
 const Index = () => {
   const [timeRange, setTimeRange] = useState("24h");
+  const { toast } = useToast();
   
   const { data: alerts = [], isLoading, error } = useQuery({
     queryKey: ['alerts'],
     queryFn: fetchAlerts,
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to fetch alerts. Please check your API connection.",
+        variant: "destructive",
+      });
+      console.error('Error fetching alerts:', error);
+    },
   });
 
   // Calculate statistics
@@ -77,8 +87,10 @@ const Index = () => {
     .sort((a: any, b: any) => b.risk - a.risk)
     .slice(0, 3);
 
-  if (error) {
-    console.error('Error fetching alerts:', error);
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+    </div>;
   }
 
   return (
