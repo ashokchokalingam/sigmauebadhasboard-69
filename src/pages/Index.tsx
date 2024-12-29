@@ -11,8 +11,8 @@ import TimelineView from "@/components/dashboard/TimelineView";
 import { getFilteredAlerts, calculateStats } from "@/components/dashboard/alertUtils";
 import { Alert } from "@/components/dashboard/types";
 
-// Update the API URL to use the correct IP and port
-const API_URL = 'http://172.16.0.75:8000';
+// Get API URL from window object, which will be set by the deployment platform
+const API_URL = (window as any).__API_URL__ || 'http://localhost:8000';
 
 const fetchAlerts = async (): Promise<Alert[]> => {
   const response = await fetch(`${API_URL}/api/alerts`);
