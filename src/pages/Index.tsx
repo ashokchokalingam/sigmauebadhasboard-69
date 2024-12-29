@@ -53,42 +53,51 @@ const Index = () => {
     }
   });
 
-  // Calculate actual number of unique users
-  const uniqueUsers = new Set(alerts.map(alert => alert.user_id)).size;
-  
-  // Calculate average risk score
-  const totalRiskScore = alerts.reduce((acc, alert) => acc + (alert.rule_level === 'critical' ? 100 : 
-    alert.rule_level === 'high' ? 75 : 
-    alert.rule_level === 'medium' ? 50 : 25), 0);
-  const avgRiskScore = alerts.length > 0 ? Math.round(totalRiskScore / alerts.length) : 0;
-  
-  // Count anomalies (critical alerts and outliers)
-  const anomaliesCount = alerts.filter(alert => 
+  // Calculate stats for current and previous periods
+  const now = new Date();
+  const twentyFourHoursAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+  const fortyEightHoursAgo = new Date(now.getTime() - (48 * 60 * 60 * 1000));
+
+  const currentPeriodAlerts = alerts.filter(alert => 
+    new Date(alert.system_time) >= twentyFourHoursAgo
+  );
+
+  const previousPeriodAlerts = alerts.filter(alert => 
+    new Date(alert.system_time) >= fortyEightHoursAgo &&
+    new Date(alert.system_time) < twentyFourHoursAgo
+  );
+
+  // Calculate current period stats
+  const currentUniqueUsers = new Set(currentPeriodAlerts.map(alert => alert.user_id)).size;
+  const previousUniqueUsers = new Set(previousPeriodAlerts.map(alert => alert.user_id)).size;
+  const userChangePercent = previousUniqueUsers ? 
+    Math.round(((currentUniqueUsers - previousUniqueUsers) / previousUniqueUsers) * 100) : 0;
+
+  // Calculate risk scores
+  const calculateAvgRiskScore = (alertsList: typeof alerts) => {
+    if (alertsList.length === 0) return 0;
+    const totalRiskScore = alertsList.reduce((acc, alert) => 
+      acc + (alert.rule_level === 'critical' ? 100 : 
+        alert.rule_level === 'high' ? 75 : 
+        alert.rule_level === 'medium' ? 50 : 25), 0
+    );
+    return Math.round(totalRiskScore / alertsList.length);
+  };
+
+  const currentAvgRiskScore = calculateAvgRiskScore(currentPeriodAlerts);
+  const previousAvgRiskScore = calculateAvgRiskScore(previousPeriodAlerts);
+  const riskScoreChangePercent = previousAvgRiskScore ? 
+    Math.round(((currentAvgRiskScore - previousAvgRiskScore) / previousAvgRiskScore) * 100) : 0;
+
+  // Calculate anomalies
+  const currentAnomalies = currentPeriodAlerts.filter(alert => 
     alert.rule_level === 'critical' || alert.dbscan_cluster === -1
   ).length;
-
-  // Filter alerts based on selected severity and tactic
-  const filteredAlerts = alerts.filter(alert => {
-    const severityMatch = selectedSeverity
-      ? (() => {
-          if (selectedSeverity === 'Critical') {
-            return alert.rule_level === 'critical' || alert.dbscan_cluster === -1;
-          } else if (selectedSeverity === 'High') {
-            return alert.rule_level === 'high';
-          } else if (selectedSeverity === 'Medium') {
-            return alert.rule_level === 'medium';
-          } else {
-            return alert.rule_level === 'low';
-          }
-        })()
-      : true;
-
-    const tacticMatch = selectedTactic
-      ? alert.tags.includes(`attack.${selectedTactic}`)
-      : true;
-
-    return severityMatch && tacticMatch;
-  });
+  const previousAnomalies = previousPeriodAlerts.filter(alert => 
+    alert.rule_level === 'critical' || alert.dbscan_cluster === -1
+  ).length;
+  const anomaliesChangePercent = previousAnomalies ? 
+    Math.round(((currentAnomalies - previousAnomalies) / previousAnomalies) * 100) : 0;
 
   if (isLoading) {
     return (
@@ -130,27 +139,27 @@ const Index = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatsCard
           title="Active Users"
-          value={uniqueUsers.toString()}
+          value={currentUniqueUsers.toString()}
           icon={Users}
-          subtitle="+8% from last period"
-          subtitleIcon={TrendingUp}
+          subtitle={`${userChangePercent >= 0 ? '+' : ''}${userChangePercent}% from last period`}
+          subtitleIcon={userChangePercent >= 0 ? TrendingUp : TrendingDown}
         />
         <StatsCard
           title="Average Risk Score"
-          value={avgRiskScore.toString()}
+          value={currentAvgRiskScore.toString()}
           icon={Shield}
-          subtitle="-5% from last period"
-          subtitleIcon={TrendingDown}
+          subtitle={`${riskScoreChangePercent >= 0 ? '+' : ''}${riskScoreChangePercent}% from last period`}
+          subtitleIcon={riskScoreChangePercent >= 0 ? TrendingUp : TrendingDown}
         />
         <StatsCard
           title="Anomalies Detected"
-          value={anomaliesCount.toString()}
+          value={currentAnomalies.toString()}
           icon={AlertTriangle}
-          subtitle="-2% from last period"
-          subtitleIcon={TrendingDown}
+          subtitle={`${anomaliesChangePercent >= 0 ? '+' : ''}${anomaliesChangePercent}% from last period`}
+          subtitleIcon={anomaliesChangePercent >= 0 ? TrendingUp : TrendingDown}
         />
       </div>
-      
+
       {/* Top Risk Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
