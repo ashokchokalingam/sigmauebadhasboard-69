@@ -60,28 +60,35 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
         {sortedMetrics.map((metric) => (
           <Card
             key={metric.type}
-            className="p-3 bg-gradient-to-r from-black/40 to-blue-500/5 border-blue-500/10 hover:to-blue-500/10 transition-all duration-300"
+            className="relative bg-gradient-to-r from-gray-800/80 to-gray-900/80 hover:from-gray-800/90 hover:to-gray-900/90 border-gray-700/50 transition-all duration-300 overflow-hidden group"
           >
-            <div className="flex items-center justify-between relative overflow-hidden">
-              <div className="z-10">
-                <h4 className="text-blue-100 font-medium">{metric.type}</h4>
-                <div className="text-xs text-blue-400 font-mono mt-1 flex items-center gap-2">
-                  <span>{metric.firstSeen.toLocaleString()}</span>
-                  <span className="text-blue-500">→</span>
-                  <span>{metric.lastSeen.toLocaleString()}</span>
+            {/* Heat map background */}
+            <div 
+              className="absolute inset-0 bg-blue-500/5"
+              style={{
+                width: `${metric.intensity}%`,
+                transition: 'width 0.3s ease-in-out'
+              }}
+            />
+            
+            <div className="relative z-10 p-3">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h4 className="text-gray-200 font-medium">
+                    {metric.type.replace('attack.', '')}
+                  </h4>
+                  <div className="text-xs text-gray-400 font-mono mt-1 flex items-center gap-2">
+                    <span>{metric.firstSeen.toLocaleTimeString()}</span>
+                    <span className="text-blue-400">→</span>
+                    <span>{metric.lastSeen.toLocaleTimeString()}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 bg-blue-500/10 text-blue-300 text-sm rounded-full font-mono">
+                    {metric.count}
+                  </span>
                 </div>
               </div>
-              <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded font-mono z-10">
-                {metric.count}
-              </span>
-              {/* Heat map background */}
-              <div 
-                className="absolute inset-0 bg-blue-500/5"
-                style={{
-                  width: `${metric.intensity}%`,
-                  transition: 'width 0.3s ease-in-out'
-                }}
-              />
             </div>
           </Card>
         ))}
