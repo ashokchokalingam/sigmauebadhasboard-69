@@ -11,14 +11,19 @@ import TimelineView from "@/components/dashboard/TimelineView";
 import { getFilteredAlerts, calculateStats } from "@/components/dashboard/alertUtils";
 import { Alert } from "@/components/dashboard/types";
 
-const API_URL = 'http://172.16.0.75:5000';
-
 const fetchAlerts = async (): Promise<Alert[]> => {
-  const response = await fetch(`${API_URL}/api/alerts`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch alerts');
+  try {
+    const response = await fetch('/api/alerts');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    // Ensure we always return an array
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Error fetching alerts:', error);
+    return [];
   }
-  return response.json();
 };
 
 const Index = () => {
@@ -31,14 +36,16 @@ const Index = () => {
     queryKey: ['alerts'],
     queryFn: fetchAlerts,
     meta: {
-      onError: () => {
-        console.error("Failed to fetch alerts");
+      onError: (error: Error) => {
+        console.error("Failed to fetch alerts:", error);
       }
     }
   });
 
-  const stats = calculateStats(alerts);
-  const filteredAlerts = getFilteredAlerts(alerts, selectedSeverity, selectedTactic);
+  // Ensure alerts is always an array before processing
+  const safeAlerts = Array.isArray(alerts) ? alerts : [];
+  const stats = calculateStats(safeAlerts);
+  const filteredAlerts = getFilteredAlerts(safeAlerts, selectedSeverity, selectedTactic);
 
   if (isLoading) {
     return (
@@ -52,7 +59,7 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212]">
         <TimelineView
-          alerts={alerts}
+          alerts={safeAlerts}
           entityType={selectedEntity.type}
           entityId={selectedEntity.id}
           onClose={() => setSelectedEntity(null)}

@@ -5,11 +5,16 @@ export const getFilteredAlerts = (
   selectedSeverity: string | null,
   selectedTactic: string | null
 ) => {
+  if (!Array.isArray(alerts)) {
+    console.warn('Alerts is not an array:', alerts);
+    return [];
+  }
+
   return alerts.filter(alert => {
-    if (selectedSeverity && alert.rule_level !== selectedSeverity) {
+    if (selectedSeverity && alert?.rule_level !== selectedSeverity) {
       return false;
     }
-    if (selectedTactic && !alert.tags.toLowerCase().includes(selectedTactic.toLowerCase())) {
+    if (selectedTactic && !alert?.tags?.toLowerCase().includes(selectedTactic.toLowerCase())) {
       return false;
     }
     return true;
