@@ -105,30 +105,30 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
           className="flex flex-col rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/50 transition-all duration-300 cursor-pointer overflow-hidden"
           onClick={() => onEntitySelect(entity.id)}
         >
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-3">
-              <EntityIcon className={`h-8 w-8 ${type === "users" ? "text-blue-400" : "text-orange-400"}`} />
+          <div className="flex items-center justify-between p-6">
+            <div className="flex items-center gap-4">
+              <EntityIcon className={`h-10 w-10 ${type === "users" ? "text-blue-400" : "text-orange-400"}`} />
               <div className="flex flex-col">
-                <span className="font-mono text-sm text-blue-100">{entity.id}</span>
-                <div className="flex items-center gap-2 mt-1">
-                  <Activity className="h-3 w-3 text-blue-400" />
-                  <span className="text-xs text-blue-300">{entity.uniqueTitles.size} unique alerts</span>
-                  <span className="text-xs text-blue-300">•</span>
-                  <span className="text-xs text-blue-300">{entity.eventCount} events</span>
+                <span className="font-mono text-lg text-blue-100 font-medium">{entity.id}</span>
+                <div className="flex items-center gap-2 mt-2">
+                  <Activity className="h-4 w-4 text-blue-400" />
+                  <span className="text-base text-blue-300">{entity.uniqueTitles.size} unique alerts</span>
+                  <span className="text-base text-blue-300">•</span>
+                  <span className="text-base text-blue-300">{entity.eventCount} events</span>
                 </div>
               </div>
             </div>
             <div className="flex flex-col items-end">
-              <div className={`text-2xl font-bold ${getRiskColor(entity.lastWeekRiskScore)}`}>
+              <div className={`text-3xl font-bold ${getRiskColor(entity.lastWeekRiskScore)}`}>
                 {entity.lastWeekRiskScore.toFixed(1)}
               </div>
-              <span className="text-xs text-blue-300">Risk Score</span>
+              <span className="text-base text-blue-300 mt-1">Risk Score</span>
             </div>
           </div>
         </div>
       ))}
       {topRiskyEntities.length === 0 && (
-        <div className="text-center text-blue-400/60 py-4">
+        <div className="text-center text-blue-400/60 py-6 text-lg">
           No risky {type} detected
         </div>
       )}
