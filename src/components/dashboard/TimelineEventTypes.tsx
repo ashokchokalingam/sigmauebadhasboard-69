@@ -12,31 +12,35 @@ interface EventMetric {
   firstSeen: Date;
   lastSeen: Date;
   intensity: number;
+  tags: string[];
 }
 
 const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
   // Calculate metrics for each event type
   const eventMetrics = alerts.reduce((acc: { [key: string]: EventMetric }, alert) => {
     const eventTypes = alert.tags.split(',').map(tag => tag.trim());
+    const title = alert.title;
     
-    eventTypes.forEach(type => {
-      if (!type) return;
-      
-      const currentDate = new Date(alert.system_time);
-      
-      if (!acc[type]) {
-        acc[type] = {
-          type,
-          count: 0,
-          firstSeen: currentDate,
-          lastSeen: currentDate,
-          intensity: 0
-        };
+    if (!acc[title]) {
+      acc[title] = {
+        type: title,
+        count: 0,
+        firstSeen: new Date(alert.system_time),
+        lastSeen: new Date(alert.system_time),
+        intensity: 0,
+        tags: []
+      };
+    }
+    
+    acc[title].count++;
+    acc[title].firstSeen = new Date(Math.min(acc[title].firstSeen.getTime(), new Date(alert.system_time).getTime()));
+    acc[title].lastSeen = new Date(Math.max(acc[title].lastSeen.getTime(), new Date(alert.system_time).getTime()));
+    
+    // Add unique tags
+    eventTypes.forEach(tag => {
+      if (!acc[title].tags.includes(tag)) {
+        acc[title].tags.push(tag);
       }
-      
-      acc[type].count++;
-      acc[type].firstSeen = new Date(Math.min(acc[type].firstSeen.getTime(), currentDate.getTime()));
-      acc[type].lastSeen = new Date(Math.max(acc[type].lastSeen.getTime(), currentDate.getTime()));
     });
     
     return acc;
@@ -51,7 +55,7 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
     }));
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 w-full">
       <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
         <Activity className="h-5 w-5 text-blue-400" />
         Event Types
@@ -60,11 +64,10 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
         {sortedMetrics.map((metric) => (
           <Card
             key={metric.type}
-            className="relative bg-slate-800 border-slate-700 hover:bg-slate-700/90 transition-all duration-300 overflow-hidden group"
+            className="relative bg-[#1a2234] border-slate-700/50 hover:bg-[#1e2943] transition-all duration-300 overflow-hidden group w-full"
           >
-            {/* Heat map background */}
             <div 
-              className="absolute inset-0 bg-blue-500/10"
+              className="absolute inset-0 bg-blue-500/5"
               style={{
                 width: `${metric.intensity}%`,
                 transition: 'width 0.3s ease-in-out'
@@ -72,25 +75,37 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
             />
             
             <div className="relative z-10 p-4">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-lg font-medium text-white">
-                    {metric.type.replace('attack.', '')}
-                  </h4>
-                  <span className="px-3 py-1 bg-blue-500/20 text-blue-200 text-sm rounded-full font-mono">
+                  <div className="flex flex-col gap-2">
+                    <h4 className="text-lg font-medium text-white">
+                      {metric.type}
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {metric.tags.map((tag, index) => (
+                        <span 
+                          key={index}
+                          className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full border border-blue-500/30"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <span className="px-3 py-1 bg-blue-900/50 text-blue-200 text-sm rounded-full font-mono whitespace-nowrap">
                     {metric.count} events
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-4 mt-1">
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <span className="text-xs text-blue-300 font-medium">First Seen</span>
-                    <div className="text-sm text-white font-mono bg-slate-900/50 p-2 rounded">
+                    <div className="text-sm text-white font-mono bg-[#151b2d] p-2 rounded">
                       {metric.firstSeen.toLocaleTimeString()}
                     </div>
                   </div>
                   <div className="space-y-1">
                     <span className="text-xs text-blue-300 font-medium">Last Seen</span>
-                    <div className="text-sm text-white font-mono bg-slate-900/50 p-2 rounded">
+                    <div className="text-sm text-white font-mono bg-[#151b2d] p-2 rounded">
                       {metric.lastSeen.toLocaleTimeString()}
                     </div>
                   </div>
