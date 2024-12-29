@@ -8,14 +8,19 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
-import { Alert, AnomaliesTableProps } from "./types";
+import { Alert } from "./types";
 import AlertTableRow from "./AlertTableRow";
-import AlertDetailsPanel from "./AlertDetailsPanel";
+import AlertDetailsView from "./AlertDetailsView";
 import TimelineView from "./TimelineView";
+import { getRiskScore } from "./utils";
 
 interface TimelineState {
   type: "user" | "computer";
   id: string;
+}
+
+interface AnomaliesTableProps {
+  alerts: Alert[];
 }
 
 const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
@@ -76,10 +81,11 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
       </Card>
 
       {selectedAlert && (
-        <AlertDetailsPanel
-          alert={selectedAlert}
-          onClose={() => setSelectedAlert(null)}
-        />
+        <Card className="w-[600px] bg-black/40 border-blue-500/10 h-fit sticky top-6">
+          <CardContent className="p-6">
+            <AlertDetailsView alert={selectedAlert} />
+          </CardContent>
+        </Card>
       )}
 
       {timelineView && (
