@@ -13,12 +13,14 @@ interface EventMetric {
   lastSeen: Date;
   intensity: number;
   tags: string[];
+  weeklyActivity: number[];
 }
 
 const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
   const eventMetrics = alerts.reduce((acc: { [key: string]: EventMetric }, alert) => {
     const eventTypes = alert.tags.split(',').map(tag => tag.trim());
     const title = alert.title;
+    const alertDate = new Date(alert.system_time);
     
     if (!acc[title]) {
       acc[title] = {
@@ -27,13 +29,20 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
         firstSeen: new Date(alert.system_time),
         lastSeen: new Date(alert.system_time),
         intensity: 0,
-        tags: []
+        tags: [],
+        weeklyActivity: Array(7).fill(0)
       };
     }
     
+    // Calculate days ago (0-6) for weekly activity
+    const daysAgo = Math.floor((Date.now() - alertDate.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysAgo >= 0 && daysAgo < 7) {
+      acc[title].weeklyActivity[daysAgo]++;
+    }
+    
     acc[title].count++;
-    acc[title].firstSeen = new Date(Math.min(acc[title].firstSeen.getTime(), new Date(alert.system_time).getTime()));
-    acc[title].lastSeen = new Date(Math.max(acc[title].lastSeen.getTime(), new Date(alert.system_time).getTime()));
+    acc[title].firstSeen = new Date(Math.min(acc[title].firstSeen.getTime(), alertDate.getTime()));
+    acc[title].lastSeen = new Date(Math.max(acc[title].lastSeen.getTime(), alertDate.getTime()));
     
     // Add unique tags
     eventTypes.forEach(tag => {
@@ -73,6 +82,26 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
                 <span className="px-3 py-1 bg-blue-900/50 text-blue-200 text-sm rounded-full">
                   {metric.count} events
                 </span>
+              </div>
+
+              {/* Weekly Activity Indicator */}
+              <div className="flex gap-1 mb-3 h-1">
+                {metric.weeklyActivity.slice().reverse().map((count, index) => {
+                  const maxCount = Math.max(...metric.weeklyActivity);
+                  const intensity = maxCount > 0 ? (count / maxCount) * 100 : 0;
+                  return (
+                    <div
+                      key={index}
+                      className="flex-1 bg-blue-950 rounded-full overflow-hidden"
+                      title={`${count} events ${6 - index} days ago`}
+                    >
+                      <div
+                        className="h-full bg-blue-500 transition-all duration-300"
+                        style={{ width: `${intensity}%` }}
+                      />
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="flex flex-wrap gap-2 mb-3">
