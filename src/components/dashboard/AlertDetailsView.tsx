@@ -53,7 +53,20 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
           </div>
           <div>
             <p className="text-sm font-medium text-green-400">Techniques</p>
-            <p className="text-base text-green-100">{techniques || 'N/A'}</p>
+            <div className="flex flex-col gap-2">
+              {techniques.length > 0 ? (
+                techniques.map((technique, index) => (
+                  <span 
+                    key={index}
+                    className="px-2 py-1 bg-green-500/10 text-green-400 text-sm rounded-lg border border-green-500/20 w-fit"
+                  >
+                    {technique}
+                  </span>
+                ))
+              ) : (
+                <span className="text-green-100">N/A</span>
+              )}
+            </div>
           </div>
         </div>
       </div>

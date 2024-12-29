@@ -41,7 +41,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView }: AlertTab
         </span>
       </TableCell>
       <TableCell>
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-col gap-1">
           {techniques.length > 0 ? (
             techniques.map((technique, index) => (
               <span 
