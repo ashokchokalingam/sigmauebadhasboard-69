@@ -26,8 +26,11 @@ interface Alert {
   task: string;
 }
 
+// Use an environment variable or configure this based on your deployment
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const fetchAlerts = async (): Promise<Alert[]> => {
-  const response = await fetch('http://localhost:5000/api/alerts');
+  const response = await fetch(`${API_URL}/api/alerts`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
