@@ -18,6 +18,7 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
     alerts.forEach(alert => {
       if (alert.tags) {
         const tags = alert.tags.split(',').map(t => t.trim());
+        // Filter to include only tactics (tags starting with 'attack.' but not containing 't1' or 'T1')
         const tactics = tags.filter(tag => 
           tag.startsWith('attack.') && 
           !tag.toLowerCase().includes('t1')
@@ -32,13 +33,13 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
     return Object.entries(tacticsCount)
       .map(([name, count]) => ({ name, alerts: count }))
       .sort((a, b) => b.alerts - a.alerts)
-      .slice(0, 6);
+      .slice(0, 8);
   };
 
   const alertData = calculateTacticsData();
   const blueColors = [
     "#0EA5E9", "#0284C7", "#0369A1", "#1E40AF",
-    "#1D4ED8", "#2563EB"
+    "#1D4ED8", "#2563EB", "#3B82F6", "#60A5FA"
   ];
 
   return (
@@ -50,7 +51,7 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart 
               data={alertData}
