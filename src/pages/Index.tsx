@@ -67,6 +67,29 @@ const Index = () => {
     alert.rule_level === 'critical' || alert.dbscan_cluster === -1
   ).length;
 
+  // Filter alerts based on selected severity and tactic
+  const filteredAlerts = alerts.filter(alert => {
+    const severityMatch = selectedSeverity
+      ? (() => {
+          if (selectedSeverity === 'Critical') {
+            return alert.rule_level === 'critical' || alert.dbscan_cluster === -1;
+          } else if (selectedSeverity === 'High') {
+            return alert.rule_level === 'high';
+          } else if (selectedSeverity === 'Medium') {
+            return alert.rule_level === 'medium';
+          } else {
+            return alert.rule_level === 'low';
+          }
+        })()
+      : true;
+
+    const tacticMatch = selectedTactic
+      ? alert.tags.includes(`attack.${selectedTactic}`)
+      : true;
+
+    return severityMatch && tacticMatch;
+  });
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
