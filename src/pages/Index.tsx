@@ -9,7 +9,6 @@ import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
 import AttackChainCard from "@/components/dashboard/AttackChainCard";
 import SystemHealthCard from "@/components/dashboard/SystemHealthCard";
 import { useToast } from "@/components/ui/use-toast";
-import UserTimeline from "@/components/UserTimeline";
 
 const API_URL = 'http://192.168.1.129:5000';
 
@@ -91,27 +90,6 @@ const Index = () => {
     );
   }
 
-  const timelineEvents = [
-    {
-      time: "6:15:06 AM",
-      event: "WMI Event Subscription Created",
-      severity: "critical",
-      tactic: "Persistence"
-    },
-    {
-      time: "6:13:50 AM",
-      event: "Important Windows Eventlog Cleared",
-      severity: "high",
-      tactic: "Defense Evasion"
-    },
-    {
-      time: "6:13:46 AM",
-      event: "Security Eventlog Cleared",
-      severity: "high",
-      tactic: "Defense Evasion"
-    }
-  ] as const;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
       <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-8">
@@ -176,10 +154,6 @@ const Index = () => {
       <div className="grid gap-6 md:grid-cols-2 mb-8">
         <AttackChainCard />
         <SystemHealthCard />
-      </div>
-
-      <div className="grid gap-6 mb-8">
-        <UserTimeline username="Administrator" events={timelineEvents} />
       </div>
 
       <div className="w-full">
