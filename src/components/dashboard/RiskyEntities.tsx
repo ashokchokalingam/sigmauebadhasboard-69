@@ -22,15 +22,17 @@ const RiskyEntities = ({ alerts, type }: RiskyEntitiesProps) => {
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
   const calculateRiskyEntities = () => {
-    return alerts.reduce((acc: { [key: string]: RiskyEntity }, alert) => {
+    const entities: { [key: string]: RiskyEntity } = {};
+
+    alerts.forEach((alert) => {
       const entityId = type === "users" ? alert.user_id : alert.computer_name;
-      if (!entityId || entityId.trim() === '') return acc;
+      if (!entityId || entityId.trim() === '') return;
       
       const alertDate = new Date(alert.system_time);
       const isWithinLastWeek = alertDate >= sevenDaysAgo;
       
-      if (!acc[entityId]) {
-        acc[entityId] = {
+      if (!entities[entityId]) {
+        entities[entityId] = {
           id: entityId,
           riskScore: getRiskScore(alert),
           eventCount: 1,
@@ -38,15 +40,18 @@ const RiskyEntities = ({ alerts, type }: RiskyEntitiesProps) => {
           lastWeekRiskScore: isWithinLastWeek ? getRiskScore(alert) : 0
         };
       } else {
-        acc[entityId].riskScore = Math.max(acc[entityId].riskScore, getRiskScore(alert));
-        acc[entityId].eventCount++;
-        acc[entityId].uniqueTitles.add(alert.title);
-        if (isWithinLastWeek) {
-          acc[entityId].lastWeekRiskScore += getRiskScore(alert);
+        // Only update risk score if this is a unique alert title
+        if (!entities[entityId].uniqueTitles.has(alert.title)) {
+          entities[entityId].uniqueTitles.add(alert.title);
+          if (isWithinLastWeek) {
+            entities[entityId].lastWeekRiskScore += getRiskScore(alert);
+          }
         }
+        entities[entityId].eventCount++;
       }
-      return acc;
-    }, {});
+    });
+
+    return entities;
   };
 
   const getRiskColor = (score: number) => {
