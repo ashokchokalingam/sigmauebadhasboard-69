@@ -118,18 +118,37 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
                 })}
               </div>
 
-              {/* Daily Timeline */}
-              <div className="relative h-2 bg-blue-950 rounded-full mb-3 overflow-hidden">
+              {/* Daily Timeline with Hour Markers */}
+              <div className="relative h-8 bg-blue-950/30 rounded-lg mb-3 overflow-hidden">
+                {/* Hour markers */}
+                {Array.from({ length: 24 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute top-0 bottom-0 w-px bg-blue-500/10"
+                    style={{ left: `${(i / 24) * 100}%` }}
+                  >
+                    <span className="absolute -top-1 left-1 text-[10px] text-blue-400/50">
+                      {i}
+                    </span>
+                  </div>
+                ))}
+                {/* Event markers */}
                 {metric.timelineEvents.map((event, index) => (
                   <div
                     key={index}
-                    className="absolute top-0 h-full w-1 bg-blue-500"
+                    className="absolute top-2 h-4 w-1.5 bg-blue-500 rounded-sm transform -translate-x-1/2 hover:h-5 hover:top-1.5 transition-all duration-200"
                     style={{
                       left: `${getTimelinePosition(event.time)}%`,
                       opacity: 0.7
                     }}
                     title={`Event at ${event.time.toLocaleTimeString()}`}
-                  />
+                  >
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <div className="bg-blue-900 text-blue-100 text-xs px-2 py-1 rounded whitespace-nowrap">
+                        {event.time.toLocaleTimeString()}
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
 
