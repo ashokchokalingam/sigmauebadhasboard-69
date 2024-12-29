@@ -119,7 +119,6 @@ const Index = () => {
           icon={Users}
           subtitle="+8% from last period"
           subtitleIcon={TrendingUp}
-          gradient="from-emerald-500 to-emerald-700"
         />
         <StatsCard
           title="Average Risk Score"
@@ -127,7 +126,6 @@ const Index = () => {
           icon={Shield}
           subtitle="-5% from last period"
           subtitleIcon={TrendingDown}
-          gradient="from-amber-500 to-amber-700"
         />
         <StatsCard
           title="Anomalies Detected"
@@ -135,7 +133,6 @@ const Index = () => {
           icon={AlertTriangle}
           subtitle="-2% from last period"
           subtitleIcon={TrendingDown}
-          gradient="from-red-500 to-red-700"
         />
       </div>
       
