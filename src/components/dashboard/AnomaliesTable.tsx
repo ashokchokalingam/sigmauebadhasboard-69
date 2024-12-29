@@ -12,9 +12,17 @@ import { useState } from "react";
 import { Alert, AnomaliesTableProps } from "./types";
 import { extractTacticsAndTechniques, getRiskScore, getRiskColor } from "./utils";
 import AlertDetailsView from "./AlertDetailsView";
+import TimelineView from "./TimelineView";
+
+interface TimelineState {
+  type: "user" | "computer";
+  id: string;
+}
 
 const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+  const [timelineView, setTimelineView] = useState<TimelineState | null>(null);
+  
   const sortedAlerts = [...alerts]
     .sort((a, b) => getRiskScore(b) - getRiskScore(a))
     .slice(0, 10);
@@ -50,14 +58,23 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
                   return (
                     <TableRow 
                       key={alert.id} 
-                      className="hover:bg-blue-950/30 cursor-pointer"
-                      onClick={() => setSelectedAlert(alert)}
+                      className="hover:bg-blue-950/30"
                     >
                       <TableCell className="font-mono text-blue-300 text-sm whitespace-nowrap">
                         {new Date(alert.system_time).toLocaleTimeString()}
                       </TableCell>
-                      <TableCell className="text-blue-100 whitespace-nowrap">{alert.user_id}</TableCell>
-                      <TableCell className="text-blue-100 whitespace-nowrap">{alert.computer_name}</TableCell>
+                      <TableCell 
+                        className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
+                        onClick={() => setTimelineView({ type: "user", id: alert.user_id })}
+                      >
+                        {alert.user_id}
+                      </TableCell>
+                      <TableCell 
+                        className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
+                        onClick={() => setTimelineView({ type: "computer", id: alert.computer_name })}
+                      >
+                        {alert.computer_name}
+                      </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
                           <span className="text-blue-100">{alert.title}</span>
@@ -84,7 +101,10 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
                         )}
                       </TableCell>
                       <TableCell>
-                        <button className="p-2 hover:bg-blue-500/10 rounded-full transition-colors">
+                        <button 
+                          className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
+                          onClick={() => setSelectedAlert(alert)}
+                        >
                           <ChevronRight className="h-4 w-4 text-blue-400" />
                         </button>
                       </TableCell>
@@ -112,6 +132,18 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
           <CardContent>
             <AlertDetailsView alert={selectedAlert} />
           </CardContent>
+        </Card>
+      )}
+
+      {/* Timeline View */}
+      {timelineView && (
+        <Card className="w-[800px] bg-black/40 border-blue-500/10 h-fit">
+          <TimelineView
+            alerts={alerts}
+            entityType={timelineView.type}
+            entityId={timelineView.id}
+            onClose={() => setTimelineView(null)}
+          />
         </Card>
       )}
     </div>
