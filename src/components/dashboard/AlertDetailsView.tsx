@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import AlertDetailsHeader from "./AlertDetailsHeader";
 import { Alert } from "./types";
+import { extractTacticsAndTechniques } from "./utils";
 
 interface AlertDetailsViewProps {
   alert: Alert;

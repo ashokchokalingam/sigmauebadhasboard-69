@@ -1,3 +1,5 @@
+import { Alert } from "./types";
+
 export const extractTacticsAndTechniques = (tags: string) => {
   const tagArray = tags.split(',').map(t => t.trim());
   const tactics: string[] = [];
