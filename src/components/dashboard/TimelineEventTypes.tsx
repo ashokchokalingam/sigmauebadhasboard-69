@@ -48,9 +48,10 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
           >
             <div>
               <h4 className="text-blue-100 font-medium">{metric.type}</h4>
-              <div className="text-xs text-blue-400 font-mono mt-1">
-                <div>First: {metric.firstSeen.toLocaleString()}</div>
-                <div>Last: {metric.lastSeen.toLocaleString()}</div>
+              <div className="text-xs text-blue-400 font-mono mt-1 flex items-center gap-2">
+                <span>{metric.firstSeen.toLocaleString()}</span>
+                <span className="text-blue-500">→</span>
+                <span>{metric.lastSeen.toLocaleString()}</span>
               </div>
             </div>
             <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded font-mono">
