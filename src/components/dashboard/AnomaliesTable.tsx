@@ -32,29 +32,58 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
     .slice(0, 10);
 
   const toggleAlert = (alert: Alert) => {
-    setSelectedAlert(selectedAlert?.id === alert.id ? null : alert);
+    // If clicking the same alert, close it
+    if (selectedAlert?.id === alert.id) {
+      setSelectedAlert(null);
+      // Close timeline if open
+      setTimelineView(null);
+      // Scroll back to the left
+      window.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      // Opening a new alert
+      setSelectedAlert(alert);
+      // Close timeline if open
+      setTimelineView(null);
+      // Scroll to the right
+      setTimeout(() => {
+        window.scrollTo({
+          left: document.documentElement.scrollWidth,
+          behavior: 'smooth'
+        });
+      }, 100);
+    }
   };
 
   const handleTimelineView = (type: "user" | "computer", id: string) => {
-    setTimelineView({ type, id });
+    // If clicking the same timeline, close it
+    if (timelineView?.type === type && timelineView?.id === id) {
+      setTimelineView(null);
+    } else {
+      // Close any open alert details
+      setSelectedAlert(null);
+      // Open new timeline
+      setTimelineView({ type, id });
+    }
   };
 
-  // Add effect to handle scrolling when alert is selected
+  // Handle scroll behavior when timeline or alert details change
   useEffect(() => {
     if (selectedAlert) {
-      // Smooth scroll to the right
-      window.scrollTo({
-        left: document.documentElement.scrollWidth,
-        behavior: 'smooth'
-      });
-    } else {
-      // Smooth scroll back to the left
+      // Scroll to the right when alert details open
+      setTimeout(() => {
+        window.scrollTo({
+          left: document.documentElement.scrollWidth,
+          behavior: 'smooth'
+        });
+      }, 100);
+    } else if (!timelineView) {
+      // Scroll back to the left when both are closed
       window.scrollTo({
         left: 0,
         behavior: 'smooth'
       });
     }
-  }, [selectedAlert]);
+  }, [selectedAlert, timelineView]);
 
   return (
     <div className="relative flex gap-4">
