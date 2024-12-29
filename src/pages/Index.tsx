@@ -1,7 +1,6 @@
 import { Activity, AlertTriangle, Shield, Users, Clock, Download } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import StatsCard from "@/components/dashboard/StatsCard";
 import TacticsChart from "@/components/dashboard/TacticsChart";
 import SeverityChart from "@/components/dashboard/SeverityChart";
 import AnomaliesTable from "@/components/dashboard/AnomaliesTable";
@@ -57,29 +56,37 @@ const Index = () => {
     }
   });
 
-  const filteredAlerts = alerts.filter(alert => {
-    // First apply severity filter
-    const severityMatch = selectedSeverity
-      ? (() => {
-          if (selectedSeverity === 'Critical') {
-            return alert.rule_level === 'critical' || alert.dbscan_cluster === -1;
-          } else if (selectedSeverity === 'High') {
-            return alert.rule_level === 'high';
-          } else if (selectedSeverity === 'Medium') {
-            return alert.rule_level === 'medium';
-          } else {
-            return alert.rule_level === 'low';
-          }
-        })()
-      : true;
+  // Extract unique users and their risk scores from alerts
+  const getRiskyUsers = () => {
+    const userRiskMap = new Map();
+    
+    alerts.forEach(alert => {
+      if (!userRiskMap.has(alert.user_id)) {
+        // Get tactics from alert tags
+        const tactics = alert.tags
+          .split(',')
+          .filter(tag => tag.startsWith('attack.') && !tag.toLowerCase().includes('t1'))
+          .map(tag => tag.replace('attack.', ''));
+        
+        // Calculate risk based on rule_level and outlier status
+        let risk = alert.rule_level === 'critical' ? 90 :
+                  alert.rule_level === 'high' ? 75 :
+                  alert.rule_level === 'medium' ? 50 : 25;
+        
+        if (alert.dbscan_cluster === -1) risk += 10;
+        
+        userRiskMap.set(alert.user_id, {
+          user: alert.user_id,
+          tactics: tactics,
+          risk: Math.min(risk, 100)
+        });
+      }
+    });
 
-    // Then apply tactic filter if one is selected
-    const tacticMatch = selectedTactic
-      ? alert.tags.includes(`attack.${selectedTactic}`)
-      : true;
-
-    return severityMatch && tacticMatch;
-  });
+    return Array.from(userRiskMap.values())
+      .sort((a, b) => b.risk - a.risk)
+      .slice(0, 3);
+  };
 
   if (isLoading) {
     return (
@@ -89,23 +96,7 @@ const Index = () => {
     );
   }
 
-  const criticalUsers = [
-    {
-      user: "john.doe",
-      tactics: ["privilege_escalation", "defense_evasion"],
-      risk: 89
-    },
-    {
-      user: "admin.system",
-      tactics: ["lateral_movement", "credential_access"],
-      risk: 76
-    },
-    {
-      user: "sarah.smith",
-      tactics: ["execution", "persistence"],
-      risk: 72
-    }
-  ];
+  const criticalUsers = getRiskyUsers();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
@@ -122,13 +113,11 @@ const Index = () => {
         </div>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-        <div className="lg:col-span-2">
-          <TacticsChart 
-            alerts={alerts} 
-            onTacticSelect={setSelectedTactic}
-          />
-        </div>
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 mb-8">
+        <TacticsChart 
+          alerts={alerts} 
+          onTacticSelect={setSelectedTactic}
+        />
         <div className="space-y-6">
           <SeverityChart 
             alerts={alerts} 
@@ -139,7 +128,7 @@ const Index = () => {
       </div>
 
       <div className="w-full">
-        <AnomaliesTable alerts={filteredAlerts} />
+        <AnomaliesTable alerts={alerts} />
       </div>
     </div>
   );
