@@ -1,10 +1,9 @@
 import { Alert } from "./types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Monitor, User, X, Activity } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { Monitor, User, X } from "lucide-react";
+import { useState } from "react";
 import TimelineEventCard from "./TimelineEventCard";
 import TimelineEventTypes from "./TimelineEventTypes";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface TimelineViewProps {
   alerts: Alert[];
@@ -15,15 +14,16 @@ interface TimelineViewProps {
 
 const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewProps) => {
   const [expandedAlert, setExpandedAlert] = useState<number | null>(null);
-  const timelineRef = useRef<HTMLDivElement>(null);
+  const [selectedEventType, setSelectedEventType] = useState<string | null>(null);
 
-  // Filter and sort alerts for the specific entity
+  // Filter alerts for the specific entity
   const filteredAlerts = alerts
     .filter(alert => 
       entityType === "user" 
         ? alert.user_id === entityId
         : alert.computer_name === entityId
     )
+    .filter(alert => !selectedEventType || alert.title === selectedEventType)
     .sort((a, b) => new Date(b.system_time).getTime() - new Date(a.system_time).getTime());
 
   const toggleRawLog = (alertId: number, event: React.MouseEvent) => {
@@ -31,32 +31,8 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
     setExpandedAlert(expandedAlert === alertId ? null : alertId);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (timelineRef.current && !timelineRef.current.contains(event.target as Node)) {
-        const clickX = event.clientX;
-        const clickY = event.clientY;
-        const html = document.documentElement;
-        const vScrollbar = html.scrollHeight > html.clientHeight;
-        const hScrollbar = html.scrollWidth > html.clientWidth;
-        const scrollbarWidth = window.innerWidth - html.clientWidth;
-        const scrollbarHeight = window.innerHeight - html.clientHeight;
-        const isVerticalScrollbarClick = vScrollbar && clickX >= window.innerWidth - scrollbarWidth;
-        const isHorizontalScrollbarClick = hScrollbar && clickY >= window.innerHeight - scrollbarHeight;
-        if (!isVerticalScrollbarClick && !isHorizontalScrollbarClick) {
-          onClose();
-        }
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [onClose]);
-
   return (
-    <div ref={timelineRef} className="flex gap-4">
+    <div className="flex gap-4">
       <Card className="bg-black/40 border-blue-500/10 w-[800px]">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-blue-100 flex items-center gap-2">
@@ -76,7 +52,11 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
         </CardHeader>
         <CardContent>
           {/* Event Types Section */}
-          <TimelineEventTypes alerts={filteredAlerts} />
+          <TimelineEventTypes 
+            alerts={filteredAlerts} 
+            onEventTypeSelect={setSelectedEventType}
+            selectedEventType={selectedEventType}
+          />
 
           {/* Timeline Events */}
           <div className="relative mt-6">

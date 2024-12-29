@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/card";
 
 interface TimelineEventTypesProps {
   alerts: Alert[];
+  onEventTypeSelect?: (title: string | null) => void;
+  selectedEventType?: string | null;
 }
 
 interface EventMetric {
@@ -17,7 +19,7 @@ interface EventMetric {
   timelineEvents: { time: Date; count: number }[];
 }
 
-const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
+const TimelineEventTypes = ({ alerts, onEventTypeSelect, selectedEventType }: TimelineEventTypesProps) => {
   const eventMetrics = alerts.reduce((acc: { [key: string]: EventMetric }, alert) => {
     const eventTypes = alert.tags.split(',').map(tag => tag.trim());
     const title = alert.title;
@@ -80,6 +82,12 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
     return events.filter(event => event.time.getHours() === hour).length;
   };
 
+  const handleEventTypeClick = (title: string) => {
+    if (onEventTypeSelect) {
+      onEventTypeSelect(selectedEventType === title ? null : title);
+    }
+  };
+
   return (
     <div className="mb-6 w-full">
       <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
@@ -90,7 +98,9 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
         {sortedMetrics.map((metric) => (
           <Card
             key={metric.type}
-            className="relative bg-[#1a2234] border-slate-700/50 hover:bg-[#1e2943] transition-all duration-300 overflow-hidden group"
+            className={`relative bg-[#1a2234] border-slate-700/50 hover:bg-[#1e2943] transition-all duration-300 overflow-hidden group cursor-pointer
+              ${selectedEventType === metric.type ? 'ring-2 ring-blue-500' : ''}`}
+            onClick={() => handleEventTypeClick(metric.type)}
           >
             <div className="p-4">
               <div className="flex items-center justify-between mb-3">
