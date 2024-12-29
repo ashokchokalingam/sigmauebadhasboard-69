@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Alert } from "./types";
 import AlertTableRow from "./AlertTableRow";
 import AlertDetailsView from "./AlertDetailsView";
@@ -38,6 +38,23 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
   const handleTimelineView = (type: "user" | "computer", id: string) => {
     setTimelineView({ type, id });
   };
+
+  // Add effect to handle scrolling when alert is selected
+  useEffect(() => {
+    if (selectedAlert) {
+      // Smooth scroll to the right
+      window.scrollTo({
+        left: document.documentElement.scrollWidth,
+        behavior: 'smooth'
+      });
+    } else {
+      // Smooth scroll back to the left
+      window.scrollTo({
+        left: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [selectedAlert]);
 
   return (
     <div className="relative flex gap-4">
