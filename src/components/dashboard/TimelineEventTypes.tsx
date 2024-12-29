@@ -76,6 +76,10 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
     return (hours / 24) * 100;
   };
 
+  const getEventsInHour = (events: { time: Date; count: number }[], hour: number) => {
+    return events.filter(event => event.time.getHours() === hour).length;
+  };
+
   return (
     <div className="mb-6 w-full">
       <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
@@ -121,17 +125,27 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
               {/* Daily Timeline with Hour Markers */}
               <div className="relative h-8 bg-blue-950/30 rounded-lg mb-3 overflow-hidden">
                 {/* Hour markers */}
-                {Array.from({ length: 24 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute top-0 bottom-0 w-px bg-blue-500/10"
-                    style={{ left: `${(i / 24) * 100}%` }}
-                  >
-                    <span className="absolute -top-1 left-1 text-[10px] text-blue-400/50">
-                      {i}
-                    </span>
-                  </div>
-                ))}
+                {Array.from({ length: 24 }).map((_, i) => {
+                  const eventsInHour = getEventsInHour(metric.timelineEvents, i);
+                  return (
+                    <div
+                      key={i}
+                      className="absolute top-0 bottom-0 w-px bg-blue-500/10 group/hour"
+                      style={{ left: `${(i / 24) * 100}%` }}
+                    >
+                      <span className="absolute -top-1 left-1 text-[10px] text-blue-400/50">
+                        {i}
+                      </span>
+                      {eventsInHour > 0 && (
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 opacity-0 group-hover/hour:opacity-100 transition-opacity duration-200">
+                          <div className="bg-blue-900 text-blue-100 text-xs px-2 py-1 rounded whitespace-nowrap">
+                            {eventsInHour} event{eventsInHour > 1 ? 's' : ''} at {i}:00
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
                 {/* Event markers */}
                 {metric.timelineEvents.map((event, index) => (
                   <div
