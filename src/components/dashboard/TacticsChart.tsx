@@ -8,9 +8,10 @@ interface Alert {
 
 interface TacticsChartProps {
   alerts: Alert[];
+  onTacticSelect: (tactic: string | null) => void;
 }
 
-const TacticsChart = ({ alerts }: TacticsChartProps) => {
+const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
   const calculateTacticsData = () => {
     const tacticsCount: { [key: string]: number } = {};
     
@@ -85,12 +86,13 @@ const TacticsChart = ({ alerts }: TacticsChartProps) => {
               <Bar 
                 dataKey="alerts"
                 radius={[0, 4, 4, 0]}
+                onClick={(data) => onTacticSelect(data.name)}
               >
                 {alertData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
                     fill={blueColors[index % blueColors.length]}
-                    className="hover:opacity-80 transition-opacity duration-200"
+                    className="hover:opacity-80 transition-opacity duration-200 cursor-pointer"
                   />
                 ))}
               </Bar>

@@ -39,6 +39,7 @@ const fetchAlerts = async (): Promise<Alert[]> => {
 const Index = () => {
   const [timeRange, setTimeRange] = useState("24h");
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
+  const [selectedTactic, setSelectedTactic] = useState<string | null>(null);
   const { toast } = useToast();
   
   const { data: alerts = [], isLoading, error } = useQuery({
@@ -55,19 +56,29 @@ const Index = () => {
     }
   });
 
-  const filteredAlerts = selectedSeverity
-    ? alerts.filter(alert => {
-        if (selectedSeverity === 'Critical') {
-          return alert.rule_level === 'critical' || alert.dbscan_cluster === -1;
-        } else if (selectedSeverity === 'High') {
-          return alert.rule_level === 'high';
-        } else if (selectedSeverity === 'Medium') {
-          return alert.rule_level === 'medium';
-        } else {
-          return alert.rule_level === 'low';
-        }
-      })
-    : alerts;
+  const filteredAlerts = alerts.filter(alert => {
+    // First apply severity filter
+    const severityMatch = selectedSeverity
+      ? (() => {
+          if (selectedSeverity === 'Critical') {
+            return alert.rule_level === 'critical' || alert.dbscan_cluster === -1;
+          } else if (selectedSeverity === 'High') {
+            return alert.rule_level === 'high';
+          } else if (selectedSeverity === 'Medium') {
+            return alert.rule_level === 'medium';
+          } else {
+            return alert.rule_level === 'low';
+          }
+        })()
+      : true;
+
+    // Then apply tactic filter if one is selected
+    const tacticMatch = selectedTactic
+      ? alert.tags.includes(`attack.${selectedTactic}`)
+      : true;
+
+    return severityMatch && tacticMatch;
+  });
 
   if (isLoading) {
     return (
@@ -133,7 +144,10 @@ const Index = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 mb-8">
-        <TacticsChart alerts={alerts} />
+        <TacticsChart 
+          alerts={alerts} 
+          onTacticSelect={setSelectedTactic}
+        />
         <SeverityChart 
           alerts={alerts} 
           onSeveritySelect={setSelectedSeverity} 
