@@ -45,14 +45,15 @@ const Index = () => {
   const { data: alerts = [], isLoading, error } = useQuery({
     queryKey: ['alerts'],
     queryFn: fetchAlerts,
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to fetch alerts. Please check your API connection.",
-        variant: "destructive",
-      });
-      console.error('Error fetching alerts:', error);
-    },
+    meta: {
+      onError: () => {
+        toast({
+          title: "Error",
+          description: "Failed to fetch alerts. Please check your API connection.",
+          variant: "destructive",
+        });
+      }
+    }
   });
 
   // Calculate statistics
