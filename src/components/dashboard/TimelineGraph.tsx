@@ -38,15 +38,15 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
   const data = processData();
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-[250px]"> {/* Reduced from 400px to 250px */}
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}
           margin={{
-            top: 10,
+            top: 5, // Reduced from 10
             right: 10,
             left: 10,
-            bottom: 10,
+            bottom: 5 // Reduced from 10
           }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#2a3441" />
@@ -54,10 +54,12 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
             dataKey="time" 
             stroke="#4b5563"
             tick={{ fill: '#4b5563' }}
+            height={20} // Added explicit height
           />
           <YAxis 
             stroke="#4b5563"
             tick={{ fill: '#4b5563' }}
+            width={25} // Added explicit width
           />
           <Tooltip
             contentStyle={{

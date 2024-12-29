@@ -54,10 +54,10 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
           </button>
         </div>
 
-        {/* Activity Graph with increased height */}
+        {/* Activity Graph with reduced height */}
         <div className="bg-black/40 border border-blue-500/10 rounded-xl p-6 mb-8">
           <h2 className="text-2xl font-semibold text-blue-100 mb-4">Activity Overview</h2>
-          <div className="h-[400px]">
+          <div className="h-[250px]"> {/* Reduced from 400px to 250px */}
             <TimelineGraph alerts={filteredAlerts} />
           </div>
         </div>
