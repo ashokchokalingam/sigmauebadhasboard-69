@@ -53,27 +53,19 @@ const Index = () => {
     }
   });
 
-  const filteredAlerts = alerts.filter(alert => {
-    const severityMatch = selectedSeverity
-      ? (() => {
-          if (selectedSeverity === 'Critical') {
-            return alert.rule_level === 'critical' || alert.dbscan_cluster === -1;
-          } else if (selectedSeverity === 'High') {
-            return alert.rule_level === 'high';
-          } else if (selectedSeverity === 'Medium') {
-            return alert.rule_level === 'medium';
-          } else {
-            return alert.rule_level === 'low';
-          }
-        })()
-      : true;
-
-    const tacticMatch = selectedTactic
-      ? alert.tags.includes(`attack.${selectedTactic}`)
-      : true;
-
-    return severityMatch && tacticMatch;
-  });
+  // Calculate actual number of unique users
+  const uniqueUsers = new Set(alerts.map(alert => alert.user_id)).size;
+  
+  // Calculate average risk score
+  const totalRiskScore = alerts.reduce((acc, alert) => acc + (alert.rule_level === 'critical' ? 100 : 
+    alert.rule_level === 'high' ? 75 : 
+    alert.rule_level === 'medium' ? 50 : 25), 0);
+  const avgRiskScore = alerts.length > 0 ? Math.round(totalRiskScore / alerts.length) : 0;
+  
+  // Count anomalies (critical alerts and outliers)
+  const anomaliesCount = alerts.filter(alert => 
+    alert.rule_level === 'critical' || alert.dbscan_cluster === -1
+  ).length;
 
   if (isLoading) {
     return (
@@ -115,21 +107,21 @@ const Index = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatsCard
           title="Active Users"
-          value="156"
+          value={uniqueUsers.toString()}
           icon={Users}
           subtitle="+8% from last period"
           subtitleIcon={TrendingUp}
         />
         <StatsCard
           title="Average Risk Score"
-          value="65"
+          value={avgRiskScore.toString()}
           icon={Shield}
           subtitle="-5% from last period"
           subtitleIcon={TrendingDown}
         />
         <StatsCard
           title="Anomalies Detected"
-          value="7"
+          value={anomaliesCount.toString()}
           icon={AlertTriangle}
           subtitle="-2% from last period"
           subtitleIcon={TrendingDown}
