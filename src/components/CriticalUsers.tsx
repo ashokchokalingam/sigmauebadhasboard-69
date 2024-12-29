@@ -2,7 +2,6 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Skull } from "lucide-react";
-import UserTimeline, { TimelineEvent } from "./UserTimeline";
 
 interface CriticalUser {
   user: string;
@@ -10,66 +9,7 @@ interface CriticalUser {
   risk: number;
 }
 
-type TimelineEvents = {
-  readonly [K in "admin.system" | "service.account" | "db.admin"]: ReadonlyArray<TimelineEvent>;
-};
-
-const mockTimelineEvents: TimelineEvents = {
-  "admin.system": [
-    {
-      time: "10:45:23",
-      event: "Attempted privilege escalation through kernel exploit",
-      severity: "critical",
-      tactic: "Privilege Escalation"
-    },
-    {
-      time: "10:43:12",
-      event: "Modified system binaries",
-      severity: "critical",
-      tactic: "Defense Evasion"
-    },
-    {
-      time: "10:40:55",
-      event: "Suspicious PowerShell execution",
-      severity: "high",
-      tactic: "Execution"
-    }
-  ],
-  "service.account": [
-    {
-      time: "11:20:15",
-      event: "Unauthorized access to production database",
-      severity: "critical",
-      tactic: "Initial Access"
-    },
-    {
-      time: "11:15:30",
-      event: "Multiple failed authentication attempts",
-      severity: "high",
-      tactic: "Credential Access"
-    }
-  ],
-  "db.admin": [
-    {
-      time: "09:55:43",
-      event: "Mass data exfiltration detected",
-      severity: "critical",
-      tactic: "Exfiltration"
-    },
-    {
-      time: "09:50:18",
-      event: "Unusual database query patterns",
-      severity: "high",
-      tactic: "Discovery"
-    }
-  ]
-};
-
-interface CriticalUsersProps {
-  users: CriticalUser[];
-}
-
-const CriticalUsers = ({ users }: CriticalUsersProps) => {
+const CriticalUsers = ({ users }: { users: CriticalUser[] }) => {
   return (
     <Card className="bg-black/40 border-red-900/20 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
@@ -101,10 +41,10 @@ const CriticalUsers = ({ users }: CriticalUsersProps) => {
                 </div>
               </DrawerTrigger>
               <DrawerContent className="bg-[#1A1F2C] border-red-900/20">
-                <UserTimeline 
-                  username={user.user} 
-                  events={mockTimelineEvents[user.user as keyof typeof mockTimelineEvents]} 
-                />
+                <div className="p-4">
+                  <h3 className="text-lg font-bold text-red-100 mb-4">User Details</h3>
+                  <p className="text-red-200">User activity details will be shown here.</p>
+                </div>
               </DrawerContent>
             </Drawer>
           ))}
