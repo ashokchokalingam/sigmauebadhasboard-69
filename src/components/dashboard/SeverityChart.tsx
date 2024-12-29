@@ -52,15 +52,18 @@ const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[400px]"> {/* Increased height from 300px to 400px */}
+        {/* Increased height from 300px to 400px */}
+        <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={severityData}
                 cx="50%"
                 cy="50%"
-                innerRadius={80} {/* Increased from 60 */}
-                outerRadius={120} {/* Increased from 80 */}
+                // Increased from 60
+                innerRadius={80}
+                // Increased from 80
+                outerRadius={120}
                 paddingAngle={5}
                 dataKey="value"
                 onDoubleClick={(data) => {
@@ -100,14 +103,18 @@ const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
               />
             </PieChart>
           </ResponsiveContainer>
-          <div className="flex justify-center gap-4 mt-6"> {/* Increased margin-top */}
+          {/* Increased margin-top */}
+          <div className="flex justify-center gap-4 mt-6">
             {severityData.map((entry, index) => (
-              <div key={index} className="flex items-center gap-2"> {/* Increased gap */}
+              // Increased gap
+              <div key={index} className="flex items-center gap-2">
+                {/* Increased size from w-3 h-3 */}
                 <div 
-                  className="w-4 h-4 rounded-full" {/* Increased size from w-3 h-3 */}
+                  className="w-4 h-4 rounded-full"
                   style={{ backgroundColor: entry.color }} 
                 />
-                <span className="text-sm text-blue-200">{entry.name}</span> {/* Increased text size from xs */}
+                {/* Increased text size from xs */}
+                <span className="text-sm text-blue-200">{entry.name}</span>
               </div>
             ))}
           </div>
