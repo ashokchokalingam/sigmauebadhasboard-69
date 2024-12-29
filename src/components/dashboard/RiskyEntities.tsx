@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { User, Monitor, Activity, X } from "lucide-react";
+import { User, Monitor, Activity } from "lucide-react";
 import { Alert } from "./types";
 import { getRiskScore } from "./utils";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface RiskyEntity {
   id: string;
@@ -17,10 +16,10 @@ interface RiskyEntity {
 interface RiskyEntitiesProps {
   alerts: Alert[];
   type: "users" | "computers";
+  onEntitySelect: (entityId: string) => void;
 }
 
-const RiskyEntities = ({ alerts, type }: RiskyEntitiesProps) => {
-  const [expandedEntity, setExpandedEntity] = useState<string | null>(null);
+const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -98,21 +97,15 @@ const RiskyEntities = ({ alerts, type }: RiskyEntitiesProps) => {
 
   const EntityIcon = type === "users" ? User : Monitor;
 
-  const handleEntityClick = (entityId: string) => {
-    setExpandedEntity(expandedEntity === entityId ? null : entityId);
-  };
-
   return (
     <div className="space-y-4">
       {topRiskyEntities.map((entity) => (
         <div 
           key={entity.id}
           className="flex flex-col rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/50 transition-all duration-300 cursor-pointer overflow-hidden"
+          onClick={() => onEntitySelect(entity.id)}
         >
-          <div 
-            className="flex items-center justify-between p-4"
-            onClick={() => handleEntityClick(entity.id)}
-          >
+          <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-3">
               <EntityIcon className={`h-8 w-8 ${type === "users" ? "text-blue-400" : "text-orange-400"}`} />
               <div className="flex flex-col">
@@ -132,49 +125,6 @@ const RiskyEntities = ({ alerts, type }: RiskyEntitiesProps) => {
               <span className="text-xs text-blue-300">Risk Score</span>
             </div>
           </div>
-
-          {expandedEntity === entity.id && (
-            <div className="px-4 pb-4 pt-2 border-t border-blue-500/10">
-              <div className="w-full h-[120px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={entity.hourlyData}
-                    margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#2a3441" />
-                    <XAxis 
-                      dataKey="time" 
-                      stroke="#4b5563"
-                      tick={{ fill: '#4b5563', fontSize: 10 }}
-                      interval={2}
-                    />
-                    <YAxis 
-                      stroke="#4b5563"
-                      tick={{ fill: '#4b5563', fontSize: 10 }}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#1a2234',
-                        border: '1px solid #3b82f6',
-                        borderRadius: '8px',
-                      }}
-                      labelStyle={{ color: '#93c5fd' }}
-                      itemStyle={{ color: '#93c5fd' }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="count"
-                      name="Events"
-                      stroke="#3b82f6"
-                      strokeWidth={2}
-                      dot={{ fill: '#3b82f6', r: 2 }}
-                      activeDot={{ r: 4, fill: '#60a5fa' }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          )}
         </div>
       ))}
       {topRiskyEntities.length === 0 && (
