@@ -16,7 +16,7 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
   const [expandedAlert, setExpandedAlert] = useState<number | null>(null);
   const [selectedEventType, setSelectedEventType] = useState<string | null>(null);
 
-  // Filter alerts for the specific entity
+  // Filter alerts for the specific entity and event type
   const filteredAlerts = alerts
     .filter(alert => 
       entityType === "user" 
