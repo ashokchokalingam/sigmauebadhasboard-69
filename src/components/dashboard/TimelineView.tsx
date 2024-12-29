@@ -4,6 +4,7 @@ import { Monitor, User, X } from "lucide-react";
 import { useState } from "react";
 import TimelineEventCard from "./TimelineEventCard";
 import TimelineEventTypes from "./TimelineEventTypes";
+import TimelineGraph from "./TimelineGraph";
 
 interface TimelineViewProps {
   alerts: Alert[];
@@ -51,6 +52,9 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
           </button>
         </CardHeader>
         <CardContent>
+          {/* Activity Graph */}
+          <TimelineGraph alerts={filteredAlerts} />
+
           {/* Event Types Section */}
           <TimelineEventTypes 
             alerts={filteredAlerts} 
