@@ -1,63 +1,89 @@
+import { Activity } from "lucide-react";
 import { Alert } from "./types";
-
-interface EventTypeMetrics {
-  type: string;
-  firstSeen: Date;
-  lastSeen: Date;
-  count: number;
-}
+import { Card } from "@/components/ui/card";
 
 interface TimelineEventTypesProps {
   alerts: Alert[];
 }
 
+interface EventMetric {
+  type: string;
+  count: number;
+  firstSeen: Date;
+  lastSeen: Date;
+  intensity: number;
+}
+
 const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
   // Calculate metrics for each event type
-  const eventTypeMetrics = alerts.reduce((acc: EventTypeMetrics[], alert) => {
-    const type = alert.title.split(':')[0].trim();
-    const time = new Date(alert.system_time);
+  const eventMetrics = alerts.reduce((acc: { [key: string]: EventMetric }, alert) => {
+    const eventTypes = alert.tags.split(',').map(tag => tag.trim());
     
-    const existing = acc.find(item => item.type === type);
-    if (existing) {
-      existing.count++;
-      if (time < existing.firstSeen) existing.firstSeen = time;
-      if (time > existing.lastSeen) existing.lastSeen = time;
-    } else {
-      acc.push({
-        type,
-        firstSeen: time,
-        lastSeen: time,
-        count: 1
-      });
-    }
+    eventTypes.forEach(type => {
+      if (!type) return;
+      
+      const currentDate = new Date(alert.system_time);
+      
+      if (!acc[type]) {
+        acc[type] = {
+          type,
+          count: 0,
+          firstSeen: currentDate,
+          lastSeen: currentDate,
+          intensity: 0
+        };
+      }
+      
+      acc[type].count++;
+      acc[type].firstSeen = new Date(Math.min(acc[type].firstSeen.getTime(), currentDate.getTime()));
+      acc[type].lastSeen = new Date(Math.max(acc[type].lastSeen.getTime(), currentDate.getTime()));
+    });
     
     return acc;
-  }, []);
+  }, {});
 
-  // Sort by count descending
-  eventTypeMetrics.sort((a, b) => b.count - a.count);
+  // Convert to array and sort by count
+  const sortedMetrics = Object.values(eventMetrics)
+    .sort((a, b) => b.count - a.count)
+    .map(metric => ({
+      ...metric,
+      intensity: (metric.count / Math.max(...Object.values(eventMetrics).map(m => m.count))) * 100
+    }));
 
   return (
-    <div className="space-y-2 bg-blue-950/20 p-4 rounded-lg border border-blue-500/20">
-      <h3 className="text-lg font-semibold text-blue-300 mb-4">Event Types</h3>
-      <div className="space-y-2">
-        {eventTypeMetrics.map((metric) => (
-          <div 
+    <div className="mb-6">
+      <h3 className="text-sm font-medium text-blue-400 mb-4 flex items-center gap-2">
+        <Activity className="h-4 w-4" />
+        Event Types
+      </h3>
+      <div className="grid gap-2">
+        {sortedMetrics.map((metric) => (
+          <Card
             key={metric.type}
-            className="grid grid-cols-[1fr,auto] gap-4 items-center p-2 rounded bg-blue-900/20 hover:bg-blue-900/30 transition-colors"
+            className="p-3 bg-gradient-to-r from-black/40 to-blue-500/5 border-blue-500/10 hover:to-blue-500/10 transition-all duration-300"
           >
-            <div>
-              <h4 className="text-blue-100 font-medium">{metric.type}</h4>
-              <div className="text-xs text-blue-400 font-mono mt-1 flex items-center gap-2">
-                <span>{metric.firstSeen.toLocaleString()}</span>
-                <span className="text-blue-500">→</span>
-                <span>{metric.lastSeen.toLocaleString()}</span>
+            <div className="flex items-center justify-between relative overflow-hidden">
+              <div className="z-10">
+                <h4 className="text-blue-100 font-medium">{metric.type}</h4>
+                <div className="text-xs text-blue-400 font-mono mt-1 flex items-center gap-2">
+                  <span>{metric.firstSeen.toLocaleString()}</span>
+                  <span className="text-blue-500">→</span>
+                  <span>{metric.lastSeen.toLocaleString()}</span>
+                </div>
               </div>
+              <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded font-mono z-10">
+                {metric.count}
+              </span>
+              {/* Heat map background */}
+              <div 
+                className="absolute inset-0 bg-blue-500/5"
+                style={{
+                  width: `${metric.intensity}%`,
+                  transition: 'width 0.3s ease-in-out'
+                }}
+              />
             </div>
-            <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded font-mono">
-              {metric.count}
-            </span>
-          </div>
+          </Card>
         ))}
       </div>
     </div>
