@@ -1,8 +1,6 @@
 import { AlertTriangle } from "lucide-react";
 import { Alert } from "./types";
 import { extractTacticsAndTechniques } from "./utils";
-import TimelineMetadataGrid from "./TimelineMetadataGrid";
-import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineRawLog from "./TimelineRawLog";
 
 interface TimelineEventCardProps {
@@ -31,21 +29,95 @@ const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: Timeline
         <div className={`bg-blue-950/30 rounded-lg p-4 border transition-all
           ${isExpanded ? 'border-blue-400 bg-blue-950/40' : 'border-blue-500/10'}`}
         >
-          {/* Title and Outlier Badge */}
-          <div className="flex items-start justify-between mb-4">
-            <h3 className="text-lg font-semibold text-blue-100">{alert.title}</h3>
-            <div className="flex items-center gap-2">
-              {alert.dbscan_cluster === -1 && (
-                <span className="px-2 py-1 bg-red-500/10 text-red-400 text-xs rounded-full border border-red-500/20 flex items-center gap-1">
-                  <AlertTriangle className="h-3 w-3" />
-                  Outlier
-                </span>
-              )}
+          {/* Title Section */}
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="col-span-2 bg-purple-950/20 border-purple-500/10 p-4 rounded-lg">
+              <h4 className="text-sm font-medium text-purple-400 mb-1">Title</h4>
+              <p className="text-lg text-purple-100">{alert.title}</p>
+            </div>
+            <div className="bg-purple-950/20 border-purple-500/10 p-4 rounded-lg">
+              <h4 className="text-sm font-medium text-purple-400 mb-1">Rule ID</h4>
+              <p className="text-sm text-purple-100 font-mono break-all">{alert.ruleid}</p>
+            </div>
+            <div className="bg-purple-950/20 border-purple-500/10 p-4 rounded-lg">
+              <h4 className="text-sm font-medium text-purple-400 mb-1">Severity</h4>
+              <p className="text-lg text-purple-100 capitalize">{alert.rule_level}</p>
             </div>
           </div>
 
-          <TimelineMetadataGrid alert={alert} />
-          <TimelineMitreSection tactics={tactics} techniques={techniques} />
+          {/* User & System Info Section */}
+          <div className="space-y-4 bg-blue-950/20 p-4 rounded-lg mb-4">
+            <h3 className="text-lg font-semibold text-blue-300">User & System Information</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-blue-400">Username</p>
+                <p className="text-base text-blue-100 font-mono">{alert.user_id}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-blue-400">Computer Name</p>
+                <p className="text-base text-blue-100 font-mono">{alert.computer_name}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-blue-400">IP Address</p>
+                <p className="text-base text-blue-100 font-mono">{alert.ip_address || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-blue-400">Time</p>
+                <p className="text-base text-blue-100 font-mono">
+                  {time.toLocaleString()}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* MITRE ATT&CK Section */}
+          <div className="space-y-4 bg-green-950/20 p-4 rounded-lg mb-4">
+            <h3 className="text-lg font-semibold text-green-300">MITRE ATT&CK</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-green-400">Tactics</p>
+                <p className="text-base text-green-100">{tactics || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-green-400">Techniques</p>
+                <div className="flex flex-col gap-2">
+                  {techniques.length > 0 ? (
+                    techniques.map((technique, index) => (
+                      <span 
+                        key={index}
+                        className="px-2 py-1 bg-green-500/10 text-green-400 text-sm rounded-lg border border-green-500/20 w-fit"
+                      >
+                        {technique}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-green-100">N/A</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Event Details Section */}
+          <div className="space-y-4 bg-blue-950/20 p-4 rounded-lg mb-4">
+            <h3 className="text-lg font-semibold text-blue-300">Event Details</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-blue-400">Event ID</p>
+                <p className="text-base text-blue-100">{alert.event_id}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-blue-400">Task</p>
+                <p className="text-base text-blue-100">{alert.task}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-blue-400">Provider Name</p>
+                <p className="text-base text-blue-100">{alert.provider_name}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Raw Log Section */}
           <TimelineRawLog 
             raw={alert.raw}
             isExpanded={isExpanded}
