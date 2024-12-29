@@ -1,4 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { useEffect, useRef } from "react";
+import Prism from "prismjs";
+import "prismjs/themes/prism-tomorrow.css";
+import "prismjs/components/prism-json";
 import AlertDetailsHeader from "./AlertDetailsHeader";
 import { Alert } from "./types";
 import { extractTacticsAndTechniques } from "./utils";
@@ -9,6 +12,13 @@ interface AlertDetailsViewProps {
 
 const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
   const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
+  const codeRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (codeRef.current) {
+      Prism.highlightElement(codeRef.current);
+    }
+  }, [alert.raw]);
   
   return (
     <div className="space-y-6">
@@ -91,11 +101,15 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
       </div>
 
       {/* Raw Data Section */}
-      <div className="space-y-4 bg-gray-950/20 p-4 rounded-lg">
+      <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-300">Raw Data</h3>
-        <pre className="text-sm text-gray-100 font-mono bg-black/40 p-4 rounded-lg overflow-x-auto">
-          {JSON.stringify(JSON.parse(alert.raw), null, 2)}
-        </pre>
+        <div className="bg-[#1E1E1E] rounded-lg overflow-hidden">
+          <pre className="p-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-500/20 scrollbar-track-transparent">
+            <code ref={codeRef} className="language-json">
+              {JSON.stringify(JSON.parse(alert.raw), null, 2)}
+            </code>
+          </pre>
+        </div>
       </div>
     </div>
   );
