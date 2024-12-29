@@ -1,6 +1,7 @@
 import { Activity, AlertTriangle, Shield, Users, Clock, Download, TrendingUp, TrendingDown } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/components/ui/use-toast";
 import StatsCard from "@/components/dashboard/StatsCard";
 import TacticsChart from "@/components/dashboard/TacticsChart";
 import SeverityChart from "@/components/dashboard/SeverityChart";
@@ -22,6 +23,7 @@ interface ApiResponse {
 }
 
 const fetchAlerts = async (): Promise<Alert[]> => {
+  console.log('Attempting to fetch alerts...');
   try {
     const response = await fetch('/api/alerts', {
       headers: {
@@ -29,6 +31,8 @@ const fetchAlerts = async (): Promise<Alert[]> => {
         'Content-Type': 'application/json',
       },
     });
+    
+    console.log('Response status:', response.status);
     
     if (!response.ok) {
       console.error('Server response error:', response.status);
@@ -40,17 +44,16 @@ const fetchAlerts = async (): Promise<Alert[]> => {
     return data.alerts || [];
   } catch (error) {
     console.error('Error fetching alerts:', error);
-    return [];
+    throw error; // Re-throw to be caught by React Query
   }
 };
-
-// ... keep existing code (component definition and state)
 
 const Index = () => {
   const [timeRange, setTimeRange] = useState("24h");
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
   const [selectedTactic, setSelectedTactic] = useState<string | null>(null);
   const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "computer"; id: string } | null>(null);
+  const { toast } = useToast();
   
   const { data: alerts = [], isLoading, error } = useQuery({
     queryKey: ['alerts'],
@@ -59,6 +62,11 @@ const Index = () => {
     meta: {
       onError: (error: Error) => {
         console.error("Failed to fetch alerts:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch alerts. Please check your connection and try again.",
+          variant: "destructive",
+        });
       }
     }
   });
@@ -72,6 +80,18 @@ const Index = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-red-500 text-center">
+          <AlertTriangle className="h-16 w-16 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold mb-2">Error Loading Data</h2>
+          <p>Please check your connection and try again.</p>
+        </div>
       </div>
     );
   }
