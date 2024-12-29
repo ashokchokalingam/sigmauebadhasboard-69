@@ -11,9 +11,19 @@ import TimelineView from "@/components/dashboard/TimelineView";
 import { getFilteredAlerts, calculateStats } from "@/components/dashboard/alertUtils";
 import { Alert } from "@/components/dashboard/types";
 
+interface ApiResponse {
+  alerts: Alert[];
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total_pages: number;
+    total_records: number;
+  };
+}
+
 const fetchAlerts = async (): Promise<Alert[]> => {
   try {
-    const response = await fetch('/api/alerts', {
+    const response = await fetch('http://localhost:5000/api/alerts', {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -21,13 +31,12 @@ const fetchAlerts = async (): Promise<Alert[]> => {
     });
     
     if (!response.ok) {
-      console.error('API Error:', response.status, response.statusText);
       throw new Error('Network response was not ok');
     }
     
-    const data = await response.json();
-    console.log('API Response:', data); // Debug log
-    return Array.isArray(data) ? data : [];
+    const data: ApiResponse = await response.json();
+    console.log('API Response:', data);
+    return data.alerts || [];
   } catch (error) {
     console.error('Error fetching alerts:', error);
     return [];
@@ -43,6 +52,7 @@ const Index = () => {
   const { data: alerts = [], isLoading, error } = useQuery({
     queryKey: ['alerts'],
     queryFn: fetchAlerts,
+    refetchInterval: 30000, // Refresh every 30 seconds
     meta: {
       onError: (error: Error) => {
         console.error("Failed to fetch alerts:", error);
@@ -102,7 +112,7 @@ const Index = () => {
         />
         <StatsCard
           title="Average Risk Score"
-          value={stats.riskScore.current.toString()}
+          value={stats.riskScore.current.toFixed(1)}
           icon={Shield}
           subtitle={`${stats.riskScore.change >= 0 ? '+' : ''}${stats.riskScore.change}% from last period`}
           subtitleIcon={stats.riskScore.change >= 0 ? TrendingUp : TrendingDown}
@@ -116,25 +126,30 @@ const Index = () => {
         />
       </div>
 
-      {/* Top Risk Cards */}
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <TacticsChart 
+          alerts={alerts} 
+          onTacticSelect={setSelectedTactic}
+        />
+        <SeverityChart 
+          alerts={alerts} 
+          onSeveritySelect={setSelectedSeverity} 
+        />
+      </div>
+
+      {/* Risky Entities */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-blue-100 mb-4 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-red-500" />
-            Risky Users ({stats.uniqueUsers.users.length})
+            <Users className="h-5 w-5 text-blue-400" />
+            Risky Users
           </h2>
-          <div className="space-y-2">
-            {stats.uniqueUsers.users.map((userId) => (
-              <div 
-                key={userId}
-                onClick={() => setSelectedEntity({ type: "user", id: userId })}
-                className="p-4 bg-blue-950/30 rounded-lg cursor-pointer hover:bg-blue-900/30 transition-colors flex items-center gap-3"
-              >
-                <Users className="h-5 w-5 text-blue-400" />
-                <span className="text-blue-100">{userId}</span>
-              </div>
-            ))}
-          </div>
+          <RiskyEntities 
+            alerts={alerts} 
+            type="users"
+            onEntitySelect={(id) => setSelectedEntity({ type: "user", id })}
+          />
         </div>
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-blue-100 mb-4 flex items-center gap-2">
@@ -147,18 +162,6 @@ const Index = () => {
             onEntitySelect={(id) => setSelectedEntity({ type: "computer", id })}
           />
         </div>
-      </div>
-
-      {/* MITRE and Risk Distribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <TacticsChart 
-          alerts={alerts} 
-          onTacticSelect={setSelectedTactic}
-        />
-        <SeverityChart 
-          alerts={alerts} 
-          onSeveritySelect={setSelectedSeverity} 
-        />
       </div>
 
       {/* Latest Anomalies */}
