@@ -79,7 +79,7 @@ const Index = () => {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatsCard
-          title="Active Users"
+          title="Risky Users"
           value={stats.uniqueUsers.current.toString()}
           icon={Users}
           subtitle={`${stats.uniqueUsers.change >= 0 ? '+' : ''}${stats.uniqueUsers.change}% from last period`}
@@ -106,7 +106,7 @@ const Index = () => {
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-blue-100 mb-4 flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" />
-            Active Users ({stats.uniqueUsers.users.length})
+            Risky Users ({stats.uniqueUsers.users.length})
           </h2>
           <div className="space-y-2">
             {stats.uniqueUsers.users.map((userId) => (

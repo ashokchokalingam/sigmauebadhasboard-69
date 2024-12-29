@@ -10,7 +10,7 @@ interface StatsCardProps {
 }
 
 const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleIcon }: StatsCardProps) => {
-  const isPositive = subtitle.includes("+");
+  const isPositive = subtitle.includes('+');
   
   return (
     <Card className="bg-[#1A1F2C]/40 border-0 hover:bg-[#1A1F2C]/60 transition-all duration-300">
@@ -20,7 +20,7 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
       </CardHeader>
       <CardContent>
         <div className={`text-4xl font-bold ${
-          title === "Active Users" ? "text-emerald-400" :
+          title === "Risky Users" ? "text-emerald-400" :
           title === "Average Risk Score" ? "text-amber-400" :
           "text-red-400"
         }`}>
