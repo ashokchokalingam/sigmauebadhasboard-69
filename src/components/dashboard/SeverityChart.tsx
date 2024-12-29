@@ -52,15 +52,15 @@ const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[400px]"> {/* Increased height from 300px to 400px */}
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={severityData}
                 cx="50%"
                 cy="50%"
-                innerRadius={60}
-                outerRadius={80}
+                innerRadius={80} {/* Increased from 60 */}
+                outerRadius={120} {/* Increased from 80 */}
                 paddingAngle={5}
                 dataKey="value"
                 onDoubleClick={(data) => {
@@ -100,14 +100,14 @@ const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
               />
             </PieChart>
           </ResponsiveContainer>
-          <div className="flex justify-center gap-4 mt-4">
+          <div className="flex justify-center gap-4 mt-6"> {/* Increased margin-top */}
             {severityData.map((entry, index) => (
-              <div key={index} className="flex items-center gap-1">
+              <div key={index} className="flex items-center gap-2"> {/* Increased gap */}
                 <div 
-                  className="w-3 h-3 rounded-full" 
+                  className="w-4 h-4 rounded-full" {/* Increased size from w-3 h-3 */}
                   style={{ backgroundColor: entry.color }} 
                 />
-                <span className="text-xs text-blue-200">{entry.name}</span>
+                <span className="text-sm text-blue-200">{entry.name}</span> {/* Increased text size from xs */}
               </div>
             ))}
           </div>
