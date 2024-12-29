@@ -56,9 +56,12 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
       return acc;
     }, []);
 
+    // Convert dates to timestamps for Math.min/max
+    const timestamps = eventDates.map(date => date.getTime());
+
     return {
-      firstSeen: new Date(Math.min(...eventDates)),
-      lastSeen: new Date(Math.max(...eventDates)),
+      firstSeen: new Date(Math.min(...timestamps)),
+      lastSeen: new Date(Math.max(...timestamps)),
       totalEvents: filteredAlerts.length,
       eventsByDay,
       eventTypes,
