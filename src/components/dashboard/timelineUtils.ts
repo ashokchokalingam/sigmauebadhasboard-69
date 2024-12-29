@@ -27,7 +27,7 @@ interface EventMetric {
 }
 
 interface EventMetricsAccumulator {
-  [key: string]: EventMetric;
+  [key: string]: Omit<EventMetric, 'intensity'>;
 }
 
 export const calculateEventMetrics = (alerts: Alert[]): EventMetric[] => {
