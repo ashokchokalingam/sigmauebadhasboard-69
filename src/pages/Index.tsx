@@ -6,6 +6,7 @@ import TacticsChart from "@/components/dashboard/TacticsChart";
 import SeverityChart from "@/components/dashboard/SeverityChart";
 import AnomaliesTable from "@/components/dashboard/AnomaliesTable";
 import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
+import RiskyEntities from "@/components/dashboard/RiskyEntities";
 import { useToast } from "@/components/ui/use-toast";
 
 const API_URL = 'http://192.168.1.129:5000';
@@ -115,6 +116,7 @@ const Index = () => {
             alerts={alerts} 
             onSeveritySelect={setSelectedSeverity} 
           />
+          <RiskyEntities alerts={alerts} />
         </div>
       </div>
 
