@@ -6,7 +6,6 @@ import TacticsChart from "@/components/dashboard/TacticsChart";
 import SeverityChart from "@/components/dashboard/SeverityChart";
 import AnomaliesTable from "@/components/dashboard/AnomaliesTable";
 import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
-import CriticalUsers from "@/components/CriticalUsers";
 import { useToast } from "@/components/ui/use-toast";
 
 const API_URL = 'http://192.168.1.129:5000';
@@ -82,33 +81,6 @@ const Index = () => {
   const criticalAlerts = alerts.filter(alert => alert.rule_level === 'critical').length;
   const outliers = alerts.filter(alert => alert.dbscan_cluster === -1).length;
   const uniqueUsers = new Set(alerts.map(alert => alert.user_id)).size;
-  
-  // Get users under attack (users with critical alerts and outlier behavior)
-  const criticalUsers = alerts
-    .filter(alert => alert.rule_level === 'critical' || alert.dbscan_cluster === -1)
-    .reduce((acc: { [key: string]: any }, alert) => {
-      if (!acc[alert.user_id]) {
-        acc[alert.user_id] = {
-          user: alert.user_id,
-          tactics: new Set(),
-          risk: 0
-        };
-      }
-      if (alert.tags) {
-        alert.tags.split(',').forEach(tag => acc[alert.user_id].tactics.add(tag.trim()));
-      }
-      acc[alert.user_id].risk += alert.dbscan_cluster === -1 ? 20 : 10;
-      return acc;
-    }, {});
-
-  const topCriticalUsers = Object.values(criticalUsers)
-    .map((user: any) => ({
-      ...user,
-      tactics: Array.from(user.tactics),
-      risk: Math.min(100, user.risk)
-    }))
-    .sort((a: any, b: any) => b.risk - a.risk)
-    .slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
@@ -168,13 +140,8 @@ const Index = () => {
         />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3 mb-8">
-        <div className="md:col-span-2">
-          <AnomaliesTable alerts={filteredAlerts} />
-        </div>
-        <div>
-          <CriticalUsers users={topCriticalUsers} />
-        </div>
+      <div className="w-full">
+        <AnomaliesTable alerts={filteredAlerts} />
       </div>
     </div>
   );

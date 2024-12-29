@@ -121,7 +121,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
 
       {/* Side Pane for Raw Data */}
       {selectedAlert && (
-        <Card className="w-96 bg-black/40 border-blue-500/10 h-fit">
+        <Card className="w-[600px] bg-black/40 border-blue-500/10 h-fit">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-blue-100">Raw Data</CardTitle>
             <button 
@@ -132,11 +132,11 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
             </button>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-6">
               {Object.entries(selectedAlert).map(([key, value]) => (
-                <div key={key} className="space-y-1">
-                  <p className="text-sm font-medium text-blue-300">{key}</p>
-                  <p className="text-sm text-blue-100 break-all font-mono">
+                <div key={key} className="space-y-2">
+                  <p className="text-base font-medium text-blue-300">{key}</p>
+                  <p className="text-base text-blue-100 break-all font-mono bg-black/20 p-3 rounded-lg">
                     {String(value)}
                   </p>
                 </div>
