@@ -63,49 +63,37 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
         {sortedMetrics.map((metric) => (
           <Card
             key={metric.type}
-            className="relative bg-[#1a2234] border-slate-700/50 hover:bg-[#1e2943] transition-all duration-300 overflow-hidden group w-full"
+            className="relative bg-[#1a2234] border-slate-700/50 hover:bg-[#1e2943] transition-all duration-300 overflow-hidden group"
           >
-            <div 
-              className="absolute inset-0 bg-blue-500/5"
-              style={{
-                width: `${metric.intensity}%`,
-                transition: 'width 0.3s ease-in-out'
-              }}
-            />
-            
-            <div className="relative z-10 p-4">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between mb-1">
-                  <h4 className="text-lg font-medium text-white">
-                    {metric.type}
-                  </h4>
-                  <span className="px-3 py-1 bg-blue-900/50 text-blue-200 text-sm rounded-full font-mono whitespace-nowrap">
-                    {metric.count} events
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-lg font-medium text-white">
+                  {metric.type}
+                </h4>
+                <span className="px-3 py-1 bg-blue-900/50 text-blue-200 text-sm rounded-full">
+                  {metric.count} events
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2 mb-3">
+                {metric.tags.map((tag, index) => (
+                  <span 
+                    key={index}
+                    className="px-2 py-1 bg-[#1d2b45] text-blue-300 text-xs rounded-md"
+                  >
+                    {tag}
                   </span>
-                </div>
+                ))}
+              </div>
 
-                {/* Compact timestamp display */}
-                <div className="flex items-center gap-4 text-xs text-blue-300 bg-[#151b2d] p-2 rounded mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">First:</span>
-                    <span className="font-mono">{metric.firstSeen.toLocaleTimeString()}</span>
-                  </div>
-                  <div className="w-px h-4 bg-blue-500/20" />
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">Last:</span>
-                    <span className="font-mono">{metric.lastSeen.toLocaleTimeString()}</span>
-                  </div>
+              <div className="flex items-center justify-between text-xs text-blue-300/70">
+                <div className="flex items-center gap-1">
+                  <span>First:</span>
+                  <span className="font-mono">{metric.firstSeen.toLocaleTimeString()}</span>
                 </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {metric.tags.map((tag, index) => (
-                    <span 
-                      key={index}
-                      className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full border border-blue-500/30"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+                <div className="flex items-center gap-1">
+                  <span>Last:</span>
+                  <span className="font-mono">{metric.lastSeen.toLocaleTimeString()}</span>
                 </div>
               </div>
             </div>
