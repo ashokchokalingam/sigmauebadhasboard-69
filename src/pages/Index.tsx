@@ -10,7 +10,7 @@ import CriticalUsers from "@/components/CriticalUsers";
 import { useToast } from "@/components/ui/use-toast";
 
 // Use the specific IP address for the API
-const API_URL = 'http://12.168.1.129:5000';
+const API_URL = 'http://192.168.1.129:5000';
 
 interface Alert {
   id: number;
