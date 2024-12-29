@@ -2,7 +2,7 @@ import { Alert } from "./types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { extractTacticsAndTechniques } from "./utils";
 import { Clock, Monitor, User, Shield, AlertTriangle, X, Terminal } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface TimelineViewProps {
   alerts: Alert[];
@@ -13,6 +13,20 @@ interface TimelineViewProps {
 
 const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (timelineRef.current && !timelineRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
 
   // Filter and sort alerts for the specific entity
   const filteredAlerts = alerts
@@ -24,7 +38,7 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
     .sort((a, b) => new Date(b.system_time).getTime() - new Date(a.system_time).getTime());
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4" ref={timelineRef}>
       <Card className="bg-black/40 border-blue-500/10 w-[800px]">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-blue-100 flex items-center gap-2">
