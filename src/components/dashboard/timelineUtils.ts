@@ -7,8 +7,19 @@ export const getEventsInHour = (events: { time: Date; count: number }[], hour: n
   return events.filter(event => event.time.getHours() === hour).length;
 };
 
-export const calculateEventMetrics = (alerts: any[]) => {
-  const eventMetrics = alerts.reduce((acc: { [key: string]: any }, alert) => {
+interface EventMetric {
+  type: string;
+  count: number;
+  firstSeen: Date;
+  lastSeen: Date;
+  intensity: number;
+  tags: string[];
+  weeklyActivity: number[];
+  timelineEvents: { time: Date; count: number }[];
+}
+
+export const calculateEventMetrics = (alerts: any[]): EventMetric[] => {
+  const eventMetrics = alerts.reduce((acc: { [key: string]: EventMetric }, alert) => {
     const eventTypes = alert.tags.split(',').map((tag: string) => tag.trim());
     const title = alert.title;
     const alertDate = new Date(alert.system_time);
@@ -50,11 +61,11 @@ export const calculateEventMetrics = (alerts: any[]) => {
   }, {});
 
   return Object.values(eventMetrics)
-    .sort((a: any, b: any) => b.count - a.count)
-    .map((metric: any) => ({
+    .sort((a, b) => b.count - a.count)
+    .map((metric) => ({
       ...metric,
       intensity: (metric.count / Math.max(...Object.values(eventMetrics).map(m => m.count))) * 100,
-      timelineEvents: metric.timelineEvents.sort((a: any, b: any) => 
+      timelineEvents: metric.timelineEvents.sort((a, b) => 
         a.time.getTime() - b.time.getTime()
       )
     }));
