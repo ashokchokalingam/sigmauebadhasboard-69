@@ -91,11 +91,9 @@ const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: Timeline
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
               <p className="text-sm font-medium text-blue-400">Tactics</p>
-              <p className="text-base">
-                <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
-                  {tactics || 'N/A'}
-                </span>
-              </p>
+              <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
+                {tactics || 'N/A'}
+              </span>
             </div>
             <div>
               <p className="text-sm font-medium text-blue-400">Techniques</p>
