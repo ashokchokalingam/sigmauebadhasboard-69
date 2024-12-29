@@ -114,12 +114,12 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
         </CardContent>
       </Card>
 
-      <div className={`fixed top-0 right-0 h-screen w-[400px] bg-black/90 transform transition-all duration-300 ease-in-out overflow-y-auto ${
+      <div className={`fixed top-0 right-0 h-screen w-[600px] bg-black/90 transform transition-all duration-300 ease-in-out overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent ${
         selectedAlert ? 'translate-x-0' : 'translate-x-full'
       }`}>
         {selectedAlert && (
           <Card className="h-full bg-transparent border-none">
-            <CardContent className="p-4">
+            <CardContent className="p-6">
               <AlertDetailsView alert={selectedAlert} />
             </CardContent>
           </Card>
