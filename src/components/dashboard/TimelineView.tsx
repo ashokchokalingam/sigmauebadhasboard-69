@@ -2,7 +2,7 @@ import { Alert } from "./types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { extractTacticsAndTechniques } from "./utils";
 import { Clock, Monitor, User, Shield, AlertTriangle, X, Terminal, ChevronDown, ChevronUp } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 
 interface TimelineViewProps {
   alerts: Alert[];
@@ -13,20 +13,6 @@ interface TimelineViewProps {
 
 const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewProps) => {
   const [expandedAlert, setExpandedAlert] = useState<number | null>(null);
-  const timelineRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (timelineRef.current && !timelineRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [onClose]);
 
   // Filter and sort alerts for the specific entity
   const filteredAlerts = alerts
@@ -42,7 +28,7 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
   };
 
   return (
-    <div className="flex gap-4" ref={timelineRef}>
+    <div className="flex gap-4">
       <Card className="bg-black/40 border-blue-500/10 w-[800px]">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-blue-100 flex items-center gap-2">
@@ -90,7 +76,8 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
                         ? 'border-blue-400 bg-blue-950/40' 
                         : 'border-blue-500/10'}`}
                     >
-                      <div className="grid grid-cols-2 gap-4 mb-4">
+                      {/* Metadata Fields */}
+                      <div className="grid grid-cols-2 gap-4">
                         <div>
                           <p className="text-sm font-medium text-blue-400">Computer</p>
                           <p className="text-base text-blue-100 font-mono flex items-center gap-2">
@@ -98,21 +85,47 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
                             {alert.computer_name}
                           </p>
                         </div>
+                        <div>
+                          <p className="text-sm font-medium text-blue-400">User ID</p>
+                          <p className="text-base text-blue-100 font-mono flex items-center gap-2">
+                            <User className="h-4 w-4" />
+                            {alert.user_id}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-blue-400">Event ID</p>
+                          <p className="text-base text-blue-100 font-mono">{alert.event_id}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-blue-400">Provider</p>
+                          <p className="text-base text-blue-100">{alert.provider_name}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-blue-400">Rule ID</p>
+                          <p className="text-base text-blue-100 font-mono">{alert.ruleid}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-blue-400">Rule Level</p>
+                          <p className="text-base text-blue-100">{alert.rule_level}</p>
+                        </div>
                         {alert.ip_address && (
                           <div>
                             <p className="text-sm font-medium text-blue-400">IP Address</p>
                             <p className="text-base text-blue-100 font-mono">{alert.ip_address}</p>
                           </div>
                         )}
+                        {alert.task && (
+                          <div>
+                            <p className="text-sm font-medium text-blue-400">Task</p>
+                            <p className="text-base text-blue-100">{alert.task}</p>
+                          </div>
+                        )}
                       </div>
 
-                      <div className="space-y-4">
+                      <div className="mt-4">
                         <div className="flex items-start justify-between">
                           <h3 className="text-lg font-semibold text-blue-100">{alert.title}</h3>
                           <div className="flex items-center gap-2">
-                            <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
-                              {alert.ruleid}
-                            </span>
                             {alert.dbscan_cluster === -1 && (
                               <span className="px-2 py-1 bg-red-500/10 text-red-400 text-xs rounded-full border border-red-500/20 flex items-center gap-1">
                                 <AlertTriangle className="h-3 w-3" />
@@ -122,7 +135,7 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4 mt-4">
                           <div>
                             <p className="text-sm font-medium text-blue-400">Tactics</p>
                             <p className="text-base">
@@ -141,25 +154,9 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <p className="text-sm font-medium text-blue-400">Provider</p>
-                            <p className="text-base text-blue-100">{alert.provider_name}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-blue-400">Event ID</p>
-                            <p className="text-base text-blue-100 font-mono">{alert.event_id}</p>
-                          </div>
-                        </div>
-
-                        <div>
-                          <p className="text-sm font-medium text-blue-400">Task</p>
-                          <p className="text-base text-blue-100">{alert.task || 'N/A'}</p>
-                        </div>
-
                         <button
                           onClick={() => toggleRawLog(alert.id)}
-                          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition-colors"
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2 mt-4 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition-colors"
                         >
                           <Terminal className="h-4 w-4" />
                           Raw Log
