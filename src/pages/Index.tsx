@@ -6,6 +6,8 @@ import TacticsChart from "@/components/dashboard/TacticsChart";
 import SeverityChart from "@/components/dashboard/SeverityChart";
 import AnomaliesTable from "@/components/dashboard/AnomaliesTable";
 import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
+import AttackChainCard from "@/components/dashboard/AttackChainCard";
+import SystemHealthCard from "@/components/dashboard/SystemHealthCard";
 import { useToast } from "@/components/ui/use-toast";
 
 const API_URL = 'http://192.168.1.129:5000';
@@ -88,11 +90,6 @@ const Index = () => {
     );
   }
 
-  // Calculate statistics
-  const criticalAlerts = alerts.filter(alert => alert.rule_level === 'critical').length;
-  const outliers = alerts.filter(alert => alert.dbscan_cluster === -1).length;
-  const uniqueUsers = new Set(alerts.map(alert => alert.user_id)).size;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
       <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-8">
@@ -113,13 +110,13 @@ const Index = () => {
           title="Total Anomalies"
           value={alerts.length}
           icon={AlertTriangle}
-          subtitle={`${criticalAlerts} critical alerts`}
+          subtitle={`${alerts.filter(a => a.rule_level === 'critical').length} critical alerts`}
           subtitleIcon={Activity}
           gradient="from-[#3B82F6] to-[#2563EB]"
         />
         <StatsCard
           title="Outliers Detected"
-          value={outliers}
+          value={alerts.filter(a => a.dbscan_cluster === -1).length}
           icon={Shield}
           subtitle="DBSCAN cluster -1"
           subtitleIcon={AlertTriangle}
@@ -127,7 +124,7 @@ const Index = () => {
         />
         <StatsCard
           title="Affected Users"
-          value={uniqueUsers}
+          value={new Set(alerts.map(a => a.user_id)).size}
           icon={Users}
           subtitle="Under investigation"
           subtitleIcon={Activity}
@@ -152,6 +149,11 @@ const Index = () => {
           alerts={alerts} 
           onSeveritySelect={setSelectedSeverity} 
         />
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 mb-8">
+        <AttackChainCard />
+        <SystemHealthCard />
       </div>
 
       <div className="w-full">
