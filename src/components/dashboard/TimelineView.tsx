@@ -2,7 +2,7 @@ import { Alert } from "./types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { extractTacticsAndTechniques } from "./utils";
 import { Clock, Monitor, User, Shield, AlertTriangle, X, Terminal, ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface TimelineViewProps {
   alerts: Alert[];
@@ -13,6 +13,7 @@ interface TimelineViewProps {
 
 const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewProps) => {
   const [expandedAlert, setExpandedAlert] = useState<number | null>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
 
   // Filter and sort alerts for the specific entity
   const filteredAlerts = alerts
@@ -23,12 +24,48 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
     )
     .sort((a, b) => new Date(b.system_time).getTime() - new Date(a.system_time).getTime());
 
-  const toggleRawLog = (alertId: number) => {
+  const toggleRawLog = (alertId: number, event: React.MouseEvent) => {
+    event.stopPropagation();
     setExpandedAlert(expandedAlert === alertId ? null : alertId);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (timelineRef.current && !timelineRef.current.contains(event.target as Node)) {
+        // Check if the click is on a scrollbar
+        const clickX = event.clientX;
+        const clickY = event.clientY;
+        const html = document.documentElement;
+        const vScrollbar = html.scrollHeight > html.clientHeight;
+        const hScrollbar = html.scrollWidth > html.clientWidth;
+        
+        // Get scrollbar dimensions
+        const scrollbarWidth = window.innerWidth - html.clientWidth;
+        const scrollbarHeight = window.innerHeight - html.clientHeight;
+        
+        // Check if click is on vertical scrollbar
+        const isVerticalScrollbarClick = vScrollbar && 
+          clickX >= window.innerWidth - scrollbarWidth;
+        
+        // Check if click is on horizontal scrollbar
+        const isHorizontalScrollbarClick = hScrollbar && 
+          clickY >= window.innerHeight - scrollbarHeight;
+        
+        // Only close if not clicking scrollbars
+        if (!isVerticalScrollbarClick && !isHorizontalScrollbarClick) {
+          onClose();
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
+
   return (
-    <div className="flex gap-4">
+    <div ref={timelineRef} className="flex gap-4">
       <Card className="bg-black/40 border-blue-500/10 w-[800px]">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-blue-100 flex items-center gap-2">
@@ -155,7 +192,7 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
                         </div>
 
                         <button
-                          onClick={() => toggleRawLog(alert.id)}
+                          onClick={(e) => toggleRawLog(alert.id, e)}
                           className="w-full flex items-center justify-center gap-2 px-4 py-2 mt-4 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition-colors"
                         >
                           <Terminal className="h-4 w-4" />
