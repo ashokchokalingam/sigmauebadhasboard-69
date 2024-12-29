@@ -13,12 +13,20 @@ import { Alert } from "@/components/dashboard/types";
 
 const fetchAlerts = async (): Promise<Alert[]> => {
   try {
-    const response = await fetch('/api/alerts');
+    const response = await fetch('/api/alerts', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    
     if (!response.ok) {
+      console.error('API Error:', response.status, response.statusText);
       throw new Error('Network response was not ok');
     }
+    
     const data = await response.json();
-    // Ensure we always return an array
+    console.log('API Response:', data); // Debug log
     return Array.isArray(data) ? data : [];
   } catch (error) {
     console.error('Error fetching alerts:', error);
