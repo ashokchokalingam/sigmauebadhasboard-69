@@ -9,6 +9,9 @@ import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
 import CriticalUsers from "@/components/CriticalUsers";
 import { useToast } from "@/components/ui/use-toast";
 
+// Use the specific IP address for the API
+const API_URL = 'http://192.168.1.129:5000';
+
 interface Alert {
   id: number;
   title: string;
@@ -26,9 +29,6 @@ interface Alert {
   rule_level: string;
   task: string;
 }
-
-// Use environment variable for API URL, fallback to localhost if not set
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const fetchAlerts = async (): Promise<Alert[]> => {
   const response = await fetch(`${API_URL}/api/alerts`);
