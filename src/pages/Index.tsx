@@ -6,8 +6,6 @@ import TacticsChart from "@/components/dashboard/TacticsChart";
 import SeverityChart from "@/components/dashboard/SeverityChart";
 import AnomaliesTable from "@/components/dashboard/AnomaliesTable";
 import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
-import AttackChainCard from "@/components/dashboard/AttackChainCard";
-import SystemHealthCard from "@/components/dashboard/SystemHealthCard";
 import { useToast } from "@/components/ui/use-toast";
 
 const API_URL = 'http://192.168.1.129:5000';
@@ -149,11 +147,6 @@ const Index = () => {
           alerts={alerts} 
           onSeveritySelect={setSelectedSeverity} 
         />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 mb-8">
-        <AttackChainCard />
-        <SystemHealthCard />
       </div>
 
       <div className="w-full">
