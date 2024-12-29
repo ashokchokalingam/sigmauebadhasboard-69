@@ -14,6 +14,7 @@ interface EventMetric {
   intensity: number;
   tags: string[];
   weeklyActivity: number[];
+  timelineEvents: { time: Date; count: number }[];
 }
 
 const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
@@ -30,7 +31,8 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
         lastSeen: new Date(alert.system_time),
         intensity: 0,
         tags: [],
-        weeklyActivity: Array(7).fill(0)
+        weeklyActivity: Array(7).fill(0),
+        timelineEvents: []
       };
     }
     
@@ -39,6 +41,12 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
     if (daysAgo >= 0 && daysAgo < 7) {
       acc[title].weeklyActivity[daysAgo]++;
     }
+    
+    // Add event to timeline
+    acc[title].timelineEvents.push({
+      time: alertDate,
+      count: 1
+    });
     
     acc[title].count++;
     acc[title].firstSeen = new Date(Math.min(acc[title].firstSeen.getTime(), alertDate.getTime()));
@@ -59,8 +67,14 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
     .sort((a, b) => b.count - a.count)
     .map(metric => ({
       ...metric,
-      intensity: (metric.count / Math.max(...Object.values(eventMetrics).map(m => m.count))) * 100
+      intensity: (metric.count / Math.max(...Object.values(eventMetrics).map(m => m.count))) * 100,
+      timelineEvents: metric.timelineEvents.sort((a, b) => a.time.getTime() - b.time.getTime())
     }));
+
+  const getTimelinePosition = (date: Date) => {
+    const hours = date.getHours() + date.getMinutes() / 60;
+    return (hours / 24) * 100;
+  };
 
   return (
     <div className="mb-6 w-full">
@@ -102,6 +116,21 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Daily Timeline */}
+              <div className="relative h-2 bg-blue-950 rounded-full mb-3 overflow-hidden">
+                {metric.timelineEvents.map((event, index) => (
+                  <div
+                    key={index}
+                    className="absolute top-0 h-full w-1 bg-blue-500"
+                    style={{
+                      left: `${getTimelinePosition(event.time)}%`,
+                      opacity: 0.7
+                    }}
+                    title={`Event at ${event.time.toLocaleTimeString()}`}
+                  />
+                ))}
               </div>
 
               <div className="flex flex-wrap gap-2 mb-3">
