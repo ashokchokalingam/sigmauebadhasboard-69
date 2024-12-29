@@ -7,6 +7,7 @@ import SeverityChart from "@/components/dashboard/SeverityChart";
 import AnomaliesTable from "@/components/dashboard/AnomaliesTable";
 import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
 import { useToast } from "@/components/ui/use-toast";
+import CriticalUsers from "@/components/CriticalUsers";
 
 const API_URL = 'http://192.168.1.129:5000';
 
@@ -88,6 +89,24 @@ const Index = () => {
     );
   }
 
+  const criticalUsers = [
+    {
+      user: "john.doe",
+      tactics: ["privilege_escalation", "defense_evasion"],
+      risk: 89
+    },
+    {
+      user: "admin.system",
+      tactics: ["lateral_movement", "credential_access"],
+      risk: 76
+    },
+    {
+      user: "sarah.smith",
+      tactics: ["execution", "persistence"],
+      risk: 72
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
       <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-8">
@@ -103,50 +122,20 @@ const Index = () => {
         </div>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <StatsCard
-          title="Total Anomalies"
-          value={alerts.length}
-          icon={AlertTriangle}
-          subtitle={`${alerts.filter(a => a.rule_level === 'critical').length} critical alerts`}
-          subtitleIcon={Activity}
-          gradient="from-[#3B82F6] to-[#2563EB]"
-        />
-        <StatsCard
-          title="Outliers Detected"
-          value={alerts.filter(a => a.dbscan_cluster === -1).length}
-          icon={Shield}
-          subtitle="DBSCAN cluster -1"
-          subtitleIcon={AlertTriangle}
-          gradient="from-[#2563EB] to-[#1D4ED8]"
-        />
-        <StatsCard
-          title="Affected Users"
-          value={new Set(alerts.map(a => a.user_id)).size}
-          icon={Users}
-          subtitle="Under investigation"
-          subtitleIcon={Activity}
-          gradient="from-[#1D4ED8] to-[#1E40AF]"
-        />
-        <StatsCard
-          title="Detection Time"
-          value="5.2s"
-          icon={Clock}
-          subtitle="Average response time"
-          subtitleIcon={Activity}
-          gradient="from-[#1E40AF] to-[#0EA5E9]"
-        />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 mb-8">
-        <TacticsChart 
-          alerts={alerts} 
-          onTacticSelect={setSelectedTactic}
-        />
-        <SeverityChart 
-          alerts={alerts} 
-          onSeveritySelect={setSelectedSeverity} 
-        />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+        <div className="lg:col-span-2">
+          <TacticsChart 
+            alerts={alerts} 
+            onTacticSelect={setSelectedTactic}
+          />
+        </div>
+        <div className="space-y-6">
+          <SeverityChart 
+            alerts={alerts} 
+            onSeveritySelect={setSelectedSeverity} 
+          />
+          <CriticalUsers users={criticalUsers} />
+        </div>
       </div>
 
       <div className="w-full">

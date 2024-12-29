@@ -52,7 +52,7 @@ const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[400px]">
+        <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -60,7 +60,7 @@ const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
                 cx="50%"
                 cy="50%"
                 innerRadius={60}
-                outerRadius={100}
+                outerRadius={80}
                 paddingAngle={5}
                 dataKey="value"
                 onDoubleClick={(data) => {
