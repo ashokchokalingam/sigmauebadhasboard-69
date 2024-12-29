@@ -23,7 +23,7 @@ interface ApiResponse {
 
 const fetchAlerts = async (): Promise<Alert[]> => {
   try {
-    const response = await fetch('http://localhost:5000/api/alerts', {
+    const response = await fetch('/api/alerts', {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -42,6 +42,8 @@ const fetchAlerts = async (): Promise<Alert[]> => {
     return [];
   }
 };
+
+// ... keep existing code (component definition and state)
 
 const Index = () => {
   const [timeRange, setTimeRange] = useState("24h");
@@ -77,7 +79,7 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212]">
         <TimelineView
-          alerts={safeAlerts}
+          alerts={alerts}
           entityType={selectedEntity.type}
           entityId={selectedEntity.id}
           onClose={() => setSelectedEntity(null)}
