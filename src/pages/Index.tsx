@@ -83,6 +83,19 @@ const Index = () => {
     );
   }
 
+  if (selectedEntity) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212]">
+        <TimelineView
+          alerts={alerts}
+          entityType={selectedEntity.type}
+          entityId={selectedEntity.id}
+          onClose={() => setSelectedEntity(null)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
       <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-8">
@@ -98,89 +111,76 @@ const Index = () => {
         </div>
       </div>
 
-      {!selectedEntity ? (
-        <>
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <StatsCard
-              title="Active Users"
-              value="156"
-              icon={Users}
-              subtitle="+8% from last period"
-              subtitleIcon={TrendingUp}
-              gradient="from-emerald-500 to-emerald-700"
-            />
-            <StatsCard
-              title="Average Risk Score"
-              value="65"
-              icon={Shield}
-              subtitle="-5% from last period"
-              subtitleIcon={TrendingDown}
-              gradient="from-amber-500 to-amber-700"
-            />
-            <StatsCard
-              title="Anomalies Detected"
-              value="7"
-              icon={AlertTriangle}
-              subtitle="-2% from last period"
-              subtitleIcon={TrendingDown}
-              gradient="from-red-500 to-red-700"
-            />
-          </div>
-          
-          {/* Top Risk Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-blue-100 mb-4 flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-                Top Risky Users
-              </h2>
-              <RiskyEntities 
-                alerts={alerts} 
-                type="users" 
-                onEntitySelect={(id) => setSelectedEntity({ type: "user", id })}
-              />
-            </div>
-            <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-blue-100 mb-4 flex items-center gap-2">
-                <Shield className="h-5 w-5 text-orange-500" />
-                Top Risky Computers
-              </h2>
-              <RiskyEntities 
-                alerts={alerts} 
-                type="computers"
-                onEntitySelect={(id) => setSelectedEntity({ type: "computer", id })}
-              />
-            </div>
-          </div>
-
-          {/* MITRE and Risk Distribution */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <TacticsChart 
-              alerts={alerts} 
-              onTacticSelect={setSelectedTactic}
-            />
-            <SeverityChart 
-              alerts={alerts} 
-              onSeveritySelect={setSelectedSeverity} 
-            />
-          </div>
-
-          {/* Latest Anomalies */}
-          <div className="w-full">
-            <AnomaliesTable alerts={filteredAlerts} />
-          </div>
-        </>
-      ) : (
-        <div className="flex justify-end">
-          <TimelineView
-            alerts={alerts}
-            entityType={selectedEntity.type}
-            entityId={selectedEntity.id}
-            onClose={() => setSelectedEntity(null)}
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <StatsCard
+          title="Active Users"
+          value="156"
+          icon={Users}
+          subtitle="+8% from last period"
+          subtitleIcon={TrendingUp}
+          gradient="from-emerald-500 to-emerald-700"
+        />
+        <StatsCard
+          title="Average Risk Score"
+          value="65"
+          icon={Shield}
+          subtitle="-5% from last period"
+          subtitleIcon={TrendingDown}
+          gradient="from-amber-500 to-amber-700"
+        />
+        <StatsCard
+          title="Anomalies Detected"
+          value="7"
+          icon={AlertTriangle}
+          subtitle="-2% from last period"
+          subtitleIcon={TrendingDown}
+          gradient="from-red-500 to-red-700"
+        />
+      </div>
+      
+      {/* Top Risk Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-blue-100 mb-4 flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-red-500" />
+            Top Risky Users
+          </h2>
+          <RiskyEntities 
+            alerts={alerts} 
+            type="users" 
+            onEntitySelect={(id) => setSelectedEntity({ type: "user", id })}
           />
         </div>
-      )}
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-blue-100 mb-4 flex items-center gap-2">
+            <Shield className="h-5 w-5 text-orange-500" />
+            Top Risky Computers
+          </h2>
+          <RiskyEntities 
+            alerts={alerts} 
+            type="computers"
+            onEntitySelect={(id) => setSelectedEntity({ type: "computer", id })}
+          />
+        </div>
+      </div>
+
+      {/* MITRE and Risk Distribution */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <TacticsChart 
+          alerts={alerts} 
+          onTacticSelect={setSelectedTactic}
+        />
+        <SeverityChart 
+          alerts={alerts} 
+          onSeveritySelect={setSelectedSeverity} 
+        />
+      </div>
+
+      {/* Latest Anomalies */}
+      <div className="w-full">
+        <AnomaliesTable alerts={filteredAlerts} />
+      </div>
     </div>
   );
 };
