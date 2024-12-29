@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { User, Monitor, Activity } from "lucide-react";
+import { User, Monitor, Activity, X } from "lucide-react";
 import { Alert } from "./types";
 import { getRiskScore } from "./utils";
+import TimelineView from "./TimelineView";
 
 interface RiskyEntity {
   id: string;
@@ -18,6 +19,7 @@ interface RiskyEntitiesProps {
 }
 
 const RiskyEntities = ({ alerts, type }: RiskyEntitiesProps) => {
+  const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -67,11 +69,33 @@ const RiskyEntities = ({ alerts, type }: RiskyEntitiesProps) => {
 
   const EntityIcon = type === "users" ? User : Monitor;
 
+  const handleEntityClick = (entityId: string) => {
+    setSelectedEntity(entityId);
+  };
+
   return (
     <div className="space-y-4">
+      {selectedEntity ? (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+          <div className="bg-[#1A1F2C] rounded-lg w-full max-w-6xl max-h-[90vh] overflow-auto">
+            <TimelineView
+              alerts={alerts.filter(alert => 
+                type === "users" ? alert.user_id === selectedEntity : alert.computer_name === selectedEntity
+              )}
+              entityType={type === "users" ? "user" : "computer"}
+              entityId={selectedEntity}
+              onClose={() => setSelectedEntity(null)}
+            />
+          </div>
+        </div>
+      ) : null}
+      
       {topRiskyEntities.map((entity) => (
-        <div key={entity.id} 
-          className="flex items-center justify-between p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/50 transition-all duration-300">
+        <div 
+          key={entity.id} 
+          className="flex items-center justify-between p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/50 transition-all duration-300 cursor-pointer"
+          onClick={() => handleEntityClick(entity.id)}
+        >
           <div className="flex items-center gap-3">
             <EntityIcon className={`h-8 w-8 ${type === "users" ? "text-blue-400" : "text-orange-400"}`} />
             <div className="flex flex-col">
