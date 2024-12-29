@@ -102,8 +102,26 @@ const Index = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <RiskyEntities alerts={alerts} />
+      {/* Top Risk Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-blue-100 mb-4 flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-red-500" />
+            Top Risky Users
+          </h2>
+          <RiskyEntities alerts={alerts} type="users" />
+        </div>
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-blue-100 mb-4 flex items-center gap-2">
+            <Shield className="h-5 w-5 text-orange-500" />
+            Top Risky Computers
+          </h2>
+          <RiskyEntities alerts={alerts} type="computers" />
+        </div>
+      </div>
+
+      {/* MITRE and Risk Distribution */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <TacticsChart 
           alerts={alerts} 
           onTacticSelect={setSelectedTactic}
@@ -114,6 +132,7 @@ const Index = () => {
         />
       </div>
 
+      {/* Latest Anomalies */}
       <div className="w-full">
         <AnomaliesTable alerts={filteredAlerts} />
       </div>
