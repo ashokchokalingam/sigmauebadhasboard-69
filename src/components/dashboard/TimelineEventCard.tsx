@@ -18,52 +18,52 @@ const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: Timeline
     <div className="relative pl-16">
       {/* Time indicator */}
       <div className="absolute left-0 -translate-x-[calc(50%-1px)] flex flex-col items-center">
-        <div className={`w-4 h-4 rounded-full ${isFirst ? 'bg-red-500 animate-pulse' : 'bg-blue-500'} shadow-lg shadow-blue-500/20`} />
-        <time className="mt-2 text-sm text-blue-400 font-mono whitespace-nowrap">
+        <div className={`w-3 h-3 rounded-full ${isFirst ? 'bg-red-500 animate-pulse' : 'bg-blue-500'} shadow-lg shadow-blue-500/20`} />
+        <time className="mt-1 text-xs text-blue-400 font-mono whitespace-nowrap">
           {time.toLocaleTimeString()}
         </time>
       </div>
 
       {/* Event card */}
-      <div className="space-y-4">
-        <div className={`bg-blue-950/30 rounded-lg p-4 border transition-all
+      <div className="space-y-2">
+        <div className={`bg-blue-950/30 rounded-lg p-3 border transition-all text-sm
           ${isExpanded ? 'border-blue-400 bg-blue-950/40' : 'border-blue-500/10'}`}
         >
           {/* Title Section */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="col-span-2 bg-purple-950/20 border-purple-500/10 p-4 rounded-lg">
-              <h4 className="text-sm font-medium text-purple-400 mb-1">Title</h4>
-              <p className="text-lg text-purple-100">{alert.title}</p>
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            <div className="col-span-2 bg-purple-950/20 border-purple-500/10 p-2 rounded-lg">
+              <h4 className="text-xs font-medium text-purple-400 mb-0.5">Title</h4>
+              <p className="text-sm text-purple-100">{alert.title}</p>
             </div>
-            <div className="bg-purple-950/20 border-purple-500/10 p-4 rounded-lg">
-              <h4 className="text-sm font-medium text-purple-400 mb-1">Rule ID</h4>
-              <p className="text-sm text-purple-100 font-mono break-all">{alert.ruleid}</p>
+            <div className="bg-purple-950/20 border-purple-500/10 p-2 rounded-lg">
+              <h4 className="text-xs font-medium text-purple-400 mb-0.5">Rule ID</h4>
+              <p className="text-xs text-purple-100 font-mono break-all">{alert.ruleid}</p>
             </div>
-            <div className="bg-purple-950/20 border-purple-500/10 p-4 rounded-lg">
-              <h4 className="text-sm font-medium text-purple-400 mb-1">Severity</h4>
-              <p className="text-lg text-purple-100 capitalize">{alert.rule_level}</p>
+            <div className="bg-purple-950/20 border-purple-500/10 p-2 rounded-lg">
+              <h4 className="text-xs font-medium text-purple-400 mb-0.5">Severity</h4>
+              <p className="text-sm text-purple-100 capitalize">{alert.rule_level}</p>
             </div>
           </div>
 
           {/* User & System Info Section */}
-          <div className="space-y-4 bg-blue-950/20 p-4 rounded-lg mb-4">
-            <h3 className="text-lg font-semibold text-blue-300">User & System Information</h3>
-            <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2 bg-blue-950/20 p-2 rounded-lg mb-2">
+            <h3 className="text-sm font-semibold text-blue-300">User & System Information</h3>
+            <div className="grid grid-cols-2 gap-2">
               <div>
-                <p className="text-sm font-medium text-blue-400">Username</p>
-                <p className="text-base text-blue-100 font-mono">{alert.user_id}</p>
+                <p className="text-xs font-medium text-blue-400">Username</p>
+                <p className="text-xs text-blue-100 font-mono">{alert.user_id}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-blue-400">Computer Name</p>
-                <p className="text-base text-blue-100 font-mono">{alert.computer_name}</p>
+                <p className="text-xs font-medium text-blue-400">Computer Name</p>
+                <p className="text-xs text-blue-100 font-mono">{alert.computer_name}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-blue-400">IP Address</p>
-                <p className="text-base text-blue-100 font-mono">{alert.ip_address || 'N/A'}</p>
+                <p className="text-xs font-medium text-blue-400">IP Address</p>
+                <p className="text-xs text-blue-100 font-mono">{alert.ip_address || 'N/A'}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-blue-400">Time</p>
-                <p className="text-base text-blue-100 font-mono">
+                <p className="text-xs font-medium text-blue-400">Time</p>
+                <p className="text-xs text-blue-100 font-mono">
                   {time.toLocaleString()}
                 </p>
               </div>
@@ -71,21 +71,21 @@ const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: Timeline
           </div>
 
           {/* MITRE ATT&CK Section */}
-          <div className="space-y-4 bg-green-950/20 p-4 rounded-lg mb-4">
-            <h3 className="text-lg font-semibold text-green-300">MITRE ATT&CK</h3>
-            <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2 bg-green-950/20 p-2 rounded-lg mb-2">
+            <h3 className="text-sm font-semibold text-green-300">MITRE ATT&CK</h3>
+            <div className="grid grid-cols-2 gap-2">
               <div>
-                <p className="text-sm font-medium text-green-400">Tactics</p>
-                <p className="text-base text-green-100">{tactics || 'N/A'}</p>
+                <p className="text-xs font-medium text-green-400">Tactics</p>
+                <p className="text-xs text-green-100">{tactics || 'N/A'}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-green-400">Techniques</p>
-                <div className="flex flex-col gap-2">
+                <p className="text-xs font-medium text-green-400">Techniques</p>
+                <div className="flex flex-wrap gap-1">
                   {techniques.length > 0 ? (
                     techniques.map((technique, index) => (
                       <span 
                         key={index}
-                        className="px-2 py-1 bg-green-500/10 text-green-400 text-sm rounded-lg border border-green-500/20 w-fit"
+                        className="px-1 py-0.5 bg-green-500/10 text-green-400 text-xs rounded-lg border border-green-500/20"
                       >
                         {technique}
                       </span>
@@ -99,20 +99,20 @@ const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: Timeline
           </div>
 
           {/* Event Details Section */}
-          <div className="space-y-4 bg-blue-950/20 p-4 rounded-lg mb-4">
-            <h3 className="text-lg font-semibold text-blue-300">Event Details</h3>
-            <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2 bg-blue-950/20 p-2 rounded-lg mb-2">
+            <h3 className="text-sm font-semibold text-blue-300">Event Details</h3>
+            <div className="grid grid-cols-2 gap-2">
               <div>
-                <p className="text-sm font-medium text-blue-400">Event ID</p>
-                <p className="text-base text-blue-100">{alert.event_id}</p>
+                <p className="text-xs font-medium text-blue-400">Event ID</p>
+                <p className="text-xs text-blue-100">{alert.event_id}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-blue-400">Task</p>
-                <p className="text-base text-blue-100">{alert.task}</p>
+                <p className="text-xs font-medium text-blue-400">Task</p>
+                <p className="text-xs text-blue-100">{alert.task}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-blue-400">Provider Name</p>
-                <p className="text-base text-blue-100">{alert.provider_name}</p>
+                <p className="text-xs font-medium text-blue-400">Provider Name</p>
+                <p className="text-xs text-blue-100">{alert.provider_name}</p>
               </div>
             </div>
           </div>
