@@ -8,26 +8,10 @@ import AnomaliesTable from "@/components/dashboard/AnomaliesTable";
 import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
 import RiskyEntities from "@/components/dashboard/RiskyEntities";
 import TimelineView from "@/components/dashboard/TimelineView";
+import { getFilteredAlerts, calculateStats } from "@/components/dashboard/alertUtils";
+import { Alert } from "@/components/dashboard/types";
 
 const API_URL = 'http://192.168.1.129:5000';
-
-interface Alert {
-  id: number;
-  title: string;
-  tags: string;
-  description: string;
-  system_time: string;
-  computer_name: string;
-  user_id: string;
-  event_id: string;
-  provider_name: string;
-  dbscan_cluster: number;
-  raw: string;
-  ip_address: string;
-  ruleid: string;
-  rule_level: string;
-  task: string;
-}
 
 const fetchAlerts = async (): Promise<Alert[]> => {
   const response = await fetch(`${API_URL}/api/alerts`);
@@ -53,51 +37,8 @@ const Index = () => {
     }
   });
 
-  // Calculate stats for current and previous periods
-  const now = new Date();
-  const twentyFourHoursAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
-  const fortyEightHoursAgo = new Date(now.getTime() - (48 * 60 * 60 * 1000));
-
-  const currentPeriodAlerts = alerts.filter(alert => 
-    new Date(alert.system_time) >= twentyFourHoursAgo
-  );
-
-  const previousPeriodAlerts = alerts.filter(alert => 
-    new Date(alert.system_time) >= fortyEightHoursAgo &&
-    new Date(alert.system_time) < twentyFourHoursAgo
-  );
-
-  // Calculate current period stats
-  const currentUniqueUsers = new Set(currentPeriodAlerts.map(alert => alert.user_id)).size;
-  const previousUniqueUsers = new Set(previousPeriodAlerts.map(alert => alert.user_id)).size;
-  const userChangePercent = previousUniqueUsers ? 
-    Math.round(((currentUniqueUsers - previousUniqueUsers) / previousUniqueUsers) * 100) : 0;
-
-  // Calculate risk scores
-  const calculateAvgRiskScore = (alertsList: typeof alerts) => {
-    if (alertsList.length === 0) return 0;
-    const totalRiskScore = alertsList.reduce((acc, alert) => 
-      acc + (alert.rule_level === 'critical' ? 100 : 
-        alert.rule_level === 'high' ? 75 : 
-        alert.rule_level === 'medium' ? 50 : 25), 0
-    );
-    return Math.round(totalRiskScore / alertsList.length);
-  };
-
-  const currentAvgRiskScore = calculateAvgRiskScore(currentPeriodAlerts);
-  const previousAvgRiskScore = calculateAvgRiskScore(previousPeriodAlerts);
-  const riskScoreChangePercent = previousAvgRiskScore ? 
-    Math.round(((currentAvgRiskScore - previousAvgRiskScore) / previousAvgRiskScore) * 100) : 0;
-
-  // Calculate anomalies
-  const currentAnomalies = currentPeriodAlerts.filter(alert => 
-    alert.rule_level === 'critical' || alert.dbscan_cluster === -1
-  ).length;
-  const previousAnomalies = previousPeriodAlerts.filter(alert => 
-    alert.rule_level === 'critical' || alert.dbscan_cluster === -1
-  ).length;
-  const anomaliesChangePercent = previousAnomalies ? 
-    Math.round(((currentAnomalies - previousAnomalies) / previousAnomalies) * 100) : 0;
+  const stats = calculateStats(alerts);
+  const filteredAlerts = getFilteredAlerts(alerts, selectedSeverity, selectedTactic);
 
   if (isLoading) {
     return (
@@ -139,24 +80,24 @@ const Index = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatsCard
           title="Active Users"
-          value={currentUniqueUsers.toString()}
+          value={stats.uniqueUsers.current.toString()}
           icon={Users}
-          subtitle={`${userChangePercent >= 0 ? '+' : ''}${userChangePercent}% from last period`}
-          subtitleIcon={userChangePercent >= 0 ? TrendingUp : TrendingDown}
+          subtitle={`${stats.uniqueUsers.change >= 0 ? '+' : ''}${stats.uniqueUsers.change}% from last period`}
+          subtitleIcon={stats.uniqueUsers.change >= 0 ? TrendingUp : TrendingDown}
         />
         <StatsCard
           title="Average Risk Score"
-          value={currentAvgRiskScore.toString()}
+          value={stats.riskScore.current.toString()}
           icon={Shield}
-          subtitle={`${riskScoreChangePercent >= 0 ? '+' : ''}${riskScoreChangePercent}% from last period`}
-          subtitleIcon={riskScoreChangePercent >= 0 ? TrendingUp : TrendingDown}
+          subtitle={`${stats.riskScore.change >= 0 ? '+' : ''}${stats.riskScore.change}% from last period`}
+          subtitleIcon={stats.riskScore.change >= 0 ? TrendingUp : TrendingDown}
         />
         <StatsCard
           title="Anomalies Detected"
-          value={currentAnomalies.toString()}
+          value={stats.anomalies.current.toString()}
           icon={AlertTriangle}
-          subtitle={`${anomaliesChangePercent >= 0 ? '+' : ''}${anomaliesChangePercent}% from last period`}
-          subtitleIcon={anomaliesChangePercent >= 0 ? TrendingUp : TrendingDown}
+          subtitle={`${stats.anomalies.change >= 0 ? '+' : ''}${stats.anomalies.change}% from last period`}
+          subtitleIcon={stats.anomalies.change >= 0 ? TrendingUp : TrendingDown}
         />
       </div>
 
@@ -165,13 +106,20 @@ const Index = () => {
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-blue-100 mb-4 flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" />
-            Top Risky Users
+            Active Users ({stats.uniqueUsers.users.length})
           </h2>
-          <RiskyEntities 
-            alerts={alerts} 
-            type="users" 
-            onEntitySelect={(id) => setSelectedEntity({ type: "user", id })}
-          />
+          <div className="space-y-2">
+            {stats.uniqueUsers.users.map((userId) => (
+              <div 
+                key={userId}
+                onClick={() => setSelectedEntity({ type: "user", id: userId })}
+                className="p-4 bg-blue-950/30 rounded-lg cursor-pointer hover:bg-blue-900/30 transition-colors flex items-center gap-3"
+              >
+                <Users className="h-5 w-5 text-blue-400" />
+                <span className="text-blue-100">{userId}</span>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-blue-100 mb-4 flex items-center gap-2">
