@@ -31,7 +31,8 @@ const fetchAlerts = async (): Promise<Alert[]> => {
     });
     
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      console.error('Server response error:', response.status);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const data: ApiResponse = await response.json();
