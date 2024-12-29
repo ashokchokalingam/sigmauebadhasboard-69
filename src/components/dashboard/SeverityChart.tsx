@@ -80,11 +80,22 @@ const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
               </Pie>
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: 'rgba(26, 31, 44, 0.95)',
+                  backgroundColor: 'rgba(17, 24, 39, 0.95)',
                   borderRadius: '8px',
                   border: '1px solid #3B82F6',
-                  color: '#E5DEFF',
+                  color: '#FFFFFF',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                }}
+                itemStyle={{
+                  color: '#FFFFFF',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  padding: '4px 8px'
+                }}
+                labelStyle={{
+                  color: '#FFFFFF',
+                  fontWeight: '600',
+                  fontSize: '14px'
                 }}
               />
             </PieChart>
