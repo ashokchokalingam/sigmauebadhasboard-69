@@ -28,23 +28,17 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
   const [timelineView, setTimelineView] = useState<TimelineState | null>(null);
   
   const sortedAlerts = [...alerts]
-    .sort((a, b) => getRiskScore(b) - getRiskScore(a))
+    .sort((a, b) => new Date(b.system_time).getTime() - new Date(a.system_time).getTime())
     .slice(0, 10);
 
   const toggleAlert = (alert: Alert) => {
-    // If clicking the same alert, close it
     if (selectedAlert?.id === alert.id) {
       setSelectedAlert(null);
-      // Close timeline if open
       setTimelineView(null);
-      // Scroll back to the left
       window.scrollTo({ left: 0, behavior: 'smooth' });
     } else {
-      // Opening a new alert
       setSelectedAlert(alert);
-      // Close timeline if open
       setTimelineView(null);
-      // Scroll to the right
       setTimeout(() => {
         window.scrollTo({
           left: document.documentElement.scrollWidth,
@@ -55,21 +49,16 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
   };
 
   const handleTimelineView = (type: "user" | "computer", id: string) => {
-    // If clicking the same timeline, close it
     if (timelineView?.type === type && timelineView?.id === id) {
       setTimelineView(null);
     } else {
-      // Close any open alert details
       setSelectedAlert(null);
-      // Open new timeline
       setTimelineView({ type, id });
     }
   };
 
-  // Handle scroll behavior when timeline or alert details change
   useEffect(() => {
     if (selectedAlert) {
-      // Scroll to the right when alert details open
       setTimeout(() => {
         window.scrollTo({
           left: document.documentElement.scrollWidth,
@@ -77,7 +66,6 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
         });
       }, 100);
     } else if (!timelineView) {
-      // Scroll back to the left when both are closed
       window.scrollTo({
         left: 0,
         behavior: 'smooth'
