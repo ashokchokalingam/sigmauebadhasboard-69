@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, Shield, Users, Clock, Download } from "lucide-react";
+import { Activity, AlertTriangle, Shield, Users, Clock, Download, TrendingUp, TrendingDown } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import StatsCard from "@/components/dashboard/StatsCard";
@@ -7,7 +7,6 @@ import SeverityChart from "@/components/dashboard/SeverityChart";
 import AnomaliesTable from "@/components/dashboard/AnomaliesTable";
 import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
 import RiskyEntities from "@/components/dashboard/RiskyEntities";
-import { useToast } from "@/components/ui/use-toast";
 
 const API_URL = 'http://192.168.1.129:5000';
 
@@ -41,7 +40,6 @@ const Index = () => {
   const [timeRange, setTimeRange] = useState("24h");
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
   const [selectedTactic, setSelectedTactic] = useState<string | null>(null);
-  const { toast } = useToast();
   
   const { data: alerts = [], isLoading, error } = useQuery({
     queryKey: ['alerts'],
@@ -100,6 +98,34 @@ const Index = () => {
             Export Data
           </button>
         </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <StatsCard
+          title="Active Users"
+          value="156"
+          icon={Users}
+          subtitle="+8% from last period"
+          subtitleIcon={TrendingUp}
+          gradient="from-emerald-500 to-emerald-700"
+        />
+        <StatsCard
+          title="Average Risk Score"
+          value="65"
+          icon={Shield}
+          subtitle="-5% from last period"
+          subtitleIcon={TrendingDown}
+          gradient="from-amber-500 to-amber-700"
+        />
+        <StatsCard
+          title="Anomalies Detected"
+          value="7"
+          icon={AlertTriangle}
+          subtitle="-2% from last period"
+          subtitleIcon={TrendingDown}
+          gradient="from-red-500 to-red-700"
+        />
       </div>
       
       {/* Top Risk Cards */}
