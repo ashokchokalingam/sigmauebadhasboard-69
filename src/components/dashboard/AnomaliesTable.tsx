@@ -86,12 +86,12 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
+                        <span className="px-2 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20">
                           {tactics || 'N/A'}
                         </span>
                       </TableCell>
                       <TableCell>
-                        <span className="px-2 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20">
+                        <span className="px-2 py-1 bg-indigo-500/10 text-indigo-400 text-xs rounded-full border border-indigo-500/20">
                           {techniques || 'N/A'}
                         </span>
                       </TableCell>
@@ -142,23 +142,70 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
             </button>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Metadata Section */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Alert Overview Section */}
+            <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-medium text-blue-400 mb-1">Event ID</h4>
-                <p className="text-blue-100 font-mono">{selectedAlert.event_id}</p>
+                <h4 className="text-sm font-medium text-blue-400 mb-2">Alert Overview</h4>
+                <div className="bg-blue-950/30 p-4 rounded-lg border border-blue-500/10">
+                  <h3 className="text-lg font-semibold text-blue-100 mb-2">{selectedAlert.title}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-2 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20">
+                      {extractTacticsAndTechniques(selectedAlert.tags).tactics || 'No Tactics'}
+                    </span>
+                    <span className="px-2 py-1 bg-indigo-500/10 text-indigo-400 text-xs rounded-full border border-indigo-500/20">
+                      {extractTacticsAndTechniques(selectedAlert.tags).techniques || 'No Techniques'}
+                    </span>
+                    <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
+                      Rule ID: {selectedAlert.ruleid}
+                    </span>
+                  </div>
+                </div>
               </div>
+
+              {/* Entity Information */}
               <div>
-                <h4 className="text-sm font-medium text-blue-400 mb-1">Provider</h4>
-                <p className="text-blue-100">{selectedAlert.provider_name}</p>
+                <h4 className="text-sm font-medium text-blue-400 mb-2">Entity Information</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-blue-950/30 p-4 rounded-lg border border-blue-500/10">
+                    <p className="text-sm font-medium text-blue-400 mb-1">Computer Name</p>
+                    <p className="text-blue-100 font-mono">{selectedAlert.computer_name}</p>
+                  </div>
+                  <div className="bg-blue-950/30 p-4 rounded-lg border border-blue-500/10">
+                    <p className="text-sm font-medium text-blue-400 mb-1">User ID</p>
+                    <p className="text-blue-100 font-mono">{selectedAlert.user_id}</p>
+                  </div>
+                  {selectedAlert.ip_address && (
+                    <div className="bg-blue-950/30 p-4 rounded-lg border border-blue-500/10">
+                      <p className="text-sm font-medium text-blue-400 mb-1">IP Address</p>
+                      <p className="text-blue-100 font-mono">{selectedAlert.ip_address}</p>
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* Event Details */}
               <div>
-                <h4 className="text-sm font-medium text-blue-400 mb-1">Task</h4>
-                <p className="text-blue-100">{selectedAlert.task}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-blue-400 mb-1">Rule ID</h4>
-                <p className="text-blue-100 font-mono">{selectedAlert.ruleid}</p>
+                <h4 className="text-sm font-medium text-blue-400 mb-2">Event Details</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-blue-950/30 p-4 rounded-lg border border-blue-500/10">
+                    <p className="text-sm font-medium text-blue-400 mb-1">Event ID</p>
+                    <p className="text-blue-100 font-mono">{selectedAlert.event_id}</p>
+                  </div>
+                  <div className="bg-blue-950/30 p-4 rounded-lg border border-blue-500/10">
+                    <p className="text-sm font-medium text-blue-400 mb-1">Provider Name</p>
+                    <p className="text-blue-100">{selectedAlert.provider_name}</p>
+                  </div>
+                  <div className="bg-blue-950/30 p-4 rounded-lg border border-blue-500/10">
+                    <p className="text-sm font-medium text-blue-400 mb-1">Task</p>
+                    <p className="text-blue-100">{selectedAlert.task}</p>
+                  </div>
+                  <div className="bg-blue-950/30 p-4 rounded-lg border border-blue-500/10">
+                    <p className="text-sm font-medium text-blue-400 mb-1">System Time</p>
+                    <p className="text-blue-100 font-mono">
+                      {new Date(selectedAlert.system_time).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
             
