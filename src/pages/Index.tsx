@@ -22,10 +22,10 @@ interface ApiResponse {
   };
 }
 
-const fetchAlerts = async (): Promise<Alert[]> => {
-  console.log('Attempting to fetch alerts...');
+const fetchAlerts = async (timeRange: string): Promise<Alert[]> => {
+  console.log('Fetching alerts with timeRange:', timeRange);
   try {
-    const response = await fetch('/api/alerts', {
+    const response = await fetch(`/api/alerts?timeRange=${timeRange}`, {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -44,21 +44,21 @@ const fetchAlerts = async (): Promise<Alert[]> => {
     return data.alerts || [];
   } catch (error) {
     console.error('Error fetching alerts:', error);
-    throw error; // Re-throw to be caught by React Query
+    throw error;
   }
 };
 
 const Index = () => {
-  const [timeRange, setTimeRange] = useState("24h");
+  const [timeRange, setTimeRange] = useState("1h"); // Default to 1 hour
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
   const [selectedTactic, setSelectedTactic] = useState<string | null>(null);
   const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "computer"; id: string } | null>(null);
   const { toast } = useToast();
   
   const { data: alerts = [], isLoading, error } = useQuery({
-    queryKey: ['alerts'],
-    queryFn: fetchAlerts,
-    refetchInterval: 30000, // Refresh every 30 seconds
+    queryKey: ['alerts', timeRange],
+    queryFn: () => fetchAlerts(timeRange),
+    refetchInterval: 30000,
     meta: {
       onError: (error: Error) => {
         console.error("Failed to fetch alerts:", error);
