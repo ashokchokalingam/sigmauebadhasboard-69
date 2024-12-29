@@ -16,7 +16,6 @@ interface EventMetric {
 }
 
 const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
-  // Calculate metrics for each event type
   const eventMetrics = alerts.reduce((acc: { [key: string]: EventMetric }, alert) => {
     const eventTypes = alert.tags.split(',').map(tag => tag.trim());
     const title = alert.title;
@@ -75,40 +74,38 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
             />
             
             <div className="relative z-10 p-4">
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col gap-2">
-                    <h4 className="text-lg font-medium text-white">
-                      {metric.type}
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {metric.tags.map((tag, index) => (
-                        <span 
-                          key={index}
-                          className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full border border-blue-500/30"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between mb-1">
+                  <h4 className="text-lg font-medium text-white">
+                    {metric.type}
+                  </h4>
                   <span className="px-3 py-1 bg-blue-900/50 text-blue-200 text-sm rounded-full font-mono whitespace-nowrap">
                     {metric.count} events
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <span className="text-xs text-blue-300 font-medium">First Seen</span>
-                    <div className="text-sm text-white font-mono bg-[#151b2d] p-2 rounded">
-                      {metric.firstSeen.toLocaleTimeString()}
-                    </div>
+
+                {/* Compact timestamp display */}
+                <div className="flex items-center gap-4 text-xs text-blue-300 bg-[#151b2d] p-2 rounded mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">First:</span>
+                    <span className="font-mono">{metric.firstSeen.toLocaleTimeString()}</span>
                   </div>
-                  <div className="space-y-1">
-                    <span className="text-xs text-blue-300 font-medium">Last Seen</span>
-                    <div className="text-sm text-white font-mono bg-[#151b2d] p-2 rounded">
-                      {metric.lastSeen.toLocaleTimeString()}
-                    </div>
+                  <div className="w-px h-4 bg-blue-500/20" />
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Last:</span>
+                    <span className="font-mono">{metric.lastSeen.toLocaleTimeString()}</span>
                   </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {metric.tags.map((tag, index) => (
+                    <span 
+                      key={index}
+                      className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full border border-blue-500/30"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
