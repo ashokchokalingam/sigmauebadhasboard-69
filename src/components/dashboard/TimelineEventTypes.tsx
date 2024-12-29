@@ -52,41 +52,48 @@ const TimelineEventTypes = ({ alerts }: TimelineEventTypesProps) => {
 
   return (
     <div className="mb-6">
-      <h3 className="text-sm font-medium text-blue-400 mb-4 flex items-center gap-2">
-        <Activity className="h-4 w-4" />
+      <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+        <Activity className="h-5 w-5 text-blue-400" />
         Event Types
       </h3>
-      <div className="grid gap-2">
+      <div className="grid gap-3">
         {sortedMetrics.map((metric) => (
           <Card
             key={metric.type}
-            className="relative bg-gradient-to-r from-gray-800/80 to-gray-900/80 hover:from-gray-800/90 hover:to-gray-900/90 border-gray-700/50 transition-all duration-300 overflow-hidden group"
+            className="relative bg-slate-800 border-slate-700 hover:bg-slate-700/90 transition-all duration-300 overflow-hidden group"
           >
             {/* Heat map background */}
             <div 
-              className="absolute inset-0 bg-blue-500/5"
+              className="absolute inset-0 bg-blue-500/10"
               style={{
                 width: `${metric.intensity}%`,
                 transition: 'width 0.3s ease-in-out'
               }}
             />
             
-            <div className="relative z-10 p-3">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h4 className="text-gray-200 font-medium">
+            <div className="relative z-10 p-4">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-lg font-medium text-white">
                     {metric.type.replace('attack.', '')}
                   </h4>
-                  <div className="text-xs text-gray-400 font-mono mt-1 flex items-center gap-2">
-                    <span>{metric.firstSeen.toLocaleTimeString()}</span>
-                    <span className="text-blue-400">→</span>
-                    <span>{metric.lastSeen.toLocaleTimeString()}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 bg-blue-500/10 text-blue-300 text-sm rounded-full font-mono">
-                    {metric.count}
+                  <span className="px-3 py-1 bg-blue-500/20 text-blue-200 text-sm rounded-full font-mono">
+                    {metric.count} events
                   </span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mt-1">
+                  <div className="space-y-1">
+                    <span className="text-xs text-blue-300 font-medium">First Seen</span>
+                    <div className="text-sm text-white font-mono bg-slate-900/50 p-2 rounded">
+                      {metric.firstSeen.toLocaleTimeString()}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <span className="text-xs text-blue-300 font-medium">Last Seen</span>
+                    <div className="text-sm text-white font-mono bg-slate-900/50 p-2 rounded">
+                      {metric.lastSeen.toLocaleTimeString()}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
