@@ -58,7 +58,6 @@ const Index = () => {
   });
 
   const filteredAlerts = alerts.filter(alert => {
-    // First apply severity filter
     const severityMatch = selectedSeverity
       ? (() => {
           if (selectedSeverity === 'Critical') {
@@ -73,7 +72,6 @@ const Index = () => {
         })()
       : true;
 
-    // Then apply tactic filter if one is selected
     const tacticMatch = selectedTactic
       ? alert.tags.includes(`attack.${selectedTactic}`)
       : true;
@@ -104,20 +102,16 @@ const Index = () => {
         </div>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
-        <div className="lg:col-span-2">
-          <TacticsChart 
-            alerts={alerts} 
-            onTacticSelect={setSelectedTactic}
-          />
-        </div>
-        <div className="space-y-6">
-          <SeverityChart 
-            alerts={alerts} 
-            onSeveritySelect={setSelectedSeverity} 
-          />
-          <RiskyEntities alerts={alerts} />
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <RiskyEntities alerts={alerts} />
+        <TacticsChart 
+          alerts={alerts} 
+          onTacticSelect={setSelectedTactic}
+        />
+        <SeverityChart 
+          alerts={alerts} 
+          onSeveritySelect={setSelectedSeverity} 
+        />
       </div>
 
       <div className="w-full">
