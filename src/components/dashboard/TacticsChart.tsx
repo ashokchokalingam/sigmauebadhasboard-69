@@ -52,19 +52,23 @@ const TacticsChart = ({ alerts }: TacticsChartProps) => {
       <CardContent>
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={alertData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+            <BarChart 
+              data={alertData}
+              layout="vertical"
+              margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#333" horizontal={false} />
               <XAxis 
-                dataKey="name" 
-                angle={-45} 
-                textAnchor="end" 
-                height={70} 
+                type="number"
                 stroke="#666"
                 tick={{ fill: '#E5DEFF', fontSize: 12 }}
               />
               <YAxis 
+                type="category"
+                dataKey="name"
                 stroke="#666"
                 tick={{ fill: '#E5DEFF', fontSize: 12 }}
+                width={90}
               />
               <Tooltip 
                 contentStyle={{ 
@@ -74,13 +78,20 @@ const TacticsChart = ({ alerts }: TacticsChartProps) => {
                   color: '#E5DEFF',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                 }}
+                cursor={{ fill: 'rgba(96, 165, 250, 0.1)' }}
+                formatter={(value: number) => [`${value} Alerts`, 'Count']}
+                labelStyle={{ color: '#E5DEFF', fontWeight: 'bold' }}
               />
               <Bar 
                 dataKey="alerts"
-                radius={[4, 4, 0, 0]}
+                radius={[0, 4, 4, 0]}
               >
                 {alertData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={blueColors[index % blueColors.length]} />
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={blueColors[index % blueColors.length]}
+                    className="hover:opacity-80 transition-opacity duration-200"
+                  />
                 ))}
               </Bar>
             </BarChart>
