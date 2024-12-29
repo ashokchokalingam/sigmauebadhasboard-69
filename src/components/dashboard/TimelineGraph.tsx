@@ -38,15 +38,15 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
   const data = processData();
 
   return (
-    <div className="w-full h-[200px] mt-4">
+    <div className="w-full h-full">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}
           margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
+            top: 10,
+            right: 10,
+            left: 10,
+            bottom: 10,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#2a3441" />
