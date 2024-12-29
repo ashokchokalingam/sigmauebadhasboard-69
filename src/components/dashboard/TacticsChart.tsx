@@ -2,18 +2,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
-const alertData = [
-  { name: "Initial Access", alerts: 24, color: "#0EA5E9" },
-  { name: "Execution", alerts: 13, color: "#0284C7" },
-  { name: "Persistence", alerts: 18, color: "#0369A1" },
-  { name: "Privilege Escalation", alerts: 28, color: "#1E40AF" },
-  { name: "Defense Evasion", alerts: 35, color: "#1D4ED8" },
-  { name: "Credential Access", alerts: 22, color: "#2563EB" },
-  { name: "Discovery", alerts: 19, color: "#3B82F6" },
-  { name: "Lateral Movement", alerts: 31, color: "#60A5FA" },
-];
+interface Alert {
+  tags: string;
+}
 
-const TacticsChart = () => {
+interface TacticsChartProps {
+  alerts: Alert[];
+}
+
+const TacticsChart = ({ alerts }: TacticsChartProps) => {
+  const calculateTacticsData = () => {
+    const tacticsCount: { [key: string]: number } = {};
+    
+    alerts.forEach(alert => {
+      if (alert.tags) {
+        const tactics = alert.tags.split(',').map(t => t.trim());
+        tactics.forEach(tactic => {
+          tacticsCount[tactic] = (tacticsCount[tactic] || 0) + 1;
+        });
+      }
+    });
+
+    return Object.entries(tacticsCount)
+      .map(([name, count]) => ({ name, alerts: count }))
+      .sort((a, b) => b.alerts - a.alerts)
+      .slice(0, 8);
+  };
+
+  const alertData = calculateTacticsData();
+  const blueColors = [
+    "#0EA5E9", "#0284C7", "#0369A1", "#1E40AF",
+    "#1D4ED8", "#2563EB", "#3B82F6", "#60A5FA"
+  ];
+
   return (
     <Card className="bg-black/40 border-[#60A5FA]/10 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
@@ -53,7 +74,7 @@ const TacticsChart = () => {
                 radius={[4, 4, 0, 0]}
               >
                 {alertData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={`cell-${index}`} fill={blueColors[index % blueColors.length]} />
                 ))}
               </Bar>
             </BarChart>

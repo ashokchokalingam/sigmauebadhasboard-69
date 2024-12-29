@@ -2,14 +2,46 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
-const severityData = [
-  { name: "Critical", value: 45, color: "#EF4444" },
-  { name: "High", value: 35, color: "#F97316" },
-  { name: "Medium", value: 15, color: "#FBBF24" },
-  { name: "Low", value: 5, color: "#34D399" },
-];
+interface Alert {
+  rule_level: string;
+  dbscan_cluster: number;
+}
 
-const SeverityChart = () => {
+interface SeverityChartProps {
+  alerts: Alert[];
+}
+
+const SeverityChart = ({ alerts }: SeverityChartProps) => {
+  const calculateSeverityData = () => {
+    const severityCounts = {
+      Critical: 0,
+      High: 0,
+      Medium: 0,
+      Low: 0
+    };
+
+    alerts.forEach(alert => {
+      if (alert.rule_level === 'critical' || alert.dbscan_cluster === -1) {
+        severityCounts.Critical++;
+      } else if (alert.rule_level === 'high') {
+        severityCounts.High++;
+      } else if (alert.rule_level === 'medium') {
+        severityCounts.Medium++;
+      } else {
+        severityCounts.Low++;
+      }
+    });
+
+    return [
+      { name: "Critical", value: severityCounts.Critical, color: "#EF4444" },
+      { name: "High", value: severityCounts.High, color: "#F97316" },
+      { name: "Medium", value: severityCounts.Medium, color: "#FBBF24" },
+      { name: "Low", value: severityCounts.Low, color: "#34D399" },
+    ];
+  };
+
+  const severityData = calculateSeverityData();
+
   return (
     <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
