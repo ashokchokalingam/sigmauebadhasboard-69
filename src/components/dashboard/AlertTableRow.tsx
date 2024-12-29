@@ -41,9 +41,22 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView }: AlertTab
         </span>
       </TableCell>
       <TableCell>
-        <span className="px-2 py-1 bg-indigo-500/10 text-indigo-400 text-xs rounded-full border border-indigo-500/20">
-          {techniques || 'N/A'}
-        </span>
+        <div className="flex flex-wrap gap-1">
+          {techniques.length > 0 ? (
+            techniques.map((technique, index) => (
+              <span 
+                key={index}
+                className="px-2 py-1 bg-indigo-500/10 text-indigo-400 text-xs rounded-full border border-indigo-500/20"
+              >
+                {technique}
+              </span>
+            ))
+          ) : (
+            <span className="px-2 py-1 bg-indigo-500/10 text-indigo-400 text-xs rounded-full border border-indigo-500/20">
+              N/A
+            </span>
+          )}
+        </div>
       </TableCell>
       <TableCell className={`font-mono font-bold ${getRiskColor(getRiskScore(alert))}`}>
         {getRiskScore(alert).toFixed(1)}

@@ -29,7 +29,7 @@ export const extractTacticsAndTechniques = (tags: string) => {
 
   return {
     tactics: tactics.join(', '),
-    techniques: techniques.join(', ')
+    techniques: techniques // Return as array instead of joined string
   };
 };
 
