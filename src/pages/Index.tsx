@@ -9,7 +9,6 @@ import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
 import CriticalUsers from "@/components/CriticalUsers";
 import { useToast } from "@/components/ui/use-toast";
 
-// Use the specific IP address for the API
 const API_URL = 'http://192.168.1.129:5000';
 
 interface Alert {
@@ -40,6 +39,7 @@ const fetchAlerts = async (): Promise<Alert[]> => {
 
 const Index = () => {
   const [timeRange, setTimeRange] = useState("24h");
+  const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
   const { toast } = useToast();
   
   const { data: alerts = [], isLoading, error } = useQuery({
@@ -55,6 +55,20 @@ const Index = () => {
       }
     }
   });
+
+  const filteredAlerts = selectedSeverity
+    ? alerts.filter(alert => {
+        if (selectedSeverity === 'Critical') {
+          return alert.rule_level === 'critical' || alert.dbscan_cluster === -1;
+        } else if (selectedSeverity === 'High') {
+          return alert.rule_level === 'high';
+        } else if (selectedSeverity === 'Medium') {
+          return alert.rule_level === 'medium';
+        } else {
+          return alert.rule_level === 'low';
+        }
+      })
+    : alerts;
 
   if (isLoading) {
     return (
@@ -148,12 +162,15 @@ const Index = () => {
 
       <div className="grid gap-6 md:grid-cols-2 mb-8">
         <TacticsChart alerts={alerts} />
-        <SeverityChart alerts={alerts} />
+        <SeverityChart 
+          alerts={alerts} 
+          onSeveritySelect={setSelectedSeverity} 
+        />
       </div>
 
       <div className="grid gap-6 md:grid-cols-3 mb-8">
         <div className="md:col-span-2">
-          <AnomaliesTable alerts={alerts} />
+          <AnomaliesTable alerts={filteredAlerts} />
         </div>
         <div>
           <CriticalUsers users={topCriticalUsers} />

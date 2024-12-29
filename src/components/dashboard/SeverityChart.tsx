@@ -9,9 +9,10 @@ interface Alert {
 
 interface SeverityChartProps {
   alerts: Alert[];
+  onSeveritySelect: (severity: string | null) => void;
 }
 
-const SeverityChart = ({ alerts }: SeverityChartProps) => {
+const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
   const calculateSeverityData = () => {
     const severityCounts = {
       Critical: 0,
@@ -62,9 +63,19 @@ const SeverityChart = ({ alerts }: SeverityChartProps) => {
                 outerRadius={100}
                 paddingAngle={5}
                 dataKey="value"
+                onDoubleClick={(data) => {
+                  if (data && data.name) {
+                    onSeveritySelect(data.name);
+                  }
+                }}
+                onClick={(data) => {
+                  if (data && data.name) {
+                    onSeveritySelect(null);
+                  }
+                }}
               >
                 {severityData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={`cell-${index}`} fill={entry.color} className="cursor-pointer" />
                 ))}
               </Pie>
               <Tooltip 
