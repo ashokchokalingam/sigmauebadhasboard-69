@@ -7,20 +7,23 @@ interface StatsCardProps {
   icon: LucideIcon;
   subtitle: string;
   subtitleIcon: LucideIcon;
-  gradient?: string;
 }
 
-const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleIcon, gradient = "from-[#9b87f5] to-[#7E69AB]" }: StatsCardProps) => {
+const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleIcon }: StatsCardProps) => {
   const isPositive = subtitle.includes("+");
   
   return (
-    <Card className="bg-black/40 border-[#9b87f5]/10 hover:bg-black/50 transition-all duration-300">
+    <Card className="bg-[#1A1F2C]/40 border-0 hover:bg-[#1A1F2C]/60 transition-all duration-300">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-[#E5DEFF]/90">{title}</CardTitle>
-        <Icon className={`h-5 w-5 bg-gradient-to-r ${gradient} bg-clip-text`} />
+        <CardTitle className="text-sm font-medium text-gray-400">{title}</CardTitle>
+        <Icon className="h-5 w-5 text-gray-400" />
       </CardHeader>
       <CardContent>
-        <div className={`text-4xl font-bold bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}>
+        <div className={`text-4xl font-bold ${
+          title === "Active Users" ? "text-emerald-400" :
+          title === "Average Risk Score" ? "text-amber-400" :
+          "text-red-400"
+        }`}>
           {value}
         </div>
         <div className="flex items-center mt-2">
