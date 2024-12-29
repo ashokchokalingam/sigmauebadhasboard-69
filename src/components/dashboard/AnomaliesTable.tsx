@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Alert } from "./types";
 import AlertTableRow from "./AlertTableRow";
 import AlertDetailsView from "./AlertDetailsView";
@@ -26,10 +26,49 @@ interface AnomaliesTableProps {
 const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [timelineView, setTimelineView] = useState<TimelineState | null>(null);
+  const [displayedAlerts, setDisplayedAlerts] = useState<Alert[]>([]);
+  const [page, setPage] = useState(1);
+  const loaderRef = useRef(null);
+  const ITEMS_PER_PAGE = 100;
   
-  const sortedAlerts = [...alerts]
-    .sort((a, b) => new Date(b.system_time).getTime() - new Date(a.system_time).getTime())
-    .slice(0, 10);
+  const sortedAlerts = [...alerts].sort((a, b) => 
+    new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
+  );
+
+  useEffect(() => {
+    // Initialize with first 100 items
+    setDisplayedAlerts(sortedAlerts.slice(0, ITEMS_PER_PAGE));
+  }, [alerts]);
+
+  const loadMore = useCallback(() => {
+    const nextItems = sortedAlerts.slice(
+      page * ITEMS_PER_PAGE,
+      (page + 1) * ITEMS_PER_PAGE
+    );
+    
+    if (nextItems.length > 0) {
+      setDisplayedAlerts(prev => [...prev, ...nextItems]);
+      setPage(prev => prev + 1);
+      console.log(`Loaded more items. Current page: ${page + 1}`);
+    }
+  }, [page, sortedAlerts]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   const toggleAlert = (alert: Alert) => {
     if (selectedAlert?.id === alert.id) {
@@ -99,7 +138,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {sortedAlerts.map((alert) => (
+                {displayedAlerts.map((alert) => (
                   <AlertTableRow
                     key={alert.id}
                     alert={alert}
@@ -110,6 +149,14 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
                 ))}
               </TableBody>
             </Table>
+            {/* Infinite scroll trigger element */}
+            <div 
+              ref={loaderRef}
+              className="h-10 flex items-center justify-center text-blue-400/60 text-sm"
+            >
+              {page * ITEMS_PER_PAGE < sortedAlerts.length ? 
+                "Loading more..." : "No more alerts to load"}
+            </div>
           </div>
         </CardContent>
       </Card>
