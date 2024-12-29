@@ -33,52 +33,66 @@ const TimelineView = ({ alerts, entityType, entityId, onClose }: TimelineViewPro
   };
 
   return (
-    <div className="flex gap-4">
-      <Card className="bg-black/40 border-blue-500/10 w-[800px]">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-blue-100 flex items-center gap-2">
+    <div className="fixed inset-0 bg-[#1A1F2C] overflow-auto">
+      <div className="max-w-[1400px] mx-auto p-8">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
             {entityType === "user" ? (
-              <User className="h-5 w-5 text-blue-500" />
+              <User className="h-8 w-8 text-blue-500" />
             ) : (
-              <Monitor className="h-5 w-5 text-blue-500" />
+              <Monitor className="h-8 w-8 text-blue-500" />
             )}
-            {entityId} Timeline
-          </CardTitle>
+            <h1 className="text-3xl font-bold text-blue-100">
+              {entityId} Timeline
+            </h1>
+          </div>
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
+            className="p-3 hover:bg-blue-500/10 rounded-full transition-colors"
           >
-            <X className="h-4 w-4 text-blue-400" />
+            <X className="h-6 w-6 text-blue-400" />
           </button>
-        </CardHeader>
-        <CardContent>
-          {/* Activity Graph */}
-          <TimelineGraph alerts={filteredAlerts} />
+        </div>
 
-          {/* Event Types Section */}
+        {/* Activity Graph with increased height */}
+        <div className="bg-black/40 border border-blue-500/10 rounded-xl p-6 mb-8">
+          <h2 className="text-2xl font-semibold text-blue-100 mb-4">Activity Overview</h2>
+          <div className="h-[400px]">
+            <TimelineGraph alerts={filteredAlerts} />
+          </div>
+        </div>
+
+        {/* Event Types Section with larger text */}
+        <div className="bg-black/40 border border-blue-500/10 rounded-xl p-6 mb-8">
+          <h2 className="text-2xl font-semibold text-blue-100 mb-4">Event Types</h2>
           <TimelineEventTypes 
             alerts={filteredAlerts} 
             onEventTypeSelect={setSelectedEventType}
             selectedEventType={selectedEventType}
           />
+        </div>
 
-          {/* Timeline Events */}
-          <div className="relative mt-6">
-            <div className="absolute left-8 top-0 bottom-0 w-px bg-blue-500/20" />
-            <div className="space-y-8">
-              {filteredAlerts.map((alert, index) => (
-                <TimelineEventCard
-                  key={alert.id}
-                  alert={alert}
-                  isExpanded={expandedAlert === alert.id}
-                  onToggleRaw={toggleRawLog}
-                  isFirst={index === 0}
-                />
-              ))}
-            </div>
+        {/* Timeline Events */}
+        <div className="relative">
+          <div className="absolute left-8 top-0 bottom-0 w-px bg-blue-500/20" />
+          <div className="space-y-8">
+            {filteredAlerts.map((alert, index) => (
+              <TimelineEventCard
+                key={alert.id}
+                alert={alert}
+                isExpanded={expandedAlert === alert.id}
+                onToggleRaw={toggleRawLog}
+                isFirst={index === 0}
+              />
+            ))}
+            {filteredAlerts.length === 0 && (
+              <div className="text-center text-xl text-blue-400/60 py-12">
+                No events found for the selected filters
+              </div>
+            )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
