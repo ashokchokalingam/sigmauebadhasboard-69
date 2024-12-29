@@ -27,13 +27,13 @@ interface Alert {
   task: string;
 }
 
-// Use an environment variable or configure this based on your deployment
+// Use environment variable for API URL, fallback to localhost if not set
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const fetchAlerts = async (): Promise<Alert[]> => {
   const response = await fetch(`${API_URL}/api/alerts`);
   if (!response.ok) {
-    throw new Error('Network response was not ok');
+    throw new Error('Failed to fetch alerts');
   }
   return response.json();
 };
@@ -55,6 +55,14 @@ const Index = () => {
       }
     }
   });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   // Calculate statistics
   const criticalAlerts = alerts.filter(alert => alert.rule_level === 'critical').length;
@@ -87,12 +95,6 @@ const Index = () => {
     }))
     .sort((a: any, b: any) => b.risk - a.risk)
     .slice(0, 3);
-
-  if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">
-      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
-    </div>;
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
