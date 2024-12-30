@@ -1,38 +1,18 @@
 import { Alert } from "./types";
 
-export const getFilteredAlerts = (
-  alerts: Alert[],
-  selectedSeverity: string | null,
-  selectedTactic: string | null
-) => {
-  if (!Array.isArray(alerts)) {
-    console.warn('Alerts is not an array:', alerts);
-    return [];
-  }
-
-  return alerts.filter(alert => {
-    if (selectedSeverity && alert?.rule_level !== selectedSeverity) {
-      return false;
-    }
-    if (selectedTactic && !alert?.tags?.toLowerCase().includes(selectedTactic.toLowerCase())) {
-      return false;
-    }
-    return true;
-  });
-};
-
 export const calculateStats = (alerts: Alert[]) => {
+  // Get dates for 7-day periods
   const now = new Date();
-  const twentyFourHoursAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
-  const fortyEightHoursAgo = new Date(now.getTime() - (48 * 60 * 60 * 1000));
+  const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+  const fourteenDaysAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
 
+  // Filter alerts for current and previous 7-day periods
   const currentPeriodAlerts = alerts.filter(alert => 
-    new Date(alert.system_time) >= twentyFourHoursAgo
+    new Date(alert.system_time) >= sevenDaysAgo && new Date(alert.system_time) <= now
   );
 
   const previousPeriodAlerts = alerts.filter(alert => 
-    new Date(alert.system_time) >= fortyEightHoursAgo &&
-    new Date(alert.system_time) < twentyFourHoursAgo
+    new Date(alert.system_time) >= fourteenDaysAgo && new Date(alert.system_time) < sevenDaysAgo
   );
 
   // Calculate unique users
@@ -49,7 +29,7 @@ export const calculateStats = (alerts: Alert[]) => {
         alert.rule_level === 'high' ? 75 : 
         alert.rule_level === 'medium' ? 50 : 25), 0
     );
-    return Math.round(totalRiskScore / alertsList.length);
+    return Math.round((totalRiskScore / alertsList.length) * 10) / 10; // Round to 1 decimal
   };
 
   const currentAvgRiskScore = calculateAvgRiskScore(currentPeriodAlerts);
@@ -57,13 +37,9 @@ export const calculateStats = (alerts: Alert[]) => {
   const riskScoreChangePercent = previousAvgRiskScore ? 
     Math.round(((currentAvgRiskScore - previousAvgRiskScore) / previousAvgRiskScore) * 100) : 0;
 
-  // Calculate anomalies
-  const currentAnomalies = currentPeriodAlerts.filter(alert => 
-    alert.rule_level === 'critical' || alert.dbscan_cluster === -1
-  ).length;
-  const previousAnomalies = previousPeriodAlerts.filter(alert => 
-    alert.rule_level === 'critical' || alert.dbscan_cluster === -1
-  ).length;
+  // Calculate anomalies (alerts with dbscan_cluster = -1)
+  const currentAnomalies = currentPeriodAlerts.filter(alert => alert.dbscan_cluster === -1).length;
+  const previousAnomalies = previousPeriodAlerts.filter(alert => alert.dbscan_cluster === -1).length;
   const anomaliesChangePercent = previousAnomalies ? 
     Math.round(((currentAnomalies - previousAnomalies) / previousAnomalies) * 100) : 0;
 
