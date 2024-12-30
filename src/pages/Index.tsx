@@ -21,16 +21,41 @@ interface ApiResponse {
   };
 }
 
+const fetchAlerts = async (): Promise<Alert[]> => {
+  console.log('Fetching all alerts');
+  try {
+    const response = await fetch('/api/alerts', {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    console.log('Response status:', response.status);
+    
+    if (!response.ok) {
+      console.error('Server response error:', response.status);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data: ApiResponse = await response.json();
+    console.log('API Response:', data);
+    return data.alerts || [];
+  } catch (error) {
+    console.error('Error fetching alerts:', error);
+    throw error;
+  }
+};
+
 const Index = () => {
   const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "computer"; id: string } | null>(null);
   const [selectedTactic, setSelectedTactic] = useState<string | null>(null);
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
   const { toast } = useToast();
   
-  const { data: alerts = [], isLoading, error } = useQuery({
+  const { data: alerts = [], isLoading, error } = useQuery<Alert[]>({
     queryKey: ['alerts'],
     queryFn: fetchAlerts,
-    refetchInterval: 30000,
     meta: {
       onError: (error: Error) => {
         console.error("Failed to fetch alerts:", error);
@@ -70,7 +95,7 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212]">
         <TimelineView
-          alerts={alerts}
+          alerts={safeAlerts}
           entityType={selectedEntity.type}
           entityId={selectedEntity.id}
           onClose={() => setSelectedEntity(null)}
@@ -96,11 +121,11 @@ const Index = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <TacticsChart 
-          alerts={alerts} 
+          alerts={safeAlerts} 
           onTacticSelect={setSelectedTactic}
         />
         <SeverityChart 
-          alerts={alerts} 
+          alerts={safeAlerts} 
           onSeveritySelect={setSelectedSeverity}
         />
       </div>
@@ -113,7 +138,7 @@ const Index = () => {
             Risky Users
           </h2>
           <RiskyEntities 
-            alerts={alerts} 
+            alerts={safeAlerts} 
             type="users"
             onEntitySelect={(id) => setSelectedEntity({ type: "user", id })}
           />
@@ -124,7 +149,7 @@ const Index = () => {
             Top Risky Computers
           </h2>
           <RiskyEntities 
-            alerts={alerts} 
+            alerts={safeAlerts} 
             type="computers"
             onEntitySelect={(id) => setSelectedEntity({ type: "computer", id })}
           />
