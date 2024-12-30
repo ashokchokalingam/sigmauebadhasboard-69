@@ -30,8 +30,8 @@ const DashboardLayout = ({
   onLoadMore,
   hasMore
 }: DashboardLayoutProps) => {
-  // Calculate stats using all alerts for the widgets
-  const stats = calculateStats(allAlerts);
+  // Calculate stats using all alerts for the widgets, passing the total count
+  const stats = calculateStats(allAlerts, totalRecords);
 
   if (selectedEntity) {
     return (

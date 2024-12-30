@@ -1,12 +1,12 @@
 import { Alert, Stats } from "./types";
 
-export const calculateStats = (alerts: Alert[]) => {
+export const calculateStats = (alerts: Alert[], totalRecords: number) => {
   // Get dates for 7-day periods
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
   const fourteenDaysAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
 
-  // Filter alerts for current and previous 7-day periods without pagination limits
+  // Filter alerts for current and previous 7-day periods
   const currentPeriodAlerts = alerts.filter(alert => 
     new Date(alert.system_time) >= sevenDaysAgo && new Date(alert.system_time) <= now
   );
@@ -43,8 +43,8 @@ export const calculateStats = (alerts: Alert[]) => {
   const riskScoreChangePercent = previousAvgRiskScore ? 
     Math.round(((currentAvgRiskScore - previousAvgRiskScore) / previousAvgRiskScore) * 100) : 0;
 
-  // Calculate anomalies (all events)
-  const currentAnomalies = currentPeriodAlerts.length;
+  // Calculate anomalies (using total records from database)
+  const currentAnomalies = totalRecords;
   const previousAnomalies = previousPeriodAlerts.length;
   const anomaliesChangePercent = previousAnomalies ? 
     Math.round(((currentAnomalies - previousAnomalies) / previousAnomalies) * 100) : 0;
@@ -81,7 +81,7 @@ export const calculateStats = (alerts: Alert[]) => {
     },
     severity: severityDistribution,
     uniqueIPs: uniqueIPs.size,
-    totalEvents: currentPeriodAlerts.length,
+    totalEvents: totalRecords,
     totalAnomalies: currentAnomalies
   };
 };
