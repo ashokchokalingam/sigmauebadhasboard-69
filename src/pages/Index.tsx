@@ -23,24 +23,38 @@ interface ApiResponse {
 
 const fetchAlerts = async (): Promise<Alert[]> => {
   console.log('Fetching all alerts');
+  let allAlerts: Alert[] = [];
+  let currentPage = 1;
+  
   try {
-    const response = await fetch('/api/alerts', {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
-    
-    console.log('Response status:', response.status);
-    
-    if (!response.ok) {
-      console.error('Server response error:', response.status);
-      throw new Error(`HTTP error! status: ${response.status}`);
+    while (true) {
+      const response = await fetch(`/api/alerts?page=${currentPage}&per_page=1000`, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      console.log(`Fetching page ${currentPage}, Response status:`, response.status);
+      
+      if (!response.ok) {
+        console.error('Server response error:', response.status);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data: ApiResponse = await response.json();
+      allAlerts = [...allAlerts, ...data.alerts];
+      
+      // Check if we've reached the last page
+      if (currentPage >= data.pagination.total_pages) {
+        break;
+      }
+      
+      currentPage++;
     }
     
-    const data: ApiResponse = await response.json();
-    console.log('API Response:', data);
-    return data.alerts || [];
+    console.log(`Total alerts fetched: ${allAlerts.length}`);
+    return allAlerts;
   } catch (error) {
     console.error('Error fetching alerts:', error);
     throw error;
