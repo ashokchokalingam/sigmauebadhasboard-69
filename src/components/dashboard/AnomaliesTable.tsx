@@ -1,6 +1,6 @@
 import { Table, TableBody } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Alert } from "./types";
 import AlertTableRow from "./AlertTableRow";
@@ -8,6 +8,7 @@ import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import DetailsSidebar from "./DetailsSidebar";
 import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
+import { useToast } from "../ui/use-toast";
 
 interface TimelineState {
   type: "user" | "computer";
@@ -24,6 +25,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [timelineView, setTimelineView] = useState<TimelineState | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
+  const { toast } = useToast();
   
   // Filter alerts for last 7 days
   const sevenDaysAgo = new Date();
@@ -46,7 +48,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
       }
       return String(alert[key as keyof Alert]).toLowerCase() === value.toLowerCase();
     });
-  });
+  }).slice(0, ALERTS_PER_PAGE);
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
@@ -88,20 +90,53 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   };
 
   const handleFilterChange = (column: string, value: string) => {
-    setFilters(prev => ({
-      ...prev,
-      [column]: value
-    }));
+    setFilters(prev => {
+      const newFilters = {
+        ...prev,
+        [column]: value
+      };
+      
+      // Show toast when filter is applied or cleared
+      if (value) {
+        toast({
+          title: "Filter Applied",
+          description: `Filtering ${column} by: ${value}`,
+        });
+      }
+      
+      return newFilters;
+    });
+  };
+
+  const clearAllFilters = () => {
+    setFilters({});
+    toast({
+      title: "Filters Cleared",
+      description: "Showing all events from the last 7 days",
+    });
   };
 
   return (
     <div className="relative flex gap-4">
       <Card className={`bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300 ${selectedAlert || timelineView ? 'flex-[0.6]' : 'flex-1'}`}>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-blue-100">
-            <AlertTriangle className="h-5 w-5 text-blue-500" />
-            Latest Events (Last 7 Days)
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-blue-100">
+              <AlertTriangle className="h-5 w-5 text-blue-500" />
+              Latest Events (Last 7 Days)
+            </CardTitle>
+            {Object.keys(filters).some(key => filters[key]) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearAllFilters}
+                className="text-blue-400 hover:text-blue-300"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Clear Filters
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border border-blue-500/10">
@@ -124,7 +159,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               </TableBody>
             </Table>
           </div>
-          {hasMore && (
+          {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
             <div className="flex justify-center mt-6">
               <Button
                 onClick={onLoadMore}
