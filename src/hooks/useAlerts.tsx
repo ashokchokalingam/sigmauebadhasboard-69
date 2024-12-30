@@ -35,7 +35,6 @@ export const useAlerts = (
     queryFn: async () => {
       console.log(`Fetching alerts for page ${page}`);
       
-      // Fetch paginated data for the table and total count from sigma_alerts
       const response = await fetch(`/api/alerts?page=${page}&per_page=${INITIAL_LOAD_SIZE}`, {
         headers: {
           'Accept': 'application/json',
@@ -53,8 +52,8 @@ export const useAlerts = (
       // Get all alerts within the last 7 days
       const filteredAlerts = data.alerts.filter(alert => isWithinLastSevenDays(alert.system_time));
       
-      // Use the total_count from the API response (this should match SELECT COUNT(*) FROM sigma_alerts)
-      const totalRecords = data.total_count;
+      // Use the total_count from the API response
+      const totalRecords = data.total_count || 0;
       console.log('Total records from sigma_alerts:', totalRecords);
       
       // Update UI with current data
