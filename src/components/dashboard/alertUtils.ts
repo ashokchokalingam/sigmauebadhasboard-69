@@ -1,4 +1,4 @@
-import { Alert } from "./types";
+import { Alert, Stats } from "./types";
 
 export const calculateStats = (alerts: Alert[]) => {
   // Get dates for 7-day periods
@@ -15,12 +15,13 @@ export const calculateStats = (alerts: Alert[]) => {
     new Date(alert.system_time) >= fourteenDaysAgo && new Date(alert.system_time) < sevenDaysAgo
   );
 
-  // Calculate unique users and computers
+  // Calculate unique users
   const currentUniqueUsers = new Set(currentPeriodAlerts.map(alert => alert.user_id));
   const previousUniqueUsers = new Set(previousPeriodAlerts.map(alert => alert.user_id));
   const userChangePercent = previousUniqueUsers.size ? 
     Math.round(((currentUniqueUsers.size - previousUniqueUsers.size) / previousUniqueUsers.size) * 100) : 0;
 
+  // Calculate unique computers
   const currentUniqueComputers = new Set(currentPeriodAlerts.map(alert => alert.computer_name));
   const previousUniqueComputers = new Set(previousPeriodAlerts.map(alert => alert.computer_name));
   const computerChangePercent = previousUniqueComputers.size ? 
@@ -42,7 +43,7 @@ export const calculateStats = (alerts: Alert[]) => {
   const riskScoreChangePercent = previousAvgRiskScore ? 
     Math.round(((currentAvgRiskScore - previousAvgRiskScore) / previousAvgRiskScore) * 100) : 0;
 
-  // Calculate anomalies (only count DBSCAN cluster -1)
+  // Calculate anomalies (only DBSCAN cluster -1)
   const currentAnomalies = currentPeriodAlerts.filter(alert => alert.dbscan_cluster === -1).length;
   const previousAnomalies = previousPeriodAlerts.filter(alert => alert.dbscan_cluster === -1).length;
   const anomaliesChangePercent = previousAnomalies ? 
