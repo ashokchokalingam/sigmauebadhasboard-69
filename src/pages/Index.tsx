@@ -11,16 +11,6 @@ import { calculateStats } from "@/components/dashboard/alertUtils";
 import { Alert } from "@/components/dashboard/types";
 import StatsSection from "@/components/dashboard/StatsSection";
 
-interface ApiResponse {
-  alerts: Alert[];
-  pagination: {
-    current_page: number;
-    per_page: number;
-    total_pages: number;
-    total_records: number;
-  };
-}
-
 const fetchAlerts = async (): Promise<Alert[]> => {
   console.log('Fetching all alerts');
   let allAlerts: Alert[] = [];
@@ -42,19 +32,17 @@ const fetchAlerts = async (): Promise<Alert[]> => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data: ApiResponse = await response.json();
+      const data = await response.json();
       allAlerts = [...allAlerts, ...data.alerts];
       
       // Check if we've reached the last page
       if (currentPage >= data.pagination.total_pages) {
-        break;
+        console.log(`Total records in database: ${data.pagination.total_records}`);
+        return { alerts: allAlerts, totalRecords: data.pagination.total_records };
       }
       
       currentPage++;
     }
-    
-    console.log(`Total alerts fetched: ${allAlerts.length}`);
-    return allAlerts;
   } catch (error) {
     console.error('Error fetching alerts:', error);
     throw error;
@@ -67,7 +55,7 @@ const Index = () => {
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
   const { toast } = useToast();
   
-  const { data: alerts = [], isLoading, error } = useQuery<Alert[]>({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['alerts'],
     queryFn: fetchAlerts,
     meta: {
@@ -82,8 +70,9 @@ const Index = () => {
     }
   });
 
-  const safeAlerts = Array.isArray(alerts) ? alerts : [];
-  const stats = calculateStats(safeAlerts);
+  const alerts = data?.alerts || [];
+  const totalRecords = data?.totalRecords || 0;
+  const stats = calculateStats(alerts);
 
   if (isLoading) {
     return (
@@ -109,7 +98,7 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212]">
         <TimelineView
-          alerts={safeAlerts}
+          alerts={alerts}
           entityType={selectedEntity.type}
           entityId={selectedEntity.id}
           onClose={() => setSelectedEntity(null)}
@@ -130,16 +119,16 @@ const Index = () => {
         </button>
       </div>
 
-      <StatsSection stats={stats} totalAlerts={safeAlerts.length} />
+      <StatsSection stats={stats} totalAlerts={totalRecords} />
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <TacticsChart 
-          alerts={safeAlerts} 
+          alerts={alerts} 
           onTacticSelect={setSelectedTactic}
         />
         <SeverityChart 
-          alerts={safeAlerts} 
+          alerts={alerts} 
           onSeveritySelect={setSelectedSeverity}
         />
       </div>
@@ -152,7 +141,7 @@ const Index = () => {
             Risky Users
           </h2>
           <RiskyEntities 
-            alerts={safeAlerts} 
+            alerts={alerts} 
             type="users"
             onEntitySelect={(id) => setSelectedEntity({ type: "user", id })}
           />
@@ -163,7 +152,7 @@ const Index = () => {
             Top Risky Computers
           </h2>
           <RiskyEntities 
-            alerts={safeAlerts} 
+            alerts={alerts} 
             type="computers"
             onEntitySelect={(id) => setSelectedEntity({ type: "computer", id })}
           />
@@ -172,7 +161,7 @@ const Index = () => {
 
       {/* Latest Anomalies */}
       <div className="w-full">
-        <AnomaliesTable alerts={safeAlerts} />
+        <AnomaliesTable alerts={alerts} />
       </div>
     </div>
   );
