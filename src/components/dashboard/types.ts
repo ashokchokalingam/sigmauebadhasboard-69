@@ -12,10 +12,11 @@ export interface Alert {
   computer_name: string;
   user_id: string;
   title: string;
+  description: string;  // Added this field
   tags: string;
   ip_address?: string;
   dbscan_cluster: number;
-  raw_log?: string; // Added for raw log data
+  raw_log?: string;
 }
 
 export interface Stats {
