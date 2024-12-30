@@ -26,10 +26,13 @@ interface FetchAlertsResponse {
   totalRecords: number;
 }
 
-const fetchAlerts = async (): Promise<FetchAlertsResponse> => {
+const fetchAlerts = async (
+  onProgressUpdate: (alerts: Alert[], totalRecords: number) => void
+): Promise<FetchAlertsResponse> => {
   console.log('Fetching all alerts');
   let allAlerts: Alert[] = [];
   let currentPage = 1;
+  let totalRecords = 0;
   
   try {
     while (true) {
@@ -49,11 +52,15 @@ const fetchAlerts = async (): Promise<FetchAlertsResponse> => {
       
       const data: ApiResponse = await response.json();
       allAlerts = [...allAlerts, ...data.alerts];
+      totalRecords = data.pagination.total_records;
+      
+      // Update UI with current data
+      onProgressUpdate(allAlerts, totalRecords);
       
       // Check if we've reached the last page
       if (currentPage >= data.pagination.total_pages) {
-        console.log(`Total records in database: ${data.pagination.total_records}`);
-        return { alerts: allAlerts, totalRecords: data.pagination.total_records };
+        console.log(`Total records in database: ${totalRecords}`);
+        return { alerts: allAlerts, totalRecords };
       }
       
       currentPage++;
@@ -68,11 +75,16 @@ const Index = () => {
   const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "computer"; id: string } | null>(null);
   const [selectedTactic, setSelectedTactic] = useState<string | null>(null);
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
+  const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
+  const [currentTotalRecords, setCurrentTotalRecords] = useState(0);
   const { toast } = useToast();
   
-  const { data, isLoading, error } = useQuery<FetchAlertsResponse>({
+  const { isLoading, error } = useQuery<FetchAlertsResponse>({
     queryKey: ['alerts'],
-    queryFn: fetchAlerts,
+    queryFn: () => fetchAlerts((alerts, totalRecords) => {
+      setCurrentAlerts(alerts);
+      setCurrentTotalRecords(totalRecords);
+    }),
     meta: {
       onError: (error: Error) => {
         console.error("Failed to fetch alerts:", error);
@@ -85,11 +97,9 @@ const Index = () => {
     }
   });
 
-  const alerts = data?.alerts || [];
-  const totalRecords = data?.totalRecords || 0;
-  const stats = calculateStats(alerts);
+  const stats = calculateStats(currentAlerts);
 
-  if (isLoading) {
+  if (isLoading && currentAlerts.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
@@ -113,7 +123,7 @@ const Index = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212]">
         <TimelineView
-          alerts={alerts}
+          alerts={currentAlerts}
           entityType={selectedEntity.type}
           entityId={selectedEntity.id}
           onClose={() => setSelectedEntity(null)}
@@ -134,16 +144,16 @@ const Index = () => {
         </button>
       </div>
 
-      <StatsSection stats={stats} totalAlerts={totalRecords} />
+      <StatsSection stats={stats} totalAlerts={currentTotalRecords} />
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <TacticsChart 
-          alerts={alerts} 
+          alerts={currentAlerts} 
           onTacticSelect={setSelectedTactic}
         />
         <SeverityChart 
-          alerts={alerts} 
+          alerts={currentAlerts} 
           onSeveritySelect={setSelectedSeverity}
         />
       </div>
@@ -156,7 +166,7 @@ const Index = () => {
             Risky Users
           </h2>
           <RiskyEntities 
-            alerts={alerts} 
+            alerts={currentAlerts} 
             type="users"
             onEntitySelect={(id) => setSelectedEntity({ type: "user", id })}
           />
@@ -167,7 +177,7 @@ const Index = () => {
             Top Risky Computers
           </h2>
           <RiskyEntities 
-            alerts={alerts} 
+            alerts={currentAlerts} 
             type="computers"
             onEntitySelect={(id) => setSelectedEntity({ type: "computer", id })}
           />
@@ -176,8 +186,14 @@ const Index = () => {
 
       {/* Latest Anomalies */}
       <div className="w-full">
-        <AnomaliesTable alerts={alerts} />
+        <AnomaliesTable alerts={currentAlerts} />
       </div>
+
+      {isLoading && currentAlerts.length > 0 && (
+        <div className="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
+          Loading more data... ({currentAlerts.length} / {currentTotalRecords})
+        </div>
+      )}
     </div>
   );
 };
