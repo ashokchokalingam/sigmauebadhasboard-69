@@ -7,6 +7,7 @@ import RiskyEntities from "./RiskyEntities";
 import TimelineView from "./TimelineView";
 import AnomaliesTable from "./AnomaliesTable";
 import { calculateStats } from "./alertUtils";
+import { Button } from "../ui/button";
 
 interface DashboardLayoutProps {
   alerts: Alert[];
@@ -14,6 +15,8 @@ interface DashboardLayoutProps {
   isLoading: boolean;
   onEntitySelect: (entity: { type: "user" | "computer"; id: string } | null) => void;
   selectedEntity: { type: "user" | "computer"; id: string } | null;
+  onLoadMore: () => void;
+  hasMore: boolean;
 }
 
 const DashboardLayout = ({
@@ -21,7 +24,9 @@ const DashboardLayout = ({
   totalRecords,
   isLoading,
   onEntitySelect,
-  selectedEntity
+  selectedEntity,
+  onLoadMore,
+  hasMore
 }: DashboardLayoutProps) => {
   const stats = calculateStats(alerts);
 
@@ -53,11 +58,11 @@ const DashboardLayout = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <TacticsChart 
           alerts={alerts} 
-          onTacticSelect={() => {}} // Add empty handler for now
+          onTacticSelect={() => {}} 
         />
         <SeverityChart 
           alerts={alerts} 
-          onSeveritySelect={() => {}} // Add empty handler for now
+          onSeveritySelect={() => {}} 
         />
       </div>
 
@@ -81,6 +86,18 @@ const DashboardLayout = ({
       <div className="w-full">
         <AnomaliesTable alerts={alerts} />
       </div>
+
+      {hasMore && (
+        <div className="flex justify-center mt-6">
+          <Button
+            onClick={onLoadMore}
+            disabled={isLoading}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {isLoading ? "Loading..." : "Load More Alerts"}
+          </Button>
+        </div>
+      )}
 
       {isLoading && alerts.length > 0 && (
         <div className="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">

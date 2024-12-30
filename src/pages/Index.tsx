@@ -9,12 +9,21 @@ const Index = () => {
   const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "computer"; id: string } | null>(null);
   const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
   const [currentTotalRecords, setCurrentTotalRecords] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const { toast } = useToast();
   
-  const { isLoading, error } = useAlerts((alerts, totalRecords) => {
-    setCurrentAlerts(alerts);
+  const { isLoading, error, data } = useAlerts(currentPage, (alerts, totalRecords) => {
+    if (currentPage === 1) {
+      setCurrentAlerts(alerts);
+    } else {
+      setCurrentAlerts(prev => [...prev, ...alerts]);
+    }
     setCurrentTotalRecords(totalRecords);
   });
+
+  const handleLoadMore = () => {
+    setCurrentPage(prev => prev + 1);
+  };
 
   if (isLoading && currentAlerts.length === 0) {
     return (
@@ -48,6 +57,8 @@ const Index = () => {
       isLoading={isLoading}
       onEntitySelect={setSelectedEntity}
       selectedEntity={selectedEntity}
+      onLoadMore={handleLoadMore}
+      hasMore={data?.hasMore || false}
     />
   );
 };

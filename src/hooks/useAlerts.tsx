@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Alert } from "@/components/dashboard/types";
-import { ALERTS_PER_PAGE } from "@/constants/pagination";
+import { INITIAL_LOAD_SIZE } from "@/constants/pagination";
 
 interface ApiResponse {
   alerts: Alert[];
@@ -15,6 +15,8 @@ interface ApiResponse {
 interface FetchAlertsResponse {
   alerts: Alert[];
   totalRecords: number;
+  hasMore: boolean;
+  currentPage: number;
 }
 
 const isWithinLastSevenDays = (date: string) => {
@@ -24,52 +26,43 @@ const isWithinLastSevenDays = (date: string) => {
 };
 
 export const useAlerts = (
+  page: number = 1,
   onProgressUpdate: (alerts: Alert[], totalRecords: number) => void
 ) => {
   return useQuery<FetchAlertsResponse>({
-    queryKey: ['alerts'],
+    queryKey: ['alerts', page],
     queryFn: async () => {
-      console.log('Fetching all alerts');
-      let allAlerts: Alert[] = [];
-      let currentPage = 1;
-      let totalRecords = 0;
+      console.log(`Fetching alerts for page ${page}`);
       
-      while (true) {
-        const response = await fetch(`/api/alerts?page=${currentPage}&per_page=${ALERTS_PER_PAGE}`, {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-        });
-        
-        console.log(`Fetching page ${currentPage}, Response status:`, response.status);
-        
-        if (!response.ok) {
-          console.error('Server response error:', response.status);
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data: ApiResponse = await response.json();
-        
-        // Filter alerts based on date for caching
-        const newAlerts = data.alerts.filter(alert => isWithinLastSevenDays(alert.system_time));
-        allAlerts = [...allAlerts, ...newAlerts];
-        totalRecords = data.pagination.total_records;
-        
-        // Update UI with current data
-        onProgressUpdate(allAlerts, totalRecords);
-        
-        // Check if we've reached the last page
-        if (currentPage >= data.pagination.total_pages) {
-          console.log(`Total records in database: ${totalRecords}`);
-          return { alerts: allAlerts, totalRecords };
-        }
-        
-        currentPage++;
+      const response = await fetch(`/api/alerts?page=${page}&per_page=${INITIAL_LOAD_SIZE}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        console.error('Server response error:', response.status);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
+      const data: ApiResponse = await response.json();
+      
+      // Filter alerts based on date for caching
+      const filteredAlerts = data.alerts.filter(alert => isWithinLastSevenDays(alert.system_time));
+      
+      // Update UI with current data
+      onProgressUpdate(filteredAlerts, data.pagination.total_records);
+      
+      return {
+        alerts: filteredAlerts,
+        totalRecords: data.pagination.total_records,
+        hasMore: page < data.pagination.total_pages,
+        currentPage: page
+      };
     },
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    gcTime: 30 * 60 * 1000,   // Keep unused data in cache for 30 minutes
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
     meta: {
       onError: (error: Error) => {
         console.error("Failed to fetch alerts:", error);
