@@ -11,6 +11,7 @@ import { Button } from "../ui/button";
 
 interface DashboardLayoutProps {
   alerts: Alert[];
+  allAlerts: Alert[];
   totalRecords: number;
   isLoading: boolean;
   onEntitySelect: (entity: { type: "user" | "computer"; id: string } | null) => void;
@@ -21,6 +22,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({
   alerts,
+  allAlerts,
   totalRecords,
   isLoading,
   onEntitySelect,
@@ -28,13 +30,13 @@ const DashboardLayout = ({
   onLoadMore,
   hasMore
 }: DashboardLayoutProps) => {
-  // Calculate stats using all alerts, not just the paginated ones
-  const stats = calculateStats(alerts);
+  // Calculate stats using all alerts for the widgets
+  const stats = calculateStats(allAlerts);
 
   if (selectedEntity) {
     return (
       <TimelineView
-        alerts={alerts}
+        alerts={allAlerts}
         entityType={selectedEntity.type}
         entityId={selectedEntity.id}
         onClose={() => onEntitySelect(null)}
@@ -58,11 +60,11 @@ const DashboardLayout = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <TacticsChart 
-          alerts={alerts} 
+          alerts={allAlerts} 
           onTacticSelect={() => {}} 
         />
         <SeverityChart 
-          alerts={alerts} 
+          alerts={allAlerts} 
           onSeveritySelect={() => {}} 
         />
       </div>
@@ -70,14 +72,14 @@ const DashboardLayout = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
           <RiskyEntities 
-            alerts={alerts} 
+            alerts={allAlerts} 
             type="users"
             onEntitySelect={(id) => onEntitySelect({ type: "user", id })}
           />
         </div>
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
           <RiskyEntities 
-            alerts={alerts} 
+            alerts={allAlerts} 
             type="computers"
             onEntitySelect={(id) => onEntitySelect({ type: "computer", id })}
           />

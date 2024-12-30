@@ -12,12 +12,30 @@ const Index = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const { toast } = useToast();
   
+  // Keep track of all alerts for widgets
+  const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
+  
   const { isLoading, error, data } = useAlerts(currentPage, (alerts, totalRecords) => {
+    // Update paginated alerts for the table
     if (currentPage === 1) {
       setCurrentAlerts(alerts);
     } else {
       setCurrentAlerts(prev => [...prev, ...alerts]);
     }
+    
+    // Update all alerts for widgets
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const recentAlerts = alerts.filter(alert => 
+      new Date(alert.system_time) >= sevenDaysAgo
+    );
+    
+    if (currentPage === 1) {
+      setAllAlerts(recentAlerts);
+    } else {
+      setAllAlerts(prev => [...prev, ...recentAlerts]);
+    }
+    
     setCurrentTotalRecords(totalRecords);
   });
 
@@ -53,6 +71,7 @@ const Index = () => {
   return (
     <DashboardLayout
       alerts={currentAlerts}
+      allAlerts={allAlerts}
       totalRecords={currentTotalRecords}
       isLoading={isLoading}
       onEntitySelect={setSelectedEntity}

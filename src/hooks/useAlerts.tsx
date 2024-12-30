@@ -48,7 +48,7 @@ export const useAlerts = (
       
       const data: ApiResponse = await response.json();
       
-      // Filter alerts based on date for caching
+      // Get all alerts within the last 7 days
       const filteredAlerts = data.alerts.filter(alert => isWithinLastSevenDays(alert.system_time));
       
       // Update UI with current data
