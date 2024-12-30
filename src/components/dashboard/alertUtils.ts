@@ -29,7 +29,7 @@ export const calculateStats = (alerts: Alert[]) => {
         alert.rule_level === 'high' ? 75 : 
         alert.rule_level === 'medium' ? 50 : 25), 0
     );
-    return Math.round((totalRiskScore / alertsList.length) * 10) / 10; // Round to 1 decimal
+    return Math.round((totalRiskScore / alertsList.length) * 10) / 10;
   };
 
   const currentAvgRiskScore = calculateAvgRiskScore(currentPeriodAlerts);
@@ -37,11 +37,11 @@ export const calculateStats = (alerts: Alert[]) => {
   const riskScoreChangePercent = previousAvgRiskScore ? 
     Math.round(((currentAvgRiskScore - previousAvgRiskScore) / previousAvgRiskScore) * 100) : 0;
 
-  // Calculate total events and change percentage
-  const currentEvents = currentPeriodAlerts.length;
-  const previousEvents = previousPeriodAlerts.length;
-  const eventsChangePercent = previousEvents ? 
-    Math.round(((currentEvents - previousEvents) / previousEvents) * 100) : 0;
+  // Calculate anomalies (only count DBSCAN cluster -1)
+  const currentAnomalies = currentPeriodAlerts.filter(alert => alert.dbscan_cluster === -1).length;
+  const previousAnomalies = previousPeriodAlerts.filter(alert => alert.dbscan_cluster === -1).length;
+  const anomaliesChangePercent = previousAnomalies ? 
+    Math.round(((currentAnomalies - previousAnomalies) / previousAnomalies) * 100) : 0;
 
   return {
     uniqueUsers: {
@@ -54,8 +54,8 @@ export const calculateStats = (alerts: Alert[]) => {
       change: riskScoreChangePercent
     },
     anomalies: {
-      current: currentEvents,
-      change: eventsChangePercent
+      current: currentAnomalies,
+      change: anomaliesChangePercent
     }
   };
 };
