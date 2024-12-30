@@ -43,9 +43,9 @@ export const calculateStats = (alerts: Alert[]) => {
   const riskScoreChangePercent = previousAvgRiskScore ? 
     Math.round(((currentAvgRiskScore - previousAvgRiskScore) / previousAvgRiskScore) * 100) : 0;
 
-  // Calculate anomalies (only DBSCAN cluster -1)
-  const currentAnomalies = currentPeriodAlerts.filter(alert => alert.dbscan_cluster === -1).length;
-  const previousAnomalies = previousPeriodAlerts.filter(alert => alert.dbscan_cluster === -1).length;
+  // Calculate anomalies (all events)
+  const currentAnomalies = currentPeriodAlerts.length;
+  const previousAnomalies = previousPeriodAlerts.length;
   const anomaliesChangePercent = previousAnomalies ? 
     Math.round(((currentAnomalies - previousAnomalies) / previousAnomalies) * 100) : 0;
 
