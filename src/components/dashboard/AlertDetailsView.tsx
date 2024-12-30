@@ -1,7 +1,7 @@
 import { Alert } from "./types";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { AlertTriangle, Clock, Server, User } from "lucide-react";
+import { AlertTriangle, Clock, Server, User, Shield, Hash, Activity } from "lucide-react";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineRawLog from "./TimelineRawLog";
 import AlertDetailsHeader from "./AlertDetailsHeader";
@@ -11,6 +11,9 @@ interface AlertDetailsViewProps {
 }
 
 const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
+  // Parse raw JSON data if available
+  const rawData = alert.raw_log ? JSON.parse(alert.raw_log) : null;
+
   return (
     <div className="space-y-6">
       <AlertDetailsHeader alert={alert} />
@@ -35,7 +38,7 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
               <p className="text-xs font-medium text-blue-400">User</p>
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4 text-blue-500" />
-                <p className="text-sm text-blue-100">{alert.user_id}</p>
+                <p className="text-sm text-blue-100">{rawData?.TargetUserName || alert.user_id || 'N/A'}</p>
               </div>
             </div>
             <div>
@@ -47,23 +50,64 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
             </div>
             <div>
               <p className="text-xs font-medium text-blue-400">Event ID</p>
-              <p className="text-sm text-blue-100">{alert.event_id}</p>
+              <div className="flex items-center gap-2">
+                <Hash className="h-4 w-4 text-blue-500" />
+                <p className="text-sm text-blue-100">{alert.event_id}</p>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-blue-400">Rule ID</p>
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-blue-500" />
+                <p className="text-sm text-blue-100">{rawData?.id || alert.rule_id || 'N/A'}</p>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-blue-400">Rule Level</p>
+              <div className="flex items-center gap-2">
+                <Activity className="h-4 w-4 text-blue-500" />
+                <p className="text-sm text-blue-100 capitalize">{rawData?.rule_level || alert.rule_level || 'N/A'}</p>
+              </div>
             </div>
             <div>
               <p className="text-xs font-medium text-blue-400">Process Name</p>
-              <p className="text-sm text-blue-100">{alert.process_name}</p>
+              <p className="text-sm text-blue-100">{rawData?.ProcessName || 'N/A'}</p>
             </div>
             <div>
               <p className="text-xs font-medium text-blue-400">Process ID</p>
-              <p className="text-sm text-blue-100">{alert.process_id}</p>
+              <p className="text-sm text-blue-100">{rawData?.ProcessID || 'N/A'}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-blue-400">Original File</p>
-              <p className="text-sm text-blue-100">{alert.original_file_name}</p>
+              <p className="text-xs font-medium text-blue-400">IP Address</p>
+              <p className="text-sm text-blue-100">{rawData?.IpAddress || alert.ip_address || 'N/A'}</p>
             </div>
             <div>
               <p className="text-xs font-medium text-blue-400">Provider Name</p>
               <p className="text-sm text-blue-100">{alert.provider_name}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-blue-400">Task</p>
+              <p className="text-sm text-blue-100">{rawData?.Task || alert.task_name || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-blue-400">Channel</p>
+              <p className="text-sm text-blue-100">{rawData?.Channel || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-blue-400">Authentication Package</p>
+              <p className="text-sm text-blue-100">{rawData?.AuthenticationPackageName || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-blue-400">Logon Type</p>
+              <p className="text-sm text-blue-100">{rawData?.LogonType || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-blue-400">Status</p>
+              <p className="text-sm text-blue-100">{rawData?.Status || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-blue-400">Failure Reason</p>
+              <p className="text-sm text-blue-100">{rawData?.FailureReason || 'N/A'}</p>
             </div>
           </div>
         </div>
