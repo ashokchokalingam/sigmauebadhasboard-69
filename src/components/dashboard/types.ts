@@ -16,6 +16,21 @@ export interface Alert {
   task: string;
 }
 
+export interface Stats {
+  uniqueUsers: {
+    current: number;
+    change: number;
+  };
+  riskScore: {
+    current: number;
+    change: number;
+  };
+  anomalies: {
+    current: number;
+    change: number;
+  };
+}
+
 export interface AnomaliesTableProps {
   alerts: Alert[];
 }
