@@ -15,7 +15,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters }: AnomaliesTabl
   
   const last7DaysAlerts = alerts.filter(alert => {
     const alertDate = new Date(alert.system_time);
-    return alertDate >= sevenDaysAgo && alert.dbscan_cluster === -1;
+    return alertDate >= sevenDaysAgo;
   });
 
   // Extract unique values for each column from filtered data
