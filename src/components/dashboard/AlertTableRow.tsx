@@ -65,11 +65,9 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView }: AlertTab
         {getRiskScore(alert).toFixed(1)}
       </TableCell>
       <TableCell>
-        {alert.dbscan_cluster === -1 && (
-          <span className="px-2 py-1 bg-red-500/10 text-red-400 text-xs rounded-full border border-red-500/20">
-            DBSCAN -1
-          </span>
-        )}
+        <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
+          {alert.dbscan_cluster}
+        </span>
       </TableCell>
       <TableCell>
         <button 

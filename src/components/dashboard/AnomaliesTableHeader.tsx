@@ -67,7 +67,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters }: AnomaliesTabl
         </TableHead>
         <TableHead className="text-blue-300">Techniques</TableHead>
         <TableHead className="text-blue-300">Risk Score</TableHead>
-        <TableHead className="text-blue-300">Outlier</TableHead>
+        <TableHead className="text-blue-300">DBSCAN Cluster</TableHead>
         <TableHead className="text-blue-300 w-[50px]"></TableHead>
       </TableRow>
     </TableHeader>
