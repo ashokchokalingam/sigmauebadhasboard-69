@@ -15,7 +15,7 @@ interface TimelineViewProps {
 }
 
 const TimelineView = ({ alerts, entityType, entityId, onClose, inSidebar = false }: TimelineViewProps) => {
-  const [expandedAlert, setExpandedAlert] = useState<number | null>(null);
+  const [expandedAlert, setExpandedAlert] = useState<string | null>(null);
   const [selectedEventType, setSelectedEventType] = useState<string | null>(null);
 
   // Filter alerts for the specific entity and event type
@@ -28,7 +28,7 @@ const TimelineView = ({ alerts, entityType, entityId, onClose, inSidebar = false
     .filter(alert => !selectedEventType || alert.title === selectedEventType)
     .sort((a, b) => new Date(b.system_time).getTime() - new Date(a.system_time).getTime());
 
-  const toggleRawLog = (alertId: number, event: React.MouseEvent) => {
+  const toggleRawLog = (alertId: string, event: React.MouseEvent) => {
     event.stopPropagation();
     setExpandedAlert(expandedAlert === alertId ? null : alertId);
   };

@@ -11,6 +11,10 @@ interface AlertDetailsViewProps {
   alert: Alert;
 }
 
+interface AlertDetailsHeaderProps {
+  alert: Alert;
+}
+
 const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
   return (
     <div className="space-y-6">
