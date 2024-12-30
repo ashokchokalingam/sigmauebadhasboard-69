@@ -1,18 +1,12 @@
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Alert } from "./types";
 import AlertTableRow from "./AlertTableRow";
-import AlertDetailsView from "./AlertDetailsView";
-import TimelineView from "./TimelineView";
-import { getRiskScore } from "./utils";
+import AnomaliesTableHeader from "./AnomaliesTableHeader";
+import InfiniteScrollLoader from "./InfiniteScrollLoader";
+import DetailsSidebar from "./DetailsSidebar";
 
 interface TimelineState {
   type: "user" | "computer";
@@ -36,11 +30,9 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
   );
 
   useEffect(() => {
-    // Initialize with first 100 items
     setDisplayedAlerts(sortedAlerts.slice(0, ITEMS_PER_PAGE));
   }, [alerts]);
 
-  // Add ESC key handler
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -51,10 +43,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
     };
 
     window.addEventListener('keydown', handleEscKey);
-
-    return () => {
-      window.removeEventListener('keydown', handleEscKey);
-    };
+    return () => window.removeEventListener('keydown', handleEscKey);
   }, []);
 
   const loadMore = useCallback(() => {
@@ -113,22 +102,6 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
     }
   };
 
-  useEffect(() => {
-    if (selectedAlert || timelineView) {
-      setTimeout(() => {
-        window.scrollTo({
-          left: document.documentElement.scrollWidth,
-          behavior: 'smooth'
-        });
-      }, 100);
-    } else {
-      window.scrollTo({
-        left: 0,
-        behavior: 'smooth'
-      });
-    }
-  }, [selectedAlert, timelineView]);
-
   return (
     <div className="relative flex gap-4">
       <Card className={`bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300 ${selectedAlert || timelineView ? 'flex-[0.6]' : 'flex-1'}`}>
@@ -141,20 +114,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
         <CardContent>
           <div className="rounded-md border border-blue-500/10">
             <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-blue-950/30">
-                  <TableHead className="text-blue-300">Time</TableHead>
-                  <TableHead className="text-blue-300">User</TableHead>
-                  <TableHead className="text-blue-300">Computer</TableHead>
-                  <TableHead className="text-blue-300">IP Address</TableHead>
-                  <TableHead className="text-blue-300">Title</TableHead>
-                  <TableHead className="text-blue-300">Tactics</TableHead>
-                  <TableHead className="text-blue-300">Techniques</TableHead>
-                  <TableHead className="text-blue-300">Risk Score</TableHead>
-                  <TableHead className="text-blue-300">Outlier</TableHead>
-                  <TableHead className="text-blue-300 w-[50px]"></TableHead>
-                </TableRow>
-              </TableHeader>
+              <AnomaliesTableHeader />
               <TableBody>
                 {displayedAlerts.map((alert) => (
                   <AlertTableRow
@@ -167,41 +127,20 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
                 ))}
               </TableBody>
             </Table>
-            <div 
+            <InfiniteScrollLoader 
               ref={loaderRef}
-              className="h-10 flex items-center justify-center text-blue-400/60 text-sm"
-            >
-              {page * ITEMS_PER_PAGE < sortedAlerts.length ? 
-                "Loading more..." : "No more alerts to load"}
-            </div>
+              hasMore={page * ITEMS_PER_PAGE < sortedAlerts.length}
+            />
           </div>
         </CardContent>
       </Card>
 
-      <div className={`fixed top-0 right-0 h-screen w-[800px] bg-black/90 transform transition-all duration-300 ease-in-out overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent ${
-        selectedAlert || timelineView ? 'translate-x-0' : 'translate-x-full'
-      }`}>
-        {selectedAlert && (
-          <Card className="h-full bg-transparent border-none">
-            <CardContent className="p-6">
-              <AlertDetailsView alert={selectedAlert} />
-            </CardContent>
-          </Card>
-        )}
-        {timelineView && (
-          <Card className="h-full bg-transparent border-none">
-            <CardContent className="p-6">
-              <TimelineView
-                alerts={alerts}
-                entityType={timelineView.type}
-                entityId={timelineView.id}
-                onClose={() => setTimelineView(null)}
-                inSidebar={true}
-              />
-            </CardContent>
-          </Card>
-        )}
-      </div>
+      <DetailsSidebar
+        selectedAlert={selectedAlert}
+        timelineView={timelineView}
+        alerts={alerts}
+        onTimelineClose={() => setTimelineView(null)}
+      />
     </div>
   );
 };
