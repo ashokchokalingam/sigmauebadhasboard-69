@@ -10,6 +10,7 @@ import TimelineView from "@/components/dashboard/TimelineView";
 import { calculateStats } from "@/components/dashboard/alertUtils";
 import { Alert } from "@/components/dashboard/types";
 import StatsSection from "@/components/dashboard/StatsSection";
+import { ALERTS_PER_PAGE } from "@/constants/pagination";
 
 interface ApiResponse {
   alerts: Alert[];
@@ -36,7 +37,7 @@ const fetchAlerts = async (
   
   try {
     while (true) {
-      const response = await fetch(`/api/alerts?page=${currentPage}&per_page=1000`, {
+      const response = await fetch(`/api/alerts?page=${currentPage}&per_page=${ALERTS_PER_PAGE}`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
