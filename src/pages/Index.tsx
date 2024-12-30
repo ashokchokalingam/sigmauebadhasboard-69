@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, Shield, Users, Clock, Download, TrendingUp, TrendingDown } from "lucide-react";
+import { Activity, AlertTriangle, Shield, Users, Clock, Download, TrendingUp, TrendingDown, Database } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
@@ -125,7 +125,14 @@ const Index = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <StatsCard
+          title="Total Events"
+          value={safeAlerts.length}
+          icon={Database}
+          subtitle={`+${Math.round((safeAlerts.length / (stats.anomalies.current || 1)) * 100)}% from alerts`}
+          subtitleIcon={TrendingUp}
+        />
         <StatsCard
           title="Risky Users"
           value={stats.uniqueUsers.current.toString()}
