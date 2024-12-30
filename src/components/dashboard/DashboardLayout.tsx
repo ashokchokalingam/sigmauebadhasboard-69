@@ -28,6 +28,7 @@ const DashboardLayout = ({
   onLoadMore,
   hasMore
 }: DashboardLayoutProps) => {
+  // Calculate stats using all alerts, not just the paginated ones
   const stats = calculateStats(alerts);
 
   if (selectedEntity) {
@@ -45,7 +46,7 @@ const DashboardLayout = ({
     <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
       <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-8">
         <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">
-          Exabeam Anomaly Hunter Dashboard
+          Exabeam Event Dashboard
         </h1>
         <button className="flex items-center gap-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 transition-all duration-300 rounded-lg px-4 py-2 border border-blue-500/10">
           <Download className="h-4 w-4" />
@@ -84,20 +85,12 @@ const DashboardLayout = ({
       </div>
 
       <div className="w-full">
-        <AnomaliesTable alerts={alerts} />
+        <AnomaliesTable 
+          alerts={alerts} 
+          onLoadMore={onLoadMore}
+          hasMore={hasMore}
+        />
       </div>
-
-      {hasMore && (
-        <div className="flex justify-center mt-6">
-          <Button
-            onClick={onLoadMore}
-            disabled={isLoading}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            {isLoading ? "Loading..." : "Load More Alerts"}
-          </Button>
-        </div>
-      )}
 
       {isLoading && alerts.length > 0 && (
         <div className="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">

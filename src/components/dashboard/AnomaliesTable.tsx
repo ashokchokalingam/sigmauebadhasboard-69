@@ -6,6 +6,8 @@ import { Alert } from "./types";
 import AlertTableRow from "./AlertTableRow";
 import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import DetailsSidebar from "./DetailsSidebar";
+import { Button } from "../ui/button";
+import { ALERTS_PER_PAGE } from "@/constants/pagination";
 
 interface TimelineState {
   type: "user" | "computer";
@@ -14,21 +16,23 @@ interface TimelineState {
 
 interface AnomaliesTableProps {
   alerts: Alert[];
+  onLoadMore: () => void;
+  hasMore: boolean;
 }
 
-const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
+const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [timelineView, setTimelineView] = useState<TimelineState | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
   
-  // Filter alerts for last 7 days and dbscan_cluster = -1
+  // Filter alerts for last 7 days
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   
   const sortedAlerts = [...alerts]
     .filter(alert => {
       const alertDate = new Date(alert.system_time);
-      return alertDate >= sevenDaysAgo && alert.dbscan_cluster === -1;
+      return alertDate >= sevenDaysAgo;
     })
     .sort((a, b) => 
       new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
@@ -96,7 +100,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-blue-100">
             <AlertTriangle className="h-5 w-5 text-blue-500" />
-            Latest Anomalies (Last 7 Days)
+            Latest Events (Last 7 Days)
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -120,6 +124,16 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
               </TableBody>
             </Table>
           </div>
+          {hasMore && (
+            <div className="flex justify-center mt-6">
+              <Button
+                onClick={onLoadMore}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Load More Events
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
