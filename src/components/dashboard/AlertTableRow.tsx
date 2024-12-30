@@ -13,23 +13,21 @@ interface AlertTableRowProps {
 const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView }: AlertTableRowProps) => {
   const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
   
-  // Convert UTC to local browser time
-  const utcDate = new Date(alert.system_time);
-  const localTime = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000)
-    .toLocaleString(undefined, {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
-      month: 'numeric',
-      day: 'numeric',
-      year: 'numeric',
-    });
+  // Convert to browser's local time
+  const browserTime = new Date(alert.system_time).toLocaleString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+    month: 'numeric',
+    day: 'numeric',
+    year: 'numeric',
+  });
   
   return (
     <TableRow className="hover:bg-blue-950/30">
       <TableCell className="font-mono text-blue-300 text-sm whitespace-nowrap">
-        {localTime}
+        {browserTime}
       </TableCell>
       <TableCell 
         className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
