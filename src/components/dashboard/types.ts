@@ -1,46 +1,18 @@
 export interface Alert {
-  id: number;
+  id: string;
   system_time: string;
-  user_id: string;
+  event_id: string;
+  rule_id: string;
+  rule_level: string;
+  task_name: string;
+  provider_name: string;
+  process_name: string;
+  process_id: string;
+  original_file_name: string;
   computer_name: string;
-  ip_address: string;
+  user_id: string;
   title: string;
   tags: string;
-  rule_level: 'critical' | 'high' | 'medium' | 'low';
-  ruleid: string;
-  event_id: string;
-  provider_name: string;
-  task: string;
-  raw: string;
+  ip_address?: string;
   dbscan_cluster: number;
-}
-
-export interface Stats {
-  uniqueUsers: {
-    current: number;
-    change: number;
-    users: string[];
-  };
-  uniqueComputers: {
-    current: number;
-    change: number;
-    computers: string[];
-  };
-  riskScore: {
-    current: number;
-    change: number;
-  };
-  anomalies: {
-    current: number;
-    change: number;
-  };
-  severity: {
-    critical: number;
-    high: number;
-    medium: number;
-    low: number;
-  };
-  uniqueIPs: number;
-  totalEvents: number;
-  totalAnomalies: number;
 }
