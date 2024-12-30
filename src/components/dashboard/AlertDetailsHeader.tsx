@@ -13,7 +13,7 @@ const AlertDetailsHeader = ({ alert }: AlertDetailsHeaderProps) => {
         <CardContent className="p-4">
           <h4 className="text-sm font-medium text-purple-400 mb-1">Title</h4>
           <p className="text-lg text-purple-100">{alert.title}</p>
-          <p className="text-sm text-purple-400 mt-2">{alert.description}</p>
+          <p className="text-sm text-purple-400 mt-2">{alert.title}</p>
         </CardContent>
       </Card>
       <div className="grid grid-cols-2 gap-4">
