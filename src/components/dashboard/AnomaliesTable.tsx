@@ -21,9 +21,18 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
   const [timelineView, setTimelineView] = useState<TimelineState | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
   
-  const sortedAlerts = [...alerts].sort((a, b) => 
-    new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
-  );
+  // Filter alerts for last 7 days and dbscan_cluster = -1
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  const sortedAlerts = [...alerts]
+    .filter(alert => {
+      const alertDate = new Date(alert.system_time);
+      return alertDate >= sevenDaysAgo && alert.dbscan_cluster === -1;
+    })
+    .sort((a, b) => 
+      new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
+    );
 
   const filteredAlerts = sortedAlerts.filter(alert => {
     return Object.entries(filters).every(([key, value]) => {
@@ -87,7 +96,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-blue-100">
             <AlertTriangle className="h-5 w-5 text-blue-500" />
-            Latest Anomalies
+            Latest Anomalies (Last 7 Days)
           </CardTitle>
         </CardHeader>
         <CardContent>
