@@ -9,9 +9,27 @@ interface AnomaliesTableHeaderProps {
 }
 
 const AnomaliesTableHeader = ({ alerts, onFilterChange, filters }: AnomaliesTableHeaderProps) => {
-  // Extract unique values for each column
+  // Get data from last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  const last7DaysAlerts = alerts.filter(alert => {
+    const alertDate = new Date(alert.system_time);
+    return alertDate >= sevenDaysAgo && alert.dbscan_cluster === -1;
+  });
+
+  // Extract unique values for each column from filtered data
   const getUniqueValues = (key: keyof Alert) => {
-    return Array.from(new Set(alerts.map(alert => String(alert[key])))).filter(Boolean);
+    const uniqueValues = Array.from(new Set(last7DaysAlerts.map(alert => {
+      if (key === 'system_time') {
+        // Format the time to show only HH:MM:SS
+        return new Date(alert[key]).toLocaleTimeString();
+      }
+      return String(alert[key]);
+    }))).filter(Boolean);
+    
+    // Sort values alphabetically
+    return uniqueValues.sort();
   };
 
   return (

@@ -46,6 +46,10 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
       if (key === "tags") {
         return alert[key].toLowerCase().includes(value.toLowerCase());
       }
+      if (key === "system_time") {
+        const alertTime = new Date(alert[key]).toLocaleTimeString();
+        return alertTime === value;
+      }
       return String(alert[key as keyof Alert]).toLowerCase() === value.toLowerCase();
     });
   }).slice(0, ALERTS_PER_PAGE);
