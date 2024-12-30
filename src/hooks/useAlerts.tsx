@@ -34,6 +34,22 @@ export const useAlerts = (
     queryFn: async () => {
       console.log(`Fetching alerts for page ${page}`);
       
+      // First, get the total count for the last 7 days
+      const countResponse = await fetch('/api/alerts/count', {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!countResponse.ok) {
+        throw new Error(`HTTP error! status: ${countResponse.status}`);
+      }
+      
+      const { total_records } = await countResponse.json();
+      console.log('Total records in last 7 days:', total_records);
+      
+      // Then fetch the paginated data for the table
       const response = await fetch(`/api/alerts?page=${page}&per_page=${INITIAL_LOAD_SIZE}`, {
         headers: {
           'Accept': 'application/json',
@@ -42,7 +58,6 @@ export const useAlerts = (
       });
       
       if (!response.ok) {
-        console.error('Server response error:', response.status);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
@@ -51,13 +66,13 @@ export const useAlerts = (
       // Get all alerts within the last 7 days
       const filteredAlerts = data.alerts.filter(alert => isWithinLastSevenDays(alert.system_time));
       
-      // Update UI with current data
-      onProgressUpdate(filteredAlerts, data.pagination.total_records);
+      // Update UI with current data and the actual total count
+      onProgressUpdate(filteredAlerts, total_records);
       
       return {
         alerts: filteredAlerts,
-        totalRecords: data.pagination.total_records,
-        hasMore: page < data.pagination.total_pages,
+        totalRecords: total_records, // Use the actual total count
+        hasMore: page < Math.ceil(total_records / INITIAL_LOAD_SIZE),
         currentPage: page
       };
     },

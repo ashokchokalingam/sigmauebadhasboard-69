@@ -24,19 +24,15 @@ const Index = () => {
     }
     
     // Update all alerts for widgets
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const recentAlerts = alerts.filter(alert => 
-      new Date(alert.system_time) >= sevenDaysAgo
-    );
-    
     if (currentPage === 1) {
-      setAllAlerts(recentAlerts);
+      setAllAlerts(alerts);
     } else {
-      setAllAlerts(prev => [...prev, ...recentAlerts]);
+      setAllAlerts(prev => [...prev, ...alerts]);
     }
     
+    // Update total records count
     setCurrentTotalRecords(totalRecords);
+    console.log('Updated total records:', totalRecords);
   });
 
   const handleLoadMore = () => {
