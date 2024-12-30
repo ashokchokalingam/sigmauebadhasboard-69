@@ -2,16 +2,11 @@ import { Alert } from "./types";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertTriangle, Clock, Server, User } from "lucide-react";
-import TimelineMetadataGrid from "./TimelineMetadataGrid";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineRawLog from "./TimelineRawLog";
 import AlertDetailsHeader from "./AlertDetailsHeader";
 
 interface AlertDetailsViewProps {
-  alert: Alert;
-}
-
-interface AlertDetailsHeaderProps {
   alert: Alert;
 }
 
@@ -55,22 +50,6 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
               <p className="text-sm text-blue-100">{alert.event_id}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-blue-400">Rule ID</p>
-              <p className="text-sm text-blue-100">{alert.rule_id || 'N/A'}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-blue-400">Severity</p>
-              <p className="text-sm text-blue-100 capitalize">{alert.rule_level || 'N/A'}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-blue-400">Task</p>
-              <p className="text-sm text-blue-100">{alert.task_name || 'N/A'}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-blue-400">Provider Name</p>
-              <p className="text-sm text-blue-100">{alert.provider_name}</p>
-            </div>
-            <div>
               <p className="text-xs font-medium text-blue-400">Process Name</p>
               <p className="text-sm text-blue-100">{alert.process_name}</p>
             </div>
@@ -82,11 +61,14 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
               <p className="text-xs font-medium text-blue-400">Original File</p>
               <p className="text-sm text-blue-100">{alert.original_file_name}</p>
             </div>
+            <div>
+              <p className="text-xs font-medium text-blue-400">Provider Name</p>
+              <p className="text-sm text-blue-100">{alert.provider_name}</p>
+            </div>
           </div>
         </div>
       </Card>
 
-      <TimelineMetadataGrid alert={alert} />
       <TimelineMitreSection alert={alert} />
       
       <Card className="bg-black/40 border-blue-500/10">
