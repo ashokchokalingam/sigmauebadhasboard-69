@@ -14,16 +14,17 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView }: AlertTab
   const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
   
   // Convert UTC to local browser time
-  const localTime = new Date(alert.system_time).toLocaleString(undefined, {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-    timeZoneName: 'short'
-  });
+  const utcDate = new Date(alert.system_time);
+  const localTime = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000)
+    .toLocaleString(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+      month: 'numeric',
+      day: 'numeric',
+      year: 'numeric',
+    });
   
   return (
     <TableRow className="hover:bg-blue-950/30">
