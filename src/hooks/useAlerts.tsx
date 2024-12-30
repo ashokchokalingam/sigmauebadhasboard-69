@@ -10,6 +10,7 @@ interface ApiResponse {
     total_pages: number;
     total_records: number;
   };
+  total_count: number; // New field from the backend
 }
 
 interface FetchAlertsResponse {
@@ -34,7 +35,7 @@ export const useAlerts = (
     queryFn: async () => {
       console.log(`Fetching alerts for page ${page}`);
       
-      // Fetch paginated data for the table
+      // Fetch paginated data for the table and total count
       const response = await fetch(`/api/alerts?page=${page}&per_page=${INITIAL_LOAD_SIZE}`, {
         headers: {
           'Accept': 'application/json',
@@ -52,9 +53,9 @@ export const useAlerts = (
       // Get all alerts within the last 7 days
       const filteredAlerts = data.alerts.filter(alert => isWithinLastSevenDays(alert.system_time));
       
-      // Use the total_records from the pagination data
-      const totalRecords = data.pagination.total_records;
-      console.log('Total records:', totalRecords);
+      // Use the total_count from the API response (this should match the COUNT(*) query)
+      const totalRecords = data.total_count;
+      console.log('Total records from database:', totalRecords);
       
       // Update UI with current data
       onProgressUpdate(filteredAlerts, totalRecords);
@@ -62,7 +63,7 @@ export const useAlerts = (
       return {
         alerts: filteredAlerts,
         totalRecords: totalRecords,
-        hasMore: page < data.pagination.total_pages,
+        hasMore: page < Math.ceil(totalRecords / INITIAL_LOAD_SIZE),
         currentPage: page
       };
     },
