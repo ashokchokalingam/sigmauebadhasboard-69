@@ -11,7 +11,22 @@ import { calculateStats } from "@/components/dashboard/alertUtils";
 import { Alert } from "@/components/dashboard/types";
 import StatsSection from "@/components/dashboard/StatsSection";
 
-const fetchAlerts = async (): Promise<Alert[]> => {
+interface ApiResponse {
+  alerts: Alert[];
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total_pages: number;
+    total_records: number;
+  };
+}
+
+interface FetchAlertsResponse {
+  alerts: Alert[];
+  totalRecords: number;
+}
+
+const fetchAlerts = async (): Promise<FetchAlertsResponse> => {
   console.log('Fetching all alerts');
   let allAlerts: Alert[] = [];
   let currentPage = 1;
@@ -32,7 +47,7 @@ const fetchAlerts = async (): Promise<Alert[]> => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data = await response.json();
+      const data: ApiResponse = await response.json();
       allAlerts = [...allAlerts, ...data.alerts];
       
       // Check if we've reached the last page
@@ -55,7 +70,7 @@ const Index = () => {
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
   const { toast } = useToast();
   
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<FetchAlertsResponse>({
     queryKey: ['alerts'],
     queryFn: fetchAlerts,
     meta: {
