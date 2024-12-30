@@ -18,7 +18,6 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
     alerts.forEach(alert => {
       if (alert.tags) {
         const tags = alert.tags.split(',').map(t => t.trim());
-        // Filter to include only tactics (tags starting with 'attack.' but not containing 't1' or 'T1')
         const tactics = tags.filter(tag => 
           tag.startsWith('attack.') && 
           !tag.toLowerCase().includes('t1')
@@ -41,6 +40,20 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
     "#0EA5E9", "#0284C7", "#0369A1", "#1E40AF",
     "#1D4ED8", "#2563EB", "#3B82F6", "#60A5FA"
   ];
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-[#1a1f2c] border border-blue-500/30 rounded-lg p-3 shadow-lg">
+          <p className="text-blue-100 font-medium mb-1">{label}</p>
+          <p className="text-blue-300 font-mono">
+            {payload[0].value.toLocaleString()} alerts
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <Card className="bg-black/40 border-[#60A5FA]/10 hover:bg-black/50 transition-all duration-300">
@@ -72,16 +85,12 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
                 width={90}
               />
               <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(26, 31, 44, 0.95)',
-                  borderRadius: '8px',
-                  border: '1px solid #60A5FA',
-                  color: '#E5DEFF',
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                content={<CustomTooltip />}
+                cursor={{ 
+                  fill: 'rgba(96, 165, 250, 0.15)',
+                  strokeWidth: 1,
+                  stroke: 'rgba(96, 165, 250, 0.3)'
                 }}
-                cursor={{ fill: 'rgba(96, 165, 250, 0.1)' }}
-                formatter={(value: number) => [`${value} Alerts`, 'Count']}
-                labelStyle={{ color: '#E5DEFF', fontWeight: 'bold' }}
               />
               <Bar 
                 dataKey="alerts"
@@ -92,7 +101,7 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
                   <Cell 
                     key={`cell-${index}`} 
                     fill={blueColors[index % blueColors.length]}
-                    className="hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+                    className="transition-opacity duration-200 cursor-pointer hover:opacity-90 active:opacity-75"
                   />
                 ))}
               </Bar>
