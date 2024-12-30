@@ -51,8 +51,14 @@ const DashboardLayout = ({
       <StatsSection stats={stats} totalAlerts={totalRecords} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <TacticsChart alerts={alerts} />
-        <SeverityChart alerts={alerts} />
+        <TacticsChart 
+          alerts={alerts} 
+          onTacticSelect={() => {}} // Add empty handler for now
+        />
+        <SeverityChart 
+          alerts={alerts} 
+          onSeveritySelect={() => {}} // Add empty handler for now
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

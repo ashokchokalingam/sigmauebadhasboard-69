@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { useAlerts } from "@/hooks/useAlerts";
+import { Alert } from "@/components/dashboard/types";
+import { AlertTriangle } from "lucide-react";
 
 const Index = () => {
   const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "computer"; id: string } | null>(null);
