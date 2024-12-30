@@ -32,7 +32,7 @@ const TimelineMetadataGrid = ({ alert }: TimelineMetadataGridProps) => {
       </div>
       <div>
         <p className="text-sm font-medium text-blue-400">Rule ID</p>
-        <p className="text-base text-blue-100 font-mono">{alert.ruleid}</p>
+        <p className="text-base text-blue-100 font-mono">{alert.rule_id}</p>
       </div>
       <div>
         <p className="text-sm font-medium text-blue-400">Rule Level</p>
@@ -44,10 +44,10 @@ const TimelineMetadataGrid = ({ alert }: TimelineMetadataGridProps) => {
           <p className="text-base text-blue-100 font-mono">{alert.ip_address}</p>
         </div>
       )}
-      {alert.task && (
+      {alert.task_name && (
         <div>
           <p className="text-sm font-medium text-blue-400">Task</p>
-          <p className="text-base text-blue-100">{alert.task}</p>
+          <p className="text-base text-blue-100">{alert.task_name}</p>
         </div>
       )}
     </div>

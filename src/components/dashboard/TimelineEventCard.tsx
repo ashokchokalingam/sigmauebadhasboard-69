@@ -6,7 +6,7 @@ import TimelineRawLog from "./TimelineRawLog";
 interface TimelineEventCardProps {
   alert: Alert;
   isExpanded: boolean;
-  onToggleRaw: (alertId: number, event: React.MouseEvent) => void;
+  onToggleRaw: (id: string, event: React.MouseEvent) => void;
   isFirst: boolean;
 }
 
@@ -37,7 +37,7 @@ const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: Timeline
             </div>
             <div className="bg-purple-950/20 border-purple-500/10 p-2 rounded-lg">
               <h4 className="text-sm font-medium text-purple-400 mb-0.5">Rule ID</h4>
-              <p className="text-sm text-purple-100 font-mono break-all">{alert.ruleid}</p>
+              <p className="text-sm text-purple-100 font-mono break-all">{alert.rule_id}</p>
             </div>
             <div className="bg-purple-950/20 border-purple-500/10 p-2 rounded-lg">
               <h4 className="text-sm font-medium text-purple-400 mb-0.5">Severity</h4>
@@ -108,7 +108,7 @@ const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: Timeline
               </div>
               <div>
                 <p className="text-sm font-medium text-blue-400">Task</p>
-                <p className="text-sm text-blue-100">{alert.task}</p>
+                <p className="text-sm text-blue-100">{alert.task_name || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-blue-400">Provider Name</p>
@@ -118,11 +118,7 @@ const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: Timeline
           </div>
 
           {/* Raw Log Section */}
-          <TimelineRawLog 
-            raw={alert.raw}
-            isExpanded={isExpanded}
-            onToggle={(e) => onToggleRaw(alert.id, e)}
-          />
+          <TimelineRawLog alert={alert} />
         </div>
       </div>
     </div>

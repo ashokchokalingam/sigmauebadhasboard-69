@@ -1,9 +1,13 @@
+import { Alert } from "./types";
+import { extractTacticsAndTechniques } from "./utils";
+
 interface TimelineMitreSectionProps {
-  tactics: string;
-  techniques: string[];
+  alert: Alert;
 }
 
-const TimelineMitreSection = ({ tactics, techniques }: TimelineMitreSectionProps) => {
+const TimelineMitreSection = ({ alert }: TimelineMitreSectionProps) => {
+  const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
+  
   return (
     <div className="grid grid-cols-2 gap-4 mb-4">
       <div>
