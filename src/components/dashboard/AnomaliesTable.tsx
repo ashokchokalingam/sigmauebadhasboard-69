@@ -27,14 +27,14 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   const [filters, setFilters] = useState<Record<string, string>>({});
   const { toast } = useToast();
   
-  // Filter alerts for last 7 days
+  // Filter alerts for last 7 days and DBSCAN cluster -1
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   
   const sortedAlerts = [...alerts]
     .filter(alert => {
       const alertDate = new Date(alert.system_time);
-      return alertDate >= sevenDaysAgo;
+      return alertDate >= sevenDaysAgo && alert.dbscan_cluster === -1;
     })
     .sort((a, b) => 
       new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
@@ -112,7 +112,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     setFilters({});
     toast({
       title: "Filters Cleared",
-      description: "Showing all events from the last 7 days",
+      description: "Showing all anomalous events (DBSCAN -1) from the last 7 days",
     });
   };
 
@@ -123,7 +123,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-blue-100">
               <AlertTriangle className="h-5 w-5 text-blue-500" />
-              Latest Events (Last 7 Days)
+              Anomalous Events (DBSCAN -1) - Last 7 Days
             </CardTitle>
             {Object.keys(filters).some(key => filters[key]) && (
               <Button
