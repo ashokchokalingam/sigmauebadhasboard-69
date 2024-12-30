@@ -1,7 +1,7 @@
 import { Alert } from "./types";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { AlertTriangle, Clock, Server, User, Shield, Hash, Activity, ChevronDown, ChevronUp } from "lucide-react";
+import { AlertTriangle, Clock, Server, User, Hash, Activity, ChevronDown, ChevronUp } from "lucide-react";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineRawLog from "./TimelineRawLog";
 import AlertDetailsHeader from "./AlertDetailsHeader";
@@ -56,24 +56,6 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
               </div>
             </div>
             <div>
-              <p className="text-xs font-medium text-blue-400">Rule ID</p>
-              <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-blue-500" />
-                <p className="text-sm text-blue-100">{alert.rule_id || 'N/A'}</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-blue-400">Rule Level</p>
-              <div className="flex items-center gap-2">
-                <Activity className="h-4 w-4 text-blue-500" />
-                <p className="text-sm text-blue-100 capitalize">{alert.rule_level || 'N/A'}</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-xs font-medium text-blue-400">IP Address</p>
-              <p className="text-sm text-blue-100">{alert.ip_address || 'N/A'}</p>
-            </div>
-            <div>
               <p className="text-xs font-medium text-blue-400">Provider Name</p>
               <p className="text-sm text-blue-100">{alert.provider_name}</p>
             </div>
@@ -81,32 +63,40 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
               <p className="text-xs font-medium text-blue-400">Task</p>
               <p className="text-sm text-blue-100">{alert.task_name || 'N/A'}</p>
             </div>
+            {alert.ip_address && (
+              <div>
+                <p className="text-xs font-medium text-blue-400">IP Address</p>
+                <p className="text-sm text-blue-100">{alert.ip_address}</p>
+              </div>
+            )}
           </div>
         </div>
       </Card>
 
       <TimelineMitreSection alert={alert} />
       
-      <Card className="bg-black/40 border-blue-500/10">
-        <div 
-          className="p-4 flex items-center justify-between cursor-pointer hover:bg-blue-500/5 transition-colors"
-          onClick={() => setIsRawExpanded(!isRawExpanded)}
-        >
-          <h3 className="text-lg font-semibold text-blue-100 flex items-center gap-2">
-            Raw Log Data
-          </h3>
-          {isRawExpanded ? (
-            <ChevronUp className="h-5 w-5 text-blue-400" />
-          ) : (
-            <ChevronDown className="h-5 w-5 text-blue-400" />
+      {alert.raw_log && (
+        <Card className="bg-black/40 border-blue-500/10">
+          <div 
+            className="p-4 flex items-center justify-between cursor-pointer hover:bg-blue-500/5 transition-colors"
+            onClick={() => setIsRawExpanded(!isRawExpanded)}
+          >
+            <h3 className="text-lg font-semibold text-blue-100 flex items-center gap-2">
+              Raw Log Data
+            </h3>
+            {isRawExpanded ? (
+              <ChevronUp className="h-5 w-5 text-blue-400" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-blue-400" />
+            )}
+          </div>
+          {isRawExpanded && (
+            <ScrollArea className="h-[400px]">
+              <TimelineRawLog alert={alert} />
+            </ScrollArea>
           )}
-        </div>
-        {isRawExpanded && (
-          <ScrollArea className="h-[400px]">
-            <TimelineRawLog alert={alert} />
-          </ScrollArea>
-        )}
-      </Card>
+        </Card>
+      )}
     </div>
   );
 };
