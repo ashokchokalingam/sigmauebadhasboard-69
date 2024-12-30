@@ -86,7 +86,7 @@ const DashboardLayout = ({
 
       <div className="w-full">
         <AnomaliesTable 
-          alerts={alerts} 
+          alerts={alerts.slice(0, 1000)} 
           onLoadMore={onLoadMore}
           hasMore={hasMore}
         />

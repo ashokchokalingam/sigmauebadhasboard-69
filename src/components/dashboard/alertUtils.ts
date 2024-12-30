@@ -6,7 +6,7 @@ export const calculateStats = (alerts: Alert[]) => {
   const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
   const fourteenDaysAgo = new Date(now.getTime() - (14 * 24 * 60 * 60 * 1000));
 
-  // Filter alerts for current and previous 7-day periods
+  // Filter alerts for current and previous 7-day periods without pagination limits
   const currentPeriodAlerts = alerts.filter(alert => 
     new Date(alert.system_time) >= sevenDaysAgo && new Date(alert.system_time) <= now
   );
