@@ -90,8 +90,16 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
             <p className="text-sm text-blue-100">{alert.event_id}</p>
           </div>
           <div>
+            <p className="text-xs font-medium text-blue-400">Rule ID</p>
+            <p className="text-sm text-blue-100">{alert.ruleid}</p>
+          </div>
+          <div>
+            <p className="text-xs font-medium text-blue-400">Severity</p>
+            <p className="text-sm text-blue-100 capitalize">{alert.rule_level}</p>
+          </div>
+          <div>
             <p className="text-xs font-medium text-blue-400">Task</p>
-            <p className="text-sm text-blue-100">{alert.task}</p>
+            <p className="text-sm text-blue-100">{alert.task || 'N/A'}</p>
           </div>
           <div>
             <p className="text-xs font-medium text-blue-400">Provider Name</p>
