@@ -1,16 +1,15 @@
-import { Activity, AlertTriangle, Shield, Users, Clock, Download, TrendingUp, TrendingDown, Database } from "lucide-react";
+import { Activity, Download } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
-import StatsCard from "@/components/dashboard/StatsCard";
 import TacticsChart from "@/components/dashboard/TacticsChart";
 import SeverityChart from "@/components/dashboard/SeverityChart";
 import AnomaliesTable from "@/components/dashboard/AnomaliesTable";
-import TimeRangeSelector from "@/components/dashboard/TimeRangeSelector";
 import RiskyEntities from "@/components/dashboard/RiskyEntities";
 import TimelineView from "@/components/dashboard/TimelineView";
-import { getFilteredAlerts, calculateStats } from "@/components/dashboard/alertUtils";
+import { calculateStats } from "@/components/dashboard/alertUtils";
 import { Alert } from "@/components/dashboard/types";
+import StatsSection from "@/components/dashboard/StatsSection";
 
 interface ApiResponse {
   alerts: Alert[];
@@ -22,10 +21,10 @@ interface ApiResponse {
   };
 }
 
-const fetchAlerts = async (timeRange: string): Promise<Alert[]> => {
-  console.log('Fetching alerts with timeRange:', timeRange);
+const fetchAlerts = async (): Promise<Alert[]> => {
+  console.log('Fetching all alerts');
   try {
-    const response = await fetch(`/api/alerts?timeRange=${timeRange}`, {
+    const response = await fetch('/api/alerts', {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -49,15 +48,12 @@ const fetchAlerts = async (timeRange: string): Promise<Alert[]> => {
 };
 
 const Index = () => {
-  const [timeRange, setTimeRange] = useState("1h"); // Default to 1 hour
-  const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
-  const [selectedTactic, setSelectedTactic] = useState<string | null>(null);
   const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "computer"; id: string } | null>(null);
   const { toast } = useToast();
   
   const { data: alerts = [], isLoading, error } = useQuery({
-    queryKey: ['alerts', timeRange],
-    queryFn: () => fetchAlerts(timeRange),
+    queryKey: ['alerts'],
+    queryFn: fetchAlerts,
     refetchInterval: 30000,
     meta: {
       onError: (error: Error) => {
@@ -71,10 +67,8 @@ const Index = () => {
     }
   });
 
-  // Ensure alerts is always an array before processing
   const safeAlerts = Array.isArray(alerts) ? alerts : [];
   const stats = calculateStats(safeAlerts);
-  const filteredAlerts = getFilteredAlerts(safeAlerts, selectedSeverity, selectedTactic);
 
   if (isLoading) {
     return (
@@ -115,57 +109,18 @@ const Index = () => {
         <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">
           Exabeam Anomaly Hunter Dashboard
         </h1>
-        <div className="flex items-center gap-4">
-          <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
-          <button className="flex items-center gap-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 transition-all duration-300 rounded-lg px-4 py-2 border border-blue-500/10">
-            <Download className="h-4 w-4" />
-            Export Data
-          </button>
-        </div>
+        <button className="flex items-center gap-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 transition-all duration-300 rounded-lg px-4 py-2 border border-blue-500/10">
+          <Download className="h-4 w-4" />
+          Export Data
+        </button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <StatsCard
-          title="Total Events"
-          value={safeAlerts.length}
-          icon={Database}
-          subtitle={`+${Math.round((safeAlerts.length / (stats.anomalies.current || 1)) * 100)}% from alerts`}
-          subtitleIcon={TrendingUp}
-        />
-        <StatsCard
-          title="Risky Users"
-          value={stats.uniqueUsers.current.toString()}
-          icon={Users}
-          subtitle={`${stats.uniqueUsers.change >= 0 ? '+' : ''}${stats.uniqueUsers.change}% from last period`}
-          subtitleIcon={stats.uniqueUsers.change >= 0 ? TrendingUp : TrendingDown}
-        />
-        <StatsCard
-          title="Average Risk Score"
-          value={stats.riskScore.current.toFixed(1)}
-          icon={Shield}
-          subtitle={`${stats.riskScore.change >= 0 ? '+' : ''}${stats.riskScore.change}% from last period`}
-          subtitleIcon={stats.riskScore.change >= 0 ? TrendingUp : TrendingDown}
-        />
-        <StatsCard
-          title="Anomalies Detected"
-          value={stats.anomalies.current.toString()}
-          icon={AlertTriangle}
-          subtitle={`${stats.anomalies.change >= 0 ? '+' : ''}${stats.anomalies.change}% from last period`}
-          subtitleIcon={stats.anomalies.change >= 0 ? TrendingUp : TrendingDown}
-        />
-      </div>
+      <StatsSection stats={stats} totalAlerts={safeAlerts.length} />
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <TacticsChart 
-          alerts={alerts} 
-          onTacticSelect={setSelectedTactic}
-        />
-        <SeverityChart 
-          alerts={alerts} 
-          onSeveritySelect={setSelectedSeverity} 
-        />
+        <TacticsChart alerts={alerts} />
+        <SeverityChart alerts={alerts} />
       </div>
 
       {/* Risky Entities */}
@@ -196,7 +151,7 @@ const Index = () => {
 
       {/* Latest Anomalies */}
       <div className="w-full">
-        <AnomaliesTable alerts={filteredAlerts} />
+        <AnomaliesTable alerts={safeAlerts} />
       </div>
     </div>
   );
