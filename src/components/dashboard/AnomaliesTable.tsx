@@ -129,6 +129,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
                   <TableHead className="text-blue-300">Time</TableHead>
                   <TableHead className="text-blue-300">User</TableHead>
                   <TableHead className="text-blue-300">Computer</TableHead>
+                  <TableHead className="text-blue-300">IP Address</TableHead>
                   <TableHead className="text-blue-300">Title</TableHead>
                   <TableHead className="text-blue-300">Tactics</TableHead>
                   <TableHead className="text-blue-300">Techniques</TableHead>

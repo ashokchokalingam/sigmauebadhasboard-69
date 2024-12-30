@@ -30,6 +30,9 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView }: AlertTab
       >
         {alert.computer_name}
       </TableCell>
+      <TableCell className="text-blue-100 font-mono">
+        {alert.ip_address || 'N/A'}
+      </TableCell>
       <TableCell>
         <div className="flex flex-wrap gap-1">
           <span className="text-blue-100">{alert.title}</span>
