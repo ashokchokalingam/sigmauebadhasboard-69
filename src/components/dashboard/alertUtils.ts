@@ -15,11 +15,16 @@ export const calculateStats = (alerts: Alert[]) => {
     new Date(alert.system_time) >= fourteenDaysAgo && new Date(alert.system_time) < sevenDaysAgo
   );
 
-  // Calculate unique users
+  // Calculate unique users and computers
   const currentUniqueUsers = new Set(currentPeriodAlerts.map(alert => alert.user_id));
   const previousUniqueUsers = new Set(previousPeriodAlerts.map(alert => alert.user_id));
   const userChangePercent = previousUniqueUsers.size ? 
     Math.round(((currentUniqueUsers.size - previousUniqueUsers.size) / previousUniqueUsers.size) * 100) : 0;
+
+  const currentUniqueComputers = new Set(currentPeriodAlerts.map(alert => alert.computer_name));
+  const previousUniqueComputers = new Set(previousPeriodAlerts.map(alert => alert.computer_name));
+  const computerChangePercent = previousUniqueComputers.size ? 
+    Math.round(((currentUniqueComputers.size - previousUniqueComputers.size) / previousUniqueComputers.size) * 100) : 0;
 
   // Calculate risk scores
   const calculateAvgRiskScore = (alertsList: Alert[]) => {
@@ -43,11 +48,27 @@ export const calculateStats = (alerts: Alert[]) => {
   const anomaliesChangePercent = previousAnomalies ? 
     Math.round(((currentAnomalies - previousAnomalies) / previousAnomalies) * 100) : 0;
 
+  // Calculate severity distributions
+  const severityDistribution = {
+    critical: currentPeriodAlerts.filter(alert => alert.rule_level === 'critical').length,
+    high: currentPeriodAlerts.filter(alert => alert.rule_level === 'high').length,
+    medium: currentPeriodAlerts.filter(alert => alert.rule_level === 'medium').length,
+    low: currentPeriodAlerts.filter(alert => alert.rule_level === 'low').length
+  };
+
+  // Calculate unique IPs
+  const uniqueIPs = new Set(currentPeriodAlerts.map(alert => alert.ip_address).filter(Boolean));
+
   return {
     uniqueUsers: {
       current: currentUniqueUsers.size,
       change: userChangePercent,
       users: Array.from(currentUniqueUsers)
+    },
+    uniqueComputers: {
+      current: currentUniqueComputers.size,
+      change: computerChangePercent,
+      computers: Array.from(currentUniqueComputers)
     },
     riskScore: {
       current: currentAvgRiskScore,
@@ -56,6 +77,10 @@ export const calculateStats = (alerts: Alert[]) => {
     anomalies: {
       current: currentAnomalies,
       change: anomaliesChangePercent
-    }
+    },
+    severity: severityDistribution,
+    uniqueIPs: uniqueIPs.size,
+    totalEvents: currentPeriodAlerts.length,
+    totalAnomalies: currentAnomalies
   };
 };
