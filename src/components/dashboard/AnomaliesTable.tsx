@@ -22,6 +22,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
   const [timelineView, setTimelineView] = useState<TimelineState | null>(null);
   const [displayedAlerts, setDisplayedAlerts] = useState<Alert[]>([]);
   const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState<Record<string, string>>({});
   const loaderRef = useRef(null);
   const ITEMS_PER_PAGE = 100;
   
@@ -29,9 +30,20 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
     new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
   );
 
+  const filteredAlerts = sortedAlerts.filter(alert => {
+    return Object.entries(filters).every(([key, value]) => {
+      if (!value) return true;
+      if (key === "tags") {
+        return alert[key].toLowerCase().includes(value.toLowerCase());
+      }
+      return String(alert[key as keyof Alert]).toLowerCase() === value.toLowerCase();
+    });
+  });
+
   useEffect(() => {
-    setDisplayedAlerts(sortedAlerts.slice(0, ITEMS_PER_PAGE));
-  }, [alerts]);
+    setDisplayedAlerts(filteredAlerts.slice(0, ITEMS_PER_PAGE));
+    setPage(1);
+  }, [filters, alerts]);
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
@@ -47,7 +59,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
   }, []);
 
   const loadMore = useCallback(() => {
-    const nextItems = sortedAlerts.slice(
+    const nextItems = filteredAlerts.slice(
       page * ITEMS_PER_PAGE,
       (page + 1) * ITEMS_PER_PAGE
     );
@@ -57,7 +69,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
       setPage(prev => prev + 1);
       console.log(`Loaded more items. Current page: ${page + 1}`);
     }
-  }, [page, sortedAlerts]);
+  }, [page, filteredAlerts]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -102,6 +114,13 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
     }
   };
 
+  const handleFilterChange = (column: string, value: string) => {
+    setFilters(prev => ({
+      ...prev,
+      [column]: value
+    }));
+  };
+
   return (
     <div className="relative flex gap-4">
       <Card className={`bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300 ${selectedAlert || timelineView ? 'flex-[0.6]' : 'flex-1'}`}>
@@ -114,7 +133,11 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
         <CardContent>
           <div className="rounded-md border border-blue-500/10">
             <Table>
-              <AnomaliesTableHeader />
+              <AnomaliesTableHeader 
+                alerts={alerts}
+                onFilterChange={handleFilterChange}
+                filters={filters}
+              />
               <TableBody>
                 {displayedAlerts.map((alert) => (
                   <AlertTableRow
@@ -129,7 +152,7 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
             </Table>
             <InfiniteScrollLoader 
               ref={loaderRef}
-              hasMore={page * ITEMS_PER_PAGE < sortedAlerts.length}
+              hasMore={page * ITEMS_PER_PAGE < filteredAlerts.length}
             />
           </div>
         </CardContent>
