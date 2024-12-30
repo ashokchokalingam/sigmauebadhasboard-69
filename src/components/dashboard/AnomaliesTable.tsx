@@ -1,7 +1,7 @@
 import { Table, TableBody } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Alert } from "./types";
 import AlertTableRow from "./AlertTableRow";
 import AnomaliesTableHeader from "./AnomaliesTableHeader";
