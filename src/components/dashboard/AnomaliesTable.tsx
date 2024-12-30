@@ -40,6 +40,23 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
     setDisplayedAlerts(sortedAlerts.slice(0, ITEMS_PER_PAGE));
   }, [alerts]);
 
+  // Add ESC key handler
+  useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedAlert(null);
+        setTimelineView(null);
+        window.scrollTo({ left: 0, behavior: 'smooth' });
+      }
+    };
+
+    window.addEventListener('keydown', handleEscKey);
+
+    return () => {
+      window.removeEventListener('keydown', handleEscKey);
+    };
+  }, []);
+
   const loadMore = useCallback(() => {
     const nextItems = sortedAlerts.slice(
       page * ITEMS_PER_PAGE,
@@ -150,7 +167,6 @@ const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
                 ))}
               </TableBody>
             </Table>
-            {/* Infinite scroll trigger element */}
             <div 
               ref={loaderRef}
               className="h-10 flex items-center justify-center text-blue-400/60 text-sm"
