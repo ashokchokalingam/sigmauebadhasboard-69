@@ -15,10 +15,14 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView }: AlertTab
   
   // Convert UTC to local browser time
   const localTime = new Date(alert.system_time).toLocaleString(undefined, {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: false
+    hour12: false,
+    timeZoneName: 'short'
   });
   
   return (
