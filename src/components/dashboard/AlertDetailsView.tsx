@@ -1,6 +1,5 @@
 import { Alert } from "./types";
 import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertTriangle, Clock, Server, User, Hash, Activity, ChevronDown, ChevronUp } from "lucide-react";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineRawLog from "./TimelineRawLog";

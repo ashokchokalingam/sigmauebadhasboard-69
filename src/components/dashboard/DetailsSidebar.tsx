@@ -34,14 +34,14 @@ const DetailsSidebar = ({
       selectedAlert || timelineView ? 'translate-x-0' : 'translate-x-full'
     }`}>
       {selectedAlert && (
-        <Card className="h-full bg-transparent border-none">
+        <Card className="min-h-screen bg-transparent border-none">
           <CardContent className="p-6">
             <AlertDetailsView alert={selectedAlert} />
           </CardContent>
         </Card>
       )}
       {timelineView && (
-        <Card className="h-full bg-transparent border-none">
+        <Card className="min-h-screen bg-transparent border-none">
           <CardContent className="p-6">
             <TimelineView
               alerts={alerts}
