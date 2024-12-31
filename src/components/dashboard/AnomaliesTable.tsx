@@ -53,18 +53,18 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
             {/* Scrollable Table Container */}
             <div 
               ref={containerRef}
-              className="flex-1 table-container rounded-md border border-blue-500/10 overflow-auto max-h-[800px]"
+              className="flex-1 relative table-container rounded-md border border-blue-500/10 overflow-auto max-h-[800px]"
             >
               <div ref={tableRef}>
                 <Table>
-                  <thead>
+                  <thead className="sticky top-0 z-20 bg-black/90 backdrop-blur-sm border-b border-blue-500/10">
                     <tr>
                       {defaultColumns.map(column => (
-                        <th key={column.key} className="text-blue-300 px-4 py-2 sticky top-0 bg-black z-10">
+                        <th key={column.key} className="text-blue-300 px-4 py-2">
                           {column.label}
                         </th>
                       ))}
-                      <th className="w-[50px] sticky top-0 bg-black z-10"></th>
+                      <th className="w-[50px]"></th>
                     </tr>
                   </thead>
                   <TableBody className="bg-black/40">
