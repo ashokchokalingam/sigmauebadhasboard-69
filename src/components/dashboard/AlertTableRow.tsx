@@ -2,6 +2,8 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Alert } from "./types";
 import { extractTacticsAndTechniques, getRiskScore, getRiskColor } from "./utils";
+import { defaultColumns } from "./TableConfig";
+import AlertDetailsView from "./AlertDetailsView";
 
 interface AlertTableRowProps {
   alert: Alert;
@@ -14,7 +16,6 @@ interface AlertTableRowProps {
 const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleColumns }: AlertTableRowProps) => {
   const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
   
-  // Convert to browser's local time
   const browserTime = new Date(alert.system_time).toLocaleString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
@@ -121,23 +122,38 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
   };
   
   return (
-    <TableRow className="hover:bg-blue-950/30">
-      {["system_time", "user_id", "computer_name", "ip_address", "title", "tags", "techniques", "risk_score", "dbscan_cluster"].map(key => 
-        renderCell(key)
+    <>
+      <TableRow 
+        className={`hover:bg-blue-950/30 cursor-pointer ${isSelected ? 'bg-blue-950/20' : ''}`}
+        onClick={onToggle}
+      >
+        {["system_time", "user_id", "computer_name", "ip_address", "title", "tags", "techniques", "risk_score", "dbscan_cluster"].map(key => 
+          renderCell(key)
+        )}
+        <TableCell>
+          <button 
+            className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle();
+            }}
+          >
+            {isSelected ? (
+              <ChevronDown className="h-4 w-4 text-blue-400" />
+            ) : (
+              <ChevronRight className="h-4 w-4 text-blue-400" />
+            )}
+          </button>
+        </TableCell>
+      </TableRow>
+      {isSelected && (
+        <tr>
+          <td colSpan={visibleColumns.length + 1} className="bg-blue-950/10 border-t border-blue-500/10">
+            <AlertDetailsView alert={alert} />
+          </td>
+        </tr>
       )}
-      <TableCell>
-        <button 
-          className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
-          onClick={onToggle}
-        >
-          {isSelected ? (
-            <ChevronDown className="h-4 w-4 text-blue-400" />
-          ) : (
-            <ChevronRight className="h-4 w-4 text-blue-400" />
-          )}
-        </button>
-      </TableCell>
-    </TableRow>
+    </>
   );
 };
 
