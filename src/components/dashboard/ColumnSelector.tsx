@@ -27,12 +27,16 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
   const [pendingColumns, setPendingColumns] = useState<string[]>(visibleColumns);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSelectAll = () => {
+  const handleSelectAll = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     const allColumnKeys = columns.map(col => col.key);
     setPendingColumns(allColumnKeys);
   };
 
-  const handleClearAll = () => {
+  const handleClearAll = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     // Keep at least one column visible (Time)
     setPendingColumns(['system_time']);
   };
@@ -54,9 +58,11 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
     }
   };
 
-  const handleApplyChanges = () => {
+  const handleApplyChanges = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     onColumnToggle(pendingColumns);
-    setIsOpen(false); // Only close after applying changes
+    setIsOpen(false);
     toast({
       title: "Column Changes Applied",
       description: "The selected columns are now visible",
@@ -64,7 +70,7 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
   };
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen} modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/20">
           <Filter className="mr-2 h-4 w-4" />
@@ -101,6 +107,7 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
               className="text-blue-300 hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer"
               checked={pendingColumns.includes(column.key)}
               onCheckedChange={(checked) => handleColumnToggle(column.key, checked)}
+              onSelect={(e) => e.preventDefault()}
             >
               {column.label}
             </DropdownMenuCheckboxItem>
