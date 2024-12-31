@@ -10,6 +10,7 @@ import ColumnSelector from "./ColumnSelector";
 import TableHeaderComponent from "./TableHeader";
 import AlertTableRow from "./TableRow";
 import { allColumns, defaultVisibleColumns } from "./TableConfig";
+import AlertDetailsView from "./AlertDetailsView";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
@@ -73,6 +74,8 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
       description: "The columns have been reordered",
     });
   };
+
+  const selectedAlert = alerts.find(alert => alert.id === selectedAlertId);
 
   return (
     <div className="space-y-6">
@@ -150,6 +153,14 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           )}
         </CardContent>
       </Card>
+
+      {selectedAlert && (
+        <Card className="bg-black/40 border-blue-500/10">
+          <CardContent className="p-6">
+            <AlertDetailsView alert={selectedAlert} />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
