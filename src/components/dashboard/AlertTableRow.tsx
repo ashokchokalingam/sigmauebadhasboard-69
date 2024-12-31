@@ -1,5 +1,5 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Alert } from "./types";
 import { extractTacticsAndTechniques } from "./utils";
 import { defaultColumns } from "./TableConfig";
@@ -107,20 +107,18 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
               onToggle();
             }}
           >
-            {isSelected ? (
-              <ChevronDown className="h-4 w-4 text-blue-400" />
-            ) : (
-              <ChevronRight className="h-4 w-4 text-blue-400" />
-            )}
+            <ChevronRight className="h-4 w-4 text-blue-400" />
           </button>
         </TableCell>
       </TableRow>
       {isSelected && (
-        <TableRow>
-          <TableCell colSpan={defaultColumns.length + 1} className="bg-blue-950/10 border-t border-blue-500/10 p-0">
-            <AlertDetailsView alert={alert} onClose={onToggle} />
-          </TableCell>
-        </TableRow>
+        <tr>
+          <td colSpan={defaultColumns.length + 1} className="p-0">
+            <div className="fixed top-0 right-0 h-screen w-[600px] z-50 shadow-2xl">
+              <AlertDetailsView alert={alert} onClose={onToggle} />
+            </div>
+          </td>
+        </tr>
       )}
     </>
   );
