@@ -59,19 +59,8 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     });
   }).slice(0, ALERTS_PER_PAGE);
 
-  const handleColumnToggle = (columnKey: string) => {
-    setVisibleColumns(prev => {
-      const newColumns = prev.includes(columnKey)
-        ? prev.filter(col => col !== columnKey)
-        : [...prev, columnKey];
-      
-      toast({
-        title: prev.includes(columnKey) ? "Column Hidden" : "Column Shown",
-        description: `${defaultColumns.find(col => col.key === columnKey)?.label} column has been ${prev.includes(columnKey) ? "hidden" : "shown"}`,
-      });
-      
-      return newColumns;
-    });
+  const handleColumnToggle = (newColumns: string[]) => {
+    setVisibleColumns(newColumns);
   };
 
   const toggleAlert = (alert: Alert) => {
