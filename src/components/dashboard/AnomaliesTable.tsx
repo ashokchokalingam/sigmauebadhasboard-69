@@ -1,7 +1,7 @@
 import { Table, TableBody } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Alert } from "./types";
 import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
@@ -17,7 +17,6 @@ interface AnomaliesTableProps {
 
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
-  const [selectedRowIndex, setSelectedRowIndex] = useState<number>(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   
@@ -36,9 +35,8 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
 
   const filteredAlerts = sortedAlerts.slice(0, ALERTS_PER_PAGE);
 
-  const handleAlertSelect = (alert: Alert, index: number) => {
+  const handleAlertSelect = (alert: Alert) => {
     setSelectedAlert(selectedAlert?.id === alert.id ? null : alert);
-    setSelectedRowIndex(selectedAlert?.id === alert.id ? -1 : index);
   };
 
   return (
@@ -52,6 +50,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
         </CardHeader>
         <CardContent>
           <div className="flex gap-6">
+            {/* Scrollable Table Container */}
             <div 
               ref={containerRef}
               className="flex-1 table-container rounded-md border border-blue-500/10 overflow-auto max-h-[800px]"
@@ -69,12 +68,12 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                     </tr>
                   </thead>
                   <TableBody className="bg-black/40">
-                    {filteredAlerts.map((alert, index) => (
+                    {filteredAlerts.map((alert) => (
                       <AlertTableRow
                         key={alert.id}
                         alert={alert}
                         isSelected={selectedAlert?.id === alert.id}
-                        onToggle={() => handleAlertSelect(alert, index)}
+                        onToggle={() => handleAlertSelect(alert)}
                         onTimelineView={() => {}}
                         visibleColumns={defaultColumns.map(col => col.key)}
                       />
@@ -84,19 +83,12 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               </div>
             </div>
 
-            {selectedAlert && selectedRowIndex >= 0 && (
-              <div 
-                className="w-[600px] flex-shrink-0 overflow-auto max-h-[800px]"
-                style={{
-                  marginTop: `${selectedRowIndex * 53}px` // Approximate height of each row
-                }}
-              >
+            {/* Fixed Alert Details Panel */}
+            {selectedAlert && (
+              <div className="w-[600px] flex-shrink-0 overflow-auto max-h-[800px] sticky top-0">
                 <AlertDetailsView
                   alert={selectedAlert}
-                  onClose={() => {
-                    setSelectedAlert(null);
-                    setSelectedRowIndex(-1);
-                  }}
+                  onClose={() => setSelectedAlert(null)}
                 />
               </div>
             )}
