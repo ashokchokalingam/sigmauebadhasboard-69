@@ -1,12 +1,15 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '@/lib/db';
 
+interface CountResponse {
+  count: number;
+}
+
 export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+  req: Request,
+  res: Response
 ) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    return new Response('Method not allowed', { status: 405 });
   }
 
   try {
@@ -19,11 +22,21 @@ export default async function handler(
       WHERE system_time >= ?
     `;
 
-    const [result] = await db.query(query, [last24Hours.toISOString()]);
+    const [result] = await db.query<CountResponse[]>(query, [last24Hours.toISOString()]);
     
-    res.status(200).json({ count: result[0].count });
+    return new Response(JSON.stringify({ count: result[0].count }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     console.error('Database error:', error);
-    res.status(500).json({ message: 'Error fetching alert count' });
+    return new Response(JSON.stringify({ message: 'Error fetching alert count' }), { 
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 }
