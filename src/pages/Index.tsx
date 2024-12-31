@@ -4,6 +4,8 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { useAlerts } from "@/hooks/useAlerts";
 import { Alert } from "@/components/dashboard/types";
 import { AlertTriangle } from "lucide-react";
+import AlertDistribution from "@/components/dashboard/AlertDistribution";
+import UserRiskLevels from "@/components/dashboard/UserRiskLevels";
 
 const Index = () => {
   const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "computer"; id: string } | null>(null);
@@ -65,16 +67,22 @@ const Index = () => {
   }
 
   return (
-    <DashboardLayout
-      alerts={currentAlerts}
-      allAlerts={allAlerts}
-      totalRecords={currentTotalRecords}
-      isLoading={isLoading}
-      onEntitySelect={setSelectedEntity}
-      selectedEntity={selectedEntity}
-      onLoadMore={handleLoadMore}
-      hasMore={data?.hasMore || false}
-    />
+    <>
+      <DashboardLayout
+        alerts={currentAlerts}
+        allAlerts={allAlerts}
+        totalRecords={currentTotalRecords}
+        isLoading={isLoading}
+        onEntitySelect={setSelectedEntity}
+        selectedEntity={selectedEntity}
+        onLoadMore={handleLoadMore}
+        hasMore={data?.hasMore || false}
+      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+        <AlertDistribution alerts={allAlerts} />
+        <UserRiskLevels alerts={allAlerts} />
+      </div>
+    </>
   );
 };
 
