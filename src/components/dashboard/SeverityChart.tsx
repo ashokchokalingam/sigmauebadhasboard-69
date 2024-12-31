@@ -47,15 +47,15 @@ const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-[#1a1f2c] border border-blue-500/30 rounded-lg p-4 shadow-lg">
+        <div className="bg-[#1a1f2c] border border-gray-700 rounded-lg p-3 shadow-xl">
           <div className="flex items-center gap-2 mb-1">
             <div 
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: data.color }}
             />
-            <p className="text-blue-100 font-medium">{data.name}</p>
+            <p className="text-gray-200 font-medium">{data.name}</p>
           </div>
-          <p className="text-blue-300 font-mono text-lg">
+          <p className="text-gray-300 font-mono">
             {data.value.toLocaleString()} alerts
           </p>
         </div>
@@ -76,36 +76,13 @@ const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
         <div className="h-[400px] relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <defs>
-                {severityData.map((entry, index) => (
-                  <linearGradient
-                    key={`gradient-${index}`}
-                    id={`pieGradient-${index}`}
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="0%"
-                      stopColor={entry.color}
-                      stopOpacity={1}
-                    />
-                    <stop
-                      offset="100%"
-                      stopColor={entry.color}
-                      stopOpacity={0.8}
-                    />
-                  </linearGradient>
-                ))}
-              </defs>
               <Pie
                 data={severityData}
                 cx="50%"
                 cy="50%"
                 innerRadius={100}
                 outerRadius={160}
-                paddingAngle={4}
+                paddingAngle={2}
                 dataKey="value"
                 onDoubleClick={(data) => {
                   if (data && data.name) {
@@ -121,10 +98,9 @@ const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
                 {severityData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={`url(#pieGradient-${index})`}
-                    stroke={entry.color}
-                    strokeWidth={2}
-                    className="cursor-pointer transition-opacity duration-300 hover:opacity-90"
+                    fill={entry.color}
+                    stroke="transparent"
+                    className="transition-opacity duration-300 hover:opacity-90"
                   />
                 ))}
               </Pie>
@@ -135,10 +111,10 @@ const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
             {severityData.map((entry, index) => (
               <div key={index} className="flex items-center gap-2">
                 <div 
-                  className="w-4 h-4 rounded-full"
+                  className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: entry.color }} 
                 />
-                <span className="text-sm text-blue-200">{entry.name}</span>
+                <span className="text-sm text-gray-300">{entry.name}</span>
               </div>
             ))}
           </div>
