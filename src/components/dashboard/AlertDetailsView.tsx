@@ -24,7 +24,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   };
 
   return (
-    <div className="bg-black/90 border-l border-blue-500/10 shadow-2xl flex flex-col h-full">
+    <div className="bg-black/90 border border-blue-500/10 shadow-2xl flex flex-col rounded-md">
       {/* Header */}
       <div className="flex justify-between items-center p-6 border-b border-blue-500/10 bg-black/90 backdrop-blur-sm sticky top-0 z-10">
         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
@@ -38,8 +38,8 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
         </button>
       </div>
 
-      {/* Scrollable Content Area */}
-      <ScrollArea className="flex-1 overflow-y-auto">
+      {/* Content */}
+      <div className="p-6 space-y-6">
         {/* Title Section */}
         <div className="space-y-2 border-b border-blue-500/10 pb-4">
           <div className="flex items-center gap-2">
@@ -102,7 +102,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
           </div>
           <TimelineRawLog alert={alert} />
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };
