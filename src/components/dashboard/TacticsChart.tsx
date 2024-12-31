@@ -29,20 +29,20 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
       }
     });
 
-    // Rich color palette with deep, saturated colors
+    // Deep, rich colors inspired by the reference images
     const colors = [
-      '#403E43',  // Charcoal Gray
-      '#6E59A5',  // Tertiary Purple
+      '#7B61FF',  // Deep Purple
+      '#4C6EF5',  // Rich Blue
+      '#F97316',  // Vibrant Orange
+      '#22C55E',  // Rich Green
+      '#6366F1',  // Indigo
+      '#3B82F6',  // Bright Blue
+      '#2563EB',  // Royal Blue
+      '#7C3AED',  // Deep Violet
       '#0EA5E9',  // Ocean Blue
-      '#F97316',  // Bright Orange
-      '#059669',  // Emerald
-      '#1A1F2C',  // Dark Purple
-      '#DC2626',  // Red
-      '#7E69AB',  // Secondary Purple
-      '#9b87f5',  // Primary Purple
-      '#D97706',  // Amber
-      '#0FA0CE',  // Bright Blue
-      '#8B5CF6'   // Vivid Purple
+      '#0D9488',  // Teal
+      '#15803D',  // Forest Green
+      '#B45309'   // Bronze
     ];
 
     return Object.entries(tacticsCount)
@@ -57,9 +57,9 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-[#1a1f2c] border border-[#403E43] rounded-lg p-4 shadow-xl">
-          <p className="text-[#9b87f5] font-bold text-xl capitalize">{label}</p>
-          <p className="text-[#7E69AB] font-mono text-lg">{payload[0].value} alerts</p>
+        <div className="bg-[#1E293B] border border-[#334155] rounded-lg p-4 shadow-xl">
+          <p className="text-[#94A3B8] font-bold text-xl capitalize">{label}</p>
+          <p className="text-[#CBD5E1] font-mono text-lg">{payload[0].value} alerts</p>
         </div>
       );
     }
@@ -67,10 +67,10 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
   };
 
   return (
-    <Card className="bg-[#1A1F2C]/90 border-[#403E43] hover:bg-[#1A1F2C] transition-all duration-300">
+    <Card className="bg-[#0F172A] border-[#334155] hover:bg-[#1E293B] transition-all duration-300">
       <CardHeader>
-        <CardTitle className="flex items-center gap-3 text-3xl font-bold text-[#9b87f5]">
-          <Activity className="h-8 w-8 text-[#7E69AB]" />
+        <CardTitle className="flex items-center gap-3 text-3xl font-bold text-[#E2E8F0]">
+          <Activity className="h-8 w-8 text-[#7B61FF]" />
           MITRE ATT&CK Tactics
         </CardTitle>
       </CardHeader>
@@ -85,29 +85,29 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
             >
               <CartesianGrid 
                 strokeDasharray="3 3" 
-                stroke="#403E43" 
+                stroke="#334155" 
                 horizontal={true}
                 vertical={false}
               />
               <XAxis 
                 type="number"
-                stroke="#6E59A5"
-                tick={{ fill: '#9b87f5', fontSize: 16 }}
+                stroke="#64748B"
+                tick={{ fill: '#94A3B8', fontSize: 16 }}
                 domain={[0, 'auto']}
               />
               <YAxis 
                 type="category"
                 dataKey="name"
-                stroke="#6E59A5"
-                tick={{ fill: '#9b87f5', fontSize: 16 }}
+                stroke="#64748B"
+                tick={{ fill: '#94A3B8', fontSize: 16 }}
                 width={140}
               />
               <Tooltip 
                 content={<CustomTooltip />}
                 cursor={{ 
-                  fill: 'rgba(155, 135, 245, 0.15)',
+                  fill: 'rgba(123, 97, 255, 0.15)',
                   strokeWidth: 1,
-                  stroke: 'rgba(155, 135, 245, 0.3)'
+                  stroke: 'rgba(123, 97, 255, 0.3)'
                 }}
               />
               <Bar 
