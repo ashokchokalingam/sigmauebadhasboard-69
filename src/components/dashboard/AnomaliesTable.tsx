@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, X } from "lucide-react";
 import { useState } from "react";
 import { Alert } from "./types";
-import DetailsSidebar from "./DetailsSidebar";
 import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
 import { useToast } from "../ui/use-toast";
@@ -11,13 +10,6 @@ import ColumnSelector from "./ColumnSelector";
 import TableHeaderComponent from "./TableHeader";
 import AlertTableRow from "./TableRow";
 import { allColumns, defaultVisibleColumns } from "./TableConfig";
-import AlertDetailsView from "./AlertDetailsView";
-import TimelineView from "./TimelineView";
-
-interface TimelineState {
-  type: "user" | "computer";
-  id: string;
-}
 
 interface AnomaliesTableProps {
   alerts: Alert[];
@@ -26,8 +18,7 @@ interface AnomaliesTableProps {
 }
 
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
-  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
-  const [timelineView, setTimelineView] = useState<TimelineState | null>(null);
+  const [selectedAlertId, setSelectedAlertId] = useState<string | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [visibleColumns, setVisibleColumns] = useState<string[]>(defaultVisibleColumns);
   const { toast } = useToast();
@@ -81,20 +72,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
       title: "Column Order Updated",
       description: "The columns have been reordered",
     });
-  };
-
-  const toggleAlert = (alert: Alert) => {
-    setSelectedAlert(selectedAlert?.id === alert.id ? null : alert);
-    setTimelineView(null);
-  };
-
-  const handleTimelineView = (type: "user" | "computer", id: string) => {
-    if (timelineView?.type === type && timelineView?.id === id) {
-      setTimelineView(null);
-    } else {
-      setSelectedAlert(null);
-      setTimelineView({ type, id });
-    }
   };
 
   return (
@@ -152,9 +129,9 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                   <AlertTableRow
                     key={alert.id}
                     alert={alert}
-                    isSelected={selectedAlert?.id === alert.id}
-                    onToggle={() => toggleAlert(alert)}
-                    onTimelineView={handleTimelineView}
+                    isSelected={selectedAlertId === alert.id}
+                    onToggle={() => setSelectedAlertId(selectedAlertId === alert.id ? null : alert.id)}
+                    onTimelineView={() => {}} // Implement if needed
                     visibleColumns={visibleColumns}
                   />
                 ))}
@@ -173,28 +150,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           )}
         </CardContent>
       </Card>
-
-      {selectedAlert && (
-        <Card className="bg-black/40 border-blue-500/10">
-          <CardContent className="p-6">
-            <AlertDetailsView alert={selectedAlert} />
-          </CardContent>
-        </Card>
-      )}
-
-      {timelineView && (
-        <Card className="bg-black/40 border-blue-500/10">
-          <CardContent className="p-6">
-            <TimelineView
-              alerts={alerts}
-              entityType={timelineView.type}
-              entityId={timelineView.id}
-              onClose={() => setTimelineView(null)}
-              inSidebar={false}
-            />
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };

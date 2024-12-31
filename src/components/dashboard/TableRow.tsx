@@ -131,12 +131,18 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
   };
   
   return (
-    <TableRow className="hover:bg-blue-950/30">
+    <TableRow 
+      className={`hover:bg-blue-950/30 cursor-pointer ${isSelected ? 'bg-blue-950/20' : ''}`}
+      onClick={onToggle}
+    >
       {defaultColumns.map(({key}) => renderCell(key as ColumnKey))}
-      <TableCell>
+      <TableCell className="w-10">
         <button 
           className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
-          onClick={onToggle}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent row click from triggering
+            onToggle();
+          }}
         >
           {isSelected ? (
             <ChevronDown className="h-4 w-4 text-blue-400" />
