@@ -3,8 +3,6 @@ import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Alert } from "@/components/dashboard/types";
 import { AlertTriangle } from "lucide-react";
-import AlertDistribution from "@/components/dashboard/AlertDistribution";
-import UserRiskLevels from "@/components/dashboard/UserRiskLevels";
 import { useAlerts } from "@/hooks/useAlerts";
 
 const Index = () => {
@@ -72,10 +70,6 @@ const Index = () => {
         onLoadMore={handleLoadMore}
         hasMore={data?.hasMore || false}
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-        <AlertDistribution alerts={allAlerts} />
-        <UserRiskLevels alerts={allAlerts} />
-      </div>
     </div>
   );
 };
