@@ -89,7 +89,11 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground min-h-screen;
+  }
+
+  #root {
+    @apply min-h-screen bg-background;
   }
 }
 
@@ -120,4 +124,13 @@
 
 tbody tr:hover {
   @apply bg-blue-950/30 transition-colors duration-200;
+}
+
+/* Ensure consistent background color when scrolling */
+html, body {
+  @apply bg-background overflow-x-hidden min-h-screen;
+}
+
+.card {
+  @apply relative z-10;
 }
