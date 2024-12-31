@@ -159,6 +159,14 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
               </div>
             </div>
           </div>
+
+          {/* Raw Log Section */}
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium text-blue-100 border-b border-blue-500/10 pb-2">Raw Log</h3>
+            <div className="pl-7">
+              <TimelineRawLog alert={alert} />
+            </div>
+          </div>
         </div>
       </ScrollArea>
     </div>
