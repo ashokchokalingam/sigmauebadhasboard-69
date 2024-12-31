@@ -33,23 +33,23 @@ const DetailsSidebar = ({
   if (!selectedAlert && !timelineView) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-blue-950/50 backdrop-blur-sm overflow-hidden">
       <div className="absolute inset-0 flex items-start justify-center p-4">
         <ResizablePanelGroup
           direction="horizontal"
-          className="min-h-[95vh] w-[95vw] max-w-[1800px] rounded-lg bg-background"
+          className="min-h-[95vh] w-[95vw] max-w-[1800px] rounded-lg bg-blue-950"
         >
           <ResizablePanel defaultSize={40} minSize={30}>
-            <div className="h-[95vh] overflow-y-auto scrollbar-thin">
+            <div className="h-[95vh] overflow-y-auto scrollbar-thin scrollbar-track-blue-950 scrollbar-thumb-blue-800">
               {selectedAlert && (
-                <Card className="h-full border-none rounded-none">
+                <Card className="h-full border-none rounded-none bg-transparent">
                   <CardContent className="p-6">
                     <AlertDetailsView alert={selectedAlert} />
                   </CardContent>
                 </Card>
               )}
               {timelineView && (
-                <Card className="h-full border-none rounded-none">
+                <Card className="h-full border-none rounded-none bg-transparent">
                   <CardContent className="p-6">
                     <TimelineView
                       alerts={alerts}
@@ -63,12 +63,14 @@ const DetailsSidebar = ({
               )}
             </div>
           </ResizablePanel>
-          <ResizableHandle withHandle />
+          <ResizableHandle withHandle className="bg-blue-800/20 hover:bg-blue-700/30" />
           <ResizablePanel defaultSize={60} minSize={30}>
-            <div className="h-[95vh] overflow-y-auto scrollbar-thin p-6">
-              <h2 className="text-2xl font-bold mb-4 text-blue-100">Event Details</h2>
-              <div className="space-y-4">
-                <MetadataPanel selectedAlert={selectedAlert} />
+            <div className="h-[95vh] overflow-y-auto scrollbar-thin scrollbar-track-blue-950 scrollbar-thumb-blue-800">
+              <div className="p-6">
+                <h2 className="text-2xl font-bold mb-4 text-blue-100">Event Details</h2>
+                <div className="space-y-4">
+                  <MetadataPanel selectedAlert={selectedAlert} />
+                </div>
               </div>
             </div>
           </ResizablePanel>
