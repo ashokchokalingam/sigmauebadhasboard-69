@@ -13,7 +13,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   const [isRawExpanded, setIsRawExpanded] = useState(false);
 
   return (
-    <div className="p-6 space-y-4 w-full">
+    <div className="p-6 space-y-4 w-full bg-black/40">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-blue-100">Alert Details</h2>
         <button 
@@ -26,7 +26,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
       </div>
       
       <div className="grid grid-cols-2 gap-4">
-        {additionalColumns.filter(col => col.key !== 'raw').map(({ key, label }) => (
+        {additionalColumns.map(({ key, label }) => (
           <div key={key} className="space-y-1">
             <h3 className="text-sm font-medium text-blue-300">{label}</h3>
             <p className="text-blue-100">

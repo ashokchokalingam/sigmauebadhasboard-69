@@ -27,7 +27,6 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     year: 'numeric',
   });
 
-  // Add ESC key handler
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && isSelected) {
@@ -45,8 +44,6 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
   }, [isSelected, onToggle]);
 
   const renderCell = (key: string) => {
-    if (!visibleColumns.includes(key)) return null;
-
     switch (key) {
       case "title":
         return (
@@ -117,13 +114,16 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     <>
       <TableRow 
         className={`hover:bg-blue-950/30 cursor-pointer ${isSelected ? 'bg-blue-950/20' : ''}`}
+        onClick={onToggle}
       >
         {defaultColumns.map(column => renderCell(column.key))}
         <TableCell>
           <button 
             className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
-            onClick={onToggle}
-            aria-label={isSelected ? "Collapse details" : "Expand details"}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle();
+            }}
           >
             {isSelected ? (
               <ChevronDown className="h-4 w-4 text-blue-400" />
