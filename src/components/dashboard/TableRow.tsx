@@ -2,9 +2,8 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Alert } from "./types";
 import { extractTacticsAndTechniques, getRiskScore, getRiskColor } from "./utils";
-import { ColumnKey, defaultColumns } from "./TableConfig";
 
-interface TableRowProps {
+interface AlertTableRowProps {
   alert: Alert;
   isSelected: boolean;
   onToggle: () => void;
@@ -12,8 +11,8 @@ interface TableRowProps {
   visibleColumns: string[];
 }
 
-const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleColumns }: TableRowProps) => {
-  const { tactics, techniques } = extractTacticsAndTechniques(alert.tags || '');
+const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleColumns }: AlertTableRowProps) => {
+  const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
   
   const browserTime = new Date(alert.system_time).toLocaleString(undefined, {
     hour: '2-digit',
@@ -25,7 +24,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     year: 'numeric',
   });
 
-  const renderCell = (key: ColumnKey) => {
+  const renderCell = (key: string) => {
     if (!visibleColumns.includes(key)) return null;
 
     switch (key) {
@@ -70,9 +69,11 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
           <TableCell>
             <div className="flex flex-col gap-1">
               <span className="text-blue-100 font-medium">{alert.title}</span>
-              <span className="text-blue-300/70 text-sm line-clamp-2">
-                {alert.description || 'N/A'}
-              </span>
+              {alert.description && (
+                <span className="text-blue-300/70 text-sm line-clamp-2">
+                  {alert.description}
+                </span>
+              )}
             </div>
           </TableCell>
         );
@@ -119,18 +120,6 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
             </span>
           </TableCell>
         );
-      case "event_id":
-      case "provider_name":
-      case "ruleid":
-      case "rule_level":
-      case "task":
-      case "target_user_name":
-      case "target_domain_name":
-        return (
-          <TableCell className="text-blue-100">
-            {alert[key] || 'N/A'}
-          </TableCell>
-        );
       default:
         return null;
     }
@@ -141,14 +130,13 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
       className={`hover:bg-blue-950/30 cursor-pointer ${isSelected ? 'bg-blue-950/20' : ''}`}
       onClick={onToggle}
     >
-      {defaultColumns.map(({key}) => renderCell(key as ColumnKey))}
-      <TableCell className="w-10">
+      {["system_time", "user_id", "computer_name", "ip_address", "title", "tags", "techniques", "risk_score", "dbscan_cluster"].map(key => 
+        renderCell(key)
+      )}
+      <TableCell>
         <button 
           className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggle();
-          }}
+          onClick={onToggle}
         >
           {isSelected ? (
             <ChevronDown className="h-4 w-4 text-blue-400" />
