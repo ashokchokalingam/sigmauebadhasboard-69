@@ -47,6 +47,15 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
       {/* Content */}
       <ScrollArea className="h-[calc(100%-5rem)] p-6">
         <div className="space-y-8">
+          {/* Alert ID Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-blue-400">
+              <Hash className="h-5 w-5" />
+              <h3 className="text-lg font-medium">Alert ID</h3>
+            </div>
+            <p className="text-blue-200 pl-7 font-mono">{alert.id || 'N/A'}</p>
+          </div>
+
           {/* Alert Details Section */}
           <div className="space-y-6">
             <div className="space-y-4">
@@ -156,6 +165,27 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
                   <span className="text-sm">Provider</span>
                 </div>
                 <p className="text-blue-200">{alert.provider_name || 'N/A'}</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-blue-400">
+                  <User className="h-4 w-4" />
+                  <span className="text-sm">Target User</span>
+                </div>
+                <p className="text-blue-200">{alert.target_user_name || 'N/A'}</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-blue-400">
+                  <Globe className="h-4 w-4" />
+                  <span className="text-sm">Target Domain</span>
+                </div>
+                <p className="text-blue-200">{alert.target_domain_name || 'N/A'}</p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-blue-400">
+                  <Clock className="h-4 w-4" />
+                  <span className="text-sm">System Time</span>
+                </div>
+                <p className="text-blue-200">{browserTime || 'N/A'}</p>
               </div>
             </div>
           </div>
