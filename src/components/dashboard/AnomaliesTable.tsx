@@ -105,34 +105,34 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
       <Card className={`bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300 ${selectedAlert || timelineView ? 'flex-[0.6]' : 'flex-1'}`}>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-blue-100">
-              <AlertTriangle className="h-5 w-5 text-blue-500" />
-              Recent Events - Last 7 Days (Limited to 1000)
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              {Object.keys(filters).some(key => filters[key]) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setFilters({});
-                    toast({
-                      title: "Filters Cleared",
-                      description: "Showing all events from the last 7 days",
-                    });
-                  }}
-                  className="text-blue-400 hover:text-blue-300"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Clear Filters
-                </Button>
-              )}
+            <div className="flex items-center gap-4">
+              <CardTitle className="flex items-center gap-2 text-blue-100">
+                <AlertTriangle className="h-5 w-5 text-blue-500" />
+                Recent Events - Last 7 Days (Limited to 1000)
+              </CardTitle>
               <ColumnSelector
                 columns={defaultColumns}
                 visibleColumns={visibleColumns}
                 onColumnToggle={handleColumnToggle}
               />
             </div>
+            {Object.keys(filters).some(key => filters[key]) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setFilters({});
+                  toast({
+                    title: "Filters Cleared",
+                    description: "Showing all events from the last 7 days",
+                  });
+                }}
+                className="text-blue-400 hover:text-blue-300"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Clear Filters
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>

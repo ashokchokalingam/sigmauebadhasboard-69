@@ -24,18 +24,18 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="ml-auto h-8 lg:flex">
+        <Button variant="outline" size="sm" className="h-8 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/20">
           <Settings2 className="mr-2 h-4 w-4" />
           <span>Columns</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[200px]">
-        <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+      <DropdownMenuContent align="start" className="w-[200px] bg-slate-900 border border-blue-500/20">
+        <DropdownMenuLabel className="text-blue-400">Toggle Columns</DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-blue-500/20" />
         {columns.map((column) => (
           <DropdownMenuCheckboxItem
             key={column.key}
-            className="capitalize"
+            className="text-blue-300 hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer"
             checked={visibleColumns.includes(column.key)}
             onCheckedChange={() => onColumnToggle(column.key)}
           >
