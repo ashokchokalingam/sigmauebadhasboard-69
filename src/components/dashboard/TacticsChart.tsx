@@ -29,15 +29,20 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
       }
     });
 
-    // Professional color palette avoiding pink and rainbow colors
+    // Rich color palette excluding pink
     const colors = [
-      '#403E43', // Charcoal Gray
-      '#1A1F2C', // Dark Purple
-      '#0EA5E9', // Ocean Blue
-      '#6E59A5', // Tertiary Purple
-      '#8E9196', // Neutral Gray
-      '#222222', // Dark Gray
-      '#0FA0CE'  // Another Blue
+      '#403E43',  // Charcoal Gray
+      '#6E59A5',  // Tertiary Purple
+      '#0EA5E9',  // Ocean Blue
+      '#F97316',  // Bright Orange
+      '#059669',  // Emerald
+      '#1A1F2C',  // Dark Purple
+      '#DC2626',  // Red
+      '#8E9196',  // Neutral Gray
+      '#7E69AB',  // Secondary Purple
+      '#D97706',  // Amber
+      '#0FA0CE',  // Bright Blue
+      '#9333EA'   // Deep Purple
     ];
 
     return Object.entries(tacticsCount)
@@ -64,8 +69,8 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
   return (
     <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
-        <CardTitle className="flex items-center gap-3 text-3xl font-bold text-gray-100">
-          <Activity className="h-8 w-8 text-gray-400" />
+        <CardTitle className="flex items-center gap-3 text-3xl font-bold text-blue-100">
+          <Activity className="h-8 w-8 text-blue-500" />
           MITRE ATT&CK Tactics
         </CardTitle>
       </CardHeader>
