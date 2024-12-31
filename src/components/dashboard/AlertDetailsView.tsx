@@ -24,10 +24,10 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 w-[600px] bg-black/90 border-l border-blue-500/10 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 flex flex-col">
-      {/* Header - Fixed at top */}
-      <div className="flex justify-between items-center p-6 border-b border-blue-500/10">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+    <div className="fixed top-0 right-0 w-[600px] h-screen bg-black/90 border-l border-blue-500/10 shadow-2xl flex flex-col overflow-hidden">
+      {/* Header */}
+      <div className="flex justify-between items-center p-6 border-b border-blue-500/10 bg-black/90 backdrop-blur-sm">
+        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
           Alert Details
         </h2>
         <button 
@@ -39,8 +39,8 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
       </div>
 
       {/* Scrollable Content Area */}
-      <ScrollArea className="flex-1 p-6">
-        <div className="space-y-6">
+      <ScrollArea className="flex-1 overflow-y-auto">
+        <div className="p-6 space-y-6">
           {/* Title Section */}
           <div className="space-y-2 border-b border-blue-500/10 pb-4">
             <div className="flex items-center gap-2">
