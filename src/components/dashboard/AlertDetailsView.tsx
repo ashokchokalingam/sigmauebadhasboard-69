@@ -25,7 +25,10 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
 
   return (
     <div 
-      className="fixed right-0 top-0 w-[600px] h-screen bg-black/90 border-l border-blue-500/10 shadow-2xl flex flex-col overflow-hidden"
+      className="absolute right-0 w-[600px] bg-black/90 border-l border-blue-500/10 shadow-2xl flex flex-col overflow-hidden"
+      style={{
+        height: 'min(100vh, 800px)',
+      }}
     >
       {/* Header */}
       <div className="flex justify-between items-center p-6 border-b border-blue-500/10 bg-black/90 backdrop-blur-sm sticky top-0 z-10">

@@ -42,7 +42,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
             Recent Events - Last 7 Days (Limited to 1000)
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="relative">
           <div className="table-container rounded-md border border-blue-500/10">
             <Table>
               <thead>
@@ -79,15 +79,22 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               </Button>
             </div>
           )}
+          
+          {selectedAlert && (
+            <div 
+              className="absolute top-0 right-0 h-full"
+              style={{
+                transform: `translateY(var(--selected-row-top, 0px))`,
+              }}
+            >
+              <AlertDetailsView
+                alert={selectedAlert}
+                onClose={() => setSelectedAlert(null)}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
-      
-      {selectedAlert && (
-        <AlertDetailsView
-          alert={selectedAlert}
-          onClose={() => setSelectedAlert(null)}
-        />
-      )}
     </div>
   );
 };
