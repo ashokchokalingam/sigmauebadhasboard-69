@@ -4,6 +4,7 @@ import { Alert } from "./types";
 import { extractTacticsAndTechniques } from "./utils";
 import { defaultColumns } from "./TableConfig";
 import AlertDetailsView from "./AlertDetailsView";
+import { useEffect } from "react";
 
 interface AlertTableRowProps {
   alert: Alert;
@@ -25,6 +26,23 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     day: 'numeric',
     year: 'numeric',
   });
+
+  // Add ESC key handler
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isSelected) {
+        onToggle();
+      }
+    };
+
+    if (isSelected) {
+      window.addEventListener('keydown', handleEsc);
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [isSelected, onToggle]);
 
   const renderCell = (key: string) => {
     if (!visibleColumns.includes(key)) return null;
@@ -109,6 +127,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
               e.stopPropagation();
               onToggle();
             }}
+            aria-label={isSelected ? "Collapse details" : "Expand details"}
           >
             {isSelected ? (
               <ChevronDown className="h-4 w-4 text-blue-400" />
@@ -121,7 +140,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
       {isSelected && (
         <TableRow>
           <TableCell colSpan={visibleColumns.length + 1} className="bg-blue-950/10 border-t border-blue-500/10 p-0">
-            <AlertDetailsView alert={alert} />
+            <AlertDetailsView alert={alert} onClose={onToggle} />
           </TableCell>
         </TableRow>
       )}

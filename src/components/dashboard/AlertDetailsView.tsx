@@ -6,13 +6,25 @@ import { additionalColumns } from "./TableConfig";
 
 interface AlertDetailsViewProps {
   alert: Alert;
+  onClose: () => void;
 }
 
-const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
+const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   const [isRawExpanded, setIsRawExpanded] = useState(false);
 
   return (
     <div className="p-6 space-y-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold text-blue-100">Alert Details</h2>
+        <button 
+          onClick={onClose}
+          className="text-blue-400 hover:text-blue-300 transition-colors"
+          aria-label="Close details"
+        >
+          ESC to close
+        </button>
+      </div>
+      
       <div className="grid grid-cols-2 gap-4">
         {additionalColumns.filter(col => col.key !== 'raw').map(({ key, label }) => (
           <div key={key} className="space-y-1">
