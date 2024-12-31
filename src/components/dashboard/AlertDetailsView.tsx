@@ -30,7 +30,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     .map(tag => tag.trim().toUpperCase());
 
   return (
-    <div className="bg-black/90 border border-blue-500/10 shadow-2xl flex flex-col rounded-md w-[600px]">
+    <div className="h-full bg-black/90 border-l border-blue-500/10">
       {/* Header */}
       <div className="flex justify-between items-center p-6 border-b border-blue-500/10 bg-black/90 backdrop-blur-sm sticky top-0 z-10">
         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
@@ -45,7 +45,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
       </div>
 
       {/* Content */}
-      <ScrollArea className="flex-1 p-6">
+      <ScrollArea className="h-[calc(100%-5rem)] p-6">
         <div className="space-y-8">
           {/* Alert Details Section */}
           <div className="space-y-6">
