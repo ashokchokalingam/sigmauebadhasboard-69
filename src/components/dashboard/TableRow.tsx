@@ -13,7 +13,7 @@ interface TableRowProps {
 }
 
 const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleColumns }: TableRowProps) => {
-  const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
+  const { tactics, techniques } = extractTacticsAndTechniques(alert.tags || '');
   
   const browserTime = new Date(alert.system_time).toLocaleString(undefined, {
     hour: '2-digit',
@@ -64,15 +64,10 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
           <TableCell>
             <div className="flex flex-col gap-1">
               <span className="text-blue-100 font-medium">{alert.title}</span>
+              <span className="text-blue-300/70 text-sm line-clamp-2">
+                {alert.description || 'N/A'}
+              </span>
             </div>
-          </TableCell>
-        );
-      case "description":
-        return (
-          <TableCell>
-            <span className="text-blue-300/70 text-sm line-clamp-2">
-              {alert.description || 'N/A'}
-            </span>
           </TableCell>
         );
       case "tags":
@@ -128,14 +123,6 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         return (
           <TableCell className="text-blue-100">
             {alert[key] || 'N/A'}
-          </TableCell>
-        );
-      case "raw":
-        return (
-          <TableCell>
-            <span className="text-blue-300/70 text-sm line-clamp-1 font-mono">
-              {alert.raw || 'N/A'}
-            </span>
           </TableCell>
         );
       default:
