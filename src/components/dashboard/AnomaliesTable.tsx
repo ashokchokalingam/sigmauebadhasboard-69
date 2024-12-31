@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
 import AlertTableRow from "./AlertTableRow";
 import { defaultColumns } from "./TableConfig";
+import AlertDetailsView from "./AlertDetailsView";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
@@ -15,7 +16,7 @@ interface AnomaliesTableProps {
 }
 
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
-  const [selectedAlertId, setSelectedAlertId] = useState<string | null>(null);
+  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -33,7 +34,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   const filteredAlerts = sortedAlerts.slice(0, ALERTS_PER_PAGE);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
       <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-blue-100">
@@ -59,8 +60,8 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                   <AlertTableRow
                     key={alert.id}
                     alert={alert}
-                    isSelected={selectedAlertId === alert.id}
-                    onToggle={() => setSelectedAlertId(selectedAlertId === alert.id ? null : alert.id)}
+                    isSelected={selectedAlert?.id === alert.id}
+                    onToggle={() => setSelectedAlert(selectedAlert?.id === alert.id ? null : alert)}
                     onTimelineView={() => {}}
                     visibleColumns={defaultColumns.map(col => col.key)}
                   />
@@ -80,6 +81,13 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           )}
         </CardContent>
       </Card>
+      
+      {selectedAlert && (
+        <AlertDetailsView
+          alert={selectedAlert}
+          onClose={() => setSelectedAlert(null)}
+        />
+      )}
     </div>
   );
 };
