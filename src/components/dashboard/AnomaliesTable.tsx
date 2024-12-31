@@ -62,34 +62,36 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
             {/* Table Container */}
             <div className="flex-1 overflow-hidden border border-blue-500/10 rounded-md">
               <div className="relative">
-                <div className="overflow-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
-                  <Table>
-                    <AnomaliesTableHeader
-                      alerts={alerts}
-                      onFilterChange={handleFilterChange}
-                      filters={filters}
-                      visibleColumns={defaultColumns.map(col => col.key)}
-                    />
-                    <TableBody>
-                      {filteredAlerts.map((alert) => (
-                        <AlertTableRow
-                          key={alert.id}
-                          alert={alert}
-                          isSelected={selectedAlert?.id === alert.id}
-                          onToggle={() => handleAlertSelect(alert)}
-                          onTimelineView={() => {}}
-                          visibleColumns={defaultColumns.map(col => col.key)}
-                        />
-                      ))}
-                    </TableBody>
-                  </Table>
+                <div className="overflow-x-auto">
+                  <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
+                    <Table>
+                      <AnomaliesTableHeader
+                        alerts={alerts}
+                        onFilterChange={handleFilterChange}
+                        filters={filters}
+                        visibleColumns={defaultColumns.map(col => col.key)}
+                      />
+                      <TableBody>
+                        {filteredAlerts.map((alert) => (
+                          <AlertTableRow
+                            key={alert.id}
+                            alert={alert}
+                            isSelected={selectedAlert?.id === alert.id}
+                            onToggle={() => handleAlertSelect(alert)}
+                            onTimelineView={() => {}}
+                            visibleColumns={defaultColumns.map(col => col.key)}
+                          />
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Alert Details Panel */}
             {selectedAlert && (
-              <div className="w-[400px] flex-shrink-0">
+              <div className="w-[400px] flex-shrink-0 sticky top-0 max-h-[800px] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
                 <AlertDetailsView
                   alert={selectedAlert}
                   onClose={() => setSelectedAlert(null)}

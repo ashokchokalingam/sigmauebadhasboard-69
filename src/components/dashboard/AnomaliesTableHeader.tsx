@@ -31,24 +31,30 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
 
   const columns = [
     { key: "system_time", label: "Time" },
-    { key: "user_id", label: "User" },
     { key: "computer_name", label: "Computer" },
-    { key: "ip_address", label: "IP Address" },
+    { key: "user_id", label: "User" },
     { key: "title", label: "Title" },
     { key: "tags", label: "Tactics" },
-    { key: "techniques", label: "Techniques" },
-    { key: "risk_score", label: "Risk Score" },
-    { key: "dbscan_cluster", label: "DBSCAN Cluster" }
+    { key: "description", label: "Description" },
+    { key: "event_id", label: "Event ID" },
+    { key: "provider_name", label: "Provider" },
+    { key: "dbscan_cluster", label: "Cluster" },
+    { key: "ip_address", label: "IP Address" },
+    { key: "ruleid", label: "Rule ID" },
+    { key: "rule_level", label: "Level" },
+    { key: "task", label: "Task" },
+    { key: "target_user_name", label: "Target User" },
+    { key: "target_domain_name", label: "Target Domain" }
   ];
 
   return (
-    <TableHeader className="sticky top-0 z-50">
+    <TableHeader className="sticky top-0 z-50 bg-black/90">
       <TableRow className="hover:bg-blue-950/30">
         {columns.map(column => 
           visibleColumns.includes(column.key) && (
             <TableHead 
               key={column.key} 
-              className="text-blue-300 bg-black/90 backdrop-blur-sm border-b border-blue-500/10"
+              className="text-blue-300 bg-black/90 backdrop-blur-sm border-b border-blue-500/10 whitespace-nowrap sticky top-0"
             >
               {column.key === "techniques" ? (
                 column.label
@@ -63,7 +69,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
             </TableHead>
           )
         )}
-        <TableHead className="text-blue-300 w-[50px] bg-black/90 backdrop-blur-sm border-b border-blue-500/10"></TableHead>
+        <TableHead className="text-blue-300 w-[50px] bg-black/90 backdrop-blur-sm border-b border-blue-500/10 sticky top-0"></TableHead>
       </TableRow>
     </TableHeader>
   );
