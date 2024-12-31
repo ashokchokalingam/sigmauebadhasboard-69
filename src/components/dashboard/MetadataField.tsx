@@ -34,7 +34,7 @@ const MetadataField = ({ icon: Icon, label, value, isRawLog = false }: MetadataF
           </button>
         )}
       </div>
-      <div className="overflow-x-auto scrollbar-thin scrollbar-track-blue-950 scrollbar-thumb-blue-800">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-track-purple-950 scrollbar-thumb-purple-800">
         <div className={`text-sm text-purple-100 font-mono ${isRawLog ? 'whitespace-pre-wrap' : ''}`}>
           {truncatedValue}
         </div>
