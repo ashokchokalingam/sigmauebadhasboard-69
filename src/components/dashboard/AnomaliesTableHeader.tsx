@@ -10,7 +10,6 @@ interface AnomaliesTableHeaderProps {
 }
 
 const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns }: AnomaliesTableHeaderProps) => {
-  // Get data from last 7 days
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   
@@ -19,7 +18,6 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
     return alertDate >= sevenDaysAgo;
   });
 
-  // Extract unique values for each column from filtered data
   const getUniqueValues = (key: keyof Alert) => {
     const uniqueValues = Array.from(new Set(last7DaysAlerts.map(alert => {
       if (key === 'system_time') {
@@ -44,11 +42,14 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
   ];
 
   return (
-    <TableHeader className="sticky top-0 z-20 bg-black/90 backdrop-blur-sm">
+    <TableHeader className="sticky top-0 z-50">
       <TableRow className="hover:bg-blue-950/30">
         {columns.map(column => 
           visibleColumns.includes(column.key) && (
-            <TableHead key={column.key} className="text-blue-300 bg-black/90">
+            <TableHead 
+              key={column.key} 
+              className="text-blue-300 bg-black/90 backdrop-blur-sm border-b border-blue-500/10"
+            >
               {column.key === "techniques" ? (
                 column.label
               ) : (
@@ -62,7 +63,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
             </TableHead>
           )
         )}
-        <TableHead className="text-blue-300 w-[50px] bg-black/90"></TableHead>
+        <TableHead className="text-blue-300 w-[50px] bg-black/90 backdrop-blur-sm border-b border-blue-500/10"></TableHead>
       </TableRow>
     </TableHeader>
   );
