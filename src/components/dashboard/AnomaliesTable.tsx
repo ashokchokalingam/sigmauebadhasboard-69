@@ -27,7 +27,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   const [filters, setFilters] = useState<Record<string, string>>({});
   const { toast } = useToast();
   
-  // Filter alerts for last 7 days and limit to 1000
+  // Filter alerts for last 7 days and limit to 1000 for table only
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   
@@ -39,7 +39,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     .sort((a, b) => 
       new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
     )
-    .slice(0, 1000);  // Limit to 1000 logs
+    .slice(0, 1000);  // Limit to 1000 logs for table view only
 
   const filteredAlerts = sortedAlerts.filter(alert => {
     return Object.entries(filters).every(([key, value]) => {
