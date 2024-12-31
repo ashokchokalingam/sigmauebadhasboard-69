@@ -30,7 +30,7 @@ const DetailsSidebar = ({
   }, [onTimelineClose]);
 
   return (
-    <div className={`fixed top-0 right-0 h-screen w-[800px] bg-black/90 transform transition-all duration-300 ease-in-out overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent z-50 ${
+    <div className={`fixed top-0 right-0 h-screen w-[1000px] bg-black/90 transform transition-all duration-300 ease-in-out overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent z-50 ${
       selectedAlert || timelineView ? 'translate-x-0' : 'translate-x-full'
     }`}>
       {selectedAlert && (
