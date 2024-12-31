@@ -18,7 +18,6 @@ const DetailsSidebar = ({
   alerts,
   onTimelineClose 
 }: DetailsSidebarProps) => {
-  // Handle ESC key press to close the entire sidebar
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -33,36 +32,39 @@ const DetailsSidebar = ({
   if (!selectedAlert && !timelineView) return null;
 
   return (
-    <ResizablePanelGroup
-      direction="horizontal"
-      className={`fixed top-0 right-0 h-screen min-w-[600px] max-w-[1400px] bg-black/90 transform transition-all duration-300 ease-in-out z-50 ${
-        selectedAlert || timelineView ? 'translate-x-0' : 'translate-x-full'
-      }`}
-    >
-      <ResizableHandle withHandle className="bg-blue-500/20 hover:bg-blue-500/30 transition-colors" />
-      <ResizablePanel defaultSize={80} minSize={30} className="overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent">
-        {selectedAlert && (
-          <Card className="min-h-screen bg-transparent border-none">
-            <CardContent className="p-6">
-              <AlertDetailsView alert={selectedAlert} />
-            </CardContent>
-          </Card>
-        )}
-        {timelineView && (
-          <Card className="min-h-screen bg-transparent border-none">
-            <CardContent className="p-6">
-              <TimelineView
-                alerts={alerts}
-                entityType={timelineView.type}
-                entityId={timelineView.id}
-                onClose={onTimelineClose}
-                inSidebar={true}
-              />
-            </CardContent>
-          </Card>
-        )}
-      </ResizablePanel>
-    </ResizablePanelGroup>
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
+      <div className="absolute inset-0 flex items-center justify-center">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-[90vh] w-[90vw] max-w-[1400px] min-w-[600px] rounded-lg bg-background"
+        >
+          <ResizablePanel defaultSize={100} minSize={30}>
+            <div className="h-full overflow-y-auto scrollbar-thin">
+              {selectedAlert && (
+                <Card className="h-full border-none rounded-none">
+                  <CardContent className="p-6">
+                    <AlertDetailsView alert={selectedAlert} />
+                  </CardContent>
+                </Card>
+              )}
+              {timelineView && (
+                <Card className="h-full border-none rounded-none">
+                  <CardContent className="p-6">
+                    <TimelineView
+                      alerts={alerts}
+                      entityType={timelineView.type}
+                      entityId={timelineView.id}
+                      onClose={onTimelineClose}
+                      inSidebar={true}
+                    />
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+    </div>
   );
 };
 
