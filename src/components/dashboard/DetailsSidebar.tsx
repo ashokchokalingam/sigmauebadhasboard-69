@@ -4,7 +4,22 @@ import AlertDetailsView from "./AlertDetailsView";
 import TimelineView from "./TimelineView";
 import { useEffect } from "react";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import { Shield, AlertTriangle, Info, User, Monitor, Calendar, Hash, Database } from "lucide-react";
+import { 
+  Shield, 
+  AlertTriangle, 
+  Info, 
+  User, 
+  Monitor, 
+  Calendar, 
+  Hash, 
+  Database,
+  Tag,
+  FileText,
+  Server,
+  Activity,
+  UserCheck,
+  Globe
+} from "lucide-react";
 
 interface DetailsSidebarProps {
   selectedAlert: Alert | null;
@@ -76,9 +91,59 @@ const DetailsSidebar = ({
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={60} minSize={30}>
             <div className="h-full overflow-y-auto scrollbar-thin p-6">
-              <h2 className="text-2xl font-bold mb-4">Additional Details</h2>
+              <h2 className="text-2xl font-bold mb-4">Metadata Details</h2>
               {selectedAlert && (
                 <div className="grid grid-cols-1 gap-4">
+                  <MetadataField 
+                    icon={FileText} 
+                    label="Title" 
+                    value={selectedAlert.title} 
+                  />
+                  <MetadataField 
+                    icon={Tag} 
+                    label="Tags" 
+                    value={selectedAlert.tags} 
+                  />
+                  <MetadataField 
+                    icon={FileText} 
+                    label="Description" 
+                    value={selectedAlert.description} 
+                  />
+                  <MetadataField 
+                    icon={Calendar} 
+                    label="System Time" 
+                    value={selectedAlert.system_time ? new Date(selectedAlert.system_time).toLocaleString() : null} 
+                  />
+                  <MetadataField 
+                    icon={Server} 
+                    label="Computer Name" 
+                    value={selectedAlert.computer_name} 
+                  />
+                  <MetadataField 
+                    icon={User} 
+                    label="User ID" 
+                    value={selectedAlert.user_id} 
+                  />
+                  <MetadataField 
+                    icon={Hash} 
+                    label="Event ID" 
+                    value={selectedAlert.event_id} 
+                  />
+                  <MetadataField 
+                    icon={Activity} 
+                    label="Provider Name" 
+                    value={selectedAlert.provider_name} 
+                  />
+                  <MetadataField 
+                    icon={Activity} 
+                    label="DBSCAN Cluster" 
+                    value={selectedAlert.dbscan_cluster} 
+                  />
+                  <MetadataField 
+                    icon={Globe} 
+                    label="IP Address" 
+                    value={selectedAlert.ip_address} 
+                  />
                   <MetadataField 
                     icon={Shield} 
                     label="Rule ID" 
@@ -95,37 +160,15 @@ const DetailsSidebar = ({
                     value={selectedAlert.task} 
                   />
                   <MetadataField 
-                    icon={User} 
+                    icon={UserCheck} 
                     label="Target User" 
                     value={selectedAlert.target_user_name} 
-                  />
-                  <MetadataField 
-                    icon={Monitor} 
-                    label="Computer Name" 
-                    value={selectedAlert.computer_name} 
                   />
                   <MetadataField 
                     icon={Database} 
                     label="Target Domain" 
                     value={selectedAlert.target_domain_name} 
                   />
-                  <MetadataField 
-                    icon={Hash} 
-                    label="Event ID" 
-                    value={selectedAlert.event_id} 
-                  />
-                  <MetadataField 
-                    icon={Calendar} 
-                    label="System Time" 
-                    value={new Date(selectedAlert.system_time || '').toLocaleString()} 
-                  />
-                  {selectedAlert.ip_address && (
-                    <MetadataField 
-                      icon={Monitor} 
-                      label="IP Address" 
-                      value={selectedAlert.ip_address} 
-                    />
-                  )}
                 </div>
               )}
               {!selectedAlert && (
