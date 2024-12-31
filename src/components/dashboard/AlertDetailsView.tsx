@@ -5,7 +5,7 @@ import { AlertTriangle, Clock, Server, User, Hash, Activity, ChevronDown, Chevro
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineRawLog from "./TimelineRawLog";
 import AlertDetailsHeader from "./AlertDetailsHeader";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface AlertDetailsViewProps {
   alert: Alert;
@@ -13,18 +13,6 @@ interface AlertDetailsViewProps {
 
 const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
   const [isRawExpanded, setIsRawExpanded] = useState(false);
-
-  // Handle ESC key press
-  useEffect(() => {
-    const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isRawExpanded) {
-        setIsRawExpanded(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleEscKey);
-    return () => window.removeEventListener('keydown', handleEscKey);
-  }, [isRawExpanded]);
 
   return (
     <div className="space-y-6">
@@ -103,11 +91,9 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
             )}
           </div>
           {isRawExpanded && (
-            <ScrollArea className="h-[400px] w-full">
-              <div className="p-4">
-                <TimelineRawLog alert={alert} />
-              </div>
-            </ScrollArea>
+            <div className="p-4">
+              <TimelineRawLog alert={alert} />
+            </div>
           )}
         </Card>
       )}

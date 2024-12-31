@@ -17,7 +17,7 @@ const DetailsSidebar = ({
   alerts,
   onTimelineClose 
 }: DetailsSidebarProps) => {
-  // Handle ESC key press
+  // Handle ESC key press to close the entire sidebar
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
