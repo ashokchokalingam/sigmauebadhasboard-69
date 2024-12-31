@@ -2,6 +2,7 @@ import { Alert } from "./types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import TimelineRawLog from "./TimelineRawLog";
+import { additionalColumns } from "./TableConfig";
 
 interface AlertDetailsViewProps {
   alert: Alert;
@@ -10,27 +11,10 @@ interface AlertDetailsViewProps {
 const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
   const [isRawExpanded, setIsRawExpanded] = useState(false);
 
-  const fields = [
-    { key: 'title', label: 'Title' },
-    { key: 'description', label: 'Description' },
-    { key: 'system_time', label: 'Time' },
-    { key: 'computer_name', label: 'Computer' },
-    { key: 'user_id', label: 'User Origin' },
-    { key: 'event_id', label: 'Event ID' },
-    { key: 'provider_name', label: 'Provider' },
-    { key: 'dbscan_cluster', label: 'ML Outlier' },
-    { key: 'ip_address', label: 'IP Address' },
-    { key: 'ruleid', label: 'Rule ID' },
-    { key: 'rule_level', label: 'Rule Level' },
-    { key: 'task', label: 'Task' },
-    { key: 'target_user_name', label: 'Target User' },
-    { key: 'target_domain_name', label: 'Target Domain' },
-  ];
-
   return (
     <div className="p-6 space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        {fields.map(({ key, label }) => (
+        {additionalColumns.filter(col => col.key !== 'raw').map(({ key, label }) => (
           <div key={key} className="space-y-1">
             <h3 className="text-sm font-medium text-blue-300">{label}</h3>
             <p className="text-blue-100">

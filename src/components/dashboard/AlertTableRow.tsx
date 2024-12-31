@@ -84,6 +84,12 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
             {alert.user_id || 'N/A'}
           </TableCell>
         );
+      case "task":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.task || 'N/A'}
+          </TableCell>
+        );
       default:
         return null;
     }
@@ -93,12 +99,16 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     <>
       <TableRow 
         className={`hover:bg-blue-950/30 cursor-pointer ${isSelected ? 'bg-blue-950/20' : ''}`}
+        onClick={onToggle}
       >
         {defaultColumns.map(column => renderCell(column.key))}
         <TableCell>
           <button 
             className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
-            onClick={onToggle}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle();
+            }}
           >
             {isSelected ? (
               <ChevronDown className="h-4 w-4 text-blue-400" />
@@ -109,11 +119,11 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         </TableCell>
       </TableRow>
       {isSelected && (
-        <tr>
-          <td colSpan={visibleColumns.length + 1} className="bg-blue-950/10 border-t border-blue-500/10">
+        <TableRow>
+          <TableCell colSpan={visibleColumns.length + 1} className="bg-blue-950/10 border-t border-blue-500/10 p-0">
             <AlertDetailsView alert={alert} />
-          </td>
-        </tr>
+          </TableCell>
+        </TableRow>
       )}
     </>
   );
