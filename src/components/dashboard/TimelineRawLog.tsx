@@ -27,16 +27,27 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
     );
   }
 
+  let formattedJson;
+  try {
+    // Try to parse and format the JSON if it's a string
+    formattedJson = typeof alert.raw === 'string' 
+      ? JSON.stringify(JSON.parse(alert.raw), null, 2)
+      : JSON.stringify(alert.raw, null, 2);
+  } catch (e) {
+    // If parsing fails, display the raw string
+    formattedJson = typeof alert.raw === 'string' ? alert.raw : JSON.stringify(alert.raw);
+  }
+
   return (
-    <div className="p-4">
+    <div className="w-full">
       <div className="flex items-center gap-2 mb-2 text-blue-400">
         <Terminal className="h-4 w-4" />
         Raw Log
       </div>
-      <div className="bg-[#1E1E1E] rounded-lg border border-blue-500/10">
+      <div className="bg-[#1E1E1E] rounded-lg border border-blue-500/10 w-full">
         <pre className="p-4 overflow-x-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent">
-          <code ref={codeRef} className="language-json">
-            {JSON.stringify(JSON.parse(alert.raw), null, 2)}
+          <code ref={codeRef} className="language-json whitespace-pre-wrap break-words">
+            {formattedJson}
           </code>
         </pre>
       </div>
