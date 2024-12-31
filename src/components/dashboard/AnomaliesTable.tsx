@@ -134,7 +134,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
         </CardHeader>
         <CardContent>
           <div className="table-container rounded-md border border-blue-500/10">
-            <div className="min-w-full inline-block align-middle">
+            <div className="w-full align-middle">
               <Table>
                 <TableHeaderComponent 
                   alerts={alerts}

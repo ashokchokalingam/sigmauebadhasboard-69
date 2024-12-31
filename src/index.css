@@ -112,14 +112,18 @@
 }
 
 /* Table Styles */
-.overflow-x-auto {
-  @apply bg-black/40 backdrop-blur-sm;
-}
-
 .table-container {
   position: relative;
   overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
   @apply bg-black/40 backdrop-blur-sm scrollbar-thin;
+}
+
+.overflow-x-auto {
+  @apply bg-black/40 backdrop-blur-sm;
+  max-width: 100vw;
+  overflow-x: auto;
 }
 
 tbody tr:hover {
