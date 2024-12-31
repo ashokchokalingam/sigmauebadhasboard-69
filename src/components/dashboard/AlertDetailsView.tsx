@@ -1,6 +1,7 @@
 import { Alert } from "./types";
 import { X, FileText, Target, Shield, Hash, Terminal, Clock, Computer, User, Network, AlertTriangle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import TimelineRawLog from "./TimelineRawLog";
 
 interface AlertDetailsViewProps {
   alert: Alert;
