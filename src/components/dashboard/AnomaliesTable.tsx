@@ -133,36 +133,34 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-blue-500/10 overflow-x-auto bg-black/40">
+          <div className="table-container rounded-md border border-blue-500/10">
             <div className="min-w-full inline-block align-middle">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeaderComponent 
-                    alerts={alerts}
-                    onFilterChange={(column, value) => {
-                      setFilters(prev => ({
-                        ...prev,
-                        [column]: value
-                      }));
-                    }}
-                    filters={filters}
-                    visibleColumns={visibleColumns}
-                    onColumnOrderChange={handleColumnOrderChange}
-                  />
-                  <TableBody className="bg-black/40">
-                    {filteredAlerts.map((alert) => (
-                      <AlertTableRow
-                        key={alert.id}
-                        alert={alert}
-                        isSelected={selectedAlert?.id === alert.id}
-                        onToggle={() => toggleAlert(alert)}
-                        onTimelineView={handleTimelineView}
-                        visibleColumns={visibleColumns}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+              <Table>
+                <TableHeaderComponent 
+                  alerts={alerts}
+                  onFilterChange={(column, value) => {
+                    setFilters(prev => ({
+                      ...prev,
+                      [column]: value
+                    }));
+                  }}
+                  filters={filters}
+                  visibleColumns={visibleColumns}
+                  onColumnOrderChange={handleColumnOrderChange}
+                />
+                <TableBody className="bg-black/40">
+                  {filteredAlerts.map((alert) => (
+                    <AlertTableRow
+                      key={alert.id}
+                      alert={alert}
+                      isSelected={selectedAlert?.id === alert.id}
+                      onToggle={() => toggleAlert(alert)}
+                      onTimelineView={handleTimelineView}
+                      visibleColumns={visibleColumns}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </div>
           {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (

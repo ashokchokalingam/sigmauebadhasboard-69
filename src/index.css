@@ -100,30 +100,24 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
+  @apply bg-blue-950/20 rounded;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(59, 130, 246, 0.3);
-  border-radius: 3px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: rgba(59, 130, 246, 0.5);
+  @apply bg-blue-500/30 rounded hover:bg-blue-500/50 transition-colors;
 }
 
 /* Table Styles */
 .overflow-x-auto {
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
+  @apply bg-black/40 backdrop-blur-sm;
 }
 
 .table-container {
   position: relative;
   overflow-x: auto;
-  background-color: rgba(0, 0, 0, 0.4);
+  @apply bg-black/40 backdrop-blur-sm scrollbar-thin;
 }
 
 tbody tr:hover {
-  background-color: rgba(59, 130, 246, 0.1) !important;
+  @apply bg-blue-950/30 transition-colors duration-200;
 }
