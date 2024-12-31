@@ -30,7 +30,6 @@ const DashboardLayout = ({
   onLoadMore,
   hasMore
 }: DashboardLayoutProps) => {
-  // Calculate stats using all alerts for the widgets, passing the total count
   const stats = calculateStats(allAlerts, totalRecords);
 
   if (selectedEntity) {
@@ -45,8 +44,8 @@ const DashboardLayout = ({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
-      <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-8">
+    <div className="min-h-screen bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
+      <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-8 bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10">
         <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">
           Exabeam Event Dashboard
         </h1>
@@ -56,17 +55,23 @@ const DashboardLayout = ({
         </button>
       </div>
 
-      <StatsSection stats={stats} totalAlerts={totalRecords} />
+      <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10 mb-8">
+        <StatsSection stats={stats} totalAlerts={totalRecords} />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <TacticsChart 
-          alerts={allAlerts} 
-          onTacticSelect={() => {}} 
-        />
-        <SeverityChart 
-          alerts={allAlerts} 
-          onSeveritySelect={() => {}} 
-        />
+        <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10">
+          <TacticsChart 
+            alerts={allAlerts} 
+            onTacticSelect={() => {}} 
+          />
+        </div>
+        <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10">
+          <SeverityChart 
+            alerts={allAlerts} 
+            onSeveritySelect={() => {}} 
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -86,7 +91,7 @@ const DashboardLayout = ({
         </div>
       </div>
 
-      <div className="w-full">
+      <div className="w-full bg-black/40 rounded-lg backdrop-blur-sm border border-blue-500/10">
         <AnomaliesTable 
           alerts={alerts.slice(0, 1000)} 
           onLoadMore={onLoadMore}
