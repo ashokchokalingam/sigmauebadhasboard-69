@@ -1,8 +1,5 @@
 import { Alert } from "./types";
 import { X, FileText, Target, Shield, Hash, Terminal, Clock, Computer, User, Network, AlertTriangle } from "lucide-react";
-import { useState } from "react";
-import TimelineRawLog from "./TimelineRawLog";
-import { allColumns } from "./TableConfig";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AlertDetailsViewProps {
@@ -11,8 +8,6 @@ interface AlertDetailsViewProps {
 }
 
 const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
-  const [isRawExpanded, setIsRawExpanded] = useState(false);
-
   const getIconForField = (key: string) => {
     switch (key) {
       case "title": return <FileText className="h-5 w-5 text-blue-400" />;
@@ -28,21 +23,23 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 w-[600px] bg-black/90 border-l border-blue-500/10 shadow-2xl transform transition-transform duration-300 ease-in-out z-50">
-      <ScrollArea className="h-screen">
-        <div className="p-6 space-y-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Alert Details
-            </h2>
-            <button 
-              onClick={onClose}
-              className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
-            >
-              <X className="h-5 w-5 text-blue-400" />
-            </button>
-          </div>
+    <div className="fixed inset-y-0 right-0 w-[600px] bg-black/90 border-l border-blue-500/10 shadow-2xl transform transition-transform duration-300 ease-in-out z-50 flex flex-col">
+      {/* Header - Fixed at top */}
+      <div className="flex justify-between items-center p-6 border-b border-blue-500/10">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          Alert Details
+        </h2>
+        <button 
+          onClick={onClose}
+          className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
+        >
+          <X className="h-5 w-5 text-blue-400" />
+        </button>
+      </div>
 
+      {/* Scrollable Content Area */}
+      <ScrollArea className="flex-1 p-6">
+        <div className="space-y-6">
           {/* Title Section */}
           <div className="space-y-2 border-b border-blue-500/10 pb-4">
             <div className="flex items-center gap-2">
@@ -84,31 +81,26 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
 
           {/* Details Grid */}
           <div className="grid grid-cols-2 gap-6">
-            {allColumns
-              .filter(col => !['title', 'description', 'tags'].includes(col.key))
-              .map(({ key, label }) => (
-                <div key={key} className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    {getIconForField(key)}
-                    <h4 className="text-sm font-medium text-blue-300">{label}</h4>
-                  </div>
-                  <p className="text-blue-100 pl-7">
-                    {alert[key as keyof Alert]?.toString() || 'N/A'}
-                  </p>
+            {['ruleid', 'system_time', 'computer_name', 'user_id', 'ip_address'].map((key) => (
+              <div key={key} className="space-y-2">
+                <div className="flex items-center gap-2">
+                  {getIconForField(key)}
+                  <h4 className="text-sm font-medium text-blue-300">{key.replace('_', ' ').toUpperCase()}</h4>
                 </div>
+                <p className="text-blue-100 pl-7">
+                  {alert[key as keyof Alert]?.toString() || 'N/A'}
+                </p>
+              </div>
             ))}
           </div>
           
-          {/* Raw Data Section */}
+          {/* Raw Data Section - Always Expanded */}
           <div className="mt-6 border-t border-blue-500/10 pt-4">
-            <button
-              className="w-full flex items-center gap-2 p-4 hover:bg-blue-500/5 transition-colors rounded-lg"
-              onClick={() => setIsRawExpanded(!isRawExpanded)}
-            >
+            <div className="flex items-center gap-2 mb-4">
               <Terminal className="h-6 w-6 text-green-400" />
               <span className="text-lg font-semibold text-green-100">Raw Data</span>
-            </button>
-            {isRawExpanded && alert.raw && (
+            </div>
+            {alert.raw && (
               <div className="mt-4">
                 <TimelineRawLog alert={alert} />
               </div>
