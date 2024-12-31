@@ -32,7 +32,7 @@ const MetadataPanel = ({ selectedAlert }: MetadataPanelProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="grid grid-cols-1 gap-4 pb-8">
       <MetadataField icon={AlertCircle} label="Title" value={selectedAlert.title} />
       <MetadataField icon={MessageSquare} label="Description" value={selectedAlert.description} />
       <MetadataField icon={Tag} label="Tags" value={selectedAlert.tags} />

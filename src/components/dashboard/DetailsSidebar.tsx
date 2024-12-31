@@ -67,7 +67,9 @@ const DetailsSidebar = ({
           <ResizablePanel defaultSize={60} minSize={30}>
             <div className="h-[95vh] overflow-y-auto scrollbar-thin p-6">
               <h2 className="text-2xl font-bold mb-4">Event Details</h2>
-              <MetadataPanel selectedAlert={selectedAlert} />
+              <div className="space-y-4">
+                <MetadataPanel selectedAlert={selectedAlert} />
+              </div>
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>
