@@ -33,12 +33,12 @@ const DetailsSidebar = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center p-4">
         <ResizablePanelGroup
           direction="horizontal"
           className="h-[90vh] w-[90vw] max-w-[1400px] min-w-[600px] rounded-lg bg-background"
         >
-          <ResizablePanel defaultSize={50}>
+          <ResizablePanel defaultSize={50} minSize={30}>
             <div className="h-full overflow-y-auto scrollbar-thin">
               {selectedAlert && (
                 <Card className="h-full border-none rounded-none">
@@ -63,7 +63,7 @@ const DetailsSidebar = ({
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={50}>
+          <ResizablePanel defaultSize={50} minSize={30}>
             <div className="h-full overflow-y-auto scrollbar-thin p-6">
               <h2 className="text-2xl font-bold mb-4">Additional Details</h2>
               <p className="text-muted-foreground">Select a section to view more information.</p>
