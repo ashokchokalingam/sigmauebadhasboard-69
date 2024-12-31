@@ -1,15 +1,16 @@
 import { Table, TableBody } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Alert } from "./types";
-import AlertTableRow from "./AlertTableRow";
-import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import DetailsSidebar from "./DetailsSidebar";
 import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
 import { useToast } from "../ui/use-toast";
 import ColumnSelector from "./ColumnSelector";
+import TableHeader from "./TableHeader";
+import AlertTableRow from "./TableRow";
+import { defaultColumns } from "./TableConfig";
 
 interface TimelineState {
   type: "user" | "computer";
@@ -22,18 +23,6 @@ interface AnomaliesTableProps {
   hasMore: boolean;
 }
 
-const defaultColumns = [
-  { key: "system_time", label: "Time" },
-  { key: "user_id", label: "User" },
-  { key: "computer_name", label: "Computer" },
-  { key: "ip_address", label: "IP Address" },
-  { key: "title", label: "Title" },
-  { key: "tags", label: "Tactics" },
-  { key: "techniques", label: "Techniques" },
-  { key: "risk_score", label: "Risk Score" },
-  { key: "dbscan_cluster", label: "DBSCAN Cluster" }
-];
-
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [timelineView, setTimelineView] = useState<TimelineState | null>(null);
@@ -43,7 +32,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   );
   const { toast } = useToast();
   
-  // Filter alerts for last 7 days and limit to 1000 for table only
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   
@@ -86,19 +74,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     });
   };
 
-  useEffect(() => {
-    const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setSelectedAlert(null);
-        setTimelineView(null);
-        window.scrollTo({ left: 0, behavior: 'smooth' });
-      }
-    };
-
-    window.addEventListener('keydown', handleEscKey);
-    return () => window.removeEventListener('keydown', handleEscKey);
-  }, []);
-
   const toggleAlert = (alert: Alert) => {
     if (selectedAlert?.id === alert.id) {
       setSelectedAlert(null);
@@ -123,32 +98,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
       setSelectedAlert(null);
       setTimelineView({ type, id });
     }
-  };
-
-  const handleFilterChange = (column: string, value: string) => {
-    setFilters(prev => {
-      const newFilters = {
-        ...prev,
-        [column]: value
-      };
-      
-      if (value) {
-        toast({
-          title: "Filter Applied",
-          description: `Filtering ${column} by: ${value}`,
-        });
-      }
-      
-      return newFilters;
-    });
-  };
-
-  const clearAllFilters = () => {
-    setFilters({});
-    toast({
-      title: "Filters Cleared",
-      description: "Showing all events from the last 7 days",
-    });
   };
 
   return (
@@ -189,24 +138,13 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
         <CardContent>
           <div className="rounded-md border border-blue-500/10">
             <Table>
-              <AnomaliesTableHeader 
+              <TableHeader 
                 alerts={alerts}
                 onFilterChange={(column, value) => {
-                  setFilters(prev => {
-                    const newFilters = {
-                      ...prev,
-                      [column]: value
-                    };
-                    
-                    if (value) {
-                      toast({
-                        title: "Filter Applied",
-                        description: `Filtering ${column} by: ${value}`,
-                      });
-                    }
-                    
-                    return newFilters;
-                  });
+                  setFilters(prev => ({
+                    ...prev,
+                    [column]: value
+                  }));
                 }}
                 filters={filters}
                 visibleColumns={visibleColumns}
@@ -217,22 +155,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                     key={alert.id}
                     alert={alert}
                     isSelected={selectedAlert?.id === alert.id}
-                    onToggle={() => {
-                      if (selectedAlert?.id === alert.id) {
-                        setSelectedAlert(null);
-                        setTimelineView(null);
-                        window.scrollTo({ left: 0, behavior: 'smooth' });
-                      } else {
-                        setSelectedAlert(alert);
-                        setTimelineView(null);
-                        setTimeout(() => {
-                          window.scrollTo({
-                            left: document.documentElement.scrollWidth,
-                            behavior: 'smooth'
-                          });
-                        }, 100);
-                      }
-                    }}
+                    onToggle={() => toggleAlert(alert)}
                     onTimelineView={handleTimelineView}
                     visibleColumns={visibleColumns}
                   />
