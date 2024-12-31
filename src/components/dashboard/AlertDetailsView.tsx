@@ -14,6 +14,8 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
   return (
     <div className="space-y-4 p-4">
       {defaultColumns.map((column) => {
+        if (!alert[column.key as keyof Alert]) return null;
+
         if (column.key === 'raw') {
           return (
             <div key={column.key} className="bg-black/40 border border-blue-500/10 rounded-lg">
@@ -39,13 +41,10 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
           );
         }
 
-        const value = alert[column.key as keyof Alert];
-        if (!value) return null;
-
         return (
           <div key={column.key} className="space-y-2">
             <h3 className="text-sm font-medium text-blue-300">{column.label}</h3>
-            <p className="text-blue-100 break-words">{String(value)}</p>
+            <p className="text-blue-100 break-words">{String(alert[column.key as keyof Alert])}</p>
           </div>
         );
       })}

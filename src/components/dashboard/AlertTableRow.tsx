@@ -40,7 +40,10 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         return (
           <TableCell 
             className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
-            onClick={() => onTimelineView("user", alert.user_id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onTimelineView("user", alert.user_id);
+            }}
           >
             {alert.user_id}
           </TableCell>
@@ -49,7 +52,10 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         return (
           <TableCell 
             className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
-            onClick={() => onTimelineView("computer", alert.computer_name)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onTimelineView("computer", alert.computer_name);
+            }}
           >
             {alert.computer_name}
           </TableCell>
