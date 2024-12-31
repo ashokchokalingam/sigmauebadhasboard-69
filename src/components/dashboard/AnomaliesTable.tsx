@@ -11,6 +11,8 @@ import ColumnSelector from "./ColumnSelector";
 import TableHeaderComponent from "./TableHeader";
 import AlertTableRow from "./TableRow";
 import { allColumns, defaultVisibleColumns } from "./TableConfig";
+import AlertDetailsView from "./AlertDetailsView";
+import TimelineView from "./TimelineView";
 
 interface TimelineState {
   type: "user" | "computer";
