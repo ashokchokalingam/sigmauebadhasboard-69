@@ -10,7 +10,6 @@ import ColumnSelector from "./ColumnSelector";
 import TableHeaderComponent from "./TableHeader";
 import AlertTableRow from "./TableRow";
 import { allColumns, defaultVisibleColumns } from "./TableConfig";
-import AlertDetailsView from "./AlertDetailsView";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
@@ -75,94 +74,82 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     });
   };
 
-  const selectedAlert = alerts.find(alert => alert.id === selectedAlertId);
-
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-[1fr,auto] gap-6">
-        <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <CardTitle className="flex items-center gap-2 text-blue-100">
-                  <AlertTriangle className="h-5 w-5 text-blue-500" />
-                  Recent Events - Last 7 Days (Limited to 1000)
-                </CardTitle>
-                <ColumnSelector
-                  columns={allColumns}
-                  visibleColumns={visibleColumns}
-                  onColumnToggle={handleColumnToggle}
-                />
-              </div>
-              {Object.keys(filters).some(key => filters[key]) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setFilters({});
-                    toast({
-                      title: "Filters Cleared",
-                      description: "Showing all events from the last 7 days",
-                    });
-                  }}
-                  className="text-blue-400 hover:text-blue-300"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Clear Filters
-                </Button>
-              )}
+      <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <CardTitle className="flex items-center gap-2 text-blue-100">
+                <AlertTriangle className="h-5 w-5 text-blue-500" />
+                Recent Events - Last 7 Days (Limited to 1000)
+              </CardTitle>
+              <ColumnSelector
+                columns={allColumns}
+                visibleColumns={visibleColumns}
+                onColumnToggle={handleColumnToggle}
+              />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="table-container rounded-md border border-blue-500/10">
-              <Table>
-                <TableHeaderComponent 
-                  alerts={alerts}
-                  onFilterChange={(column, value) => {
-                    setFilters(prev => ({
-                      ...prev,
-                      [column]: value
-                    }));
-                  }}
-                  filters={filters}
-                  visibleColumns={visibleColumns}
-                  onColumnOrderChange={handleColumnOrderChange}
-                />
-                <TableBody className="bg-black/40">
-                  {filteredAlerts.map((alert) => (
-                    <AlertTableRow
-                      key={alert.id}
-                      alert={alert}
-                      isSelected={selectedAlertId === alert.id}
-                      onToggle={() => setSelectedAlertId(selectedAlertId === alert.id ? null : alert.id)}
-                      onTimelineView={() => {}} // Implement if needed
-                      visibleColumns={visibleColumns}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-            {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
-              <div className="flex justify-center mt-6">
-                <Button
-                  onClick={onLoadMore}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Load More Events
-                </Button>
-              </div>
+            {Object.keys(filters).some(key => filters[key]) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setFilters({});
+                  toast({
+                    title: "Filters Cleared",
+                    description: "Showing all events from the last 7 days",
+                  });
+                }}
+                className="text-blue-400 hover:text-blue-300"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Clear Filters
+              </Button>
             )}
-          </CardContent>
-        </Card>
-
-        {selectedAlert && (
-          <Card className="bg-black/40 border-blue-500/10 w-[600px] sticky top-6">
-            <CardContent className="p-6">
-              <AlertDetailsView alert={selectedAlert} />
-            </CardContent>
-          </Card>
-        )}
-      </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="table-container rounded-md border border-blue-500/10">
+            <Table>
+              <TableHeaderComponent 
+                alerts={alerts}
+                onFilterChange={(column, value) => {
+                  setFilters(prev => ({
+                    ...prev,
+                    [column]: value
+                  }));
+                }}
+                filters={filters}
+                visibleColumns={visibleColumns}
+                onColumnOrderChange={handleColumnOrderChange}
+              />
+              <TableBody className="bg-black/40">
+                {filteredAlerts.map((alert) => (
+                  <AlertTableRow
+                    key={alert.id}
+                    alert={alert}
+                    isSelected={selectedAlertId === alert.id}
+                    onToggle={() => setSelectedAlertId(selectedAlertId === alert.id ? null : alert.id)}
+                    onTimelineView={() => {}}
+                    visibleColumns={visibleColumns}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
+            <div className="flex justify-center mt-6">
+              <Button
+                onClick={onLoadMore}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Load More Events
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
