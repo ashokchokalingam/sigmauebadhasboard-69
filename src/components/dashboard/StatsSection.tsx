@@ -1,4 +1,4 @@
-import { Database, Shield, Users, AlertTriangle, TrendingUp, TrendingDown, Monitor, Network, Activity, AlertCircle } from "lucide-react";
+import { Activity, AlertTriangle, Database, Monitor, Network, Shield, Users } from "lucide-react";
 import StatsCard from "./StatsCard";
 import { Stats } from "./types";
 
@@ -8,7 +8,6 @@ interface StatsSectionProps {
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
-  // Add null checks to prevent undefined errors
   if (!stats) {
     return null;
   }
@@ -16,60 +15,60 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <StatsCard
-        title="Total Events (7d)"
-        value={stats.totalEvents || 0}
+        title="Total Events (24h)"
+        value={stats.totalEvents}
         icon={Database}
         subtitle={`${stats.severity?.critical || 0} Critical, ${stats.severity?.high || 0} High`}
-        subtitleIcon={AlertCircle}
+        subtitleIcon={AlertTriangle}
       />
       <StatsCard
-        title="Risky Users"
+        title="Active Users (24h)"
         value={stats.uniqueUsers?.current?.toString() || '0'}
         icon={Users}
-        subtitle={`${stats.uniqueUsers?.change >= 0 ? '+' : ''}${stats.uniqueUsers?.change || 0}% from last period`}
-        subtitleIcon={stats.uniqueUsers?.change >= 0 ? TrendingUp : TrendingDown}
-      />
-      <StatsCard
-        title="Active Computers"
-        value={stats.uniqueComputers?.current?.toString() || '0'}
-        icon={Monitor}
-        subtitle={`${stats.uniqueComputers?.change >= 0 ? '+' : ''}${stats.uniqueComputers?.change || 0}% from last period`}
-        subtitleIcon={stats.uniqueComputers?.change >= 0 ? TrendingUp : TrendingDown}
-      />
-      <StatsCard
-        title="Unique IPs"
-        value={stats.uniqueIPs?.toString() || '0'}
-        icon={Network}
-        subtitle="Active in last 7 days"
+        subtitle={`${stats.uniqueUsers?.users?.length || 0} unique users`}
         subtitleIcon={Activity}
       />
       <StatsCard
-        title="Average Risk Score"
+        title="Active Computers (24h)"
+        value={stats.uniqueComputers?.current?.toString() || '0'}
+        icon={Monitor}
+        subtitle={`${stats.uniqueComputers?.computers?.length || 0} unique systems`}
+        subtitleIcon={Activity}
+      />
+      <StatsCard
+        title="Unique IPs (24h)"
+        value={stats.uniqueIPs?.toString() || '0'}
+        icon={Network}
+        subtitle="Active in last 24 hours"
+        subtitleIcon={Activity}
+      />
+      <StatsCard
+        title="Risk Score (24h)"
         value={(stats.riskScore?.current || 0).toFixed(1)}
         icon={Shield}
-        subtitle={`${stats.riskScore?.change >= 0 ? '+' : ''}${stats.riskScore?.change || 0}% from last period`}
-        subtitleIcon={stats.riskScore?.change >= 0 ? TrendingUp : TrendingDown}
+        subtitle="Average risk score"
+        subtitleIcon={Activity}
       />
       <StatsCard
-        title="Anomalies (-1)"
+        title="Anomalies (24h)"
         value={stats.anomalies?.current?.toString() || '0'}
         icon={AlertTriangle}
-        subtitle={`${stats.anomalies?.change >= 0 ? '+' : ''}${stats.anomalies?.change || 0}% from last period`}
-        subtitleIcon={stats.anomalies?.change >= 0 ? TrendingUp : TrendingDown}
+        subtitle="Total anomalies detected"
+        subtitleIcon={Activity}
       />
       <StatsCard
-        title="Medium Events"
+        title="Medium Events (24h)"
         value={stats.severity?.medium?.toString() || '0'}
-        icon={AlertCircle}
+        icon={Activity}
         subtitle={`${stats.severity?.low || 0} Low Severity Events`}
         subtitleIcon={Activity}
       />
       <StatsCard
-        title="High/Critical"
+        title="High/Critical (24h)"
         value={((stats.severity?.high || 0) + (stats.severity?.critical || 0)).toString()}
         icon={AlertTriangle}
         subtitle={`${stats.severity?.critical || 0} Critical, ${stats.severity?.high || 0} High`}
-        subtitleIcon={AlertCircle}
+        subtitleIcon={AlertTriangle}
       />
     </div>
   );
