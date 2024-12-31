@@ -1,51 +1,85 @@
-import { TableHead, TableRow } from "@/components/ui/table";
-import ColumnFilter from "./ColumnFilter";
+import { TableRow } from "@/components/ui/table";
 import { Alert } from "./types";
 import { defaultColumns } from "./TableConfig";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  horizontalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import DraggableHeader from "./DraggableHeader";
 
 interface TableHeaderProps {
   alerts: Alert[];
   onFilterChange: (column: string, value: string) => void;
   filters: Record<string, string>;
   visibleColumns: string[];
+  onColumnOrderChange: (newOrder: string[]) => void;
 }
 
-const TableHeaderComponent = ({ alerts, onFilterChange, filters, visibleColumns }: TableHeaderProps) => {
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  
-  const last7DaysAlerts = alerts.filter(alert => {
-    const alertDate = new Date(alert.system_time);
-    return alertDate >= sevenDaysAgo;
-  });
+const TableHeaderComponent = ({ 
+  alerts, 
+  onFilterChange, 
+  filters, 
+  visibleColumns,
+  onColumnOrderChange 
+}: TableHeaderProps) => {
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor)
+  );
 
-  const getUniqueValues = (key: keyof Alert) => {
-    const uniqueValues = Array.from(new Set(last7DaysAlerts.map(alert => {
-      if (key === 'system_time') {
-        return new Date(alert[key]).toLocaleTimeString();
-      }
-      return String(alert[key]);
-    }))).filter(Boolean);
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
     
-    return uniqueValues.sort();
+    if (active.id !== over.id) {
+      const oldIndex = visibleColumns.indexOf(active.id);
+      const newIndex = visibleColumns.indexOf(over.id);
+      
+      const newOrder = arrayMove(visibleColumns, oldIndex, newIndex);
+      onColumnOrderChange(newOrder);
+    }
   };
 
   return (
     <thead>
       <TableRow className="hover:bg-blue-950/30">
-        {defaultColumns.map(column => 
-          visibleColumns.includes(column.key) && (
-            <TableHead key={column.key} className="text-blue-300">
-              <ColumnFilter
-                title={column.label}
-                options={getUniqueValues(column.key as keyof Alert)}
-                onSelect={(value) => onFilterChange(column.key, value)}
-                selectedValue={filters[column.key]}
-              />
-            </TableHead>
-          )
-        )}
-        <TableHead className="text-blue-300 w-[50px]"></TableHead>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={visibleColumns}
+            strategy={horizontalListSortingStrategy}
+          >
+            {defaultColumns.map(column => 
+              visibleColumns.includes(column.key) && (
+                <DraggableHeader
+                  key={column.key}
+                  id={column.key}
+                  title={column.label}
+                  columnKey={column.key}
+                  onFilterChange={onFilterChange}
+                  selectedValue={filters[column.key]}
+                  alerts={alerts}
+                />
+              )
+            )}
+          </SortableContext>
+        </DndContext>
+        <th className="w-[50px]"></th>
       </TableRow>
     </thead>
   );

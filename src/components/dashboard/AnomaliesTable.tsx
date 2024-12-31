@@ -63,6 +63,14 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     setVisibleColumns(newColumns);
   };
 
+  const handleColumnOrderChange = (newOrder: string[]) => {
+    setVisibleColumns(newOrder);
+    toast({
+      title: "Column Order Updated",
+      description: "The columns have been reordered",
+    });
+  };
+
   const toggleAlert = (alert: Alert) => {
     if (selectedAlert?.id === alert.id) {
       setSelectedAlert(null);
@@ -139,6 +147,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                     }}
                     filters={filters}
                     visibleColumns={visibleColumns}
+                    onColumnOrderChange={handleColumnOrderChange}
                   />
                   <TableBody className="bg-black/40">
                     {filteredAlerts.map((alert) => (
