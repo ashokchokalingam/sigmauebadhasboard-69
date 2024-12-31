@@ -11,8 +11,8 @@ interface TimelineEventCardProps {
 }
 
 const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: TimelineEventCardProps) => {
-  const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
-  const time = new Date(alert.system_time);
+  const { tactics, techniques } = extractTacticsAndTechniques(alert.tags || '');
+  const time = new Date(alert.system_time || '');
 
   return (
     <div className="relative pl-16">
@@ -33,15 +33,15 @@ const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: Timeline
           <div className="grid grid-cols-2 gap-2 mb-2">
             <div className="col-span-2 bg-purple-950/20 border-purple-500/10 p-2 rounded-lg">
               <h4 className="text-sm font-medium text-purple-400 mb-0.5">Title</h4>
-              <p className="text-base text-purple-100">{alert.title}</p>
+              <p className="text-base text-purple-100">{alert.title || 'N/A'}</p>
             </div>
             <div className="bg-purple-950/20 border-purple-500/10 p-2 rounded-lg">
               <h4 className="text-sm font-medium text-purple-400 mb-0.5">Rule ID</h4>
-              <p className="text-sm text-purple-100 font-mono break-all">{alert.rule_id}</p>
+              <p className="text-sm text-purple-100 font-mono break-all">{alert.ruleid || 'N/A'}</p>
             </div>
             <div className="bg-purple-950/20 border-purple-500/10 p-2 rounded-lg">
               <h4 className="text-sm font-medium text-purple-400 mb-0.5">Severity</h4>
-              <p className="text-base text-purple-100 capitalize">{alert.rule_level}</p>
+              <p className="text-base text-purple-100 capitalize">{alert.rule_level || 'N/A'}</p>
             </div>
           </div>
 
@@ -51,11 +51,11 @@ const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: Timeline
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <p className="text-sm font-medium text-blue-400">Username</p>
-                <p className="text-sm text-blue-100 font-mono">{alert.user_id}</p>
+                <p className="text-sm text-blue-100 font-mono">{alert.user_id || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-blue-400">Computer Name</p>
-                <p className="text-sm text-blue-100 font-mono">{alert.computer_name}</p>
+                <p className="text-sm text-blue-100 font-mono">{alert.computer_name || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-blue-400">IP Address</p>
@@ -104,15 +104,15 @@ const TimelineEventCard = ({ alert, isExpanded, onToggleRaw, isFirst }: Timeline
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <p className="text-sm font-medium text-blue-400">Event ID</p>
-                <p className="text-sm text-blue-100">{alert.event_id}</p>
+                <p className="text-sm text-blue-100">{alert.event_id || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-blue-400">Task</p>
-                <p className="text-sm text-blue-100">{alert.task_name || 'N/A'}</p>
+                <p className="text-sm text-blue-100">{alert.task || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-blue-400">Provider Name</p>
-                <p className="text-sm text-blue-100">{alert.provider_name}</p>
+                <p className="text-sm text-blue-100">{alert.provider_name || 'N/A'}</p>
               </div>
             </div>
           </div>

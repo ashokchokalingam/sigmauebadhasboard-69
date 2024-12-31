@@ -16,9 +16,9 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
     if (codeRef.current) {
       Prism.highlightElement(codeRef.current);
     }
-  }, [alert.raw_log]);
+  }, [alert.raw]);
 
-  if (!alert.raw_log) {
+  if (!alert.raw) {
     return (
       <div className="p-4 text-blue-400 flex items-center gap-2">
         <Terminal className="h-4 w-4" />
@@ -36,7 +36,7 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
       <div className="bg-[#1E1E1E] rounded-lg border border-blue-500/10">
         <pre className="p-4 overflow-x-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent">
           <code ref={codeRef} className="language-json">
-            {JSON.stringify(JSON.parse(alert.raw_log), null, 2)}
+            {JSON.stringify(JSON.parse(alert.raw), null, 2)}
           </code>
         </pre>
       </div>

@@ -30,7 +30,7 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-blue-500" />
                 <p className="text-sm text-blue-100">
-                  {new Date(alert.system_time).toLocaleString()}
+                  {new Date(alert.system_time || '').toLocaleString()}
                 </p>
               </div>
             </div>
@@ -45,23 +45,23 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
               <p className="text-xs font-medium text-blue-400">Computer Name</p>
               <div className="flex items-center gap-2">
                 <Server className="h-4 w-4 text-blue-500" />
-                <p className="text-sm text-blue-100">{alert.computer_name}</p>
+                <p className="text-sm text-blue-100">{alert.computer_name || 'N/A'}</p>
               </div>
             </div>
             <div>
               <p className="text-xs font-medium text-blue-400">Event ID</p>
               <div className="flex items-center gap-2">
                 <Hash className="h-4 w-4 text-blue-500" />
-                <p className="text-sm text-blue-100">{alert.event_id}</p>
+                <p className="text-sm text-blue-100">{alert.event_id || 'N/A'}</p>
               </div>
             </div>
             <div>
               <p className="text-xs font-medium text-blue-400">Provider Name</p>
-              <p className="text-sm text-blue-100">{alert.provider_name}</p>
+              <p className="text-sm text-blue-100">{alert.provider_name || 'N/A'}</p>
             </div>
             <div>
               <p className="text-xs font-medium text-blue-400">Task</p>
-              <p className="text-sm text-blue-100">{alert.task_name || 'N/A'}</p>
+              <p className="text-sm text-blue-100">{alert.task || 'N/A'}</p>
             </div>
             {alert.ip_address && (
               <div>
@@ -75,7 +75,7 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
 
       <TimelineMitreSection alert={alert} />
       
-      {alert.raw_log && (
+      {alert.raw && (
         <Card className="bg-black/40 border-blue-500/10">
           <div 
             className="p-4 flex items-center justify-between cursor-pointer hover:bg-blue-500/5 transition-colors"

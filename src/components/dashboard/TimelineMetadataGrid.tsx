@@ -12,31 +12,31 @@ const TimelineMetadataGrid = ({ alert }: TimelineMetadataGridProps) => {
         <p className="text-sm font-medium text-blue-400">Computer</p>
         <p className="text-base text-blue-100 font-mono flex items-center gap-2">
           <Monitor className="h-4 w-4" />
-          {alert.computer_name}
+          {alert.computer_name || 'N/A'}
         </p>
       </div>
       <div>
         <p className="text-sm font-medium text-blue-400">User ID</p>
         <p className="text-base text-blue-100 font-mono flex items-center gap-2">
           <User className="h-4 w-4" />
-          {alert.user_id}
+          {alert.user_id || 'N/A'}
         </p>
       </div>
       <div>
         <p className="text-sm font-medium text-blue-400">Event ID</p>
-        <p className="text-base text-blue-100 font-mono">{alert.event_id}</p>
+        <p className="text-base text-blue-100 font-mono">{alert.event_id || 'N/A'}</p>
       </div>
       <div>
         <p className="text-sm font-medium text-blue-400">Provider</p>
-        <p className="text-base text-blue-100">{alert.provider_name}</p>
+        <p className="text-base text-blue-100">{alert.provider_name || 'N/A'}</p>
       </div>
       <div>
         <p className="text-sm font-medium text-blue-400">Rule ID</p>
-        <p className="text-base text-blue-100 font-mono">{alert.rule_id}</p>
+        <p className="text-base text-blue-100 font-mono">{alert.ruleid || 'N/A'}</p>
       </div>
       <div>
         <p className="text-sm font-medium text-blue-400">Rule Level</p>
-        <p className="text-base text-blue-100">{alert.rule_level}</p>
+        <p className="text-base text-blue-100">{alert.rule_level || 'N/A'}</p>
       </div>
       {alert.ip_address && (
         <div>
@@ -44,10 +44,10 @@ const TimelineMetadataGrid = ({ alert }: TimelineMetadataGridProps) => {
           <p className="text-base text-blue-100 font-mono">{alert.ip_address}</p>
         </div>
       )}
-      {alert.task_name && (
+      {alert.task && (
         <div>
           <p className="text-sm font-medium text-blue-400">Task</p>
-          <p className="text-base text-blue-100">{alert.task_name}</p>
+          <p className="text-base text-blue-100">{alert.task}</p>
         </div>
       )}
     </div>
