@@ -24,9 +24,16 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   };
 
   return (
-    <div className="fixed top-0 right-0 w-[600px] h-screen bg-black/90 border-l border-blue-500/10 shadow-2xl flex flex-col overflow-hidden">
+    <div 
+      className="absolute right-0 w-[600px] bg-black/90 border-l border-blue-500/10 shadow-2xl flex flex-col overflow-hidden"
+      style={{
+        height: 'min(100vh, 800px)',
+        top: 'max(0px, calc(var(--scroll-offset, 0px)))',
+        transition: 'top 0.3s ease-out'
+      }}
+    >
       {/* Header */}
-      <div className="flex justify-between items-center p-6 border-b border-blue-500/10 bg-black/90 backdrop-blur-sm">
+      <div className="flex justify-between items-center p-6 border-b border-blue-500/10 bg-black/90 backdrop-blur-sm sticky top-0 z-10">
         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
           Alert Details
         </h2>
@@ -94,18 +101,14 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
               </div>
             ))}
           </div>
-          
-          {/* Raw Data Section - Always Expanded */}
+
+          {/* Raw Data Section */}
           <div className="mt-6 border-t border-blue-500/10 pt-4">
             <div className="flex items-center gap-2 mb-4">
               <Terminal className="h-6 w-6 text-green-400" />
               <span className="text-lg font-semibold text-green-100">Raw Data</span>
             </div>
-            {alert.raw && (
-              <div className="mt-4">
-                <TimelineRawLog alert={alert} />
-              </div>
-            )}
+            <TimelineRawLog alert={alert} />
           </div>
         </div>
       </ScrollArea>
