@@ -24,12 +24,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   };
 
   return (
-    <div 
-      className="absolute right-0 w-[600px] bg-black/90 border-l border-blue-500/10 shadow-2xl flex flex-col overflow-hidden"
-      style={{
-        height: 'min(100vh, 800px)',
-      }}
-    >
+    <div className="bg-black/90 border-l border-blue-500/10 shadow-2xl flex flex-col h-full">
       {/* Header */}
       <div className="flex justify-between items-center p-6 border-b border-blue-500/10 bg-black/90 backdrop-blur-sm sticky top-0 z-10">
         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
@@ -45,69 +40,67 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
 
       {/* Scrollable Content Area */}
       <ScrollArea className="flex-1 overflow-y-auto">
-        <div className="p-6 space-y-6">
-          {/* Title Section */}
-          <div className="space-y-2 border-b border-blue-500/10 pb-4">
-            <div className="flex items-center gap-2">
-              <FileText className="h-6 w-6 text-blue-400" />
-              <h3 className="text-xl font-semibold text-blue-100">{alert.title}</h3>
+        {/* Title Section */}
+        <div className="space-y-2 border-b border-blue-500/10 pb-4">
+          <div className="flex items-center gap-2">
+            <FileText className="h-6 w-6 text-blue-400" />
+            <h3 className="text-xl font-semibold text-blue-100">{alert.title}</h3>
+          </div>
+        </div>
+
+        {/* Description Section */}
+        <div className="space-y-2 border-b border-blue-500/10 pb-4">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-6 w-6 text-yellow-400" />
+            <h4 className="text-lg font-medium text-yellow-100">Description</h4>
+          </div>
+          <p className="text-blue-200 text-sm leading-relaxed pl-8">
+            {alert.description || 'No description available'}
+          </p>
+        </div>
+
+        {/* MITRE ATT&CK Section */}
+        <div className="space-y-4 border-b border-blue-500/10 pb-4">
+          <div className="flex items-center gap-2">
+            <Target className="h-6 w-6 text-purple-400" />
+            <h4 className="text-lg font-medium text-purple-100">MITRE ATT&CK</h4>
+          </div>
+          <div className="pl-8 space-y-4">
+            <div className="flex flex-wrap gap-2">
+              {alert.tags?.split(',').map((tag, index) => (
+                <span 
+                  key={index}
+                  className="px-3 py-1 bg-purple-500/10 text-purple-300 text-sm rounded-full border border-purple-500/20"
+                >
+                  {tag.trim()}
+                </span>
+              ))}
             </div>
           </div>
+        </div>
 
-          {/* Description Section */}
-          <div className="space-y-2 border-b border-blue-500/10 pb-4">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-6 w-6 text-yellow-400" />
-              <h4 className="text-lg font-medium text-yellow-100">Description</h4>
-            </div>
-            <p className="text-blue-200 text-sm leading-relaxed pl-8">
-              {alert.description || 'No description available'}
-            </p>
-          </div>
-
-          {/* MITRE ATT&CK Section */}
-          <div className="space-y-4 border-b border-blue-500/10 pb-4">
-            <div className="flex items-center gap-2">
-              <Target className="h-6 w-6 text-purple-400" />
-              <h4 className="text-lg font-medium text-purple-100">MITRE ATT&CK</h4>
-            </div>
-            <div className="pl-8 space-y-4">
-              <div className="flex flex-wrap gap-2">
-                {alert.tags?.split(',').map((tag, index) => (
-                  <span 
-                    key={index}
-                    className="px-3 py-1 bg-purple-500/10 text-purple-300 text-sm rounded-full border border-purple-500/20"
-                  >
-                    {tag.trim()}
-                  </span>
-                ))}
+        {/* Details Grid */}
+        <div className="grid grid-cols-2 gap-6">
+          {['ruleid', 'system_time', 'computer_name', 'user_id', 'ip_address'].map((key) => (
+            <div key={key} className="space-y-2">
+              <div className="flex items-center gap-2">
+                {getIconForField(key)}
+                <h4 className="text-sm font-medium text-blue-300">{key.replace('_', ' ').toUpperCase()}</h4>
               </div>
+              <p className="text-blue-100 pl-7">
+                {alert[key as keyof Alert]?.toString() || 'N/A'}
+              </p>
             </div>
-          </div>
+          ))}
+        </div>
 
-          {/* Details Grid */}
-          <div className="grid grid-cols-2 gap-6">
-            {['ruleid', 'system_time', 'computer_name', 'user_id', 'ip_address'].map((key) => (
-              <div key={key} className="space-y-2">
-                <div className="flex items-center gap-2">
-                  {getIconForField(key)}
-                  <h4 className="text-sm font-medium text-blue-300">{key.replace('_', ' ').toUpperCase()}</h4>
-                </div>
-                <p className="text-blue-100 pl-7">
-                  {alert[key as keyof Alert]?.toString() || 'N/A'}
-                </p>
-              </div>
-            ))}
+        {/* Raw Data Section */}
+        <div className="mt-6 border-t border-blue-500/10 pt-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Terminal className="h-6 w-6 text-green-400" />
+            <span className="text-lg font-semibold text-green-100">Raw Data</span>
           </div>
-
-          {/* Raw Data Section */}
-          <div className="mt-6 border-t border-blue-500/10 pt-4">
-            <div className="flex items-center gap-2 mb-4">
-              <Terminal className="h-6 w-6 text-green-400" />
-              <span className="text-lg font-semibold text-green-100">Raw Data</span>
-            </div>
-            <TimelineRawLog alert={alert} />
-          </div>
+          <TimelineRawLog alert={alert} />
         </div>
       </ScrollArea>
     </div>

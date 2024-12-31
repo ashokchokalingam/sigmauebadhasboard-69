@@ -3,7 +3,6 @@ import { ChevronRight } from "lucide-react";
 import { Alert } from "./types";
 import { extractTacticsAndTechniques } from "./utils";
 import { defaultColumns } from "./TableConfig";
-import { useEffect, useRef } from "react";
 
 interface AlertTableRowProps {
   alert: Alert;
@@ -14,16 +13,8 @@ interface AlertTableRowProps {
 }
 
 const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleColumns }: AlertTableRowProps) => {
-  const rowRef = useRef<HTMLTableRowElement>(null);
   const { tactics } = extractTacticsAndTechniques(alert.tags);
   
-  useEffect(() => {
-    if (isSelected && rowRef.current) {
-      const rowRect = rowRef.current.getBoundingClientRect();
-      rowRef.current.parentElement?.style.setProperty('--selected-row-top', `${rowRect.top}px`);
-    }
-  }, [isSelected]);
-
   const browserTime = new Date(alert.system_time).toLocaleString(undefined, {
     hour: '2-digit',
     minute: '2-digit',
@@ -85,7 +76,6 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
   
   return (
     <TableRow 
-      ref={rowRef}
       className={`hover:bg-blue-950/30 cursor-pointer ${isSelected ? 'bg-blue-950/20' : ''}`}
       onClick={onToggle}
     >

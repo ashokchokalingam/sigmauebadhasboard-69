@@ -1,7 +1,7 @@
 import { Table, TableBody } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Alert } from "./types";
 import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
@@ -17,6 +17,7 @@ interface AnomaliesTableProps {
 
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -42,33 +43,48 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
             Recent Events - Last 7 Days (Limited to 1000)
           </CardTitle>
         </CardHeader>
-        <CardContent className="relative">
-          <div className="table-container rounded-md border border-blue-500/10">
-            <Table>
-              <thead>
-                <tr>
-                  {defaultColumns.map(column => (
-                    <th key={column.key} className="text-blue-300 px-4 py-2">
-                      {column.label}
-                    </th>
+        <CardContent>
+          <div className="flex gap-6">
+            <div 
+              ref={containerRef}
+              className="flex-1 table-container rounded-md border border-blue-500/10"
+            >
+              <Table>
+                <thead>
+                  <tr>
+                    {defaultColumns.map(column => (
+                      <th key={column.key} className="text-blue-300 px-4 py-2">
+                        {column.label}
+                      </th>
+                    ))}
+                    <th className="w-[50px]"></th>
+                  </tr>
+                </thead>
+                <TableBody className="bg-black/40">
+                  {filteredAlerts.map((alert) => (
+                    <AlertTableRow
+                      key={alert.id}
+                      alert={alert}
+                      isSelected={selectedAlert?.id === alert.id}
+                      onToggle={() => setSelectedAlert(selectedAlert?.id === alert.id ? null : alert)}
+                      onTimelineView={() => {}}
+                      visibleColumns={defaultColumns.map(col => col.key)}
+                    />
                   ))}
-                  <th className="w-[50px]"></th>
-                </tr>
-              </thead>
-              <TableBody className="bg-black/40">
-                {filteredAlerts.map((alert) => (
-                  <AlertTableRow
-                    key={alert.id}
-                    alert={alert}
-                    isSelected={selectedAlert?.id === alert.id}
-                    onToggle={() => setSelectedAlert(selectedAlert?.id === alert.id ? null : alert)}
-                    onTimelineView={() => {}}
-                    visibleColumns={defaultColumns.map(col => col.key)}
-                  />
-                ))}
-              </TableBody>
-            </Table>
+                </TableBody>
+              </Table>
+            </div>
+
+            {selectedAlert && (
+              <div className="w-[600px] flex-shrink-0">
+                <AlertDetailsView
+                  alert={selectedAlert}
+                  onClose={() => setSelectedAlert(null)}
+                />
+              </div>
+            )}
           </div>
+
           {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
             <div className="flex justify-center mt-6">
               <Button
@@ -77,20 +93,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               >
                 Load More Events
               </Button>
-            </div>
-          )}
-          
-          {selectedAlert && (
-            <div 
-              className="absolute top-0 right-0 h-full"
-              style={{
-                transform: `translateY(var(--selected-row-top, 0px))`,
-              }}
-            >
-              <AlertDetailsView
-                alert={selectedAlert}
-                onClose={() => setSelectedAlert(null)}
-              />
             </div>
           )}
         </CardContent>
