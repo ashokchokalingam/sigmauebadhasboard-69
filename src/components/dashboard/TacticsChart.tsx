@@ -29,11 +29,21 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
       }
     });
 
+    const colors = [
+      '#8B5CF6', // Vivid Purple
+      '#D946EF', // Magenta Pink
+      '#F97316', // Bright Orange
+      '#0EA5E9', // Ocean Blue
+      '#1EAEDB', // Bright Blue
+      '#33C3F0', // Sky Blue
+      '#0FA0CE'  // Another Bright Blue
+    ];
+
     return Object.entries(tacticsCount)
-      .map(([name, value]) => ({ 
-        name: name.replace(/_/g, '-'),
+      .map(([name, value], index) => ({ 
+        name: name.replace(/_/g, ' '),
         value,
-        color: '#3B82F6' // Using a consistent blue color for all bars
+        color: colors[index % colors.length]
       }))
       .sort((a, b) => b.value - a.value);
   };
@@ -41,9 +51,9 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-[#1a1f2c] border border-gray-800 rounded-lg p-3 shadow-xl">
-          <p className="text-gray-200 capitalize">{label}</p>
-          <p className="text-blue-400 font-mono">{payload[0].value} alerts</p>
+        <div className="bg-[#1a1f2c] border border-gray-700 rounded-lg p-3 shadow-xl">
+          <p className="text-gray-200 font-medium text-lg capitalize">{label}</p>
+          <p className="text-gray-300 font-mono text-base">{payload[0].value} alerts</p>
         </div>
       );
     }
@@ -51,21 +61,21 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
   };
 
   return (
-    <Card className="bg-black/40 border-blue-500/10">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-lg font-medium text-blue-100">
-          <Activity className="h-5 w-5 text-blue-500" />
+    <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-2xl font-bold text-blue-100">
+          <Activity className="h-6 w-6 text-blue-500" />
           MITRE ATT&CK Tactics
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[400px] mt-4">
+        <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={calculateTacticsData()}
               layout="vertical"
-              margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
-              barSize={24}
+              margin={{ top: 20, right: 30, left: 120, bottom: 20 }}
+              barSize={32}
             >
               <CartesianGrid 
                 strokeDasharray="3 3" 
@@ -76,33 +86,34 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
               <XAxis 
                 type="number"
                 stroke="#666"
-                tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                tick={{ fill: '#E5DEFF', fontSize: 14 }}
                 domain={[0, 'auto']}
               />
               <YAxis 
                 type="category"
                 dataKey="name"
                 stroke="#666"
-                tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                tick={{ fill: '#E5DEFF', fontSize: 14 }}
                 width={120}
               />
               <Tooltip 
                 content={<CustomTooltip />}
                 cursor={{ 
-                  fill: 'rgba(59, 130, 246, 0.1)',
+                  fill: 'rgba(96, 165, 250, 0.15)',
                   strokeWidth: 1,
-                  stroke: 'rgba(59, 130, 246, 0.2)'
+                  stroke: 'rgba(96, 165, 250, 0.3)'
                 }}
               />
               <Bar 
                 dataKey="value"
                 radius={[0, 4, 4, 0]}
+                onClick={(data) => onTacticSelect(data.name)}
               >
                 {calculateTacticsData().map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
                     fill={entry.color}
-                    fillOpacity={0.8}
+                    fillOpacity={0.9}
                   />
                 ))}
               </Bar>
