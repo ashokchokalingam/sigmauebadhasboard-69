@@ -29,13 +29,14 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
       }
     });
 
+    // Professional color palette avoiding pink and rainbow colors
     const colors = [
-      '#D946EF', // Vibrant Magenta
-      '#8B5CF6', // Vivid Purple
-      '#F97316', // Bright Orange
+      '#403E43', // Charcoal Gray
+      '#1A1F2C', // Dark Purple
       '#0EA5E9', // Ocean Blue
-      '#33C3F0', // Sky Blue
-      '#1EAEDB', // Bright Blue
+      '#6E59A5', // Tertiary Purple
+      '#8E9196', // Neutral Gray
+      '#222222', // Dark Gray
       '#0FA0CE'  // Another Blue
     ];
 
@@ -63,8 +64,8 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
   return (
     <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
-        <CardTitle className="flex items-center gap-3 text-3xl font-bold text-blue-100">
-          <Activity className="h-8 w-8 text-blue-500" />
+        <CardTitle className="flex items-center gap-3 text-3xl font-bold text-gray-100">
+          <Activity className="h-8 w-8 text-gray-400" />
           MITRE ATT&CK Tactics
         </CardTitle>
       </CardHeader>
@@ -86,14 +87,14 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
               <XAxis 
                 type="number"
                 stroke="#666"
-                tick={{ fill: '#E5DEFF', fontSize: 16 }}
+                tick={{ fill: '#C8C8C9', fontSize: 16 }}
                 domain={[0, 'auto']}
               />
               <YAxis 
                 type="category"
                 dataKey="name"
                 stroke="#666"
-                tick={{ fill: '#E5DEFF', fontSize: 16 }}
+                tick={{ fill: '#C8C8C9', fontSize: 16 }}
                 width={140}
               />
               <Tooltip 
