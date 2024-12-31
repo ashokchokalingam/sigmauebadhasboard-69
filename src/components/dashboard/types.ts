@@ -1,21 +1,21 @@
 export interface Alert {
   id: string;
-  system_time: string;
-  event_id: string;
-  rule_id: string;
-  rule_level: string;
-  task_name: string;
-  provider_name: string;
-  process_name: string;
-  process_id: string;
-  original_file_name: string;
-  computer_name: string;
-  user_id: string;
-  title: string;
-  tags: string;
-  ip_address?: string;
-  dbscan_cluster: number;
-  raw_log?: string;
+  title: string | null;
+  tags: string | null;
+  description: string | null;
+  system_time: string | null;
+  computer_name: string | null;
+  user_id: string | null;
+  event_id: string | null;
+  provider_name: string | null;
+  dbscan_cluster: number | null;
+  raw: string | null;
+  ip_address: string | null;
+  ruleid: string | null;         // Changed from rule_id to match DB
+  rule_level: string | null;
+  task: string | null;          // Changed from task_name to match DB
+  target_user_name: string | null;
+  target_domain_name: string | null;
 }
 
 export interface Stats {
