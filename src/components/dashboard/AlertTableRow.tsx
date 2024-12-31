@@ -99,7 +99,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
             onToggle();
           }}
         >
-          <ChevronRight className={`h-4 w-4 text-blue-400 transition-transform ${isSelected ? 'rotate-180' : ''}`} />
+          <ChevronRight className={`h-4 w-4 text-blue-400 transition-transform ${isSelected ? 'rotate-90' : ''}`} />
         </button>
       </TableCell>
     </TableRow>

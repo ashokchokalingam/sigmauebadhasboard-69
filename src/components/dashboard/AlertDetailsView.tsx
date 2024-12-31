@@ -25,7 +25,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
 
   return (
     <div 
-      className="absolute right-0 w-[600px] bg-black/90 border-l border-blue-500/10 shadow-2xl flex flex-col overflow-hidden"
+      className="fixed right-0 w-[600px] bg-black/90 border-l border-blue-500/10 shadow-2xl flex flex-col overflow-hidden"
       style={{
         height: 'min(100vh, 800px)',
         top: 'max(0px, calc(var(--scroll-offset, 0px)))',
