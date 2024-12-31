@@ -7,14 +7,31 @@ export const defaultColumns = [
   { key: "tags", label: "Tactics" },
   { key: "techniques", label: "Techniques" },
   { key: "risk_score", label: "Risk Score" },
+  { key: "dbscan_cluster", label: "ML Outlier" }
+];
+
+export const additionalColumns = [
   { key: "rule_level", label: "Rule Level" },
   { key: "target_user_name", label: "Target User" },
   { key: "target_domain_name", label: "Target Domain" },
-  { key: "dbscan_cluster", label: "ML Outlier" },
   { key: "event_id", label: "Event ID" },
   { key: "provider_name", label: "Provider" },
   { key: "ruleid", label: "Rule ID" },
   { key: "task", label: "Task" }
 ];
 
-export type ColumnKey = typeof defaultColumns[number]['key'];
+export const allColumns = [...defaultColumns, ...additionalColumns];
+
+export type ColumnKey = typeof allColumns[number]['key'];
+
+// Define which columns should be visible by default
+export const defaultVisibleColumns = [
+  "system_time",
+  "user_id", 
+  "computer_name",
+  "ip_address",
+  "title",
+  "tags",
+  "risk_score",
+  "dbscan_cluster"
+];

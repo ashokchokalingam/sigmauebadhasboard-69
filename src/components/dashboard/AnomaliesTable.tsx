@@ -10,7 +10,7 @@ import { useToast } from "../ui/use-toast";
 import ColumnSelector from "./ColumnSelector";
 import TableHeaderComponent from "./TableHeader";
 import AlertTableRow from "./TableRow";
-import { defaultColumns } from "./TableConfig";
+import { allColumns, defaultVisibleColumns } from "./TableConfig";
 
 interface TimelineState {
   type: "user" | "computer";
@@ -27,9 +27,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [timelineView, setTimelineView] = useState<TimelineState | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(
-    defaultColumns.map(col => col.key)
-  );
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(defaultVisibleColumns);
   const { toast } = useToast();
   
   const sevenDaysAgo = new Date();
@@ -60,7 +58,19 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   }).slice(0, ALERTS_PER_PAGE);
 
   const handleColumnToggle = (newColumns: string[]) => {
+    if (newColumns.length === 0) {
+      toast({
+        title: "Error",
+        description: "At least one column must be visible",
+        variant: "destructive",
+      });
+      return;
+    }
     setVisibleColumns(newColumns);
+    toast({
+      title: "Columns Updated",
+      description: "The visible columns have been updated",
+    });
   };
 
   const handleColumnOrderChange = (newOrder: string[]) => {
@@ -108,7 +118,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                 Recent Events - Last 7 Days (Limited to 1000)
               </CardTitle>
               <ColumnSelector
-                columns={defaultColumns}
+                columns={allColumns}
                 visibleColumns={visibleColumns}
                 onColumnToggle={handleColumnToggle}
               />
