@@ -2,6 +2,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Alert } from "./types";
 import { extractTacticsAndTechniques, getRiskScore, getRiskColor } from "./utils";
+import { defaultColumns } from "./TableConfig";
 
 interface AlertTableRowProps {
   alert: Alert;
@@ -28,22 +29,34 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     if (!visibleColumns.includes(key)) return null;
 
     switch (key) {
+      case "title":
+        return (
+          <TableCell>
+            <div className="flex flex-col gap-1">
+              <span className="text-blue-100 font-medium line-clamp-2">{alert.title || 'N/A'}</span>
+            </div>
+          </TableCell>
+        );
+      case "tags":
+        return (
+          <TableCell>
+            <span className="px-2 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20 line-clamp-1">
+              {tactics || 'N/A'}
+            </span>
+          </TableCell>
+        );
+      case "description":
+        return (
+          <TableCell>
+            <span className="text-blue-300/70 text-sm line-clamp-2">
+              {alert.description || 'N/A'}
+            </span>
+          </TableCell>
+        );
       case "system_time":
         return (
           <TableCell className="font-mono text-blue-300 text-sm whitespace-nowrap">
             {browserTime}
-          </TableCell>
-        );
-      case "user_id":
-        return (
-          <TableCell 
-            className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTimelineView("user", alert.user_id);
-            }}
-          >
-            {alert.user_id}
           </TableCell>
         );
       case "computer_name":
@@ -55,72 +68,19 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
               onTimelineView("computer", alert.computer_name);
             }}
           >
-            {alert.computer_name}
+            {alert.computer_name || 'N/A'}
           </TableCell>
         );
-      case "ip_address":
+      case "user_id":
         return (
-          <TableCell className="text-blue-100 font-mono">
-            {alert.ip_address || 'N/A'}
-          </TableCell>
-        );
-      case "title":
-        return (
-          <TableCell>
-            <div className="flex flex-col gap-1">
-              <span className="text-blue-100 font-medium">{alert.title}</span>
-            </div>
-          </TableCell>
-        );
-      case "description":
-        return (
-          <TableCell>
-            <span className="text-blue-300/70 text-sm line-clamp-2">
-              {alert.description || 'N/A'}
-            </span>
-          </TableCell>
-        );
-      case "tags":
-        return (
-          <TableCell>
-            <span className="px-2 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20">
-              {tactics || 'N/A'}
-            </span>
-          </TableCell>
-        );
-      case "techniques":
-        return (
-          <TableCell>
-            <div className="flex flex-col gap-1">
-              {techniques.length > 0 ? (
-                techniques.map((technique, index) => (
-                  <span 
-                    key={index}
-                    className="px-2 py-1 bg-indigo-500/10 text-indigo-400 text-xs rounded-full border border-indigo-500/20"
-                  >
-                    {technique}
-                  </span>
-                ))
-              ) : (
-                <span className="px-2 py-1 bg-indigo-500/10 text-indigo-400 text-xs rounded-full border border-indigo-500/20">
-                  N/A
-                </span>
-              )}
-            </div>
-          </TableCell>
-        );
-      case "risk_score":
-        return (
-          <TableCell className={`font-mono font-bold ${getRiskColor(getRiskScore(alert))}`}>
-            {getRiskScore(alert).toFixed(1)}
-          </TableCell>
-        );
-      case "dbscan_cluster":
-        return (
-          <TableCell>
-            <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
-              {alert.dbscan_cluster}
-            </span>
+          <TableCell 
+            className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onTimelineView("user", alert.user_id);
+            }}
+          >
+            {alert.user_id || 'N/A'}
           </TableCell>
         );
       case "event_id":
@@ -133,6 +93,20 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         return (
           <TableCell className="text-blue-100">
             {alert.provider_name || 'N/A'}
+          </TableCell>
+        );
+      case "dbscan_cluster":
+        return (
+          <TableCell>
+            <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
+              {alert.dbscan_cluster}
+            </span>
+          </TableCell>
+        );
+      case "ip_address":
+        return (
+          <TableCell className="text-blue-100 font-mono">
+            {alert.ip_address || 'N/A'}
           </TableCell>
         );
       case "ruleid":
@@ -163,6 +137,14 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         return (
           <TableCell className="text-blue-100">
             {alert.target_domain_name || 'N/A'}
+          </TableCell>
+        );
+      case "raw":
+        return (
+          <TableCell>
+            <span className="text-blue-300/70 text-sm line-clamp-1">
+              {alert.raw || 'N/A'}
+            </span>
           </TableCell>
         );
       default:
