@@ -82,20 +82,8 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   };
 
   const toggleAlert = (alert: Alert) => {
-    if (selectedAlert?.id === alert.id) {
-      setSelectedAlert(null);
-      setTimelineView(null);
-      window.scrollTo({ left: 0, behavior: 'smooth' });
-    } else {
-      setSelectedAlert(alert);
-      setTimelineView(null);
-      setTimeout(() => {
-        window.scrollTo({
-          left: document.documentElement.scrollWidth,
-          behavior: 'smooth'
-        });
-      }, 100);
-    }
+    setSelectedAlert(selectedAlert?.id === alert.id ? null : alert);
+    setTimelineView(null);
   };
 
   const handleTimelineView = (type: "user" | "computer", id: string) => {
@@ -108,8 +96,8 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   };
 
   return (
-    <div className="relative flex gap-4">
-      <Card className={`bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300 ${selectedAlert || timelineView ? 'flex-[0.6]' : 'flex-1'}`}>
+    <div className="space-y-6">
+      <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -184,12 +172,27 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
         </CardContent>
       </Card>
 
-      <DetailsSidebar
-        selectedAlert={selectedAlert}
-        timelineView={timelineView}
-        alerts={alerts}
-        onTimelineClose={() => setTimelineView(null)}
-      />
+      {selectedAlert && (
+        <Card className="bg-black/40 border-blue-500/10">
+          <CardContent className="p-6">
+            <AlertDetailsView alert={selectedAlert} />
+          </CardContent>
+        </Card>
+      )}
+
+      {timelineView && (
+        <Card className="bg-black/40 border-blue-500/10">
+          <CardContent className="p-6">
+            <TimelineView
+              alerts={alerts}
+              entityType={timelineView.type}
+              entityId={timelineView.id}
+              onClose={() => setTimelineView(null)}
+              inSidebar={false}
+            />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
