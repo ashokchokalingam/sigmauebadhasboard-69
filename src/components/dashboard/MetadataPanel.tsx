@@ -36,7 +36,7 @@ const MetadataPanel = ({ selectedAlert }: MetadataPanelProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 pb-8">
+    <div className="grid grid-cols-1 gap-4 pb-8 max-h-[calc(95vh-4rem)] overflow-y-auto">
       {/* Basic Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-blue-300 mb-2">Basic Information</h3>
@@ -50,7 +50,11 @@ const MetadataPanel = ({ selectedAlert }: MetadataPanelProps) => {
       {/* Time and System Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-blue-300 mb-2">Time and System Information</h3>
-        <MetadataField icon={Clock} label="System Time" value={selectedAlert.system_time ? new Date(selectedAlert.system_time).toLocaleString() : null} />
+        <MetadataField 
+          icon={Clock} 
+          label="System Time" 
+          value={selectedAlert.system_time ? new Date(selectedAlert.system_time).toLocaleString() : null} 
+        />
         <MetadataField icon={Server} label="Computer Name" value={selectedAlert.computer_name} />
         <MetadataField icon={Globe} label="IP Address" value={selectedAlert.ip_address} />
         <MetadataField icon={Network} label="Provider Name" value={selectedAlert.provider_name} />

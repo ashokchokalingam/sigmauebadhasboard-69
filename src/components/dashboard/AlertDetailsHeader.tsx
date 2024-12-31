@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert } from "./types";
-import { AlertTriangle, Shield, Info } from "lucide-react";
+import { AlertTriangle, Shield, Info, Clock, Globe, User, Hash, Database, Tag, Terminal } from "lucide-react";
 
 interface AlertDetailsHeaderProps {
   alert: Alert;
@@ -66,18 +66,24 @@ const AlertDetailsHeader = ({ alert }: AlertDetailsHeaderProps) => {
         <Card className="bg-purple-950/20 border-purple-500/10">
           <CardContent className="p-4">
             <h4 className="text-sm font-medium text-purple-400 mb-1">User Impacted</h4>
-            <p className="text-sm text-purple-100">
-              {alert.target_user_name || 'N/A'}
-            </p>
+            <div className="flex items-center gap-2">
+              <User className="h-5 w-5 text-purple-400" />
+              <p className="text-sm text-purple-100">
+                {alert.target_user_name || 'N/A'}
+              </p>
+            </div>
           </CardContent>
         </Card>
 
         <Card className="bg-purple-950/20 border-purple-500/10">
           <CardContent className="p-4">
             <h4 className="text-sm font-medium text-purple-400 mb-1">Domain</h4>
-            <p className="text-sm text-purple-100">
-              {alert.target_domain_name || 'N/A'}
-            </p>
+            <div className="flex items-center gap-2">
+              <Globe className="h-5 w-5 text-purple-400" />
+              <p className="text-sm text-purple-100">
+                {alert.target_domain_name || 'N/A'}
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
