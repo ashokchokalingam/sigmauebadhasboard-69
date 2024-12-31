@@ -30,7 +30,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     .map(tag => tag.trim().toUpperCase());
 
   return (
-    <div className="bg-black/90 border border-blue-500/10 shadow-2xl flex flex-col rounded-md">
+    <div className="bg-black/90 border border-blue-500/10 shadow-2xl flex flex-col rounded-md w-[600px]">
       {/* Header */}
       <div className="flex justify-between items-center p-6 border-b border-blue-500/10 bg-black/90 backdrop-blur-sm sticky top-0 z-10">
         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
@@ -45,39 +45,39 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
       </div>
 
       {/* Content */}
-      <ScrollArea className="flex-1">
-        <div className="p-6 space-y-6">
-          {/* Primary Alert Details Section */}
-          <div className="space-y-4 border-b border-blue-500/10 pb-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-400" />
-                <h3 className="text-lg font-medium text-blue-100">Title</h3>
+      <ScrollArea className="flex-1 p-6">
+        <div className="space-y-8">
+          {/* Alert Details Section */}
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-blue-400">
+                <FileText className="h-5 w-5" />
+                <h3 className="text-lg font-medium">Title</h3>
               </div>
               <p className="text-blue-200 pl-7">{alert.title || 'N/A'}</p>
             </div>
             
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-yellow-400" />
-                <h3 className="text-lg font-medium text-yellow-100">Description</h3>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-yellow-400">
+                <AlertTriangle className="h-5 w-5" />
+                <h3 className="text-lg font-medium">Description</h3>
               </div>
               <p className="text-blue-200 pl-7">{alert.description || 'N/A'}</p>
             </div>
 
             {/* MITRE ATT&CK Information */}
-            <div className="space-y-2 pl-7 pt-2">
-              <h4 className="text-sm font-medium text-purple-400">MITRE ATT&CK:</h4>
+            <div className="space-y-4 pl-7">
+              <h4 className="text-lg font-medium text-purple-400">MITRE ATT&CK</h4>
               
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <div>
-                  <h5 className="text-sm text-purple-300">Tactics:</h5>
-                  <p className="text-purple-200">{tactics || 'N/A'}</p>
+                  <h5 className="text-sm font-medium text-purple-300">Tactics:</h5>
+                  <p className="text-purple-200 mt-1">{tactics || 'N/A'}</p>
                 </div>
                 
                 <div>
-                  <h5 className="text-sm text-purple-300">Techniques:</h5>
-                  <div className="flex flex-wrap gap-2">
+                  <h5 className="text-sm font-medium text-purple-300">Techniques:</h5>
+                  <div className="flex flex-wrap gap-2 mt-1">
                     {techniques?.map((technique, index) => (
                       <span 
                         key={index}
@@ -91,34 +91,34 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
               </div>
             </div>
 
-            <div className="space-y-1 pl-7">
+            <div className="space-y-2 pl-7">
               <h4 className="text-sm font-medium text-blue-400">Rule ID:</h4>
-              <p className="text-blue-200 font-mono">{alert.ruleid || 'N/A'}</p>
+              <p className="text-blue-200 font-mono break-all">{alert.ruleid || 'N/A'}</p>
             </div>
           </div>
 
           {/* Severity & Task Section */}
-          <div className="space-y-4 border-b border-blue-500/10 pb-6">
-            <h3 className="text-lg font-medium text-blue-100">Severity & Task</h3>
-            <div className="grid grid-cols-2 gap-4 pl-7">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-blue-400" />
-                  <span className="text-sm text-blue-400">Severity</span>
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium text-blue-100 border-b border-blue-500/10 pb-2">Severity & Task</h3>
+            <div className="grid grid-cols-2 gap-6 pl-7">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-blue-400">
+                  <AlertTriangle className="h-4 w-4" />
+                  <span className="text-sm">Severity</span>
                 </div>
                 <p className="text-blue-200 capitalize">{alert.rule_level || 'N/A'}</p>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Tag className="h-4 w-4 text-blue-400" />
-                  <span className="text-sm text-blue-400">Task</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-blue-400">
+                  <Tag className="h-4 w-4" />
+                  <span className="text-sm">Task</span>
                 </div>
                 <p className="text-blue-200">{alert.task || 'N/A'}</p>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Database className="h-4 w-4 text-blue-400" />
-                  <span className="text-sm text-blue-400">ML Cluster</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-blue-400">
+                  <Database className="h-4 w-4" />
+                  <span className="text-sm">ML Cluster</span>
                 </div>
                 <p className="text-blue-200">Cluster {alert.dbscan_cluster || 'N/A'}</p>
               </div>
@@ -126,34 +126,34 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
           </div>
 
           {/* System Information Section */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-blue-100">System Information</h3>
-            <div className="grid grid-cols-2 gap-4 pl-7">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Computer className="h-4 w-4 text-blue-400" />
-                  <span className="text-sm text-blue-400">Computer Name</span>
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium text-blue-100 border-b border-blue-500/10 pb-2">System Information</h3>
+            <div className="grid grid-cols-2 gap-6 pl-7">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-blue-400">
+                  <Computer className="h-4 w-4" />
+                  <span className="text-sm">Computer Name</span>
                 </div>
                 <p className="text-blue-200">{alert.computer_name || 'N/A'}</p>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Network className="h-4 w-4 text-blue-400" />
-                  <span className="text-sm text-blue-400">IP Address</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-blue-400">
+                  <Network className="h-4 w-4" />
+                  <span className="text-sm">IP Address</span>
                 </div>
                 <p className="text-blue-200 font-mono">{alert.ip_address || 'N/A'}</p>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Hash className="h-4 w-4 text-blue-400" />
-                  <span className="text-sm text-blue-400">Event ID</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-blue-400">
+                  <Hash className="h-4 w-4" />
+                  <span className="text-sm">Event ID</span>
                 </div>
                 <p className="text-blue-200">{alert.event_id || 'N/A'}</p>
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <Terminal className="h-4 w-4 text-blue-400" />
-                  <span className="text-sm text-blue-400">Provider</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-blue-400">
+                  <Terminal className="h-4 w-4" />
+                  <span className="text-sm">Provider</span>
                 </div>
                 <p className="text-blue-200">{alert.provider_name || 'N/A'}</p>
               </div>
