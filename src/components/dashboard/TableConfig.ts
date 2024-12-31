@@ -5,10 +5,7 @@ export const defaultColumns = [
   { key: "system_time", label: "Time" },
   { key: "computer_name", label: "Computer" },
   { key: "user_id", label: "User Origin" },
-  { key: "task", label: "Task" }
-];
-
-export const additionalColumns = [
+  { key: "task", label: "Task" },
   { key: "event_id", label: "Event ID" },
   { key: "provider_name", label: "Provider" },
   { key: "ip_address", label: "IP Address" },

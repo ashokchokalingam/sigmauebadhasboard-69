@@ -99,6 +99,48 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
             {alert.user_id || 'N/A'}
           </TableCell>
         );
+      case "event_id":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.event_id || 'N/A'}
+          </TableCell>
+        );
+      case "provider_name":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.provider_name || 'N/A'}
+          </TableCell>
+        );
+      case "ip_address":
+        return (
+          <TableCell className="text-blue-100 font-mono">
+            {alert.ip_address || 'N/A'}
+          </TableCell>
+        );
+      case "ruleid":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.ruleid || 'N/A'}
+          </TableCell>
+        );
+      case "rule_level":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.rule_level || 'N/A'}
+          </TableCell>
+        );
+      case "target_user_name":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.target_user_name || 'N/A'}
+          </TableCell>
+        );
+      case "target_domain_name":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.target_domain_name || 'N/A'}
+          </TableCell>
+        );
       case "task":
         return (
           <TableCell className="text-blue-100">
@@ -135,7 +177,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
       </TableRow>
       {isSelected && (
         <TableRow>
-          <TableCell colSpan={visibleColumns.length + 1} className="bg-blue-950/10 border-t border-blue-500/10 p-0">
+          <TableCell colSpan={defaultColumns.length + 1} className="bg-blue-950/10 border-t border-blue-500/10 p-0">
             <AlertDetailsView alert={alert} onClose={onToggle} />
           </TableCell>
         </TableRow>
