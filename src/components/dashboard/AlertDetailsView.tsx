@@ -75,7 +75,7 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
       <TimelineMitreSection alert={alert} />
       
       {alert.raw && (
-        <Card className="bg-black/40 border-blue-500/10">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg">
           <div 
             className="p-4 flex items-center justify-between cursor-pointer hover:bg-blue-500/5 transition-colors"
             onClick={() => setIsRawExpanded(!isRawExpanded)}
@@ -94,7 +94,7 @@ const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
               <TimelineRawLog alert={alert} />
             </div>
           )}
-        </Card>
+        </div>
       )}
     </div>
   );
