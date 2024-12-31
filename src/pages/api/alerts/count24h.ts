@@ -1,6 +1,7 @@
 import { db } from '@/lib/db';
+import { RowDataPacket } from 'mysql2';
 
-interface CountResponse {
+interface CountResponse extends RowDataPacket {
   count: number;
 }
 
