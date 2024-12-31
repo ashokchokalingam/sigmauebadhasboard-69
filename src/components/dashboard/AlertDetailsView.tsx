@@ -2,7 +2,7 @@ import { Alert } from "./types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import TimelineRawLog from "./TimelineRawLog";
-import { additionalColumns } from "./TableConfig";
+import { defaultColumns } from "./TableConfig";
 
 interface AlertDetailsViewProps {
   alert: Alert;
@@ -26,7 +26,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
       </div>
       
       <div className="grid grid-cols-2 gap-4">
-        {additionalColumns.map(({ key, label }) => (
+        {defaultColumns.map(({ key, label }) => (
           <div key={key} className="space-y-1">
             <h3 className="text-sm font-medium text-blue-300">{label}</h3>
             <p className="text-blue-100">
