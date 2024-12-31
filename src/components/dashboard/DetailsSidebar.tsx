@@ -33,14 +33,14 @@ const DetailsSidebar = ({
   if (!selectedAlert && !timelineView) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
-      <div className="absolute inset-0 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm overflow-hidden">
+      <div className="absolute inset-0 flex items-start justify-center p-4">
         <ResizablePanelGroup
           direction="horizontal"
-          className="h-[90vh] w-[90vw] max-w-[1400px] min-w-[600px] rounded-lg bg-background"
+          className="min-h-[95vh] w-[95vw] max-w-[1800px] rounded-lg bg-background"
         >
           <ResizablePanel defaultSize={40} minSize={30}>
-            <div className="h-full overflow-y-auto scrollbar-thin">
+            <div className="h-[95vh] overflow-y-auto scrollbar-thin">
               {selectedAlert && (
                 <Card className="h-full border-none rounded-none">
                   <CardContent className="p-6">
@@ -65,7 +65,7 @@ const DetailsSidebar = ({
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={60} minSize={30}>
-            <div className="h-full overflow-y-auto scrollbar-thin p-6">
+            <div className="h-[95vh] overflow-y-auto scrollbar-thin p-6">
               <h2 className="text-2xl font-bold mb-4">Event Details</h2>
               <MetadataPanel selectedAlert={selectedAlert} />
             </div>

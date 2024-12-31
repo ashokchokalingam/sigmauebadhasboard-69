@@ -18,7 +18,8 @@ import {
   Clock,
   AlertCircle,
   Layers,
-  Code
+  Code,
+  MessageSquare
 } from "lucide-react";
 
 interface MetadataPanelProps {
@@ -33,8 +34,8 @@ const MetadataPanel = ({ selectedAlert }: MetadataPanelProps) => {
   return (
     <div className="grid grid-cols-1 gap-4">
       <MetadataField icon={AlertCircle} label="Title" value={selectedAlert.title} />
+      <MetadataField icon={MessageSquare} label="Description" value={selectedAlert.description} />
       <MetadataField icon={Tag} label="Tags" value={selectedAlert.tags} />
-      <MetadataField icon={FileText} label="Description" value={selectedAlert.description} />
       <MetadataField 
         icon={Clock} 
         label="System Time" 
@@ -51,7 +52,7 @@ const MetadataPanel = ({ selectedAlert }: MetadataPanelProps) => {
       <MetadataField icon={Info} label="Task" value={selectedAlert.task} />
       <MetadataField icon={UserCheck} label="Target User" value={selectedAlert.target_user_name} />
       <MetadataField icon={Database} label="Target Domain" value={selectedAlert.target_domain_name} />
-      <MetadataField icon={Code} label="Raw Log Data" value={selectedAlert.raw} />
+      <MetadataField icon={Code} label="Raw Log Data" value={selectedAlert.raw} isRawLog={true} />
     </div>
   );
 };
