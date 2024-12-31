@@ -37,13 +37,13 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full">
       <div className="flex items-center gap-2 mb-2 text-blue-400">
         <Terminal className="h-4 w-4" />
         Raw Log
       </div>
-      <div className="bg-[#1E1E1E] rounded-lg border border-blue-500/10">
-        <pre className="p-4">
+      <div className="bg-[#1E1E1E] rounded-lg border border-blue-500/10 h-[calc(100%-2rem)]">
+        <pre className="p-4 h-full overflow-auto">
           <code ref={codeRef} className="language-json whitespace-pre-wrap break-words">
             {formattedJson}
           </code>

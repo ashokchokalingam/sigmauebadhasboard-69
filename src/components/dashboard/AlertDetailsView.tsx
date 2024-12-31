@@ -1,7 +1,10 @@
 import { Alert } from "./types";
-import { X, FileText, Target, Shield, Hash, Terminal, Clock, Computer, User, Network, AlertTriangle, Globe, Database, Tag } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { X } from "lucide-react";
 import TimelineRawLog from "./TimelineRawLog";
+import AlertIdentification from "./AlertDetailsSections/AlertIdentification";
+import AlertMainInfo from "./AlertDetailsSections/AlertMainInfo";
+import MitreInfo from "./AlertDetailsSections/MitreInfo";
+import SystemInfo from "./AlertDetailsSections/SystemInfo";
 
 interface AlertDetailsViewProps {
   alert: Alert;
@@ -9,26 +12,6 @@ interface AlertDetailsViewProps {
 }
 
 const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
-  const browserTime = new Date(alert.system_time).toLocaleString(undefined, {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
-    month: 'numeric',
-    day: 'numeric',
-    year: 'numeric',
-  });
-
-  // Extract MITRE ATT&CK information
-  const tactics = alert.tags?.split(',')
-    .filter(tag => tag.includes('attack.'))
-    .map(tag => tag.replace('attack.', ''))
-    .join(', ');
-
-  const techniques = alert.tags?.split(',')
-    .filter(tag => tag.toLowerCase().includes('t1'))
-    .map(tag => tag.trim().toUpperCase());
-
   return (
     <div className="h-full bg-black/90 border-l border-blue-500/10">
       {/* Header */}
@@ -45,160 +28,21 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
       </div>
 
       {/* Content */}
-      <ScrollArea className="h-[calc(100%-5rem)] p-6">
-        <div className="space-y-8">
-          {/* Alert ID Section */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-blue-400">
-              <Hash className="h-5 w-5" />
-              <h3 className="text-lg font-medium">Alert ID</h3>
-            </div>
-            <p className="text-blue-200 pl-7 font-mono">{alert.id || 'N/A'}</p>
-          </div>
+      <div className="h-[calc(100%-5rem)] grid grid-rows-[auto_1fr]">
+        <div className="p-6 space-y-8 overflow-y-auto">
+          <AlertIdentification alert={alert} />
+          <AlertMainInfo alert={alert} />
+          <MitreInfo alert={alert} />
+          <SystemInfo alert={alert} />
+        </div>
 
-          {/* Alert Details Section */}
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-blue-400">
-                <FileText className="h-5 w-5" />
-                <h3 className="text-lg font-medium">Title</h3>
-              </div>
-              <p className="text-blue-200 pl-7">{alert.title || 'N/A'}</p>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-yellow-400">
-                <AlertTriangle className="h-5 w-5" />
-                <h3 className="text-lg font-medium">Description</h3>
-              </div>
-              <p className="text-blue-200 pl-7">{alert.description || 'N/A'}</p>
-            </div>
-
-            {/* MITRE ATT&CK Information */}
-            <div className="space-y-4 pl-7">
-              <h4 className="text-lg font-medium text-purple-400">MITRE ATT&CK</h4>
-              
-              <div className="space-y-4">
-                <div>
-                  <h5 className="text-sm font-medium text-purple-300">Tactics:</h5>
-                  <p className="text-purple-200 mt-1">{tactics || 'N/A'}</p>
-                </div>
-                
-                <div>
-                  <h5 className="text-sm font-medium text-purple-300">Techniques:</h5>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {techniques?.map((technique, index) => (
-                      <span 
-                        key={index}
-                        className="px-2 py-1 bg-purple-500/10 text-purple-300 text-sm rounded-full border border-purple-500/20"
-                      >
-                        {technique}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2 pl-7">
-              <h4 className="text-sm font-medium text-blue-400">Rule ID:</h4>
-              <p className="text-blue-200 font-mono break-all">{alert.ruleid || 'N/A'}</p>
-            </div>
-          </div>
-
-          {/* Severity & Task Section */}
-          <div className="space-y-6">
-            <h3 className="text-lg font-medium text-blue-100 border-b border-blue-500/10 pb-2">Severity & Task</h3>
-            <div className="grid grid-cols-2 gap-6 pl-7">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-400">
-                  <AlertTriangle className="h-4 w-4" />
-                  <span className="text-sm">Severity</span>
-                </div>
-                <p className="text-blue-200 capitalize">{alert.rule_level || 'N/A'}</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-400">
-                  <Tag className="h-4 w-4" />
-                  <span className="text-sm">Task</span>
-                </div>
-                <p className="text-blue-200">{alert.task || 'N/A'}</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-400">
-                  <Database className="h-4 w-4" />
-                  <span className="text-sm">ML Cluster</span>
-                </div>
-                <p className="text-blue-200">Cluster {alert.dbscan_cluster || 'N/A'}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* System Information Section */}
-          <div className="space-y-6">
-            <h3 className="text-lg font-medium text-blue-100 border-b border-blue-500/10 pb-2">System Information</h3>
-            <div className="grid grid-cols-2 gap-6 pl-7">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-400">
-                  <Computer className="h-4 w-4" />
-                  <span className="text-sm">Computer Name</span>
-                </div>
-                <p className="text-blue-200">{alert.computer_name || 'N/A'}</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-400">
-                  <Network className="h-4 w-4" />
-                  <span className="text-sm">IP Address</span>
-                </div>
-                <p className="text-blue-200 font-mono">{alert.ip_address || 'N/A'}</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-400">
-                  <Hash className="h-4 w-4" />
-                  <span className="text-sm">Event ID</span>
-                </div>
-                <p className="text-blue-200">{alert.event_id || 'N/A'}</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-400">
-                  <Terminal className="h-4 w-4" />
-                  <span className="text-sm">Provider</span>
-                </div>
-                <p className="text-blue-200">{alert.provider_name || 'N/A'}</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-400">
-                  <User className="h-4 w-4" />
-                  <span className="text-sm">Target User</span>
-                </div>
-                <p className="text-blue-200">{alert.target_user_name || 'N/A'}</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-400">
-                  <Globe className="h-4 w-4" />
-                  <span className="text-sm">Target Domain</span>
-                </div>
-                <p className="text-blue-200">{alert.target_domain_name || 'N/A'}</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-blue-400">
-                  <Clock className="h-4 w-4" />
-                  <span className="text-sm">System Time</span>
-                </div>
-                <p className="text-blue-200">{browserTime || 'N/A'}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Raw Log Section */}
-          <div className="space-y-6">
-            <h3 className="text-lg font-medium text-blue-100 border-b border-blue-500/10 pb-2">Raw Log</h3>
-            <div className="pl-7">
-              <TimelineRawLog alert={alert} />
-            </div>
+        {/* Raw Log Section - Full Height */}
+        <div className="border-t border-blue-500/10">
+          <div className="p-6">
+            <TimelineRawLog alert={alert} />
           </div>
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };
