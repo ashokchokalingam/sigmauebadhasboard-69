@@ -6,9 +6,10 @@ interface AnomaliesTableHeaderProps {
   alerts: Alert[];
   onFilterChange: (column: string, value: string) => void;
   filters: Record<string, string>;
+  visibleColumns: string[];
 }
 
-const AnomaliesTableHeader = ({ alerts, onFilterChange, filters }: AnomaliesTableHeaderProps) => {
+const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns }: AnomaliesTableHeaderProps) => {
   // Get data from last 7 days
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -32,60 +33,37 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters }: AnomaliesTabl
     return uniqueValues.sort();
   };
 
+  const columns = [
+    { key: "system_time", label: "Time" },
+    { key: "user_id", label: "User" },
+    { key: "computer_name", label: "Computer" },
+    { key: "ip_address", label: "IP Address" },
+    { key: "title", label: "Title" },
+    { key: "tags", label: "Tactics" },
+    { key: "techniques", label: "Techniques" },
+    { key: "risk_score", label: "Risk Score" },
+    { key: "dbscan_cluster", label: "DBSCAN Cluster" }
+  ];
+
   return (
     <TableHeader>
       <TableRow className="hover:bg-blue-950/30">
-        <TableHead className="text-blue-300">
-          <ColumnFilter
-            title="Time"
-            options={getUniqueValues("system_time")}
-            onSelect={(value) => onFilterChange("system_time", value)}
-            selectedValue={filters["system_time"]}
-          />
-        </TableHead>
-        <TableHead className="text-blue-300">
-          <ColumnFilter
-            title="User"
-            options={getUniqueValues("user_id")}
-            onSelect={(value) => onFilterChange("user_id", value)}
-            selectedValue={filters["user_id"]}
-          />
-        </TableHead>
-        <TableHead className="text-blue-300">
-          <ColumnFilter
-            title="Computer"
-            options={getUniqueValues("computer_name")}
-            onSelect={(value) => onFilterChange("computer_name", value)}
-            selectedValue={filters["computer_name"]}
-          />
-        </TableHead>
-        <TableHead className="text-blue-300">
-          <ColumnFilter
-            title="IP Address"
-            options={getUniqueValues("ip_address")}
-            onSelect={(value) => onFilterChange("ip_address", value)}
-            selectedValue={filters["ip_address"]}
-          />
-        </TableHead>
-        <TableHead className="text-blue-300">
-          <ColumnFilter
-            title="Title"
-            options={getUniqueValues("title")}
-            onSelect={(value) => onFilterChange("title", value)}
-            selectedValue={filters["title"]}
-          />
-        </TableHead>
-        <TableHead className="text-blue-300">
-          <ColumnFilter
-            title="Tactics"
-            options={getUniqueValues("tags")}
-            onSelect={(value) => onFilterChange("tags", value)}
-            selectedValue={filters["tags"]}
-          />
-        </TableHead>
-        <TableHead className="text-blue-300">Techniques</TableHead>
-        <TableHead className="text-blue-300">Risk Score</TableHead>
-        <TableHead className="text-blue-300">DBSCAN Cluster</TableHead>
+        {columns.map(column => 
+          visibleColumns.includes(column.key) && (
+            <TableHead key={column.key} className="text-blue-300">
+              {column.key === "techniques" ? (
+                column.label
+              ) : (
+                <ColumnFilter
+                  title={column.label}
+                  options={getUniqueValues(column.key as keyof Alert)}
+                  onSelect={(value) => onFilterChange(column.key, value)}
+                  selectedValue={filters[column.key]}
+                />
+              )}
+            </TableHead>
+          )
+        )}
         <TableHead className="text-blue-300 w-[50px]"></TableHead>
       </TableRow>
     </TableHeader>

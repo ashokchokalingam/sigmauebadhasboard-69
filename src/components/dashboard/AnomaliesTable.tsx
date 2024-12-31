@@ -9,6 +9,7 @@ import DetailsSidebar from "./DetailsSidebar";
 import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
 import { useToast } from "../ui/use-toast";
+import ColumnSelector from "./ColumnSelector";
 
 interface TimelineState {
   type: "user" | "computer";
@@ -21,10 +22,25 @@ interface AnomaliesTableProps {
   hasMore: boolean;
 }
 
+const defaultColumns = [
+  { key: "system_time", label: "Time" },
+  { key: "user_id", label: "User" },
+  { key: "computer_name", label: "Computer" },
+  { key: "ip_address", label: "IP Address" },
+  { key: "title", label: "Title" },
+  { key: "tags", label: "Tactics" },
+  { key: "techniques", label: "Techniques" },
+  { key: "risk_score", label: "Risk Score" },
+  { key: "dbscan_cluster", label: "DBSCAN Cluster" }
+];
+
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [timelineView, setTimelineView] = useState<TimelineState | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(
+    defaultColumns.map(col => col.key)
+  );
   const { toast } = useToast();
   
   // Filter alerts for last 7 days and limit to 1000 for table only
@@ -39,7 +55,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     .sort((a, b) => 
       new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
     )
-    .slice(0, 1000);  // Limit to 1000 logs for table view only
+    .slice(0, 1000);
 
   const filteredAlerts = sortedAlerts.filter(alert => {
     return Object.entries(filters).every(([key, value]) => {
@@ -54,6 +70,21 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
       return String(alert[key as keyof Alert]).toLowerCase() === value.toLowerCase();
     });
   }).slice(0, ALERTS_PER_PAGE);
+
+  const handleColumnToggle = (columnKey: string) => {
+    setVisibleColumns(prev => {
+      const newColumns = prev.includes(columnKey)
+        ? prev.filter(col => col !== columnKey)
+        : [...prev, columnKey];
+      
+      toast({
+        title: prev.includes(columnKey) ? "Column Hidden" : "Column Shown",
+        description: `${defaultColumns.find(col => col.key === columnKey)?.label} column has been ${prev.includes(columnKey) ? "hidden" : "shown"}`,
+      });
+      
+      return newColumns;
+    });
+  };
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
@@ -129,17 +160,30 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               <AlertTriangle className="h-5 w-5 text-blue-500" />
               Recent Events - Last 7 Days (Limited to 1000)
             </CardTitle>
-            {Object.keys(filters).some(key => filters[key]) && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearAllFilters}
-                className="text-blue-400 hover:text-blue-300"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Clear Filters
-              </Button>
-            )}
+            <div className="flex items-center gap-2">
+              {Object.keys(filters).some(key => filters[key]) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setFilters({});
+                    toast({
+                      title: "Filters Cleared",
+                      description: "Showing all events from the last 7 days",
+                    });
+                  }}
+                  className="text-blue-400 hover:text-blue-300"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Clear Filters
+                </Button>
+              )}
+              <ColumnSelector
+                columns={defaultColumns}
+                visibleColumns={visibleColumns}
+                onColumnToggle={handleColumnToggle}
+              />
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -147,8 +191,25 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
             <Table>
               <AnomaliesTableHeader 
                 alerts={alerts}
-                onFilterChange={handleFilterChange}
+                onFilterChange={(column, value) => {
+                  setFilters(prev => {
+                    const newFilters = {
+                      ...prev,
+                      [column]: value
+                    };
+                    
+                    if (value) {
+                      toast({
+                        title: "Filter Applied",
+                        description: `Filtering ${column} by: ${value}`,
+                      });
+                    }
+                    
+                    return newFilters;
+                  });
+                }}
                 filters={filters}
+                visibleColumns={visibleColumns}
               />
               <TableBody>
                 {filteredAlerts.map((alert) => (
@@ -156,8 +217,24 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                     key={alert.id}
                     alert={alert}
                     isSelected={selectedAlert?.id === alert.id}
-                    onToggle={() => toggleAlert(alert)}
+                    onToggle={() => {
+                      if (selectedAlert?.id === alert.id) {
+                        setSelectedAlert(null);
+                        setTimelineView(null);
+                        window.scrollTo({ left: 0, behavior: 'smooth' });
+                      } else {
+                        setSelectedAlert(alert);
+                        setTimelineView(null);
+                        setTimeout(() => {
+                          window.scrollTo({
+                            left: document.documentElement.scrollWidth,
+                            behavior: 'smooth'
+                          });
+                        }, 100);
+                      }
+                    }}
                     onTimelineView={handleTimelineView}
+                    visibleColumns={visibleColumns}
                   />
                 ))}
               </TableBody>
