@@ -1,5 +1,16 @@
 import { Alert, Stats } from "./types";
 
+export const get24HourCount = async () => {
+  try {
+    const response = await fetch('/api/alerts/count24h');
+    const data = await response.json();
+    return data.count;
+  } catch (error) {
+    console.error('Error fetching 24h count:', error);
+    return 0;
+  }
+};
+
 export const calculateStats = (alerts: Alert[], totalRecords: number) => {
   // Get dates for 24-hour period
   const now = new Date();
