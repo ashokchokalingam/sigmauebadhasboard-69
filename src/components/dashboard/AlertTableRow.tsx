@@ -117,16 +117,12 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     <>
       <TableRow 
         className={`hover:bg-blue-950/30 cursor-pointer ${isSelected ? 'bg-blue-950/20' : ''}`}
-        onClick={onToggle}
       >
         {defaultColumns.map(column => renderCell(column.key))}
         <TableCell>
           <button 
             className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle();
-            }}
+            onClick={onToggle}
             aria-label={isSelected ? "Collapse details" : "Expand details"}
           >
             {isSelected ? (

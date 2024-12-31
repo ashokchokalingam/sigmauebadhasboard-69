@@ -13,7 +13,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   const [isRawExpanded, setIsRawExpanded] = useState(false);
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-6 space-y-4 w-full">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-blue-100">Alert Details</h2>
         <button 
