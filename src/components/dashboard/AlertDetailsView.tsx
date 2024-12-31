@@ -1,8 +1,7 @@
 import { Alert } from "./types";
-import TimelineRawLog from "./TimelineRawLog";
-import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { defaultColumns } from "./TableConfig";
+import { useState } from "react";
+import TimelineRawLog from "./TimelineRawLog";
 
 interface AlertDetailsViewProps {
   alert: Alert;
@@ -11,43 +10,54 @@ interface AlertDetailsViewProps {
 const AlertDetailsView = ({ alert }: AlertDetailsViewProps) => {
   const [isRawExpanded, setIsRawExpanded] = useState(false);
 
+  const fields = [
+    { key: 'title', label: 'Title' },
+    { key: 'description', label: 'Description' },
+    { key: 'system_time', label: 'Time' },
+    { key: 'computer_name', label: 'Computer' },
+    { key: 'user_id', label: 'User Origin' },
+    { key: 'event_id', label: 'Event ID' },
+    { key: 'provider_name', label: 'Provider' },
+    { key: 'dbscan_cluster', label: 'ML Outlier' },
+    { key: 'ip_address', label: 'IP Address' },
+    { key: 'ruleid', label: 'Rule ID' },
+    { key: 'rule_level', label: 'Rule Level' },
+    { key: 'task', label: 'Task' },
+    { key: 'target_user_name', label: 'Target User' },
+    { key: 'target_domain_name', label: 'Target Domain' },
+  ];
+
   return (
-    <div className="space-y-4 p-4">
-      {defaultColumns.map((column) => {
-        if (!alert[column.key as keyof Alert]) return null;
-
-        if (column.key === 'raw') {
-          return (
-            <div key={column.key} className="bg-black/40 border border-blue-500/10 rounded-lg">
-              <div 
-                className="p-4 flex items-center justify-between cursor-pointer hover:bg-blue-500/5 transition-colors"
-                onClick={() => setIsRawExpanded(!isRawExpanded)}
-              >
-                <h3 className="text-xl font-semibold text-blue-100">
-                  {column.label}
-                </h3>
-                {isRawExpanded ? (
-                  <ChevronUp className="h-6 w-6 text-blue-400" />
-                ) : (
-                  <ChevronDown className="h-6 w-6 text-blue-400" />
-                )}
-              </div>
-              {isRawExpanded && alert.raw && (
-                <div className="p-4">
-                  <TimelineRawLog alert={alert} />
-                </div>
-              )}
-            </div>
-          );
-        }
-
-        return (
-          <div key={column.key} className="space-y-2">
-            <h3 className="text-sm font-medium text-blue-300">{column.label}</h3>
-            <p className="text-blue-100 break-words">{String(alert[column.key as keyof Alert])}</p>
+    <div className="p-6 space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        {fields.map(({ key, label }) => (
+          <div key={key} className="space-y-1">
+            <h3 className="text-sm font-medium text-blue-300">{label}</h3>
+            <p className="text-blue-100">
+              {alert[key as keyof Alert]?.toString() || 'N/A'}
+            </p>
           </div>
-        );
-      })}
+        ))}
+      </div>
+      
+      <div className="mt-6 border-t border-blue-500/10 pt-4">
+        <button
+          className="w-full flex items-center justify-between p-4 hover:bg-blue-500/5 transition-colors rounded-lg"
+          onClick={() => setIsRawExpanded(!isRawExpanded)}
+        >
+          <span className="text-lg font-semibold text-blue-100">Raw Data</span>
+          {isRawExpanded ? (
+            <ChevronUp className="h-6 w-6 text-blue-400" />
+          ) : (
+            <ChevronDown className="h-6 w-6 text-blue-400" />
+          )}
+        </button>
+        {isRawExpanded && alert.raw && (
+          <div className="mt-4">
+            <TimelineRawLog alert={alert} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
