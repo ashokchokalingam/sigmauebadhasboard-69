@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Cell } from "recharts";
 import { Alert } from "./types";
 
 interface AlertDistributionProps {
@@ -80,8 +80,6 @@ const AlertDistribution = ({ alerts }: AlertDistributionProps) => {
               <Bar
                 dataKey="value"
                 radius={[4, 4, 0, 0]}
-                fill="#3b82f6"
-                dataKey="value"
               >
                 {calculateSeverityData().map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
