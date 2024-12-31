@@ -30,17 +30,20 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
     });
 
     return Object.entries(tacticsCount)
-      .map(([name, count]) => ({ name: name.replace(/_/g, ' '), value: count }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 7);
+      .map(([name, value]) => ({ 
+        name: name.replace(/_/g, '-'),
+        value,
+        color: '#3B82F6' // Using a consistent blue color for all bars
+      }))
+      .sort((a, b) => b.value - a.value);
   };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-[#1a1f2c] border border-gray-700 rounded-lg p-3 shadow-xl">
-          <p className="text-gray-200 font-medium capitalize">{label}</p>
-          <p className="text-gray-300 font-mono">{payload[0].value} alerts</p>
+        <div className="bg-[#1a1f2c] border border-gray-800 rounded-lg p-3 shadow-xl">
+          <p className="text-gray-200 capitalize">{label}</p>
+          <p className="text-blue-400 font-mono">{payload[0].value} alerts</p>
         </div>
       );
     }
@@ -48,28 +51,22 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
   };
 
   return (
-    <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-blue-100">
+    <Card className="bg-black/40 border-blue-500/10">
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center gap-2 text-lg font-medium text-blue-100">
           <Activity className="h-5 w-5 text-blue-500" />
           MITRE ATT&CK Tactics
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[400px]">
+        <div className="h-[400px] mt-4">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={calculateTacticsData()}
               layout="vertical"
-              margin={{ top: 20, right: 30, left: 120, bottom: 20 }}
-              barSize={32}
+              margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+              barSize={24}
             >
-              <defs>
-                <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#60A5FA" stopOpacity={0.8} />
-                  <stop offset="100%" stopColor="#60A5FA" stopOpacity={1} />
-                </linearGradient>
-              </defs>
               <CartesianGrid 
                 strokeDasharray="3 3" 
                 stroke="#333" 
@@ -79,29 +76,36 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
               <XAxis 
                 type="number"
                 stroke="#666"
-                tick={{ fill: '#E5DEFF', fontSize: 12 }}
+                tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                domain={[0, 'auto']}
               />
               <YAxis 
                 type="category"
                 dataKey="name"
                 stroke="#666"
-                tick={{ fill: '#E5DEFF', fontSize: 12 }}
+                tick={{ fill: '#9CA3AF', fontSize: 12 }}
                 width={120}
               />
               <Tooltip 
                 content={<CustomTooltip />}
                 cursor={{ 
-                  fill: 'rgba(96, 165, 250, 0.15)',
+                  fill: 'rgba(59, 130, 246, 0.1)',
                   strokeWidth: 1,
-                  stroke: 'rgba(96, 165, 250, 0.3)'
+                  stroke: 'rgba(59, 130, 246, 0.2)'
                 }}
               />
               <Bar 
                 dataKey="value"
-                fill="url(#barGradient)"
                 radius={[0, 4, 4, 0]}
-                onClick={(data) => onTacticSelect(data.name)}
-              />
+              >
+                {calculateTacticsData().map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.color}
+                    fillOpacity={0.8}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
