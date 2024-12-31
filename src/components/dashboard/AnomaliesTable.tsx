@@ -79,57 +79,57 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
 
   return (
     <div className="space-y-6">
-      <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <CardTitle className="flex items-center gap-2 text-blue-100">
-                <AlertTriangle className="h-5 w-5 text-blue-500" />
-                Recent Events - Last 7 Days (Limited to 1000)
-              </CardTitle>
-              <ColumnSelector
-                columns={allColumns}
-                visibleColumns={visibleColumns}
-                onColumnToggle={handleColumnToggle}
-              />
+      <div className="grid grid-cols-[1fr,auto] gap-6">
+        <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <CardTitle className="flex items-center gap-2 text-blue-100">
+                  <AlertTriangle className="h-5 w-5 text-blue-500" />
+                  Recent Events - Last 7 Days (Limited to 1000)
+                </CardTitle>
+                <ColumnSelector
+                  columns={allColumns}
+                  visibleColumns={visibleColumns}
+                  onColumnToggle={handleColumnToggle}
+                />
+              </div>
+              {Object.keys(filters).some(key => filters[key]) && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setFilters({});
+                    toast({
+                      title: "Filters Cleared",
+                      description: "Showing all events from the last 7 days",
+                    });
+                  }}
+                  className="text-blue-400 hover:text-blue-300"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Clear Filters
+                </Button>
+              )}
             </div>
-            {Object.keys(filters).some(key => filters[key]) && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setFilters({});
-                  toast({
-                    title: "Filters Cleared",
-                    description: "Showing all events from the last 7 days",
-                  });
-                }}
-                className="text-blue-400 hover:text-blue-300"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Clear Filters
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="table-container rounded-md border border-blue-500/10">
-            <Table>
-              <TableHeaderComponent 
-                alerts={alerts}
-                onFilterChange={(column, value) => {
-                  setFilters(prev => ({
-                    ...prev,
-                    [column]: value
-                  }));
-                }}
-                filters={filters}
-                visibleColumns={visibleColumns}
-                onColumnOrderChange={handleColumnOrderChange}
-              />
-              <TableBody className="bg-black/40">
-                {filteredAlerts.map((alert) => (
-                  <>
+          </CardHeader>
+          <CardContent>
+            <div className="table-container rounded-md border border-blue-500/10">
+              <Table>
+                <TableHeaderComponent 
+                  alerts={alerts}
+                  onFilterChange={(column, value) => {
+                    setFilters(prev => ({
+                      ...prev,
+                      [column]: value
+                    }));
+                  }}
+                  filters={filters}
+                  visibleColumns={visibleColumns}
+                  onColumnOrderChange={handleColumnOrderChange}
+                />
+                <TableBody className="bg-black/40">
+                  {filteredAlerts.map((alert) => (
                     <AlertTableRow
                       key={alert.id}
                       alert={alert}
@@ -138,30 +138,31 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                       onTimelineView={() => {}} // Implement if needed
                       visibleColumns={visibleColumns}
                     />
-                    {selectedAlertId === alert.id && (
-                      <tr>
-                        <td colSpan={visibleColumns.length + 1} className="p-4 bg-blue-950/20">
-                          <AlertDetailsView alert={alert} />
-                        </td>
-                      </tr>
-                    )}
-                  </>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
-            <div className="flex justify-center mt-6">
-              <Button
-                onClick={onLoadMore}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Load More Events
-              </Button>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-          )}
-        </CardContent>
-      </Card>
+            {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
+              <div className="flex justify-center mt-6">
+                <Button
+                  onClick={onLoadMore}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Load More Events
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {selectedAlert && (
+          <Card className="bg-black/40 border-blue-500/10 w-[600px] sticky top-6">
+            <CardContent className="p-6">
+              <AlertDetailsView alert={selectedAlert} />
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
