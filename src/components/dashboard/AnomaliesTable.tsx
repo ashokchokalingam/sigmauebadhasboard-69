@@ -129,14 +129,23 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               />
               <TableBody className="bg-black/40">
                 {filteredAlerts.map((alert) => (
-                  <AlertTableRow
-                    key={alert.id}
-                    alert={alert}
-                    isSelected={selectedAlertId === alert.id}
-                    onToggle={() => setSelectedAlertId(selectedAlertId === alert.id ? null : alert.id)}
-                    onTimelineView={() => {}} // Implement if needed
-                    visibleColumns={visibleColumns}
-                  />
+                  <>
+                    <AlertTableRow
+                      key={alert.id}
+                      alert={alert}
+                      isSelected={selectedAlertId === alert.id}
+                      onToggle={() => setSelectedAlertId(selectedAlertId === alert.id ? null : alert.id)}
+                      onTimelineView={() => {}} // Implement if needed
+                      visibleColumns={visibleColumns}
+                    />
+                    {selectedAlertId === alert.id && (
+                      <tr>
+                        <td colSpan={visibleColumns.length + 1} className="p-4 bg-blue-950/20">
+                          <AlertDetailsView alert={alert} />
+                        </td>
+                      </tr>
+                    )}
+                  </>
                 ))}
               </TableBody>
             </Table>
@@ -153,14 +162,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           )}
         </CardContent>
       </Card>
-
-      {selectedAlert && (
-        <Card className="bg-black/40 border-blue-500/10">
-          <CardContent className="p-6">
-            <AlertDetailsView alert={selectedAlert} />
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };
