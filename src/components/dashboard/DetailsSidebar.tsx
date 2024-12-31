@@ -66,9 +66,9 @@ const DetailsSidebar = ({
           <ResizableHandle withHandle className="bg-blue-800/20 hover:bg-blue-700/30" />
           <ResizablePanel defaultSize={60} minSize={30}>
             <div className="h-[95vh] overflow-y-auto scrollbar-thin scrollbar-track-blue-950 scrollbar-thumb-blue-800">
-              <div className="p-6">
+              <div className="p-6 overflow-x-auto scrollbar-thin scrollbar-track-blue-950 scrollbar-thumb-blue-800">
                 <h2 className="text-2xl font-bold mb-4 text-blue-100">Event Details</h2>
-                <div className="space-y-4">
+                <div className="space-y-4 min-w-[600px]">
                   <MetadataPanel selectedAlert={selectedAlert} />
                 </div>
               </div>
