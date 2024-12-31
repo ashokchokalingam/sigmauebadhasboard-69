@@ -87,66 +87,6 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
             {alert.computer_name || 'N/A'}
           </TableCell>
         );
-      case "user_id":
-        return (
-          <TableCell 
-            className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTimelineView("user", alert.user_id);
-            }}
-          >
-            {alert.user_id || 'N/A'}
-          </TableCell>
-        );
-      case "event_id":
-        return (
-          <TableCell className="text-blue-100">
-            {alert.event_id || 'N/A'}
-          </TableCell>
-        );
-      case "provider_name":
-        return (
-          <TableCell className="text-blue-100">
-            {alert.provider_name || 'N/A'}
-          </TableCell>
-        );
-      case "ip_address":
-        return (
-          <TableCell className="text-blue-100 font-mono">
-            {alert.ip_address || 'N/A'}
-          </TableCell>
-        );
-      case "ruleid":
-        return (
-          <TableCell className="text-blue-100">
-            {alert.ruleid || 'N/A'}
-          </TableCell>
-        );
-      case "rule_level":
-        return (
-          <TableCell className="text-blue-100">
-            {alert.rule_level || 'N/A'}
-          </TableCell>
-        );
-      case "target_user_name":
-        return (
-          <TableCell className="text-blue-100">
-            {alert.target_user_name || 'N/A'}
-          </TableCell>
-        );
-      case "target_domain_name":
-        return (
-          <TableCell className="text-blue-100">
-            {alert.target_domain_name || 'N/A'}
-          </TableCell>
-        );
-      case "task":
-        return (
-          <TableCell className="text-blue-100">
-            {alert.task || 'N/A'}
-          </TableCell>
-        );
       default:
         return null;
     }

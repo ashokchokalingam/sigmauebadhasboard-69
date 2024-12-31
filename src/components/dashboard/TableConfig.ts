@@ -3,6 +3,14 @@ export const defaultColumns = [
   { key: "tags", label: "Tactics" },
   { key: "description", label: "Description" },
   { key: "system_time", label: "Time" },
+  { key: "computer_name", label: "Computer" }
+];
+
+export const allColumns = [
+  { key: "title", label: "Title" },
+  { key: "tags", label: "Tactics" },
+  { key: "description", label: "Description" },
+  { key: "system_time", label: "Time" },
   { key: "computer_name", label: "Computer" },
   { key: "user_id", label: "User Origin" },
   { key: "task", label: "Task" },
@@ -14,5 +22,3 @@ export const defaultColumns = [
   { key: "target_user_name", label: "Target User" },
   { key: "target_domain_name", label: "Target Domain" }
 ];
-
-export type ColumnKey = typeof defaultColumns[number]['key'];
