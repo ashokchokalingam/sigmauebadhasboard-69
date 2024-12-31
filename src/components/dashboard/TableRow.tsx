@@ -69,12 +69,15 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
           <TableCell>
             <div className="flex flex-col gap-1">
               <span className="text-blue-100 font-medium">{alert.title}</span>
-              {alert.description && (
-                <span className="text-blue-300/70 text-sm line-clamp-2">
-                  {alert.description}
-                </span>
-              )}
             </div>
+          </TableCell>
+        );
+      case "description":
+        return (
+          <TableCell>
+            <span className="text-blue-300/70 text-sm line-clamp-2">
+              {alert.description || 'N/A'}
+            </span>
           </TableCell>
         );
       case "tags":
@@ -120,6 +123,48 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
             </span>
           </TableCell>
         );
+      case "event_id":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.event_id || 'N/A'}
+          </TableCell>
+        );
+      case "provider_name":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.provider_name || 'N/A'}
+          </TableCell>
+        );
+      case "ruleid":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.ruleid || 'N/A'}
+          </TableCell>
+        );
+      case "rule_level":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.rule_level || 'N/A'}
+          </TableCell>
+        );
+      case "task":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.task || 'N/A'}
+          </TableCell>
+        );
+      case "target_user_name":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.target_user_name || 'N/A'}
+          </TableCell>
+        );
+      case "target_domain_name":
+        return (
+          <TableCell className="text-blue-100">
+            {alert.target_domain_name || 'N/A'}
+          </TableCell>
+        );
       default:
         return null;
     }
@@ -130,13 +175,14 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
       className={`hover:bg-blue-950/30 cursor-pointer ${isSelected ? 'bg-blue-950/20' : ''}`}
       onClick={onToggle}
     >
-      {["system_time", "user_id", "computer_name", "ip_address", "title", "tags", "techniques", "risk_score", "dbscan_cluster"].map(key => 
-        renderCell(key)
-      )}
+      {defaultColumns.map(column => renderCell(column.key))}
       <TableCell>
         <button 
           className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
-          onClick={onToggle}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle();
+          }}
         >
           {isSelected ? (
             <ChevronDown className="h-4 w-4 text-blue-400" />

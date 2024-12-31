@@ -3,24 +3,25 @@ export const defaultColumns = [
   { key: "user_id", label: "User Origin" },
   { key: "computer_name", label: "Computer" },
   { key: "ip_address", label: "IP Address" },
-  { key: "title", label: "ThreatName" },
+  { key: "title", label: "Title" },
+  { key: "description", label: "Description" },
   { key: "tags", label: "Tactics" },
   { key: "techniques", label: "Techniques" },
   { key: "risk_score", label: "Risk Score" },
-  { key: "dbscan_cluster", label: "ML Outlier" }
-];
-
-export const additionalColumns = [
-  { key: "rule_level", label: "Rule Level" },
-  { key: "target_user_name", label: "Target User" },
-  { key: "target_domain_name", label: "Target Domain" },
+  { key: "dbscan_cluster", label: "ML Outlier" },
   { key: "event_id", label: "Event ID" },
   { key: "provider_name", label: "Provider" },
   { key: "ruleid", label: "Rule ID" },
-  { key: "task", label: "Task" }
+  { key: "rule_level", label: "Rule Level" },
+  { key: "task", label: "Task" },
+  { key: "target_user_name", label: "Target User" },
+  { key: "target_domain_name", label: "Target Domain" }
 ];
 
-export const allColumns = [...defaultColumns, ...additionalColumns];
+// These are additional columns that can be toggled but aren't shown by default
+export const additionalColumns = [];
+
+export const allColumns = [...defaultColumns];
 
 export type ColumnKey = typeof allColumns[number]['key'];
 
@@ -31,7 +32,16 @@ export const defaultVisibleColumns = [
   "computer_name",
   "ip_address",
   "title",
+  "description",
   "tags",
+  "techniques",
   "risk_score",
-  "dbscan_cluster"
+  "dbscan_cluster",
+  "event_id",
+  "provider_name",
+  "ruleid",
+  "rule_level",
+  "task",
+  "target_user_name",
+  "target_domain_name"
 ];
