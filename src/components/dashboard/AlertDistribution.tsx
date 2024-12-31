@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
 import { Alert } from "./types";
 
 interface AlertDistributionProps {
@@ -42,8 +42,7 @@ const AlertDistribution = ({ alerts }: AlertDistributionProps) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-[#1a1f2c] border border-gray-700 rounded-lg p-3 shadow-xl">
-          <p className="text-gray-200 font-medium">{label}</p>
-          <p className="text-gray-300 font-mono">{payload[0].value} alerts</p>
+          <p className="text-gray-300">{`${label}: ${payload[0].value}`}</p>
         </div>
       );
     }
@@ -51,7 +50,7 @@ const AlertDistribution = ({ alerts }: AlertDistributionProps) => {
   };
 
   return (
-    <Card className="bg-[#1a1f2c] border-gray-800">
+    <Card className="bg-[#1a1f2c]/80 border-gray-800/50">
       <CardHeader>
         <CardTitle className="text-gray-200">Alert Distribution</CardTitle>
         <p className="text-sm text-gray-400">Alert severity breakdown</p>
@@ -75,11 +74,14 @@ const AlertDistribution = ({ alerts }: AlertDistributionProps) => {
                 stroke="#9ca3af"
                 tick={{ fill: "#9ca3af" }}
                 axisLine={{ stroke: "#4b5563" }}
+                domain={[0, 'auto']}
               />
               <Tooltip content={<CustomTooltip />} />
               <Bar
                 dataKey="value"
                 radius={[4, 4, 0, 0]}
+                fill="#3b82f6"
+                dataKey="value"
               >
                 {calculateSeverityData().map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />

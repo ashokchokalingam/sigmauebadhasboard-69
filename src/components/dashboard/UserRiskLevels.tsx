@@ -44,8 +44,17 @@ const UserRiskLevels = ({ alerts }: UserRiskLevelsProps) => {
     }
   };
 
+  const getBadgeColor = (level: string) => {
+    switch (level) {
+      case "Critical": return "bg-red-500";
+      case "High": return "bg-orange-500";
+      case "Medium": return "bg-blue-500";
+      default: return "bg-green-500";
+    }
+  };
+
   return (
-    <Card className="bg-[#1a1f2c] border-gray-800">
+    <Card className="bg-[#1a1f2c]/80 border-gray-800/50">
       <CardHeader>
         <CardTitle className="text-gray-200">User Risk Levels</CardTitle>
         <p className="text-sm text-gray-400">Users categorized by risk severity</p>
@@ -54,8 +63,8 @@ const UserRiskLevels = ({ alerts }: UserRiskLevelsProps) => {
         {riskLevels.map((level) => (
           <div key={level} className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-gray-200">{level}</span>
-              <span className={`px-2 py-1 rounded text-xs text-white ${getRiskColor(level)}`}>
+              <span className="text-gray-200 font-medium">{level}</span>
+              <span className={`px-2 py-1 rounded-full text-xs text-white ${getBadgeColor(level)}`}>
                 {userRisks[level]?.length || 0} users
               </span>
             </div>
@@ -63,7 +72,7 @@ const UserRiskLevels = ({ alerts }: UserRiskLevelsProps) => {
               {userRisks[level]?.map((user) => (
                 <span
                   key={user}
-                  className="px-3 py-1.5 bg-gray-800/50 rounded-full text-sm text-gray-300"
+                  className="px-3 py-1.5 bg-gray-800/50 rounded-full text-sm text-gray-300 border border-gray-700/50"
                 >
                   {user}
                 </span>
