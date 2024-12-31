@@ -30,13 +30,13 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
     });
 
     const colors = [
+      '#D946EF', // Vibrant Magenta
       '#8B5CF6', // Vivid Purple
-      '#D946EF', // Magenta Pink
       '#F97316', // Bright Orange
       '#0EA5E9', // Ocean Blue
-      '#1EAEDB', // Bright Blue
       '#33C3F0', // Sky Blue
-      '#0FA0CE'  // Another Bright Blue
+      '#1EAEDB', // Bright Blue
+      '#0FA0CE'  // Another Blue
     ];
 
     return Object.entries(tacticsCount)
@@ -51,9 +51,9 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-[#1a1f2c] border border-gray-700 rounded-lg p-3 shadow-xl">
-          <p className="text-gray-200 font-medium text-lg capitalize">{label}</p>
-          <p className="text-gray-300 font-mono text-base">{payload[0].value} alerts</p>
+        <div className="bg-[#1a1f2c] border border-gray-700 rounded-lg p-4 shadow-xl">
+          <p className="text-gray-200 font-bold text-xl capitalize">{label}</p>
+          <p className="text-gray-300 font-mono text-lg">{payload[0].value} alerts</p>
         </div>
       );
     }
@@ -63,8 +63,8 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
   return (
     <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-2xl font-bold text-blue-100">
-          <Activity className="h-6 w-6 text-blue-500" />
+        <CardTitle className="flex items-center gap-3 text-3xl font-bold text-blue-100">
+          <Activity className="h-8 w-8 text-blue-500" />
           MITRE ATT&CK Tactics
         </CardTitle>
       </CardHeader>
@@ -74,8 +74,8 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
             <BarChart
               data={calculateTacticsData()}
               layout="vertical"
-              margin={{ top: 20, right: 30, left: 120, bottom: 20 }}
-              barSize={32}
+              margin={{ top: 20, right: 30, left: 140, bottom: 20 }}
+              barSize={36}
             >
               <CartesianGrid 
                 strokeDasharray="3 3" 
@@ -86,15 +86,15 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
               <XAxis 
                 type="number"
                 stroke="#666"
-                tick={{ fill: '#E5DEFF', fontSize: 14 }}
+                tick={{ fill: '#E5DEFF', fontSize: 16 }}
                 domain={[0, 'auto']}
               />
               <YAxis 
                 type="category"
                 dataKey="name"
                 stroke="#666"
-                tick={{ fill: '#E5DEFF', fontSize: 14 }}
-                width={120}
+                tick={{ fill: '#E5DEFF', fontSize: 16 }}
+                width={140}
               />
               <Tooltip 
                 content={<CustomTooltip />}
