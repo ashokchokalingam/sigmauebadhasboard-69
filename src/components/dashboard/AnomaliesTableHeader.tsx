@@ -23,13 +23,11 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
   const getUniqueValues = (key: keyof Alert) => {
     const uniqueValues = Array.from(new Set(last7DaysAlerts.map(alert => {
       if (key === 'system_time') {
-        // Format the time to show only HH:MM:SS
         return new Date(alert[key]).toLocaleTimeString();
       }
       return String(alert[key]);
     }))).filter(Boolean);
     
-    // Sort values alphabetically
     return uniqueValues.sort();
   };
 
@@ -46,11 +44,11 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
   ];
 
   return (
-    <TableHeader>
+    <TableHeader className="sticky top-0 z-20 bg-black/90 backdrop-blur-sm">
       <TableRow className="hover:bg-blue-950/30">
         {columns.map(column => 
           visibleColumns.includes(column.key) && (
-            <TableHead key={column.key} className="text-blue-300">
+            <TableHead key={column.key} className="text-blue-300 bg-black/90">
               {column.key === "techniques" ? (
                 column.label
               ) : (
@@ -64,7 +62,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
             </TableHead>
           )
         )}
-        <TableHead className="text-blue-300 w-[50px]"></TableHead>
+        <TableHead className="text-blue-300 w-[50px] bg-black/90"></TableHead>
       </TableRow>
     </TableHeader>
   );

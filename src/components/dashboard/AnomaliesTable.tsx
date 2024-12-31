@@ -8,6 +8,7 @@ import { ALERTS_PER_PAGE } from "@/constants/pagination";
 import AlertTableRow from "./AlertTableRow";
 import { defaultColumns } from "./TableConfig";
 import AlertDetailsView from "./AlertDetailsView";
+import AnomaliesTableHeader from "./AnomaliesTableHeader";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
@@ -17,6 +18,7 @@ interface AnomaliesTableProps {
 
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+  const [filters, setFilters] = useState<Record<string, string>>({});
   const containerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   
@@ -39,8 +41,15 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     setSelectedAlert(selectedAlert?.id === alert.id ? null : alert);
   };
 
+  const handleFilterChange = (column: string, value: string) => {
+    setFilters(prev => ({
+      ...prev,
+      [column]: value === prev[column] ? '' : value
+    }));
+  };
+
   return (
-    <div className="space-y-6 relative">
+    <div className="space-y-6">
       <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-blue-100">
@@ -49,25 +58,18 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-6">
-            {/* Scrollable Table Container */}
-            <div 
-              ref={containerRef}
-              className="flex-1 relative table-container rounded-md border border-blue-500/10 overflow-auto max-h-[800px]"
-            >
-              <div ref={tableRef}>
+          <div className="flex gap-4">
+            {/* Table Container */}
+            <div className="flex-1 overflow-hidden border border-blue-500/10 rounded-md">
+              <div className="overflow-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
                 <Table>
-                  <thead className="sticky top-0 z-20 bg-black/90 backdrop-blur-sm border-b border-blue-500/10">
-                    <tr>
-                      {defaultColumns.map(column => (
-                        <th key={column.key} className="text-blue-300 px-4 py-2">
-                          {column.label}
-                        </th>
-                      ))}
-                      <th className="w-[50px]"></th>
-                    </tr>
-                  </thead>
-                  <TableBody className="bg-black/40">
+                  <AnomaliesTableHeader
+                    alerts={alerts}
+                    onFilterChange={handleFilterChange}
+                    filters={filters}
+                    visibleColumns={defaultColumns.map(col => col.key)}
+                  />
+                  <TableBody>
                     {filteredAlerts.map((alert) => (
                       <AlertTableRow
                         key={alert.id}
@@ -83,9 +85,9 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               </div>
             </div>
 
-            {/* Fixed Alert Details Panel */}
+            {/* Alert Details Panel */}
             {selectedAlert && (
-              <div className="w-[600px] flex-shrink-0 overflow-auto max-h-[800px] sticky top-0">
+              <div className="w-[450px] flex-shrink-0">
                 <AlertDetailsView
                   alert={selectedAlert}
                   onClose={() => setSelectedAlert(null)}
