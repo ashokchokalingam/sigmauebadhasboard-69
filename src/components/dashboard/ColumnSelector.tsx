@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Filter, X } from "lucide-react";
 import { useToast } from "../ui/use-toast";
+import { useState } from "react";
 
 interface Column {
   label: string;
@@ -23,32 +24,25 @@ interface ColumnSelectorProps {
 
 const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelectorProps) => {
   const { toast } = useToast();
+  const [pendingColumns, setPendingColumns] = useState<string[]>(visibleColumns);
 
   const handleSelectAll = () => {
     const allColumnKeys = columns.map(col => col.key);
-    onColumnToggle(allColumnKeys);
-    toast({
-      title: "All Columns Shown",
-      description: "All columns have been enabled",
-    });
+    setPendingColumns(allColumnKeys);
   };
 
   const handleClearAll = () => {
     // Keep at least one column visible (Time)
-    onColumnToggle(['system_time']);
-    toast({
-      title: "Columns Hidden",
-      description: "All optional columns have been hidden",
-    });
+    setPendingColumns(['system_time']);
   };
 
   const handleColumnToggle = (columnKey: string, checked: boolean) => {
     if (checked) {
-      onColumnToggle([...visibleColumns, columnKey]);
+      setPendingColumns(prev => [...prev, columnKey]);
     } else {
       // Prevent hiding all columns - keep at least one
-      if (visibleColumns.length > 1) {
-        onColumnToggle(visibleColumns.filter(key => key !== columnKey));
+      if (pendingColumns.length > 1) {
+        setPendingColumns(prev => prev.filter(key => key !== columnKey));
       } else {
         toast({
           title: "Cannot Hide All Columns",
@@ -57,6 +51,14 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
         });
       }
     }
+  };
+
+  const handleApplyChanges = () => {
+    onColumnToggle(pendingColumns);
+    toast({
+      title: "Column Changes Applied",
+      description: "The selected columns are now visible",
+    });
   };
 
   return (
@@ -73,7 +75,7 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
           <div className="flex gap-1">
             <Button
               variant="ghost"
-              size="xs"
+              size="sm"
               onClick={handleSelectAll}
               className="h-6 px-2 text-xs text-blue-400 hover:text-blue-300"
             >
@@ -81,7 +83,7 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
             </Button>
             <Button
               variant="ghost"
-              size="xs"
+              size="sm"
               onClick={handleClearAll}
               className="h-6 px-2 text-xs text-blue-400 hover:text-blue-300"
             >
@@ -90,16 +92,28 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-blue-500/20" />
-        {columns.map((column) => (
-          <DropdownMenuCheckboxItem
-            key={column.key}
-            className="text-blue-300 hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer"
-            checked={visibleColumns.includes(column.key)}
-            onCheckedChange={(checked) => handleColumnToggle(column.key, checked)}
+        <div className="max-h-[300px] overflow-y-auto">
+          {columns.map((column) => (
+            <DropdownMenuCheckboxItem
+              key={column.key}
+              className="text-blue-300 hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer"
+              checked={pendingColumns.includes(column.key)}
+              onCheckedChange={(checked) => handleColumnToggle(column.key, checked)}
+            >
+              {column.label}
+            </DropdownMenuCheckboxItem>
+          ))}
+        </div>
+        <DropdownMenuSeparator className="bg-blue-500/20" />
+        <div className="p-2">
+          <Button
+            onClick={handleApplyChanges}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            size="sm"
           >
-            {column.label}
-          </DropdownMenuCheckboxItem>
-        ))}
+            Apply Changes
+          </Button>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );
