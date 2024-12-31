@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
 import { useToast } from "../ui/use-toast";
 import ColumnSelector from "./ColumnSelector";
-import TableHeader from "./TableHeader";
+import TableHeaderComponent from "./TableHeader";
 import AlertTableRow from "./TableRow";
 import { defaultColumns } from "./TableConfig";
 
@@ -138,7 +138,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
         <CardContent>
           <div className="rounded-md border border-blue-500/10">
             <Table>
-              <TableHeader 
+              <TableHeaderComponent 
                 alerts={alerts}
                 onFilterChange={(column, value) => {
                   setFilters(prev => ({

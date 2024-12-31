@@ -1,4 +1,4 @@
-import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TableHead, TableRow } from "@/components/ui/table";
 import ColumnFilter from "./ColumnFilter";
 import { Alert } from "./types";
 import { defaultColumns } from "./TableConfig";
@@ -10,7 +10,7 @@ interface TableHeaderProps {
   visibleColumns: string[];
 }
 
-const TableHeader = ({ alerts, onFilterChange, filters, visibleColumns }: TableHeaderProps) => {
+const TableHeaderComponent = ({ alerts, onFilterChange, filters, visibleColumns }: TableHeaderProps) => {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   
@@ -31,7 +31,7 @@ const TableHeader = ({ alerts, onFilterChange, filters, visibleColumns }: TableH
   };
 
   return (
-    <TableHeader>
+    <thead>
       <TableRow className="hover:bg-blue-950/30">
         {defaultColumns.map(column => 
           visibleColumns.includes(column.key) && (
@@ -47,8 +47,8 @@ const TableHeader = ({ alerts, onFilterChange, filters, visibleColumns }: TableH
         )}
         <TableHead className="text-blue-300 w-[50px]"></TableHead>
       </TableRow>
-    </TableHeader>
+    </thead>
   );
 };
 
-export default TableHeader;
+export default TableHeaderComponent;

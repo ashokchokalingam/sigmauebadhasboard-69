@@ -2,7 +2,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Alert } from "./types";
 import { extractTacticsAndTechniques, getRiskScore, getRiskColor } from "./utils";
-import { ColumnKey } from "./TableConfig";
+import { ColumnKey, defaultColumns } from "./TableConfig";
 
 interface TableRowProps {
   alert: Alert;
