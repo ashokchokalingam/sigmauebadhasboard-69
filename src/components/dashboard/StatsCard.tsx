@@ -19,7 +19,7 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
       </CardHeader>
       <CardContent>
         <div className="text-4xl font-bold text-red-400">
-          {value}
+          {value.toLocaleString()}
         </div>
         <div className="flex items-center mt-2">
           <SubtitleIcon className="h-4 w-4 mr-1 text-red-400" />
