@@ -1,7 +1,6 @@
 import { Activity, AlertTriangle, Database, Monitor, Network, Shield, Users } from "lucide-react";
 import StatsCard from "./StatsCard";
 import { Stats } from "./types";
-import { useQuery } from "@tanstack/react-query";
 
 interface StatsSectionProps {
   stats: Stats;
@@ -9,19 +8,6 @@ interface StatsSectionProps {
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
-  const { data: totalCount, isLoading } = useQuery({
-    queryKey: ['totalCount'],
-    queryFn: async () => {
-      const response = await fetch('/api/total_count');
-      if (!response.ok) {
-        throw new Error('Failed to fetch total count');
-      }
-      const data = await response.json();
-      return data.total_count || 0;  // Changed from data.count to data.total_count to match API response
-    },
-    initialData: 0,
-  });
-
   if (!stats) {
     return null;
   }
@@ -30,7 +16,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <StatsCard
         title="Total Events (24h)"
-        value={isLoading ? "Loading..." : totalCount}
+        value={stats.totalEvents}
         icon={Database}
         subtitle={`${stats.severity?.critical || 0} Critical, ${stats.severity?.high || 0} High`}
         subtitleIcon={AlertTriangle}
