@@ -29,7 +29,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     switch (key) {
       case "title":
         return (
-          <TableCell>
+          <TableCell className="text-left">
             <div className="flex flex-col gap-1">
               <span className="text-blue-100 font-medium line-clamp-2">{alert.title || 'N/A'}</span>
             </div>
@@ -37,7 +37,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "tags":
         return (
-          <TableCell>
+          <TableCell className="text-left">
             <span className="px-2 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20 line-clamp-1">
               {tactics || 'N/A'}
             </span>
@@ -45,7 +45,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "description":
         return (
-          <TableCell>
+          <TableCell className="text-left">
             <span className="text-blue-300/70 text-sm line-clamp-2">
               {alert.description || 'N/A'}
             </span>
@@ -53,14 +53,14 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "system_time":
         return (
-          <TableCell className="font-mono text-blue-300 text-sm whitespace-nowrap">
+          <TableCell className="font-mono text-blue-300 text-sm whitespace-nowrap text-left">
             {browserTime}
           </TableCell>
         );
       case "computer_name":
         return (
           <TableCell 
-            className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
+            className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors text-left"
             onClick={(e) => {
               e.stopPropagation();
               onTimelineView("computer", alert.computer_name);
@@ -72,7 +72,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
       case "user_id":
         return (
           <TableCell 
-            className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
+            className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors text-left"
             onClick={(e) => {
               e.stopPropagation();
               onTimelineView("user", alert.user_id);
@@ -83,19 +83,19 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "event_id":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
+          <TableCell className="text-blue-100 whitespace-nowrap text-left">
             {alert.event_id || 'N/A'}
           </TableCell>
         );
       case "provider_name":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
+          <TableCell className="text-blue-100 whitespace-nowrap text-left">
             {alert.provider_name || 'N/A'}
           </TableCell>
         );
       case "dbscan_cluster":
         return (
-          <TableCell>
+          <TableCell className="text-left">
             <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
               {alert.dbscan_cluster || 'N/A'}
             </span>
@@ -103,43 +103,43 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "ip_address":
         return (
-          <TableCell className="text-blue-100 font-mono whitespace-nowrap">
+          <TableCell className="text-blue-100 font-mono whitespace-nowrap text-left">
             {alert.ip_address || 'N/A'}
           </TableCell>
         );
       case "ruleid":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
+          <TableCell className="text-blue-100 whitespace-nowrap text-left">
             {alert.ruleid || 'N/A'}
           </TableCell>
         );
       case "rule_level":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
+          <TableCell className="text-blue-100 whitespace-nowrap text-left">
             {alert.rule_level || 'N/A'}
           </TableCell>
         );
       case "task":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
+          <TableCell className="text-blue-100 whitespace-nowrap text-left">
             {alert.task || 'N/A'}
           </TableCell>
         );
       case "target_user_name":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
+          <TableCell className="text-blue-100 whitespace-nowrap text-left">
             {alert.target_user_name || 'N/A'}
           </TableCell>
         );
       case "target_domain_name":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
+          <TableCell className="text-blue-100 whitespace-nowrap text-left">
             {alert.target_domain_name || 'N/A'}
           </TableCell>
         );
       default:
         return (
-          <TableCell className="text-blue-100">
+          <TableCell className="text-blue-100 text-left">
             N/A
           </TableCell>
         );
@@ -152,7 +152,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
       onClick={onToggle}
     >
       {defaultColumns.map(column => renderCell(column.key))}
-      <TableCell>
+      <TableCell className="text-right">
         <button 
           className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
           onClick={(e) => {

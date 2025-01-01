@@ -54,7 +54,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
           visibleColumns.includes(column.key) && (
             <TableHead 
               key={column.key} 
-              className="text-blue-300 bg-black/90 backdrop-blur-sm border-b border-blue-500/10 whitespace-nowrap sticky top-0"
+              className="text-blue-300 bg-black/90 backdrop-blur-sm border-b border-blue-500/10 whitespace-nowrap sticky top-0 text-left h-12 px-4"
             >
               {column.key === "techniques" ? (
                 column.label
@@ -69,7 +69,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
             </TableHead>
           )
         )}
-        <TableHead className="text-blue-300 w-[50px] bg-black/90 backdrop-blur-sm border-b border-blue-500/10 sticky top-0"></TableHead>
+        <TableHead className="text-blue-300 w-[50px] bg-black/90 backdrop-blur-sm border-b border-blue-500/10 sticky top-0 text-right"></TableHead>
       </TableRow>
     </TableHeader>
   );
