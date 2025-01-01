@@ -20,8 +20,6 @@ interface AnomaliesTableProps {
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
-  const containerRef = useRef<HTMLDivElement>(null);
-  const tableRef = useRef<HTMLDivElement>(null);
   
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -63,30 +61,28 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
             <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg border border-blue-500/10">
               <ResizablePanel defaultSize={75} minSize={30}>
                 <div className="h-full overflow-hidden border-r border-blue-500/10">
-                  <div className="relative h-full">
-                    <div className="overflow-x-auto">
-                      <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
-                        <Table>
-                          <AnomaliesTableHeader
-                            alerts={alerts}
-                            onFilterChange={handleFilterChange}
-                            filters={filters}
-                            visibleColumns={defaultColumns.map(col => col.key)}
-                          />
-                          <TableBody>
-                            {filteredAlerts.map((alert) => (
-                              <AlertTableRow
-                                key={alert.id}
-                                alert={alert}
-                                isSelected={selectedAlert?.id === alert.id}
-                                onToggle={() => handleAlertSelect(alert)}
-                                onTimelineView={() => {}}
-                                visibleColumns={defaultColumns.map(col => col.key)}
-                              />
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </div>
+                  <div className="h-full flex flex-col">
+                    <div className="flex-grow overflow-auto">
+                      <Table>
+                        <AnomaliesTableHeader
+                          alerts={alerts}
+                          onFilterChange={handleFilterChange}
+                          filters={filters}
+                          visibleColumns={defaultColumns.map(col => col.key)}
+                        />
+                        <TableBody className="relative">
+                          {filteredAlerts.map((alert) => (
+                            <AlertTableRow
+                              key={alert.id}
+                              alert={alert}
+                              isSelected={selectedAlert?.id === alert.id}
+                              onToggle={() => handleAlertSelect(alert)}
+                              onTimelineView={() => {}}
+                              visibleColumns={defaultColumns.map(col => col.key)}
+                            />
+                          ))}
+                        </TableBody>
+                      </Table>
                     </div>
                   </div>
                 </div>
@@ -104,31 +100,29 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               </ResizablePanel>
             </ResizablePanelGroup>
           ) : (
-            <div className="overflow-hidden border border-blue-500/10 rounded-md">
-              <div className="relative">
-                <div className="overflow-x-auto">
-                  <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
-                    <Table>
-                      <AnomaliesTableHeader
-                        alerts={alerts}
-                        onFilterChange={handleFilterChange}
-                        filters={filters}
-                        visibleColumns={defaultColumns.map(col => col.key)}
-                      />
-                      <TableBody>
-                        {filteredAlerts.map((alert) => (
-                          <AlertTableRow
-                            key={alert.id}
-                            alert={alert}
-                            isSelected={selectedAlert?.id === alert.id}
-                            onToggle={() => handleAlertSelect(alert)}
-                            onTimelineView={() => {}}
-                            visibleColumns={defaultColumns.map(col => col.key)}
-                          />
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+            <div className="border border-blue-500/10 rounded-md overflow-hidden">
+              <div className="h-[800px] flex flex-col">
+                <div className="flex-grow overflow-auto">
+                  <Table>
+                    <AnomaliesTableHeader
+                      alerts={alerts}
+                      onFilterChange={handleFilterChange}
+                      filters={filters}
+                      visibleColumns={defaultColumns.map(col => col.key)}
+                    />
+                    <TableBody className="relative">
+                      {filteredAlerts.map((alert) => (
+                        <AlertTableRow
+                          key={alert.id}
+                          alert={alert}
+                          isSelected={selectedAlert?.id === alert.id}
+                          onToggle={() => handleAlertSelect(alert)}
+                          onTimelineView={() => {}}
+                          visibleColumns={defaultColumns.map(col => col.key)}
+                        />
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               </div>
             </div>
