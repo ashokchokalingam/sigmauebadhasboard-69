@@ -1,12 +1,12 @@
 import { Table, TableBody } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Alert } from "./types";
 import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
 import AlertTableRow from "./AlertTableRow";
-import { defaultColumns } from "./TableConfig";
+import { defaultColumns, allColumns } from "./TableConfig";
 import AlertDetailsView from "./AlertDetailsView";
 import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
@@ -21,7 +21,10 @@ interface AnomaliesTableProps {
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(defaultColumns.map(col => col.key));
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(
+    defaultColumns.map(col => col.key)
+  );
+  
   const containerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   
@@ -40,20 +43,17 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
 
   const filteredAlerts = sortedAlerts
     .filter(alert => {
-      // Check if the alert matches all active filters
       return Object.entries(filters).every(([key, value]) => {
-        if (!value) return true; // Skip empty filters
+        if (!value) return true;
         
         const alertValue = alert[key as keyof Alert];
         if (!alertValue) return false;
         
-        // Handle system_time separately
         if (key === 'system_time') {
-          const timeString = new Date(alertValue).toLocaleTimeString();
+          const timeString = new Date(alertValue as string).toLocaleTimeString();
           return timeString === value;
         }
         
-        // Convert both to strings for comparison and check if they match
         return String(alertValue).toLowerCase().includes(String(value).toLowerCase());
       });
     })
@@ -74,6 +74,11 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     setVisibleColumns(columns);
   };
 
+  // Reset to default columns on component mount
+  useEffect(() => {
+    setVisibleColumns(defaultColumns.map(col => col.key));
+  }, []);
+
   return (
     <div className="space-y-6">
       <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
@@ -84,7 +89,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               Recent Events - Last 7 Days (Limited to 1000)
             </CardTitle>
             <ColumnSelector
-              columns={defaultColumns}
+              columns={allColumns}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
             />
