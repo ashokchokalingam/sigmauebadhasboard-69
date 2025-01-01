@@ -20,7 +20,7 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
 
   if (!alert.raw) {
     return (
-      <div className="p-4 text-blue-400 flex items-center gap-2">
+      <div className="p-4 text-purple-400 flex items-center gap-2">
         <Terminal className="h-4 w-4" />
         No raw log data available
       </div>
@@ -38,11 +38,11 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
 
   return (
     <div className="w-full h-full">
-      <div className="flex items-center gap-2 mb-2 text-blue-400">
+      <div className="flex items-center gap-2 mb-2 text-purple-400">
         <Terminal className="h-4 w-4" />
         Raw Log
       </div>
-      <div className="bg-[#1E1E1E] rounded-lg border border-blue-500/10 h-[calc(100%-2rem)]">
+      <div className="bg-[#1a1f2c] rounded-lg border border-purple-500/10 h-[calc(100%-2rem)]">
         <pre className="p-4 h-full overflow-auto">
           <code ref={codeRef} className="language-json whitespace-pre-wrap break-words">
             {formattedJson}

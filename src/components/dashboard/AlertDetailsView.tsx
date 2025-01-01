@@ -29,17 +29,17 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     .map(tag => tag.trim().toUpperCase());
 
   return (
-    <div className="h-full bg-black/90 border-l border-blue-500/10">
+    <div className="h-full bg-black/90 border-l border-purple-500/10">
       {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b border-blue-500/10 bg-black/90 backdrop-blur-sm sticky top-0 z-10">
-        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+      <div className="flex justify-between items-center p-4 border-b border-purple-500/10 bg-black/90 backdrop-blur-sm sticky top-0 z-10">
+        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
           Alert Details
         </h2>
         <button 
           onClick={onClose}
-          className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
+          className="p-2 hover:bg-purple-500/10 rounded-full transition-colors"
         >
-          <X className="h-5 w-5 text-blue-400" />
+          <X className="h-5 w-5 text-purple-400" />
         </button>
       </div>
 
@@ -76,20 +76,20 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
           </Card>
 
           {/* MITRE ATT&CK Info */}
-          <Card className="bg-blue-950/20 border-blue-500/10 p-4">
-            <h3 className="text-lg font-semibold text-blue-300 mb-3">MITRE ATT&CK</h3>
+          <Card className="bg-purple-950/20 border-purple-500/10 p-4">
+            <h3 className="text-lg font-semibold text-purple-300 mb-3">MITRE ATT&CK</h3>
             <div className="space-y-3">
               <div>
-                <h4 className="text-sm font-medium text-blue-400">Tactics</h4>
-                <p className="text-sm text-blue-100">{tactics || 'N/A'}</p>
+                <h4 className="text-sm font-medium text-purple-400">Tactics</h4>
+                <p className="text-sm text-purple-100">{tactics || 'N/A'}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-blue-400">Techniques</h4>
+                <h4 className="text-sm font-medium text-purple-400">Techniques</h4>
                 <div className="flex flex-wrap gap-2">
                   {techniques?.map((technique, index) => (
                     <span 
                       key={index}
-                      className="px-2 py-1 bg-blue-500/10 text-blue-300 text-xs rounded-full border border-blue-500/20"
+                      className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
                     >
                       {technique}
                     </span>
@@ -100,46 +100,46 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
           </Card>
 
           {/* System Details */}
-          <Card className="bg-green-950/20 border-green-500/10 p-4">
-            <h3 className="text-lg font-semibold text-green-300 mb-3">System Information</h3>
+          <Card className="bg-purple-950/20 border-purple-500/10 p-4">
+            <h3 className="text-lg font-semibold text-purple-300 mb-3">System Information</h3>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
               <div>
-                <h4 className="text-sm font-medium text-green-400">Computer Name</h4>
-                <p className="text-sm text-green-100 font-mono">{alert.computer_name || 'N/A'}</p>
+                <h4 className="text-sm font-medium text-purple-400">Computer Name</h4>
+                <p className="text-sm text-purple-100 font-mono">{alert.computer_name || 'N/A'}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-green-400">IP Address</h4>
-                <p className="text-sm text-green-100 font-mono">{alert.ip_address || 'N/A'}</p>
+                <h4 className="text-sm font-medium text-purple-400">IP Address</h4>
+                <p className="text-sm text-purple-100 font-mono">{alert.ip_address || 'N/A'}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-green-400">User ID</h4>
-                <p className="text-sm text-green-100 font-mono">{alert.user_id || 'N/A'}</p>
+                <h4 className="text-sm font-medium text-purple-400">User ID</h4>
+                <p className="text-sm text-purple-100 font-mono">{alert.user_id || 'N/A'}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-green-400">Event ID</h4>
-                <p className="text-sm text-green-100 font-mono">{alert.event_id || 'N/A'}</p>
+                <h4 className="text-sm font-medium text-purple-400">Event ID</h4>
+                <p className="text-sm text-purple-100 font-mono">{alert.event_id || 'N/A'}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-green-400">Provider</h4>
-                <p className="text-sm text-green-100 font-mono">{alert.provider_name || 'N/A'}</p>
+                <h4 className="text-sm font-medium text-purple-400">Provider</h4>
+                <p className="text-sm text-purple-100 font-mono">{alert.provider_name || 'N/A'}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-green-400">Target User</h4>
-                <p className="text-sm text-green-100 font-mono">{alert.target_user_name || 'N/A'}</p>
+                <h4 className="text-sm font-medium text-purple-400">Target User</h4>
+                <p className="text-sm text-purple-100 font-mono">{alert.target_user_name || 'N/A'}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-green-400">Target Domain</h4>
-                <p className="text-sm text-green-100 font-mono">{alert.target_domain_name || 'N/A'}</p>
+                <h4 className="text-sm font-medium text-purple-400">Target Domain</h4>
+                <p className="text-sm text-purple-100 font-mono">{alert.target_domain_name || 'N/A'}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-green-400">System Time</h4>
-                <p className="text-sm text-green-100 font-mono">{browserTime || 'N/A'}</p>
+                <h4 className="text-sm font-medium text-purple-400">System Time</h4>
+                <p className="text-sm text-purple-100 font-mono">{browserTime || 'N/A'}</p>
               </div>
             </div>
           </Card>
 
           {/* Raw Log Section */}
-          <Card className="bg-gray-950/20 border-gray-500/10">
+          <Card className="bg-purple-950/20 border-purple-500/10">
             <TimelineRawLog alert={alert} />
           </Card>
         </div>
