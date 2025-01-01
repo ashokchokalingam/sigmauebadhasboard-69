@@ -81,7 +81,6 @@ const DashboardLayout = ({
         </div>
         <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10">
           <SeverityChart 
-            alerts={allAlerts} 
             onSeveritySelect={() => {}} 
           />
         </div>
