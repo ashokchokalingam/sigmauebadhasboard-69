@@ -10,6 +10,7 @@ import { defaultColumns } from "./TableConfig";
 import AlertDetailsView from "./AlertDetailsView";
 import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import ColumnSelector from "./ColumnSelector";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
@@ -20,6 +21,7 @@ interface AnomaliesTableProps {
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(defaultColumns.map(col => col.key));
   const containerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   
@@ -49,14 +51,25 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     }));
   };
 
+  const handleColumnToggle = (columns: string[]) => {
+    setVisibleColumns(columns);
+  };
+
   return (
     <div className="space-y-6">
       <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-blue-100">
-            <AlertTriangle className="h-5 w-5 text-blue-500" />
-            Recent Events - Last 7 Days (Limited to 1000)
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-blue-100">
+              <AlertTriangle className="h-5 w-5 text-blue-500" />
+              Recent Events - Last 7 Days (Limited to 1000)
+            </CardTitle>
+            <ColumnSelector
+              columns={defaultColumns}
+              visibleColumns={visibleColumns}
+              onColumnToggle={handleColumnToggle}
+            />
+          </div>
         </CardHeader>
         <CardContent>
           {selectedAlert ? (
@@ -71,7 +84,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                             alerts={alerts}
                             onFilterChange={handleFilterChange}
                             filters={filters}
-                            visibleColumns={defaultColumns.map(col => col.key)}
+                            visibleColumns={visibleColumns}
                           />
                           <TableBody>
                             {filteredAlerts.map((alert) => (
@@ -81,7 +94,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                                 isSelected={selectedAlert?.id === alert.id}
                                 onToggle={() => handleAlertSelect(alert)}
                                 onTimelineView={() => {}}
-                                visibleColumns={defaultColumns.map(col => col.key)}
+                                visibleColumns={visibleColumns}
                               />
                             ))}
                           </TableBody>
@@ -113,7 +126,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                         alerts={alerts}
                         onFilterChange={handleFilterChange}
                         filters={filters}
-                        visibleColumns={defaultColumns.map(col => col.key)}
+                        visibleColumns={visibleColumns}
                       />
                       <TableBody>
                         {filteredAlerts.map((alert) => (
@@ -123,7 +136,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                             isSelected={selectedAlert?.id === alert.id}
                             onToggle={() => handleAlertSelect(alert)}
                             onTimelineView={() => {}}
-                            visibleColumns={defaultColumns.map(col => col.key)}
+                            visibleColumns={visibleColumns}
                           />
                         ))}
                       </TableBody>
