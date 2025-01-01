@@ -1,76 +1,74 @@
-import { Alert } from "./types";
+import { Alert, Stats } from "./types";
+
+export const get24HourCount = async () => {
+  try {
+    const response = await fetch('/api/alerts/count24h');
+    const data = await response.json();
+    return data.count;
+  } catch (error) {
+    console.error('Error fetching 24h count:', error);
+    return 0;
+  }
+};
 
 export const calculateStats = (alerts: Alert[], totalRecords: number) => {
-  if (!alerts || alerts.length === 0) {
-    return {
-      totalEvents: totalRecords,
-      severity: {
-        critical: 0,
-        high: 0,
-        medium: 0,
-        low: 0
-      },
-      uniqueUsers: {
-        current: 0,
-        change: 0,
-        users: []
-      },
-      uniqueComputers: {
-        current: 0,
-        change: 0,
-        computers: []
-      },
-      uniqueIPs: 0,
-      riskScore: {
-        current: 0,
-        change: 0
-      },
-      anomalies: {
-        current: 0,
-        change: 0
-      }
-    };
-  }
+  // Get dates for 24-hour period
+  const now = new Date();
+  const last24Hours = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+  
+  // Filter alerts for last 24 hours without limit
+  const last24HourAlerts = alerts.filter(alert => 
+    new Date(alert.system_time) >= last24Hours && new Date(alert.system_time) <= now
+  );
 
-  const severityCounts = alerts.reduce((acc, alert) => {
-    const severity = alert.severity?.toLowerCase() || 'low';
-    acc[severity] = (acc[severity] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  // Calculate unique users in last 24 hours
+  const uniqueUsers = new Set(last24HourAlerts.map(alert => alert.user_id));
+  const uniqueComputers = new Set(last24HourAlerts.map(alert => alert.computer_name));
+  const uniqueIPs = new Set(last24HourAlerts.map(alert => alert.ip_address).filter(Boolean));
 
-  const uniqueUsers = Array.from(new Set(alerts.map(alert => alert.user_id)));
-  const uniqueComputers = Array.from(new Set(alerts.map(alert => alert.computer_name)));
-  const uniqueIPs = new Set(alerts.map(alert => alert.ip_address)).size;
+  // Calculate severity distributions for last 24 hours
+  const severityDistribution = {
+    critical: last24HourAlerts.filter(alert => alert.rule_level === 'critical').length,
+    high: last24HourAlerts.filter(alert => alert.rule_level === 'high').length,
+    medium: last24HourAlerts.filter(alert => alert.rule_level === 'medium').length,
+    low: last24HourAlerts.filter(alert => alert.rule_level === 'low').length
+  };
 
-  const riskScore = alerts.reduce((acc, alert) => acc + (alert.risk_score || 0), 0) / alerts.length || 0;
-  const anomaliesCount = alerts.filter(alert => alert.is_anomaly).length;
+  // Calculate risk score for last 24 hours
+  const calculateAvgRiskScore = (alertsList: Alert[]) => {
+    if (alertsList.length === 0) return 0;
+    const totalRiskScore = alertsList.reduce((acc, alert) => 
+      acc + (alert.rule_level === 'critical' ? 100 : 
+        alert.rule_level === 'high' ? 75 : 
+        alert.rule_level === 'medium' ? 50 : 25), 0
+    );
+    return Math.round((totalRiskScore / alertsList.length) * 10) / 10;
+  };
+
+  const avgRiskScore = calculateAvgRiskScore(last24HourAlerts);
 
   return {
-    totalEvents: totalRecords,
-    severity: {
-      critical: severityCounts.critical || 0,
-      high: severityCounts.high || 0,
-      medium: severityCounts.medium || 0,
-      low: severityCounts.low || 0
-    },
     uniqueUsers: {
-      current: uniqueUsers.length,
+      current: uniqueUsers.size,
       change: 0,
-      users: uniqueUsers.filter(Boolean) as string[]
+      users: Array.from(uniqueUsers)
     },
     uniqueComputers: {
-      current: uniqueComputers.length,
+      current: uniqueComputers.size,
       change: 0,
-      computers: uniqueComputers.filter(Boolean) as string[]
+      computers: Array.from(uniqueComputers)
     },
-    uniqueIPs: uniqueIPs,
     riskScore: {
-      current: riskScore,
+      current: avgRiskScore,
       change: 0
     },
     anomalies: {
-      current: anomaliesCount,
+      current: last24HourAlerts.length,
       change: 0
-    }
+    },
+    severity: severityDistribution,
+    uniqueIPs: uniqueIPs.size,
+    totalEvents: last24HourAlerts.length,
+    totalAnomalies: last24HourAlerts.length
   };
 };
