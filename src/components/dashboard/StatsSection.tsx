@@ -9,7 +9,7 @@ interface StatsSectionProps {
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
-  const { data: totalCount } = useQuery({
+  const { data: totalCount, isLoading } = useQuery({
     queryKey: ['totalCount'],
     queryFn: async () => {
       const response = await fetch('/api/total_count');
@@ -17,8 +17,9 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         throw new Error('Failed to fetch total count');
       }
       const data = await response.json();
-      return data.count || 0;
+      return data.total_count || 0;  // Changed from data.count to data.total_count to match API response
     },
+    initialData: 0,
   });
 
   if (!stats) {
@@ -29,7 +30,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <StatsCard
         title="Total Events (24h)"
-        value={totalCount || 0}
+        value={isLoading ? "Loading..." : totalCount}
         icon={Database}
         subtitle={`${stats.severity?.critical || 0} Critical, ${stats.severity?.high || 0} High`}
         subtitleIcon={AlertTriangle}
