@@ -31,6 +31,11 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   
+  // Reset to default columns on component mount
+  useEffect(() => {
+    setVisibleColumns(defaultColumns.map(col => col.key));
+  }, []);
+
   const sortedAlerts = [...alerts]
     .filter(alert => {
       const alertDate = new Date(alert.system_time);
@@ -73,11 +78,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   const handleColumnToggle = (columns: string[]) => {
     setVisibleColumns(columns);
   };
-
-  // Reset to default columns on component mount
-  useEffect(() => {
-    setVisibleColumns(defaultColumns.map(col => col.key));
-  }, []);
 
   return (
     <div className="space-y-6">
