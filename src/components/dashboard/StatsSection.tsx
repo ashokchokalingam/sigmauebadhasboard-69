@@ -17,7 +17,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         throw new Error('Failed to fetch total count');
       }
       const data = await response.json();
-      console.log('Total count data:', data);
+      console.log('Total count response:', data);
       return data;
     }
   });
@@ -26,8 +26,8 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
     return null;
   }
 
-  // Get the total value directly from the total_counts response
-  const totalEvents = totalCount?.total || 0;
+  // Get the total events value from the API response
+  const totalEvents = totalCount?.total_events || 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
