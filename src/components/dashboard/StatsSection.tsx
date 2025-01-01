@@ -26,12 +26,13 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
     return null;
   }
 
-  // Get the values from the API response
-  const totalEvents = totalCount?.total_events || 0;
+  const totalEvents = totalCount?.total_counts?.find(count => count.rule_level === "Total")?.event_count || 0;
+  const criticalEvents = totalCount?.total_counts?.find(count => count.rule_level === "Critical")?.event_count || 0;
+  const highEvents = totalCount?.total_counts?.find(count => count.rule_level === "High")?.event_count || 0;
 
   const breakdown = [
-    { rule_level: 'Critical', event_count: totalCount?.critical_events || 0 },
-    { rule_level: 'High', event_count: totalCount?.high_events || 0 },
+    { rule_level: 'Critical', event_count: criticalEvents },
+    { rule_level: 'High', event_count: highEvents },
   ];
 
   return (
