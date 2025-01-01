@@ -49,6 +49,39 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     }));
   };
 
+  const tableContent = (
+    <div className="overflow-hidden border border-blue-500/10 rounded-md">
+      <div className="relative">
+        <div className="overflow-x-auto">
+          <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
+            <Table>
+              <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-sm border-b border-blue-500/10">
+                <AnomaliesTableHeader
+                  alerts={alerts}
+                  onFilterChange={handleFilterChange}
+                  filters={filters}
+                  visibleColumns={defaultColumns.map(col => col.key)}
+                />
+              </div>
+              <TableBody className="w-full">
+                {filteredAlerts.map((alert) => (
+                  <AlertTableRow
+                    key={alert.id}
+                    alert={alert}
+                    isSelected={selectedAlert?.id === alert.id}
+                    onToggle={() => handleAlertSelect(alert)}
+                    onTimelineView={() => {}}
+                    visibleColumns={defaultColumns.map(col => col.key)}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
@@ -62,36 +95,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           {selectedAlert ? (
             <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg border border-blue-500/10">
               <ResizablePanel defaultSize={75} minSize={30}>
-                <div className="h-full overflow-hidden">
-                  <div className="relative h-full">
-                    <div className="overflow-x-auto">
-                      <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
-                        <Table>
-                          <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-sm border-b border-blue-500/10">
-                            <AnomaliesTableHeader
-                              alerts={alerts}
-                              onFilterChange={handleFilterChange}
-                              filters={filters}
-                              visibleColumns={defaultColumns.map(col => col.key)}
-                            />
-                          </div>
-                          <TableBody>
-                            {filteredAlerts.map((alert) => (
-                              <AlertTableRow
-                                key={alert.id}
-                                alert={alert}
-                                isSelected={selectedAlert?.id === alert.id}
-                                onToggle={() => handleAlertSelect(alert)}
-                                onTimelineView={() => {}}
-                                visibleColumns={defaultColumns.map(col => col.key)}
-                              />
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {tableContent}
               </ResizablePanel>
               
               <ResizableHandle withHandle className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors" />
@@ -104,36 +108,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               </ResizablePanel>
             </ResizablePanelGroup>
           ) : (
-            <div className="overflow-hidden border border-blue-500/10 rounded-md">
-              <div className="relative">
-                <div className="overflow-x-auto">
-                  <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
-                    <Table>
-                      <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-sm border-b border-blue-500/10">
-                        <AnomaliesTableHeader
-                          alerts={alerts}
-                          onFilterChange={handleFilterChange}
-                          filters={filters}
-                          visibleColumns={defaultColumns.map(col => col.key)}
-                        />
-                      </div>
-                      <TableBody>
-                        {filteredAlerts.map((alert) => (
-                          <AlertTableRow
-                            key={alert.id}
-                            alert={alert}
-                            isSelected={selectedAlert?.id === alert.id}
-                            onToggle={() => handleAlertSelect(alert)}
-                            onTimelineView={() => {}}
-                            visibleColumns={defaultColumns.map(col => col.key)}
-                          />
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
-              </div>
-            </div>
+            tableContent
           )}
 
           {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
