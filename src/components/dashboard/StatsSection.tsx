@@ -24,6 +24,8 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
     return null;
   }
 
+  const breakdown = totalCount?.breakdown?.filter((item: any) => item.rule_level !== 'Total') || [];
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatsCard
@@ -32,7 +34,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         icon={Database}
         subtitle="Total events in last 24 hours"
         subtitleIcon={AlertTriangle}
-        breakdown={totalCount?.breakdown}
+        breakdown={breakdown}
       />
       <StatsCard
         title="Active Users (24h)"

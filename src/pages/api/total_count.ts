@@ -4,7 +4,14 @@ export async function GET() {
   try {
     const query = `
       SELECT
-        'Critical' AS rule_level, 0 AS event_count
+        'Total' AS rule_level,
+        COUNT(*) AS event_count
+      FROM sigma_alerts
+      WHERE system_time >= NOW() - INTERVAL 24 HOUR
+      UNION ALL
+      SELECT
+        'Critical' AS rule_level,
+        0 AS event_count
       UNION ALL
       SELECT
         'High' AS rule_level,
@@ -33,15 +40,15 @@ export async function GET() {
 
     const [rows] = await db.query(query);
     
-    // Calculate total events
-    const total = (rows as any[]).reduce((sum, row) => sum + Number(row.event_count), 0);
-    
     // Format the response
     const response = {
-      total,
+      total: (rows as any[]).find(r => r.rule_level === 'Total')?.event_count || 0,
       breakdown: rows,
       critical: (rows as any[]).find(r => r.rule_level === 'Critical')?.event_count || 0,
-      high: (rows as any[]).find(r => r.rule_level === 'High')?.event_count || 0
+      high: (rows as any[]).find(r => r.rule_level === 'High')?.event_count || 0,
+      medium: (rows as any[]).find(r => r.rule_level === 'Medium')?.event_count || 0,
+      low: (rows as any[]).find(r => r.rule_level === 'Low')?.event_count || 0,
+      informational: (rows as any[]).find(r => r.rule_level === 'Informational')?.event_count || 0
     };
 
     return new Response(JSON.stringify(response), {
