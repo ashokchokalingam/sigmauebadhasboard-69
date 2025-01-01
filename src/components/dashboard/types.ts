@@ -11,11 +11,14 @@ export interface Alert {
   dbscan_cluster: number | null;
   raw: string | null;
   ip_address: string | null;
-  ruleid: string | null;         // Changed from rule_id to match DB
+  ruleid: string | null;
   rule_level: string | null;
-  task: string | null;          // Changed from task_name to match DB
+  task: string | null;
   target_user_name: string | null;
   target_domain_name: string | null;
+  severity?: string;
+  risk_score?: number;
+  is_anomaly?: boolean;
 }
 
 export interface Stats {
