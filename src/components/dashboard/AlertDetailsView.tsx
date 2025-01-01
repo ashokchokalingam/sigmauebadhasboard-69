@@ -16,9 +16,11 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   if (!alert) return null;
 
   return (
-    <div className="h-full flex flex-col bg-black/40 backdrop-blur-sm border-l border-purple-500/10">
-      <div className="flex-1 overflow-y-auto scrollbar-thin">
-        <div className="sticky top-0 z-10 flex justify-end p-2 bg-black/40 backdrop-blur-sm border-b border-purple-500/10">
+    <div className="h-full flex flex-col">
+      {/* Fixed header with blur effect */}
+      <div className="sticky top-0 z-20 bg-black/40 backdrop-blur-sm border-b border-purple-500/10">
+        <div className="flex justify-between items-center p-4">
+          <h2 className="text-xl font-semibold text-purple-100">{alert.title || 'Alert Details'}</h2>
           <Button
             variant="ghost"
             size="icon"
@@ -28,7 +30,10 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
             <X className="h-4 w-4" />
           </Button>
         </div>
+      </div>
 
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto scrollbar-thin">
         <div className="p-4 space-y-6">
           <AlertDetailsHeader alert={alert} />
           <AlertMainInfo alert={alert} />

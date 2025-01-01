@@ -1,7 +1,7 @@
 import { Table, TableBody } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Alert } from "./types";
 import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
@@ -57,60 +57,20 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {selectedAlert ? (
-            <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg border border-blue-500/10">
-              <ResizablePanel defaultSize={75} minSize={30}>
-                <div className="h-full overflow-hidden border-r border-blue-500/10">
-                  <div className="h-full flex flex-col">
-                    <div className="flex-grow overflow-auto">
-                      <Table>
-                        <AnomaliesTableHeader
-                          alerts={alerts}
-                          onFilterChange={handleFilterChange}
-                          filters={filters}
-                          visibleColumns={defaultColumns.map(col => col.key)}
-                        />
-                        <TableBody className="relative">
-                          {filteredAlerts.map((alert) => (
-                            <AlertTableRow
-                              key={alert.id}
-                              alert={alert}
-                              isSelected={selectedAlert?.id === alert.id}
-                              onToggle={() => handleAlertSelect(alert)}
-                              onTimelineView={() => {}}
-                              visibleColumns={defaultColumns.map(col => col.key)}
-                            />
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </div>
-                </div>
-              </ResizablePanel>
-              
-              <ResizableHandle withHandle className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors" />
-              
-              <ResizablePanel defaultSize={25} minSize={20}>
-                <div className="h-full">
-                  <AlertDetailsView
-                    alert={selectedAlert}
-                    onClose={() => setSelectedAlert(null)}
+          <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg border border-blue-500/10">
+            <ResizablePanel defaultSize={75} minSize={30}>
+              <div className="h-full flex flex-col border-r border-blue-500/10">
+                <div className="sticky top-0 z-10 bg-black/90">
+                  <AnomaliesTableHeader
+                    alerts={alerts}
+                    onFilterChange={handleFilterChange}
+                    filters={filters}
+                    visibleColumns={defaultColumns.map(col => col.key)}
                   />
                 </div>
-              </ResizablePanel>
-            </ResizablePanelGroup>
-          ) : (
-            <div className="border border-blue-500/10 rounded-md overflow-hidden">
-              <div className="h-[800px] flex flex-col">
-                <div className="flex-grow overflow-auto">
+                <div className="flex-1 overflow-y-auto scrollbar-thin">
                   <Table>
-                    <AnomaliesTableHeader
-                      alerts={alerts}
-                      onFilterChange={handleFilterChange}
-                      filters={filters}
-                      visibleColumns={defaultColumns.map(col => col.key)}
-                    />
-                    <TableBody className="relative">
+                    <TableBody>
                       {filteredAlerts.map((alert) => (
                         <AlertTableRow
                           key={alert.id}
@@ -123,21 +83,31 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                       ))}
                     </TableBody>
                   </Table>
+                  {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
+                    <div className="flex justify-center p-4">
+                      <Button
+                        onClick={onLoadMore}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Load More Events
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          )}
-
-          {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
-            <div className="flex justify-center mt-6">
-              <Button
-                onClick={onLoadMore}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Load More Events
-              </Button>
-            </div>
-          )}
+            </ResizablePanel>
+            
+            <ResizableHandle withHandle className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors" />
+            
+            <ResizablePanel defaultSize={25} minSize={20}>
+              {selectedAlert && (
+                <AlertDetailsView
+                  alert={selectedAlert}
+                  onClose={() => setSelectedAlert(null)}
+                />
+              )}
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </CardContent>
       </Card>
     </div>
