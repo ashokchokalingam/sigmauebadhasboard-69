@@ -95,7 +95,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               <ResizableHandle withHandle className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors" />
               
               <ResizablePanel defaultSize={25} minSize={20}>
-                <div className="h-full">
+                <div className="h-full overflow-y-auto">
                   <AlertDetailsView
                     alert={selectedAlert}
                     onClose={() => setSelectedAlert(null)}
