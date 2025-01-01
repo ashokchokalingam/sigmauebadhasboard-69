@@ -1,47 +1,36 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-
-interface Alert {
-  rule_level: string;
-  dbscan_cluster: number;
-}
+import { useQuery } from "@tanstack/react-query";
 
 interface SeverityChartProps {
-  alerts: Alert[];
   onSeveritySelect: (severity: string | null) => void;
 }
 
-const SeverityChart = ({ alerts, onSeveritySelect }: SeverityChartProps) => {
-  const calculateSeverityData = () => {
-    const severityCounts = {
-      Critical: 0,
-      High: 0,
-      Medium: 0,
-      Low: 0
-    };
-
-    alerts.forEach(alert => {
-      if (alert.rule_level === 'critical' || alert.dbscan_cluster === -1) {
-        severityCounts.Critical++;
-      } else if (alert.rule_level === 'high') {
-        severityCounts.High++;
-      } else if (alert.rule_level === 'medium') {
-        severityCounts.Medium++;
-      } else {
-        severityCounts.Low++;
+const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
+  const { data: totalCount } = useQuery({
+    queryKey: ['totalCount'],
+    queryFn: async () => {
+      const response = await fetch('/api/total_count');
+      if (!response.ok) {
+        throw new Error('Failed to fetch total count');
       }
-    });
+      const data = await response.json();
+      return data;
+    }
+  });
 
-    return [
-      { name: "Critical", value: severityCounts.Critical, color: "#DC2626" },
-      { name: "High", value: severityCounts.High, color: "#EA580C" },
-      { name: "Medium", value: severityCounts.Medium, color: "#D97706" },
-      { name: "Low", value: severityCounts.Low, color: "#059669" },
-    ];
-  };
-
-  const severityData = calculateSeverityData();
+  const severityData = totalCount?.total_counts?.filter(count => 
+    count.rule_level !== "Total"
+  )?.map(count => ({
+    name: count.rule_level,
+    value: parseInt(count.event_count),
+    color: count.rule_level === "Critical" ? "#DC2626" : 
+           count.rule_level === "High" ? "#F97316" :
+           count.rule_level === "Medium" ? "#FB923C" :
+           count.rule_level === "Low" ? "#22C55E" :
+           "#64748B" // Default color for Informational
+  })) || [];
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
