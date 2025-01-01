@@ -38,7 +38,26 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     )
     .slice(0, 1000);
 
-  const filteredAlerts = sortedAlerts.slice(0, ALERTS_PER_PAGE);
+  const filteredAlerts = sortedAlerts
+    .filter(alert => {
+      // Check if the alert matches all active filters
+      return Object.entries(filters).every(([key, value]) => {
+        if (!value) return true; // Skip empty filters
+        
+        const alertValue = alert[key as keyof Alert];
+        if (!alertValue) return false;
+        
+        // Handle system_time separately
+        if (key === 'system_time') {
+          const timeString = new Date(alertValue).toLocaleTimeString();
+          return timeString === value;
+        }
+        
+        // Convert both to strings for comparison and check if they match
+        return String(alertValue).toLowerCase().includes(String(value).toLowerCase());
+      });
+    })
+    .slice(0, ALERTS_PER_PAGE);
 
   const handleAlertSelect = (alert: Alert) => {
     setSelectedAlert(selectedAlert?.id === alert.id ? null : alert);
