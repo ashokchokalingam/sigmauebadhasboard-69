@@ -7,9 +7,10 @@ interface StatsCardProps {
   icon: LucideIcon;
   subtitle: string;
   subtitleIcon: LucideIcon;
+  breakdown?: { rule_level: string; event_count: number }[];
 }
 
-const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleIcon }: StatsCardProps) => {
+const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleIcon, breakdown }: StatsCardProps) => {
   return (
     <Card className="bg-black/40 border-0 hover:bg-black/50 transition-all duration-300">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -26,6 +27,16 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
             {subtitle}
           </p>
         </div>
+        {breakdown && (
+          <div className="mt-4 space-y-2">
+            {breakdown.map((item) => (
+              <div key={item.rule_level} className="flex justify-between items-center text-xs">
+                <span className="text-gray-400">{item.rule_level}</span>
+                <span className="text-red-400 font-semibold">{item.event_count.toLocaleString()}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

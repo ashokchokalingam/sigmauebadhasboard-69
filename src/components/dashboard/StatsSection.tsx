@@ -30,8 +30,9 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         title="Total Events (24h)"
         value={totalCount?.total || 0}
         icon={Database}
-        subtitle={`${totalCount?.critical || 0} Critical, ${totalCount?.high || 0} High`}
+        subtitle="Total events in last 24 hours"
         subtitleIcon={AlertTriangle}
+        breakdown={totalCount?.breakdown}
       />
       <StatsCard
         title="Active Users (24h)"
