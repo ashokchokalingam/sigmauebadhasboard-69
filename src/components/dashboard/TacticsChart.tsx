@@ -7,9 +7,9 @@ interface TacticsChartProps {
   onTacticSelect: (tactic: string | null) => void;
 }
 
-interface TagCount {
-  tag: string;
-  count: number;
+interface TagData {
+  tags: string;
+  total_count: number;
 }
 
 const TacticsChart = ({ onTacticSelect }: TacticsChartProps) => {
@@ -21,43 +21,41 @@ const TacticsChart = ({ onTacticSelect }: TacticsChartProps) => {
         throw new Error('Failed to fetch tags');
       }
       const data = await response.json();
-      return data;
+      return data.tags as TagData[];
     }
   });
 
   const calculateTacticsData = () => {
     if (!tagsData) return [];
 
-    // Filter for tactics (tags starting with 'attack.' but not 'attack.T1')
     const tacticsCount: { [key: string]: number } = {};
     
-    tagsData.forEach((tagData: TagCount) => {
-      const tag = tagData.tag;
-      if (tag.startsWith('attack.') && !tag.includes('T1')) {
-        const tacticName = tag.replace('attack.', '');
-        tacticsCount[tacticName] = (tacticsCount[tacticName] || 0) + tagData.count;
-      }
+    tagsData.forEach((tagData: TagData) => {
+      // Split tags and process each one
+      const tags = tagData.tags.split(', ');
+      tags.forEach(tag => {
+        // Only process tags that start with 'attack.' and don't include 'T1'
+        if (tag.startsWith('attack.') && !tag.includes('T1') && !tag.includes('detection')) {
+          const tacticName = tag.replace('attack.', '').replace(/-/g, ' ');
+          tacticsCount[tacticName] = (tacticsCount[tacticName] || 0) + tagData.total_count;
+        }
+      });
     });
 
-    // Deep, rich colors inspired by the reference images
+    // Colors matching the image
     const colors = [
-      '#7B61FF',  // Deep Purple
-      '#4C6EF5',  // Rich Blue
-      '#22C55E',  // Rich Green
-      '#F97316',  // Vibrant Orange
-      '#6366F1',  // Indigo
-      '#3B82F6',  // Bright Blue
-      '#2563EB',  // Royal Blue
-      '#7C3AED',  // Deep Violet
-      '#0EA5E9',  // Ocean Blue
-      '#0D9488',  // Teal
-      '#15803D',  // Forest Green
-      '#B45309'   // Bronze
+      '#7C3AED',  // Purple for initial-access
+      '#4C6EF5',  // Blue for persistence
+      '#22C55E',  // Green for impact
+      '#F97316',  // Orange for credential-access
+      '#6366F1',  // Indigo for execution
+      '#3B82F6',  // Blue for privilege-escalation
+      '#2563EB',  // Royal Blue for defense-evasion
     ];
 
     return Object.entries(tacticsCount)
-      .map(([name, value], index) => ({ 
-        name: name.replace(/_/g, ' '),
+      .map(([name, value], index) => ({
+        name: name,
         value,
         color: colors[index % colors.length]
       }))
@@ -69,7 +67,7 @@ const TacticsChart = ({ onTacticSelect }: TacticsChartProps) => {
       return (
         <div className="bg-[#1E293B] border border-[#334155] rounded-lg p-4 shadow-xl">
           <p className="text-[#94A3B8] font-bold text-xl capitalize">{label}</p>
-          <p className="text-[#CBD5E1] font-mono text-lg">{payload[0].value} alerts</p>
+          <p className="text-[#CBD5E1] font-mono text-lg">{payload[0].value.toLocaleString()} alerts</p>
         </div>
       );
     }
@@ -104,14 +102,14 @@ const TacticsChart = ({ onTacticSelect }: TacticsChartProps) => {
               <XAxis 
                 type="number"
                 stroke="#64748B"
-                tick={{ fill: '#94A3B8', fontSize: 16 }}
+                tick={{ fill: '#94A3B8', fontSize: 14 }}
                 domain={[0, 'auto']}
               />
               <YAxis 
                 type="category"
                 dataKey="name"
                 stroke="#64748B"
-                tick={{ fill: '#94A3B8', fontSize: 16 }}
+                tick={{ fill: '#94A3B8', fontSize: 14 }}
                 width={140}
               />
               <Tooltip 
