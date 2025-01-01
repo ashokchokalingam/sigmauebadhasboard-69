@@ -32,7 +32,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     <div className="h-full bg-black/90 border-l border-purple-500/10">
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b border-purple-500/10 bg-black/90 backdrop-blur-sm sticky top-0 z-10">
-        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">
+        <h2 className="text-xl font-bold bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] bg-clip-text text-transparent">
           Alert Details
         </h2>
         <button 
