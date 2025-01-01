@@ -44,11 +44,6 @@ export async function GET() {
     const response = {
       total: (rows as any[]).find(r => r.rule_level === 'Total')?.event_count || 0,
       breakdown: rows,
-      critical: (rows as any[]).find(r => r.rule_level === 'Critical')?.event_count || 0,
-      high: (rows as any[]).find(r => r.rule_level === 'High')?.event_count || 0,
-      medium: (rows as any[]).find(r => r.rule_level === 'Medium')?.event_count || 0,
-      low: (rows as any[]).find(r => r.rule_level === 'Low')?.event_count || 0,
-      informational: (rows as any[]).find(r => r.rule_level === 'Informational')?.event_count || 0
     };
 
     return new Response(JSON.stringify(response), {

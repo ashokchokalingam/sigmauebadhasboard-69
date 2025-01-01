@@ -17,7 +17,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         throw new Error('Failed to fetch total count');
       }
       const data = await response.json();
-      console.log('Total count data:', data); // Debug log
+      console.log('Total count data:', data);
       return data;
     }
   });
