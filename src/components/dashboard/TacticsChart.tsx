@@ -1,31 +1,41 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
-
-interface Alert {
-  tags: string;
-}
+import { useQuery } from "@tanstack/react-query";
 
 interface TacticsChartProps {
-  alerts: Alert[];
   onTacticSelect: (tactic: string | null) => void;
 }
 
-const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
+interface TagCount {
+  tag: string;
+  count: number;
+}
+
+const TacticsChart = ({ onTacticSelect }: TacticsChartProps) => {
+  const { data: tagsData } = useQuery({
+    queryKey: ['tags'],
+    queryFn: async () => {
+      const response = await fetch('/api/tags');
+      if (!response.ok) {
+        throw new Error('Failed to fetch tags');
+      }
+      const data = await response.json();
+      return data;
+    }
+  });
+
   const calculateTacticsData = () => {
+    if (!tagsData) return [];
+
+    // Filter for tactics (tags starting with 'attack.' but not 'attack.T1')
     const tacticsCount: { [key: string]: number } = {};
     
-    alerts.forEach(alert => {
-      if (alert.tags) {
-        const tags = alert.tags.split(',').map(t => t.trim());
-        const tactics = tags.filter(tag => 
-          tag.startsWith('attack.') && 
-          !tag.toLowerCase().includes('t1')
-        ).map(tag => tag.replace('attack.', ''));
-        
-        tactics.forEach(tactic => {
-          tacticsCount[tactic] = (tacticsCount[tactic] || 0) + 1;
-        });
+    tagsData.forEach((tagData: TagCount) => {
+      const tag = tagData.tag;
+      if (tag.startsWith('attack.') && !tag.includes('T1')) {
+        const tacticName = tag.replace('attack.', '');
+        tacticsCount[tacticName] = (tacticsCount[tacticName] || 0) + tagData.count;
       }
     });
 
@@ -33,8 +43,8 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
     const colors = [
       '#7B61FF',  // Deep Purple
       '#4C6EF5',  // Rich Blue
-      '#F97316',  // Vibrant Orange
       '#22C55E',  // Rich Green
+      '#F97316',  // Vibrant Orange
       '#6366F1',  // Indigo
       '#3B82F6',  // Bright Blue
       '#2563EB',  // Royal Blue
@@ -66,6 +76,8 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
     return null;
   };
 
+  const chartData = calculateTacticsData();
+
   return (
     <Card className="bg-[#0F172A] border-[#334155] hover:bg-[#1E293B] transition-all duration-300">
       <CardHeader>
@@ -78,7 +90,7 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={calculateTacticsData()}
+              data={chartData}
               layout="vertical"
               margin={{ top: 20, right: 30, left: 140, bottom: 20 }}
               barSize={36}
@@ -115,7 +127,7 @@ const TacticsChart = ({ alerts, onTacticSelect }: TacticsChartProps) => {
                 radius={[0, 4, 4, 0]}
                 onClick={(data) => onTacticSelect(data.name)}
               >
-                {calculateTacticsData().map((entry, index) => (
+                {chartData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
                     fill={entry.color}
