@@ -67,12 +67,14 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                     <div className="overflow-x-auto">
                       <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
                         <Table>
-                          <AnomaliesTableHeader
-                            alerts={alerts}
-                            onFilterChange={handleFilterChange}
-                            filters={filters}
-                            visibleColumns={defaultColumns.map(col => col.key)}
-                          />
+                          <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-sm border-b border-blue-500/10">
+                            <AnomaliesTableHeader
+                              alerts={alerts}
+                              onFilterChange={handleFilterChange}
+                              filters={filters}
+                              visibleColumns={defaultColumns.map(col => col.key)}
+                            />
+                          </div>
                           <TableBody>
                             {filteredAlerts.map((alert) => (
                               <AlertTableRow
@@ -95,7 +97,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               <ResizableHandle withHandle className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors" />
               
               <ResizablePanel defaultSize={25} minSize={20}>
-                <div className="h-full overflow-y-auto">
+                <div className="sticky top-0 h-full overflow-y-auto">
                   <AlertDetailsView
                     alert={selectedAlert}
                     onClose={() => setSelectedAlert(null)}
@@ -109,12 +111,14 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                 <div className="overflow-x-auto">
                   <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
                     <Table>
-                      <AnomaliesTableHeader
-                        alerts={alerts}
-                        onFilterChange={handleFilterChange}
-                        filters={filters}
-                        visibleColumns={defaultColumns.map(col => col.key)}
-                      />
+                      <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-sm border-b border-blue-500/10">
+                        <AnomaliesTableHeader
+                          alerts={alerts}
+                          onFilterChange={handleFilterChange}
+                          filters={filters}
+                          visibleColumns={defaultColumns.map(col => col.key)}
+                        />
+                      </div>
                       <TableBody>
                         {filteredAlerts.map((alert) => (
                           <AlertTableRow
