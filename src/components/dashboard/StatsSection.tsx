@@ -13,7 +13,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatsCard
         title="Total Events (24h)"
         value={stats.totalEvents}
@@ -36,39 +36,11 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         subtitleIcon={Activity}
       />
       <StatsCard
-        title="Unique IPs (24h)"
-        value={stats.uniqueIPs?.toString() || '0'}
-        icon={Network}
-        subtitle="Active in last 24 hours"
-        subtitleIcon={Activity}
-      />
-      <StatsCard
-        title="Risk Score (24h)"
-        value={(stats.riskScore?.current || 0).toFixed(1)}
-        icon={Shield}
-        subtitle="Average risk score"
-        subtitleIcon={Activity}
-      />
-      <StatsCard
         title="Anomalies (24h)"
         value={stats.anomalies?.current?.toString() || '0'}
         icon={AlertTriangle}
         subtitle="Total anomalies detected"
         subtitleIcon={Activity}
-      />
-      <StatsCard
-        title="Medium Events (24h)"
-        value={stats.severity?.medium?.toString() || '0'}
-        icon={Activity}
-        subtitle={`${stats.severity?.low || 0} Low Severity Events`}
-        subtitleIcon={Activity}
-      />
-      <StatsCard
-        title="High/Critical (24h)"
-        value={((stats.severity?.high || 0) + (stats.severity?.critical || 0)).toString()}
-        icon={AlertTriangle}
-        subtitle={`${stats.severity?.critical || 0} Critical, ${stats.severity?.high || 0} High`}
-        subtitleIcon={AlertTriangle}
       />
     </div>
   );
