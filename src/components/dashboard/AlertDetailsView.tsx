@@ -16,7 +16,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   if (!alert) return null;
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col bg-black/40">
       <div className="sticky top-0 z-20 bg-black/90 backdrop-blur-sm border-b border-purple-500/10">
         <div className="flex justify-between items-center p-4">
           <h2 className="text-xl font-semibold text-purple-100">{alert.title || 'Alert Details'}</h2>

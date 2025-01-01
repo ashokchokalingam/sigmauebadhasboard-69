@@ -57,62 +57,55 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ResizablePanelGroup 
-            direction="horizontal" 
-            className="min-h-[800px] rounded-lg border border-blue-500/10"
-          >
-            <ResizablePanel defaultSize={75} minSize={30}>
-              <div className="h-full flex flex-col">
-                <div className="sticky top-0 z-10 bg-black/90 border-b border-blue-500/10">
-                  <AnomaliesTableHeader
-                    alerts={alerts}
-                    onFilterChange={handleFilterChange}
-                    filters={filters}
-                    visibleColumns={defaultColumns.map(col => col.key)}
-                  />
-                </div>
-                <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
-                  <Table>
-                    <TableBody>
-                      {filteredAlerts.map((alert) => (
-                        <AlertTableRow
-                          key={alert.id}
-                          alert={alert}
-                          isSelected={selectedAlert?.id === alert.id}
-                          onToggle={() => handleAlertSelect(alert)}
-                          onTimelineView={() => {}}
-                          visibleColumns={defaultColumns.map(col => col.key)}
-                        />
-                      ))}
-                    </TableBody>
-                  </Table>
-                  {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
-                    <div className="flex justify-center p-4">
-                      <Button
-                        onClick={onLoadMore}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
-                      >
-                        Load More Events
-                      </Button>
-                    </div>
-                  )}
-                </div>
+          <div className="grid grid-cols-[1fr,auto,400px] min-h-[800px] rounded-lg border border-blue-500/10">
+            <div className="h-full flex flex-col">
+              <div className="sticky top-0 z-10 bg-black/90 border-b border-blue-500/10">
+                <AnomaliesTableHeader
+                  alerts={alerts}
+                  onFilterChange={handleFilterChange}
+                  filters={filters}
+                  visibleColumns={defaultColumns.map(col => col.key)}
+                />
               </div>
-            </ResizablePanel>
-            
-            <ResizableHandle withHandle className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors" />
-            
-            <ResizablePanel defaultSize={25} minSize={20}>
-              <div className="h-full">
-                {selectedAlert && (
-                  <AlertDetailsView
-                    alert={selectedAlert}
-                    onClose={() => setSelectedAlert(null)}
-                  />
+              <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
+                <Table>
+                  <TableBody>
+                    {filteredAlerts.map((alert) => (
+                      <AlertTableRow
+                        key={alert.id}
+                        alert={alert}
+                        isSelected={selectedAlert?.id === alert.id}
+                        onToggle={() => handleAlertSelect(alert)}
+                        onTimelineView={() => {}}
+                        visibleColumns={defaultColumns.map(col => col.key)}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
+                {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
+                  <div className="flex justify-center p-4">
+                    <Button
+                      onClick={onLoadMore}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Load More Events
+                    </Button>
+                  </div>
                 )}
               </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+            </div>
+            
+            <div className="w-[1px] bg-blue-500/10" />
+            
+            <div className="sticky top-0 h-[800px] overflow-hidden">
+              {selectedAlert && (
+                <AlertDetailsView
+                  alert={selectedAlert}
+                  onClose={() => setSelectedAlert(null)}
+                />
+              )}
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
