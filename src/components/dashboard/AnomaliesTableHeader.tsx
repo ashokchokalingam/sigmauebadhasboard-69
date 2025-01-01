@@ -50,25 +50,21 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
   return (
     <TableHeader className="sticky top-0 z-50 bg-black/90">
       <TableRow className="hover:bg-blue-950/30">
-        {columns.map(column => 
-          visibleColumns.includes(column.key) && (
+        {columns
+          .filter(column => visibleColumns.includes(column.key))
+          .map(column => (
             <TableHead 
               key={column.key} 
               className="text-blue-300 bg-black/90 backdrop-blur-sm border-b border-blue-500/10 whitespace-nowrap sticky top-0"
             >
-              {column.key === "techniques" ? (
-                column.label
-              ) : (
-                <ColumnFilter
-                  title={column.label}
-                  options={getUniqueValues(column.key as keyof Alert)}
-                  onSelect={(value) => onFilterChange(column.key, value)}
-                  selectedValue={filters[column.key]}
-                />
-              )}
+              <ColumnFilter
+                title={column.label}
+                options={getUniqueValues(column.key as keyof Alert)}
+                onSelect={(value) => onFilterChange(column.key, value)}
+                selectedValue={filters[column.key]}
+              />
             </TableHead>
-          )
-        )}
+          ))}
         <TableHead className="text-blue-300 w-[50px] bg-black/90 backdrop-blur-sm border-b border-blue-500/10 sticky top-0"></TableHead>
       </TableRow>
     </TableHeader>

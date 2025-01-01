@@ -26,6 +26,8 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
   });
 
   const renderCell = (key: string) => {
+    if (!visibleColumns.includes(key)) return null;
+
     switch (key) {
       case "title":
         return (
@@ -151,7 +153,9 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
       className={`hover:bg-blue-950/30 cursor-pointer ${isSelected ? 'bg-blue-950/20' : ''}`}
       onClick={onToggle}
     >
-      {defaultColumns.map(column => renderCell(column.key))}
+      {defaultColumns
+        .filter(column => visibleColumns.includes(column.key))
+        .map(column => renderCell(column.key))}
       <TableCell>
         <button 
           className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
