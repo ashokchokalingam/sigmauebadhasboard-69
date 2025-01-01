@@ -11,7 +11,7 @@ interface StatsCardProps {
 
 const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleIcon }: StatsCardProps) => {
   return (
-    <Card className="bg-black/40 border border-blue-500/10 hover:bg-black/50 transition-all duration-300">
+    <Card className="bg-black/40 border-0 hover:bg-black/50 transition-all duration-300">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-gray-400">{title}</CardTitle>
         <Icon className="h-5 w-5 text-gray-400" />
