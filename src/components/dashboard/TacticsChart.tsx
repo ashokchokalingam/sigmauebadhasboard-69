@@ -31,31 +31,33 @@ const TacticsChart = ({ onTacticSelect }: TacticsChartProps) => {
     const tacticsCount: { [key: string]: number } = {};
     
     tagsData.forEach((tagData: TagData) => {
-      // Split tags and process each one
       const tags = tagData.tags.split(', ');
       tags.forEach(tag => {
-        // Only process tags that start with 'attack.' and don't include 'T1'
-        if (tag.startsWith('attack.') && !tag.includes('T1') && !tag.includes('detection')) {
-          const tacticName = tag.replace('attack.', '').replace(/-/g, ' ');
+        // Only process tags that start with 'attack.' and don't include 't1' (case insensitive)
+        if (tag.startsWith('attack.') && !tag.toLowerCase().includes('t1')) {
+          const tacticName = tag.replace('attack.', '')
+                               .replace(/-/g, ' ')
+                               .split(' ')
+                               .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                               .join(' ');
           tacticsCount[tacticName] = (tacticsCount[tacticName] || 0) + tagData.total_count;
         }
       });
     });
 
-    // Colors matching the image
     const colors = [
-      '#7C3AED',  // Purple for initial-access
-      '#4C6EF5',  // Blue for persistence
-      '#22C55E',  // Green for impact
-      '#F97316',  // Orange for credential-access
-      '#6366F1',  // Indigo for execution
-      '#3B82F6',  // Blue for privilege-escalation
-      '#2563EB',  // Royal Blue for defense-evasion
+      '#7C3AED',  // Purple for Initial Access
+      '#4C6EF5',  // Blue for Persistence
+      '#22C55E',  // Green for Impact
+      '#F97316',  // Orange for Credential Access
+      '#6366F1',  // Indigo for Execution
+      '#3B82F6',  // Blue for Privilege Escalation
+      '#2563EB',  // Royal Blue for Defense Evasion
     ];
 
     return Object.entries(tacticsCount)
       .map(([name, value], index) => ({
-        name: name,
+        name,
         value,
         color: colors[index % colors.length]
       }))
