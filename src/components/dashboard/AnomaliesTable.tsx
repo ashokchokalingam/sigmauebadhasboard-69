@@ -57,10 +57,13 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg border border-blue-500/10">
+          <ResizablePanelGroup 
+            direction="horizontal" 
+            className="min-h-[800px] rounded-lg border border-blue-500/10"
+          >
             <ResizablePanel defaultSize={75} minSize={30}>
-              <div className="h-full flex flex-col border-r border-blue-500/10">
-                <div className="sticky top-0 z-10 bg-black/90">
+              <div className="h-full flex flex-col">
+                <div className="sticky top-0 z-10 bg-black/90 border-b border-blue-500/10">
                   <AnomaliesTableHeader
                     alerts={alerts}
                     onFilterChange={handleFilterChange}
@@ -68,7 +71,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                     visibleColumns={defaultColumns.map(col => col.key)}
                   />
                 </div>
-                <div className="flex-1 overflow-y-auto scrollbar-thin">
+                <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
                   <Table>
                     <TableBody>
                       {filteredAlerts.map((alert) => (
@@ -100,12 +103,14 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
             <ResizableHandle withHandle className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors" />
             
             <ResizablePanel defaultSize={25} minSize={20}>
-              {selectedAlert && (
-                <AlertDetailsView
-                  alert={selectedAlert}
-                  onClose={() => setSelectedAlert(null)}
-                />
-              )}
+              <div className="h-full">
+                {selectedAlert && (
+                  <AlertDetailsView
+                    alert={selectedAlert}
+                    onClose={() => setSelectedAlert(null)}
+                  />
+                )}
+              </div>
             </ResizablePanel>
           </ResizablePanelGroup>
         </CardContent>

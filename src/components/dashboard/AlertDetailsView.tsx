@@ -17,8 +17,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
 
   return (
     <div className="h-full flex flex-col">
-      {/* Fixed header with blur effect */}
-      <div className="sticky top-0 z-20 bg-black/40 backdrop-blur-sm border-b border-purple-500/10">
+      <div className="sticky top-0 z-20 bg-black/90 backdrop-blur-sm border-b border-purple-500/10">
         <div className="flex justify-between items-center p-4">
           <h2 className="text-xl font-semibold text-purple-100">{alert.title || 'Alert Details'}</h2>
           <Button
@@ -32,8 +31,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
         </div>
       </div>
 
-      {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto scrollbar-thin">
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/10 scrollbar-track-transparent">
         <div className="p-4 space-y-6">
           <AlertDetailsHeader alert={alert} />
           <AlertMainInfo alert={alert} />
