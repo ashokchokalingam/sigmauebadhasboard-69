@@ -62,7 +62,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           {selectedAlert ? (
             <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg border border-blue-500/10">
               <ResizablePanel defaultSize={75} minSize={30}>
-                <div className="h-full overflow-hidden border-r border-blue-500/10">
+                <div className="h-full overflow-hidden">
                   <div className="relative h-full">
                     <div className="overflow-x-auto">
                       <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
@@ -97,12 +97,10 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               <ResizableHandle withHandle className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors" />
               
               <ResizablePanel defaultSize={25} minSize={20}>
-                <div className="sticky top-0 h-full overflow-y-auto">
-                  <AlertDetailsView
-                    alert={selectedAlert}
-                    onClose={() => setSelectedAlert(null)}
-                  />
-                </div>
+                <AlertDetailsView
+                  alert={selectedAlert}
+                  onClose={() => setSelectedAlert(null)}
+                />
               </ResizablePanel>
             </ResizablePanelGroup>
           ) : (
