@@ -19,7 +19,7 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
       </CardHeader>
       <CardContent>
         <div className="text-4xl font-bold text-red-400">
-          {value.toLocaleString()}
+          {typeof value === 'number' ? value.toLocaleString() : value}
         </div>
         <div className="flex items-center mt-2">
           <SubtitleIcon className="h-4 w-4 mr-1 text-red-400" />
@@ -27,12 +27,14 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
             {subtitle}
           </p>
         </div>
-        {breakdown && (
+        {breakdown && breakdown.length > 0 && (
           <div className="mt-4 space-y-2">
             {breakdown.map((item) => (
               <div key={item.rule_level} className="flex justify-between items-center text-xs">
                 <span className="text-gray-400">{item.rule_level}</span>
-                <span className="text-red-400 font-semibold">{item.event_count.toLocaleString()}</span>
+                <span className="text-red-400 font-semibold">
+                  {typeof item.event_count === 'number' ? item.event_count.toLocaleString() : item.event_count}
+                </span>
               </div>
             ))}
           </div>
