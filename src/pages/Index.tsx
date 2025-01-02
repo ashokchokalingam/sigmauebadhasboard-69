@@ -13,7 +13,7 @@ const Index = () => {
   const { toast } = useToast();
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
   
-  const { isLoading, error, data } = useAlerts(currentPage, (alerts, totalRecords) => {
+  const { isLoading, error, data, refetch } = useAlerts(currentPage, (alerts, totalRecords) => {
     if (currentPage === 1) {
       setCurrentAlerts(alerts);
     } else {
@@ -29,8 +29,9 @@ const Index = () => {
     setCurrentTotalRecords(totalRecords);
   });
 
-  const handleLoadMore = () => {
+  const handleLoadMore = async () => {
     setCurrentPage(prev => prev + 1);
+    return refetch(); // Return the Promise from refetch
   };
 
   if (isLoading && currentAlerts.length === 0) {
