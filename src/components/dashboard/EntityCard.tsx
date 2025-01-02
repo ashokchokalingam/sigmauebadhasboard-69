@@ -1,5 +1,5 @@
 import React from "react";
-import { Activity } from "lucide-react";
+import { Activity, Computer, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EntityCardProps {
@@ -12,6 +12,7 @@ interface EntityCardProps {
 const EntityCard = ({ id, eventCount, uniqueTitles, onClick }: EntityCardProps) => {
   // Get a consistent avatar number for each user (1-9)
   const avatarNumber = Math.abs(id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % 9) + 1;
+  const isComputer = id.endsWith('$');
   
   return (
     <div 
@@ -22,12 +23,12 @@ const EntityCard = ({ id, eventCount, uniqueTitles, onClick }: EntityCardProps) 
       
       <div className="relative flex items-center justify-between p-4">
         <div className="flex items-center gap-4">
-          <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-purple-400/30 group-hover:border-purple-400/50 transition-colors">
-            <img
-              src={`/ninjas/ninja${avatarNumber}.png`}
-              alt="Ninja Avatar"
-              className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
-            />
+          <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-purple-400/30 group-hover:border-purple-400/50 transition-colors bg-purple-950/50 flex items-center justify-center">
+            {isComputer ? (
+              <Computer className="w-6 h-6 text-purple-300" />
+            ) : (
+              <User className="w-6 h-6 text-purple-300" />
+            )}
           </div>
           
           <div className="flex flex-col">
