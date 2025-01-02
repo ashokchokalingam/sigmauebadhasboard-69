@@ -29,6 +29,31 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     if (!visibleColumns.includes(key)) return null;
 
     switch (key) {
+      case "users":
+        return (
+          <TableCell>
+            <div className="space-y-2">
+              <div>
+                <span className="text-xs text-blue-400">Origin User</span>
+                <p 
+                  className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onTimelineView("user", alert.user_id);
+                  }}
+                >
+                  {alert.user_id || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <span className="text-xs text-blue-400">User Impacted</span>
+                <p className="text-blue-100 whitespace-nowrap">
+                  {alert.target_user_name || 'N/A'}
+                </p>
+              </div>
+            </div>
+          </TableCell>
+        );
       case "title":
         return (
           <TableCell>
@@ -69,18 +94,6 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
             }}
           >
             {alert.computer_name || 'N/A'}
-          </TableCell>
-        );
-      case "user_id":
-        return (
-          <TableCell 
-            className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTimelineView("user", alert.user_id);
-            }}
-          >
-            {alert.user_id || 'N/A'}
           </TableCell>
         );
       case "event_id":
@@ -125,12 +138,6 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         return (
           <TableCell className="text-blue-100 whitespace-nowrap">
             {alert.task || 'N/A'}
-          </TableCell>
-        );
-      case "target_user_name":
-        return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
-            {alert.target_user_name || 'N/A'}
           </TableCell>
         );
       case "target_domain_name":

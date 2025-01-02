@@ -1,7 +1,7 @@
 export const defaultColumns = [
   { key: "system_time", label: "Time" },
   { key: "computer_name", label: "Computer" },
-  { key: "user_id", label: "User" },
+  { key: "users", label: "Users" },  // Changed from user_id to combine both users
   { key: "title", label: "Title" },
   { key: "tags", label: "Tactics" },
   { key: "target_user_name", label: "Target User" }
