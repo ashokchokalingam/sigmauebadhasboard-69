@@ -1,6 +1,5 @@
 import { Table, TableBody } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { useState, useRef, useEffect } from "react";
 import { Alert } from "./types";
 import { Button } from "../ui/button";
@@ -8,9 +7,9 @@ import { ALERTS_PER_PAGE } from "@/constants/pagination";
 import AlertTableRow from "./AlertTableRow";
 import { defaultColumns, allColumns } from "./TableConfig";
 import AlertDetailsView from "./AlertDetailsView";
-import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import ColumnSelector from "./ColumnSelector";
+import TimelineHeader from "./TimelineHeader";
+import AnomaliesTableHeader from "./AnomaliesTableHeader";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
@@ -24,8 +23,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
     defaultColumns.map(col => col.key)
   );
-  const [displayCount, setDisplayCount] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
+  const [isUpdating, setIsUpdating] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
@@ -36,7 +34,12 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   // Poll for new alerts every 10 seconds
   useEffect(() => {
     const pollInterval = setInterval(() => {
-      onLoadMore();
+      setIsUpdating(true);
+      onLoadMore().finally(() => {
+        setTimeout(() => {
+          setIsUpdating(false);
+        }, 1000);
+      });
     }, 10000);
 
     return () => clearInterval(pollInterval);
@@ -46,14 +49,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   useEffect(() => {
     setVisibleColumns(defaultColumns.map(col => col.key));
   }, []);
-
-  // Update counts whenever alerts change
-  useEffect(() => {
-    const filteredCount = filteredAlerts.length;
-    const total = alerts.length;
-    setDisplayCount(filteredCount);
-    setTotalCount(total);
-  }, [alerts, filters]);
 
   const sortedAlerts = [...alerts]
     .filter(alert => {
@@ -93,61 +88,53 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     }));
   };
 
-  const handleColumnToggle = (columns: string[]) => {
-    setVisibleColumns(columns);
-  };
+  const renderTable = () => (
+    <div className="overflow-hidden border border-blue-500/10 rounded-md">
+      <div className="relative">
+        <div className="overflow-x-auto">
+          <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
+            <Table>
+              <AnomaliesTableHeader
+                alerts={alerts}
+                onFilterChange={handleFilterChange}
+                filters={filters}
+                visibleColumns={visibleColumns}
+              />
+              <TableBody>
+                {filteredAlerts.map((alert) => (
+                  <AlertTableRow
+                    key={alert.id}
+                    alert={alert}
+                    isSelected={selectedAlert?.id === alert.id}
+                    onToggle={() => handleAlertSelect(alert)}
+                    onTimelineView={() => {}}
+                    visibleColumns={visibleColumns}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
       <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="space-y-2">
-              <CardTitle className="flex items-center gap-2 text-blue-100">
-                <AlertTriangle className="h-5 w-5 text-blue-500" />
-                Event Timeline
-              </CardTitle>
-              <p className="text-sm text-blue-400">
-                Showing {displayCount} of {totalCount} events from the last 7 days
-              </p>
-            </div>
-            <ColumnSelector
-              columns={allColumns}
-              visibleColumns={visibleColumns}
-              onColumnToggle={handleColumnToggle}
-            />
-          </div>
-        </CardHeader>
+        <TimelineHeader
+          isLoading={isUpdating}
+          columns={allColumns}
+          visibleColumns={visibleColumns}
+          onColumnToggle={setVisibleColumns}
+        />
         <CardContent>
           {selectedAlert ? (
             <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg border border-blue-500/10">
               <ResizablePanel defaultSize={75} minSize={30}>
                 <div className="h-full overflow-hidden border-r border-blue-500/10">
                   <div className="relative h-full">
-                    <div className="overflow-x-auto">
-                      <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
-                        <Table>
-                          <AnomaliesTableHeader
-                            alerts={alerts}
-                            onFilterChange={handleFilterChange}
-                            filters={filters}
-                            visibleColumns={visibleColumns}
-                          />
-                          <TableBody>
-                            {filteredAlerts.map((alert) => (
-                              <AlertTableRow
-                                key={alert.id}
-                                alert={alert}
-                                isSelected={selectedAlert?.id === alert.id}
-                                onToggle={() => handleAlertSelect(alert)}
-                                onTimelineView={() => {}}
-                                visibleColumns={visibleColumns}
-                              />
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </div>
-                    </div>
+                    {renderTable()}
                   </div>
                 </div>
               </ResizablePanel>
@@ -164,34 +151,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               </ResizablePanel>
             </ResizablePanelGroup>
           ) : (
-            <div className="overflow-hidden border border-blue-500/10 rounded-md">
-              <div className="relative">
-                <div className="overflow-x-auto">
-                  <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
-                    <Table>
-                      <AnomaliesTableHeader
-                        alerts={alerts}
-                        onFilterChange={handleFilterChange}
-                        filters={filters}
-                        visibleColumns={visibleColumns}
-                      />
-                      <TableBody>
-                        {filteredAlerts.map((alert) => (
-                          <AlertTableRow
-                            key={alert.id}
-                            alert={alert}
-                            isSelected={selectedAlert?.id === alert.id}
-                            onToggle={() => handleAlertSelect(alert)}
-                            onTimelineView={() => {}}
-                            visibleColumns={visibleColumns}
-                          />
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
-              </div>
-            </div>
+            renderTable()
           )}
 
           {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
