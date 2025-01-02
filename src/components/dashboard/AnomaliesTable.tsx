@@ -1,17 +1,18 @@
-import { Table, TableBody } from "@/components/ui/table";
+import { Table } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Alert } from "./types";
 import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
-import AlertTableRow from "./AlertTableRow";
-import { defaultColumns, allColumns } from "./TableConfig";
+import { defaultColumns } from "./TableConfig";
 import AlertDetailsView from "./AlertDetailsView";
 import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import ColumnSelector from "./ColumnSelector";
 import { useToast } from "../ui/use-toast";
+import { useAlertsFilter } from "./hooks/useAlertsFilter";
+import AnomaliesTableContent from "./AnomaliesTableContent";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
@@ -21,79 +22,14 @@ interface AnomaliesTableProps {
 
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
-  const [filters, setFilters] = useState<Record<string, string>>({});
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
     defaultColumns.map(col => col.key)
   );
   const { toast } = useToast();
-  
-  const containerRef = useRef<HTMLDivElement>(null);
-  const tableRef = useRef<HTMLDivElement>(null);
-  
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-  // Reset filters when visible columns change
-  useEffect(() => {
-    const updatedFilters = { ...filters };
-    Object.keys(updatedFilters).forEach(key => {
-      if (!visibleColumns.includes(key)) {
-        delete updatedFilters[key];
-      }
-    });
-    setFilters(updatedFilters);
-  }, [visibleColumns]);
-
-  const sortedAlerts = [...alerts]
-    .filter(alert => {
-      const alertDate = new Date(alert.system_time);
-      return alertDate >= sevenDaysAgo;
-    })
-    .sort((a, b) => 
-      new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
-    )
-    .slice(0, 1000);
-
-  const filteredAlerts = sortedAlerts
-    .filter(alert => {
-      return Object.entries(filters).every(([key, value]) => {
-        if (!value) return true;
-        
-        if (!visibleColumns.includes(key)) return true;
-
-        if (key === 'system_time') {
-          const timeString = new Date(alert[key]).toLocaleTimeString();
-          return timeString.toLowerCase().includes(value.toLowerCase());
-        }
-
-        if (key === 'users') {
-          const userOrigin = String(alert.user_id || '').toLowerCase();
-          const userImpacted = String(alert.target_user_name || '').toLowerCase();
-          const searchValue = value.toLowerCase();
-          return userOrigin.includes(searchValue) || userImpacted.includes(searchValue);
-        }
-
-        const alertValue = alert[key as keyof Alert];
-        if (!alertValue) return false;
-        
-        return String(alertValue).toLowerCase().includes(value.toLowerCase());
-      });
-    })
-    .slice(0, ALERTS_PER_PAGE);
+  const { filters, handleFilterChange, filterAlerts } = useAlertsFilter(alerts, visibleColumns);
 
   const handleAlertSelect = (alert: Alert) => {
     setSelectedAlert(selectedAlert?.id === alert.id ? null : alert);
-  };
-
-  const handleFilterChange = (column: string, value: string) => {
-    if (!visibleColumns.includes(column)) {
-      return;
-    }
-    
-    setFilters(prev => ({
-      ...prev,
-      [column]: value
-    }));
   };
 
   const handleColumnToggle = (columns: string[]) => {
@@ -105,6 +41,8 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     });
   };
 
+  const filteredAlerts = filterAlerts();
+
   return (
     <div className="space-y-6">
       <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
@@ -115,7 +53,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               Recent Events - Last 7 Days (Limited to 1000)
             </CardTitle>
             <ColumnSelector
-              columns={allColumns}
+              columns={defaultColumns}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
             />
@@ -136,18 +74,12 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                             filters={filters}
                             visibleColumns={visibleColumns}
                           />
-                          <TableBody>
-                            {filteredAlerts.map((alert) => (
-                              <AlertTableRow
-                                key={alert.id}
-                                alert={alert}
-                                isSelected={selectedAlert?.id === alert.id}
-                                onToggle={() => handleAlertSelect(alert)}
-                                onTimelineView={() => {}}
-                                visibleColumns={visibleColumns}
-                              />
-                            ))}
-                          </TableBody>
+                          <AnomaliesTableContent
+                            alerts={filteredAlerts}
+                            selectedAlert={selectedAlert}
+                            onAlertSelect={handleAlertSelect}
+                            visibleColumns={visibleColumns}
+                          />
                         </Table>
                       </div>
                     </div>
@@ -178,18 +110,12 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                         filters={filters}
                         visibleColumns={visibleColumns}
                       />
-                      <TableBody>
-                        {filteredAlerts.map((alert) => (
-                          <AlertTableRow
-                            key={alert.id}
-                            alert={alert}
-                            isSelected={selectedAlert?.id === alert.id}
-                            onToggle={() => handleAlertSelect(alert)}
-                            onTimelineView={() => {}}
-                            visibleColumns={visibleColumns}
-                          />
-                        ))}
-                      </TableBody>
+                      <AnomaliesTableContent
+                        alerts={filteredAlerts}
+                        selectedAlert={selectedAlert}
+                        onAlertSelect={handleAlertSelect}
+                        visibleColumns={visibleColumns}
+                      />
                     </Table>
                   </div>
                 </div>
