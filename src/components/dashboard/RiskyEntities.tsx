@@ -120,7 +120,9 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
     }
   };
 
-  const entities = getUniqueEntities();
+  const entities = getUniqueEntities()
+    .sort((a, b) => b.uniqueTitles - a.uniqueTitles); // Sort by uniqueTitles in descending order
+  
   const EntityIcon = type === "users" ? User : Monitor;
 
   // Show loading state while fetching data
