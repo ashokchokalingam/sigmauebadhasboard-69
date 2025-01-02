@@ -6,9 +6,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 
 interface UserData {
-  user_id: string;
-  event_count: number;
-  unique_alerts: number;
+  user_impacted: string;
+  total_events: number;
+  unique_anomalies: number;
 }
 
 interface RiskyEntitiesProps {
@@ -25,7 +25,9 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
       if (!response.ok) {
         throw new Error('Failed to fetch origin users');
       }
-      return response.json();
+      const data = await response.json();
+      console.log('Origin users:', data);
+      return data.user_origin_logs || [];
     },
     enabled: type === "users"
   });
@@ -37,7 +39,9 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
       if (!response.ok) {
         throw new Error('Failed to fetch impacted users');
       }
-      return response.json();
+      const data = await response.json();
+      console.log('Impacted users:', data);
+      return data.user_impacted_logs || [];
     },
     enabled: type === "users"
   });
@@ -46,38 +50,38 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
     if (type === "users") {
       const combinedUsers = new Map<string, { id: string; eventCount: number; uniqueTitles: number }>();
       
-      // Process origin users if available
-      if (originUsers?.length) {
-        originUsers.forEach((user: UserData) => {
-          if (!user.user_id || user.user_id.trim() === '') return;
-          const entityId = sanitizeEntityName(user.user_id);
+      // Process impacted users if available
+      if (impactedUsers?.length) {
+        impactedUsers.forEach((user: UserData) => {
+          if (!user.user_impacted || user.user_impacted.trim() === '') return;
+          const entityId = sanitizeEntityName(user.user_impacted);
           
           combinedUsers.set(entityId, {
             id: entityId,
-            eventCount: user.event_count,
-            uniqueTitles: user.unique_alerts
+            eventCount: user.total_events,
+            uniqueTitles: user.unique_anomalies
           });
         });
       }
 
-      // Process impacted users if available
-      if (impactedUsers?.length) {
-        impactedUsers.forEach((user: UserData) => {
-          if (!user.user_id || user.user_id.trim() === '') return;
-          const entityId = sanitizeEntityName(user.user_id);
+      // Process origin users if available and merge with existing data
+      if (originUsers?.length) {
+        originUsers.forEach((user: UserData) => {
+          if (!user.user_impacted || user.user_impacted.trim() === '') return;
+          const entityId = sanitizeEntityName(user.user_impacted);
           
           if (combinedUsers.has(entityId)) {
             const existing = combinedUsers.get(entityId)!;
             combinedUsers.set(entityId, {
               ...existing,
-              eventCount: existing.eventCount + user.event_count,
-              uniqueTitles: existing.uniqueTitles + user.unique_alerts
+              eventCount: existing.eventCount + user.total_events,
+              uniqueTitles: existing.uniqueTitles + user.unique_anomalies
             });
           } else {
             combinedUsers.set(entityId, {
               id: entityId,
-              eventCount: user.event_count,
-              uniqueTitles: user.unique_alerts
+              eventCount: user.total_events,
+              uniqueTitles: user.unique_anomalies
             });
           }
         });
@@ -124,7 +128,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
     return (
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-blue-100 mb-4">
-          {type === "users" ? "Active Users" : "Active Computers"}
+          Active Users
         </h3>
         <div className="text-center text-blue-400/60 py-6 text-sm">
           Loading...
