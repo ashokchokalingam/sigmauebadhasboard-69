@@ -43,49 +43,47 @@ const DashboardLayout = ({
   const stats = calculateStats(allAlerts, totalRecords);
 
   return (
-    <div className="min-h-screen bg-[#1a1f2c] w-full">
-      <div className="p-4 md:p-6 space-y-6 max-w-[2000px] mx-auto">
-        <StatsSection 
-          stats={stats}
-          totalAlerts={allAlerts.length}
-          alerts={allAlerts}
-          totalRecords={totalRecords}
-        />
+    <div className="container mx-auto p-6 space-y-6">
+      <StatsSection 
+        stats={stats}
+        totalAlerts={allAlerts.length}
+        alerts={allAlerts}
+        totalRecords={totalRecords}
+      />
 
-        {selectedEntity && showTimeline ? (
-          <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg">
-            <ResizablePanel defaultSize={70} minSize={30}>
-              <div className="h-full">
-                <AnomaliesTable
-                  alerts={alerts}
-                  onLoadMore={onLoadMore}
-                  hasMore={hasMore}
-                />
-              </div>
-            </ResizablePanel>
-            
-            <ResizableHandle withHandle />
-            
-            <ResizablePanel defaultSize={30} minSize={20}>
-              <Card className="h-full bg-black/40 border-blue-500/10">
-                <TimelineView
-                  alerts={allAlerts}
-                  entityType={selectedEntity.type}
-                  entityId={selectedEntity.id}
-                  onClose={handleCloseTimeline}
-                  inSidebar={true}
-                />
-              </Card>
-            </ResizablePanel>
-          </ResizablePanelGroup>
-        ) : (
-          <AnomaliesTable
-            alerts={alerts}
-            onLoadMore={onLoadMore}
-            hasMore={hasMore}
-          />
-        )}
-      </div>
+      {selectedEntity && showTimeline ? (
+        <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg">
+          <ResizablePanel defaultSize={70} minSize={30}>
+            <div className="h-full">
+              <AnomaliesTable
+                alerts={alerts}
+                onLoadMore={onLoadMore}
+                hasMore={hasMore}
+              />
+            </div>
+          </ResizablePanel>
+          
+          <ResizableHandle withHandle />
+          
+          <ResizablePanel defaultSize={30} minSize={20}>
+            <Card className="h-full bg-black/40 border-blue-500/10">
+              <TimelineView
+                alerts={allAlerts}
+                entityType={selectedEntity.type}
+                entityId={selectedEntity.id}
+                onClose={handleCloseTimeline}
+                inSidebar={true}
+              />
+            </Card>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      ) : (
+        <AnomaliesTable
+          alerts={alerts}
+          onLoadMore={onLoadMore}
+          hasMore={hasMore}
+        />
+      )}
     </div>
   );
 };

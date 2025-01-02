@@ -63,7 +63,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#1a1f2c]">
+    <div className="min-h-screen bg-[#1a1f2c]">
       <DashboardLayout
         alerts={currentAlerts}
         allAlerts={allAlerts}
