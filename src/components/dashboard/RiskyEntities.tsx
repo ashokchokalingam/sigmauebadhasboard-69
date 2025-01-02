@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { User, Monitor, Activity } from "lucide-react";
 import { Alert } from "./types";
-import { getRiskScore } from "./utils";
+import { getRiskScore, sanitizeEntityName } from "./utils";
 
 interface RiskyEntity {
   id: string;
@@ -51,15 +51,16 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
     const entities: { [key: string]: RiskyEntity } = {};
 
     alerts.forEach((alert) => {
-      const entityId = type === "users" ? alert.user_id : alert.computer_name;
-      if (!entityId || entityId.trim() === '') return;
+      const rawEntityId = type === "users" ? alert.user_id : alert.computer_name;
+      if (!rawEntityId || rawEntityId.trim() === '') return;
       
+      const entityId = sanitizeEntityName(rawEntityId);
       const alertDate = new Date(alert.system_time);
       const isWithinLastWeek = alertDate >= sevenDaysAgo;
       
       if (!entities[entityId]) {
         const entityAlerts = alerts.filter(a => 
-          type === "users" ? a.user_id === entityId : a.computer_name === entityId
+          sanitizeEntityName(type === "users" ? a.user_id : a.computer_name) === entityId
         );
         
         entities[entityId] = {

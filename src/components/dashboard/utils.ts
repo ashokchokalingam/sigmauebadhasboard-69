@@ -14,6 +14,21 @@ const TACTIC_BASE_SCORES: { [key: string]: number } = {
   'impact': 10
 };
 
+export const sanitizeEntityName = (name: string | null | undefined): string => {
+  if (!name) return 'N/A';
+  
+  // Trim whitespace and normalize multiple spaces
+  let sanitized = name.trim().replace(/\s+/g, ' ');
+  
+  // Handle Windows-style paths consistently
+  sanitized = sanitized.replace(/\\\\/g, '\\');
+  
+  // Remove any trailing dots or spaces
+  sanitized = sanitized.replace(/[\s.]+$/, '');
+  
+  return sanitized || 'N/A';
+};
+
 export const extractTacticsAndTechniques = (tags: string) => {
   const tagArray = tags.split(',').map(t => t.trim());
   const tactics: string[] = [];
@@ -29,7 +44,7 @@ export const extractTacticsAndTechniques = (tags: string) => {
 
   return {
     tactics: tactics.join(', '),
-    techniques: techniques // Return as array instead of joined string
+    techniques
   };
 };
 
@@ -45,7 +60,7 @@ export const getRiskScore = (alert: Alert) => {
   if (alert.dbscan_cluster === -1) score += 2;
   
   // Add scores based on tactics
-  const { tactics } = extractTacticsAndTechniques(alert.tags);
+  const { tactics } = extractTacticsAndTechniques(alert.tags || '');
   const tacticsList = tactics.split(', ');
   
   let maxTacticScore = 0;
