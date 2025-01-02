@@ -11,6 +11,7 @@ import AlertDetailsView from "./AlertDetailsView";
 import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import ColumnSelector from "./ColumnSelector";
+import { useToast } from "../ui/use-toast";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
@@ -24,17 +25,13 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
     defaultColumns.map(col => col.key)
   );
+  const { toast } = useToast();
   
   const containerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  
-  // Reset to default columns on component mount
-  useEffect(() => {
-    setVisibleColumns(defaultColumns.map(col => col.key));
-  }, []);
 
   const sortedAlerts = [...alerts]
     .filter(alert => {
@@ -51,13 +48,19 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
       return Object.entries(filters).every(([key, value]) => {
         if (!value) return true;
         
-        const alertValue = alert[key as keyof Alert];
-        if (!alertValue) return false;
-        
+        if (!visibleColumns.includes(key)) return true;
+
         if (key === 'system_time') {
-          const timeString = new Date(alertValue as string).toLocaleTimeString();
+          const timeString = new Date(alert[key]).toLocaleTimeString();
           return timeString === value;
         }
+
+        if (key === 'users') {
+          return alert.user_id?.includes(value) || alert.target_user_name?.includes(value);
+        }
+
+        const alertValue = alert[key as keyof Alert];
+        if (!alertValue) return false;
         
         return String(alertValue).toLowerCase().includes(String(value).toLowerCase());
       });
@@ -76,7 +79,21 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   };
 
   const handleColumnToggle = (columns: string[]) => {
+    // Remove filters for columns that are no longer visible
+    const updatedFilters = { ...filters };
+    Object.keys(filters).forEach(key => {
+      if (!columns.includes(key)) {
+        delete updatedFilters[key];
+      }
+    });
+    
+    setFilters(updatedFilters);
     setVisibleColumns(columns);
+    
+    toast({
+      title: "Column Changes Applied",
+      description: "The selected columns and their filters have been updated",
+    });
   };
 
   return (

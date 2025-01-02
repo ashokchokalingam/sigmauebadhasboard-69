@@ -1,6 +1,7 @@
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import ColumnFilter from "./ColumnFilter";
 import { Alert } from "./types";
+import { defaultColumns } from "./TableConfig";
 
 interface AnomaliesTableHeaderProps {
   alerts: Alert[];
@@ -23,34 +24,19 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
       if (key === 'system_time') {
         return new Date(alert[key]).toLocaleTimeString();
       }
+      if (key === 'users') {
+        return [alert.user_id, alert.target_user_name].filter(Boolean);
+      }
       return String(alert[key]);
-    }))).filter(Boolean);
+    })).flat()).filter(Boolean);
     
     return uniqueValues.sort();
   };
 
-  const columns = [
-    { key: "system_time", label: "Time" },
-    { key: "computer_name", label: "Computer" },
-    { key: "user_id", label: "User" },
-    { key: "title", label: "Title" },
-    { key: "tags", label: "Tactics" },
-    { key: "description", label: "Description" },
-    { key: "event_id", label: "Event ID" },
-    { key: "provider_name", label: "Provider" },
-    { key: "dbscan_cluster", label: "Cluster" },
-    { key: "ip_address", label: "IP Address" },
-    { key: "ruleid", label: "Rule ID" },
-    { key: "rule_level", label: "Level" },
-    { key: "task", label: "Task" },
-    { key: "target_user_name", label: "Target User" },
-    { key: "target_domain_name", label: "Target Domain" }
-  ];
-
   return (
     <TableHeader className="sticky top-0 z-50 bg-black/90">
       <TableRow className="hover:bg-blue-950/30">
-        {columns
+        {defaultColumns
           .filter(column => visibleColumns.includes(column.key))
           .map(column => (
             <TableHead 
