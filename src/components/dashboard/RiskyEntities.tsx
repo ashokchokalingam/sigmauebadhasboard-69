@@ -1,17 +1,8 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import React from "react";
 import { User, Monitor, Activity } from "lucide-react";
 import { Alert } from "./types";
-import { getRiskScore, sanitizeEntityName } from "./utils";
-
-interface RiskyEntity {
-  id: string;
-  riskScore: number;
-  eventCount: number;
-  uniqueTitles: Set<string>;
-  lastWeekRiskScore: number;
-  hourlyData: { time: string; count: number }[];
-}
+import { sanitizeEntityName } from "./utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface RiskyEntitiesProps {
   alerts: Alert[];
@@ -20,119 +11,77 @@ interface RiskyEntitiesProps {
 }
 
 const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => {
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-  const processHourlyData = (entityAlerts: Alert[]) => {
-    const hourlyData: { [key: string]: { time: string; count: number } } = {};
-    
-    // Initialize all hours
-    for (let i = 0; i < 24; i++) {
-      const hour = i.toString().padStart(2, '0');
-      hourlyData[hour] = {
-        time: `${hour}:00`,
-        count: 0
-      };
-    }
-
-    // Count alerts per hour
-    entityAlerts.forEach(alert => {
-      const date = new Date(alert.system_time);
-      const hour = date.getHours().toString().padStart(2, '0');
-      if (hourlyData[hour]) {
-        hourlyData[hour].count++;
-      }
-    });
-
-    return Object.values(hourlyData).sort((a, b) => a.time.localeCompare(b.time));
-  };
-
-  const calculateRiskyEntities = () => {
-    const entities: { [key: string]: RiskyEntity } = {};
+  const getUniqueEntities = () => {
+    const entities = new Map<string, { id: string; eventCount: number; uniqueTitles: Set<string> }>();
 
     alerts.forEach((alert) => {
       const rawEntityId = type === "users" ? alert.user_id : alert.computer_name;
       if (!rawEntityId || rawEntityId.trim() === '') return;
       
       const entityId = sanitizeEntityName(rawEntityId);
-      const alertDate = new Date(alert.system_time);
-      const isWithinLastWeek = alertDate >= sevenDaysAgo;
       
-      if (!entities[entityId]) {
+      if (!entities.has(entityId)) {
         const entityAlerts = alerts.filter(a => 
           sanitizeEntityName(type === "users" ? a.user_id : a.computer_name) === entityId
         );
         
-        entities[entityId] = {
+        entities.set(entityId, {
           id: entityId,
-          riskScore: getRiskScore(alert),
           eventCount: 1,
-          uniqueTitles: new Set([alert.title]),
-          lastWeekRiskScore: isWithinLastWeek ? getRiskScore(alert) : 0,
-          hourlyData: processHourlyData(entityAlerts)
-        };
+          uniqueTitles: new Set([alert.title])
+        });
       } else {
-        if (!entities[entityId].uniqueTitles.has(alert.title)) {
-          entities[entityId].uniqueTitles.add(alert.title);
-          if (isWithinLastWeek) {
-            entities[entityId].lastWeekRiskScore += getRiskScore(alert);
-          }
+        const entity = entities.get(entityId)!;
+        if (!entity.uniqueTitles.has(alert.title)) {
+          entity.uniqueTitles.add(alert.title);
         }
-        entities[entityId].eventCount++;
+        entity.eventCount++;
       }
     });
 
-    return entities;
+    return Array.from(entities.values());
   };
 
-  const getRiskColor = (score: number) => {
-    if (score >= 500) return "text-red-500";
-    if (score >= 100) return "text-orange-500";
-    if (score >= 50) return "text-yellow-500";
-    return "text-green-500";
-  };
-
-  const topRiskyEntities = Object.values(calculateRiskyEntities())
-    .sort((a, b) => b.lastWeekRiskScore - a.lastWeekRiskScore)
-    .slice(0, 5);
-
+  const entities = getUniqueEntities();
   const EntityIcon = type === "users" ? User : Monitor;
 
   return (
     <div className="space-y-4">
-      {topRiskyEntities.map((entity) => (
-        <div 
-          key={entity.id}
-          className="flex flex-col rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/50 transition-all duration-300 cursor-pointer overflow-hidden"
-          onClick={() => onEntitySelect(entity.id)}
-        >
-          <div className="flex items-center justify-between p-6">
-            <div className="flex items-center gap-4">
-              <EntityIcon className={`h-10 w-10 ${type === "users" ? "text-blue-400" : "text-orange-400"}`} />
-              <div className="flex flex-col">
-                <span className="font-mono text-lg text-blue-100 font-medium">{entity.id}</span>
-                <div className="flex items-center gap-2 mt-2">
-                  <Activity className="h-4 w-4 text-blue-400" />
-                  <span className="text-base text-blue-300">{entity.uniqueTitles.size} unique alerts</span>
-                  <span className="text-base text-blue-300">•</span>
-                  <span className="text-base text-blue-300">{entity.eventCount} events</span>
+      <h3 className="text-lg font-semibold text-blue-100 mb-4">
+        {type === "users" ? "Active Users" : "Active Computers"}
+      </h3>
+      
+      <ScrollArea className="h-[400px] pr-4">
+        <div className="space-y-2">
+          {entities.map((entity) => (
+            <div 
+              key={entity.id}
+              className="flex flex-col rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/50 transition-all duration-300 cursor-pointer overflow-hidden"
+              onClick={() => onEntitySelect(entity.id)}
+            >
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center gap-4">
+                  <EntityIcon className={`h-8 w-8 ${type === "users" ? "text-blue-400" : "text-orange-400"}`} />
+                  <div className="flex flex-col">
+                    <span className="font-mono text-sm text-blue-100">{entity.id}</span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Activity className="h-3 w-3 text-blue-400" />
+                      <span className="text-xs text-blue-300">{entity.uniqueTitles.size} unique alerts</span>
+                      <span className="text-xs text-blue-300">•</span>
+                      <span className="text-xs text-blue-300">{entity.eventCount} events</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col items-end">
-              <div className={`text-3xl font-bold ${getRiskColor(entity.lastWeekRiskScore)}`}>
-                {entity.lastWeekRiskScore.toFixed(1)}
-              </div>
-              <span className="text-base text-blue-300 mt-1">Risk Score</span>
+          ))}
+          {entities.length === 0 && (
+            <div className="text-center text-blue-400/60 py-6 text-sm">
+              No {type} detected
             </div>
-          </div>
+          )}
         </div>
-      ))}
-      {topRiskyEntities.length === 0 && (
-        <div className="text-center text-blue-400/60 py-6 text-lg">
-          No risky {type} detected
-        </div>
-      )}
+      </ScrollArea>
     </div>
   );
 };
