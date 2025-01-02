@@ -20,7 +20,12 @@ export const sanitizeEntityName = (name: string | null | undefined): string => {
   // Trim whitespace and normalize multiple spaces
   let sanitized = name.trim().replace(/\s+/g, ' ');
   
-  // Handle Windows-style paths consistently
+  // Handle Windows system accounts (preserve backslashes)
+  if (sanitized.includes('\\')) {
+    return sanitized;
+  }
+  
+  // Handle Windows-style paths consistently for computer names
   sanitized = sanitized.replace(/\\\\/g, '\\');
   
   // Remove any trailing dots or spaces
