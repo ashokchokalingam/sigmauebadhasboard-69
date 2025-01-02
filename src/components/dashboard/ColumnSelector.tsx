@@ -13,7 +13,6 @@ import { useState } from "react";
 import { allColumns } from "./TableConfig";
 
 interface ColumnSelectorProps {
-  columns: typeof allColumns;
   visibleColumns: string[];
   onColumnToggle: (columns: string[]) => void;
 }
