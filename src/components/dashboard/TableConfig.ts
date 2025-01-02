@@ -1,7 +1,7 @@
 export const defaultColumns = [
   { key: "system_time", label: "Time" },
-  { key: "computer_name", label: "Computer" },
   { key: "users", label: "Users" },
+  { key: "computer_name", label: "Computer" },
   { key: "title", label: "Title" },
   { key: "tags", label: "Tactics" },
   { key: "description", label: "Description" }
@@ -16,5 +16,6 @@ export const allColumns = [
   { key: "ruleid", label: "Rule ID" },
   { key: "rule_level", label: "Level" },
   { key: "task", label: "Task" },
-  { key: "target_domain_name", label: "Target Domain" }
+  { key: "target_domain_name", label: "Target Domain" },
+  { key: "raw", label: "Raw Log" }
 ];

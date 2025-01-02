@@ -19,29 +19,29 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
     return alertDate >= sevenDaysAgo;
   });
 
-  const getUniqueValues = (key: keyof Alert | 'users'): string[] => {
-    if (key === 'users') {
-      const userSet = new Set<string>();
-      last7DaysAlerts.forEach(alert => {
-        if (alert.user_id) userSet.add(alert.user_id);
-        if (alert.target_user_name) userSet.add(alert.target_user_name);
-      });
-      return Array.from(userSet).filter(Boolean);
-    }
+  const getUniqueValues = (columnKey: string): string[] => {
+    switch (columnKey) {
+      case 'users':
+        const userSet = new Set<string>();
+        last7DaysAlerts.forEach(alert => {
+          if (alert.user_id) userSet.add(alert.user_id);
+          if (alert.target_user_name) userSet.add(alert.target_user_name);
+        });
+        return Array.from(userSet).filter(Boolean);
 
-    if (key === 'system_time') {
-      return Array.from(new Set(
-        last7DaysAlerts.map(alert => 
-          new Date(alert[key]).toLocaleTimeString()
-        )
-      )).filter(Boolean);
-    }
+      case 'system_time':
+        return Array.from(new Set(
+          last7DaysAlerts.map(alert => 
+            new Date(alert.system_time).toLocaleTimeString()
+          )
+        )).filter(Boolean);
 
-    const values = last7DaysAlerts
-      .map(alert => String(alert[key as keyof Alert]))
-      .filter(Boolean);
-    
-    return Array.from(new Set(values));
+      default:
+        const values = last7DaysAlerts
+          .map(alert => String(alert[columnKey as keyof Alert] || ''))
+          .filter(Boolean);
+        return Array.from(new Set(values));
+    }
   };
 
   return (

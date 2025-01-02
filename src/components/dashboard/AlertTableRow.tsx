@@ -34,7 +34,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
           <TableCell>
             <div className="space-y-2">
               <div>
-                <span className="text-xs text-blue-400">Origin User</span>
+                <span className="text-xs text-blue-400">User Origin</span>
                 <p 
                   className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
                   onClick={(e) => {
