@@ -20,7 +20,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   });
 
   const tactics = alert.tags?.split(',')
-    .filter(tag => tag.includes('attack.'))
+    .filter(tag => tag.includes('attack.') && !tag.toLowerCase().includes('t1'))
     .map(tag => tag.replace('attack.', ''))
     .map(tactic => tactic.split('_').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
