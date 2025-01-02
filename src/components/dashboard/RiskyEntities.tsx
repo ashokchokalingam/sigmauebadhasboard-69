@@ -75,7 +75,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
             combinedUsers.set(entityId, {
               ...existing,
               eventCount: existing.eventCount + user.total_events,
-              uniqueTitles: existing.uniqueTitles + user.unique_anomalies
+              uniqueTitles: Math.max(existing.uniqueTitles, user.unique_anomalies)
             });
           } else {
             combinedUsers.set(entityId, {
@@ -106,10 +106,10 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
           });
         } else {
           const entity = entities.get(entityId)!;
-          if (!entity.uniqueTitles.has(alert.title)) {
+          entity.eventCount++;
+          if (alert.title) {
             entity.uniqueTitles.add(alert.title);
           }
-          entity.eventCount++;
         }
       });
 
@@ -153,7 +153,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
             >
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-4">
-                  <EntityIcon className={`h-8 w-8 ${type === "users" ? "text-blue-400" : "text-orange-400"}`} />
+                  <EntityIcon className="h-8 w-8 text-blue-400" />
                   <div className="flex flex-col">
                     <span className="font-mono text-sm text-blue-100">{entity.id}</span>
                     <div className="flex items-center gap-2 mt-1">
@@ -169,7 +169,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
           ))}
           {(!entities || entities.length === 0) && (
             <div className="text-center text-blue-400/60 py-6 text-sm">
-              No {type} detected
+              No active users detected
             </div>
           )}
         </div>
