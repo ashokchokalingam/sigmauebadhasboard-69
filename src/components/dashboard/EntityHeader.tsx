@@ -12,7 +12,7 @@ const EntityHeader = ({ totalEntities, isLoading }: EntityHeaderProps) => {
       <div className="flex items-center gap-2">
         <AlertTriangle className="h-5 w-5 text-purple-400" />
         <span className="bg-gradient-to-r from-purple-200 to-blue-200 bg-clip-text text-transparent">
-          Shadow Warriors
+          Active Users
         </span>
       </div>
       <div className="flex items-center gap-2">
