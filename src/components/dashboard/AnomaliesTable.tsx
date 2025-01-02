@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Alert } from "./types";
 import { Button } from "../ui/button";
 import { ALERTS_PER_PAGE } from "@/constants/pagination";
-import { allColumns } from "./TableConfig";
+import { defaultColumns } from "./TableConfig";
 import AlertDetailsView from "./AlertDetailsView";
 import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
@@ -23,7 +23,7 @@ interface AnomaliesTableProps {
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
-    allColumns.map(col => col.key)
+    defaultColumns.map(col => col.key)
   );
   const { toast } = useToast();
   const { filters, handleFilterChange, filterAlerts } = useAlertsFilter(alerts, visibleColumns);
@@ -53,7 +53,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               Recent Events - Last 7 Days (Limited to 1000)
             </CardTitle>
             <ColumnSelector
-              columns={allColumns}
               visibleColumns={visibleColumns}
               onColumnToggle={handleColumnToggle}
             />

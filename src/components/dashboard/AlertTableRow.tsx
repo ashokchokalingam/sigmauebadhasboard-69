@@ -2,7 +2,6 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { ChevronRight } from "lucide-react";
 import { Alert } from "./types";
 import { extractTacticsAndTechniques } from "./utils";
-import { defaultColumns } from "./TableConfig";
 
 interface AlertTableRowProps {
   alert: Alert;
@@ -60,14 +59,6 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
             <div className="flex flex-col gap-1">
               <span className="text-blue-100 font-medium line-clamp-2">{alert.title || 'N/A'}</span>
             </div>
-          </TableCell>
-        );
-      case "tags":
-        return (
-          <TableCell>
-            <span className="px-2 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20 line-clamp-1">
-              {tactics || 'N/A'}
-            </span>
           </TableCell>
         );
       case "description":
@@ -160,9 +151,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
       className={`hover:bg-blue-950/30 cursor-pointer ${isSelected ? 'bg-blue-950/20' : ''}`}
       onClick={onToggle}
     >
-      {defaultColumns
-        .filter(column => visibleColumns.includes(column.key))
-        .map(column => renderCell(column.key))}
+      {visibleColumns.map(columnKey => renderCell(columnKey))}
       <TableCell>
         <button 
           className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
