@@ -24,17 +24,36 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
     defaultColumns.map(col => col.key)
   );
+  const [displayCount, setDisplayCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  // Poll for new alerts every 10 seconds
+  useEffect(() => {
+    const pollInterval = setInterval(() => {
+      onLoadMore();
+    }, 10000);
+
+    return () => clearInterval(pollInterval);
+  }, [onLoadMore]);
   
   // Reset to default columns on component mount
   useEffect(() => {
     setVisibleColumns(defaultColumns.map(col => col.key));
   }, []);
+
+  // Update counts whenever alerts change
+  useEffect(() => {
+    const filteredCount = filteredAlerts.length;
+    const total = alerts.length;
+    setDisplayCount(filteredCount);
+    setTotalCount(total);
+  }, [alerts, filters]);
 
   const sortedAlerts = [...alerts]
     .filter(alert => {
@@ -43,8 +62,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     })
     .sort((a, b) => 
       new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
-    )
-    .slice(0, 1000);
+    );
 
   const filteredAlerts = sortedAlerts
     .filter(alert => {
@@ -84,10 +102,15 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
       <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-blue-100">
-              <AlertTriangle className="h-5 w-5 text-blue-500" />
-              Recent Events - Last 7 Days (Limited to 1000)
-            </CardTitle>
+            <div className="space-y-2">
+              <CardTitle className="flex items-center gap-2 text-blue-100">
+                <AlertTriangle className="h-5 w-5 text-blue-500" />
+                Event Timeline
+              </CardTitle>
+              <p className="text-sm text-blue-400">
+                Showing {displayCount} of {totalCount} events from the last 7 days
+              </p>
+            </div>
             <ColumnSelector
               columns={allColumns}
               visibleColumns={visibleColumns}
