@@ -5,6 +5,7 @@ import StatsSection from "./StatsSection";
 import AnomaliesTable from "./AnomaliesTable";
 import TimelineView from "./TimelineView";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { calculateStats } from "./alertUtils";
 
 interface DashboardLayoutProps {
   alerts: Alert[];
@@ -39,9 +40,16 @@ const DashboardLayout = ({
     onEntitySelect(null);
   };
 
+  const stats = calculateStats(allAlerts, totalRecords);
+
   return (
     <div className="container mx-auto p-6 space-y-6">
-      <StatsSection alerts={allAlerts} totalRecords={totalRecords} />
+      <StatsSection 
+        stats={stats}
+        totalAlerts={allAlerts.length}
+        alerts={allAlerts}
+        totalRecords={totalRecords}
+      />
 
       {selectedEntity && showTimeline ? (
         <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg">
