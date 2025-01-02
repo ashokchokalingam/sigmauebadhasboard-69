@@ -56,7 +56,7 @@ const EntityCard = ({ id, eventCount, uniqueTitles, onClick }: EntityCardProps) 
               "bg-gradient-to-r from-blue-500/20 to-blue-400/20",
               "border border-blue-500/30",
               "text-blue-200",
-              "animate-pulse"
+              "animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]"
             )}>
               Risk Watch
             </span>
