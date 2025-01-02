@@ -139,7 +139,8 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
     <div className="space-y-4">
       <EntityHeader 
         totalEntities={entities.length} 
-        isLoading={isLoadingOrigin || isLoadingImpacted} 
+        isLoading={isLoadingOrigin || isLoadingImpacted}
+        type={type}
       />
       
       <ScrollArea className="h-[400px] pr-4">
@@ -154,8 +155,8 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
             />
           ))}
           {(!entities || entities.length === 0) && (
-            <div className="text-center text-purple-400/60 py-6 text-sm">
-              No active users detected
+            <div className="text-center text-blue-400/60 py-6 text-sm">
+              No {type === "computers" ? "active computers" : "active users"} detected
             </div>
           )}
         </div>
