@@ -13,7 +13,7 @@ import AnomaliesTableHeader from "./AnomaliesTableHeader";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
-  onLoadMore: () => void;
+  onLoadMore: () => Promise<void>; // Updated to specify Promise return type
   hasMore: boolean;
 }
 
