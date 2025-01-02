@@ -144,7 +144,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
       />
       
       <ScrollArea className="h-[400px] pr-4">
-        <div className="space-y-3">
+        <div className="space-y-2">
           {entities?.map((entity) => (
             <EntityCard
               key={entity.id}
