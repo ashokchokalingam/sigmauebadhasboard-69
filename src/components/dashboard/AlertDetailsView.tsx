@@ -22,7 +22,9 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   const tactics = alert.tags?.split(',')
     .filter(tag => tag.includes('attack.'))
     .map(tag => tag.replace('attack.', ''))
-    .join(', ');
+    .map(tactic => tactic.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' '));
 
   const techniques = alert.tags?.split(',')
     .filter(tag => tag.toLowerCase().includes('t1'))
@@ -34,14 +36,14 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     if (l.includes('high')) return 'text-[#FF8C00]';
     if (l.includes('medium')) return 'text-[#FFD700]';
     if (l.includes('low')) return 'text-[#32CD32]';
-    return 'text-[#1E90FF]'; // informational/default
+    return 'text-[#1E90FF]';
   };
 
   return (
     <div className="h-full bg-[#1E1E2F] border-l border-[#7B68EE]/20">
       {/* Header */}
       <div className="flex justify-between items-center p-4 border-b border-[#7B68EE]/20 bg-[#1E1E2F] backdrop-blur-sm sticky top-0 z-10">
-        <h2 className="text-xl font-bold bg-gradient-to-r from-[#7B68EE] to-[#8A2BE2] bg-clip-text text-transparent">
+        <h2 className="text-xl font-bold bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] bg-clip-text text-transparent">
           Alert Details
         </h2>
         <button 
@@ -92,11 +94,20 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
             <div className="space-y-3">
               <div>
                 <h4 className="text-sm font-medium text-[#A9A9A9]">Tactics</h4>
-                <p className="text-sm text-[#E0E0E0]">{tactics || 'N/A'}</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {tactics?.map((tactic, index) => (
+                    <span 
+                      key={index}
+                      className="px-2 py-1 bg-[#7B68EE]/10 text-[#7B68EE] text-xs rounded-full border border-[#7B68EE]/20"
+                    >
+                      {tactic}
+                    </span>
+                  ))}
+                </div>
               </div>
               <div>
                 <h4 className="text-sm font-medium text-[#A9A9A9]">Techniques</h4>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mt-2">
                   {techniques?.map((technique, index) => (
                     <span 
                       key={index}
