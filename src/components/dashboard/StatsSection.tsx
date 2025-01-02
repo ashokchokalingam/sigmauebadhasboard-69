@@ -2,13 +2,16 @@ import { Activity, AlertTriangle, Database, Monitor, Users } from "lucide-react"
 import StatsCard from "./StatsCard";
 import { Stats } from "./types";
 import { useQuery } from "@tanstack/react-query";
+import { Alert } from "./types";
 
 interface StatsSectionProps {
   stats: Stats;
   totalAlerts: number;
+  alerts: Alert[];
+  totalRecords: number;
 }
 
-const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
+const StatsSection = ({ stats, totalAlerts, alerts, totalRecords }: StatsSectionProps) => {
   const { data: totalCount } = useQuery({
     queryKey: ['totalCount'],
     queryFn: async () => {
