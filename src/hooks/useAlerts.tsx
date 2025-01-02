@@ -7,6 +7,19 @@ interface ApiResponse {
   alerts: {
     system_time: string;
     title: string;
+    description: string;
+    computer_name: string;
+    user_id: string;
+    event_id: string;
+    provider_name: string;
+    dbscan_cluster: number;
+    ip_address: string;
+    ruleid: string;
+    rule_level: string;
+    task: string;
+    target_user_name: string;
+    target_domain_name: string;
+    tags: string[];
   }[];
   pagination: {
     current_page: number;
@@ -42,10 +55,14 @@ export const useAlerts = (
       
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
         
         const response = await fetch(`/api/alerts?page=${page}&per_page=${INITIAL_LOAD_SIZE}`, {
-          signal: controller.signal
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache'
+          }
         });
         
         clearTimeout(timeoutId);
@@ -57,25 +74,10 @@ export const useAlerts = (
         const data: ApiResponse = await response.json();
         console.log('Received data:', data);
         
-        // Convert the simplified API response to our frontend Alert type
+        // Convert the API response to our frontend Alert type
         const alerts: Alert[] = data.alerts.map(alert => ({
           id: crypto.randomUUID(),
-          system_time: alert.system_time,
-          title: alert.title,
-          tags: null,
-          description: null,
-          computer_name: null,
-          user_id: null,
-          event_id: null,
-          provider_name: null,
-          dbscan_cluster: null,
-          raw: null,
-          ip_address: null,
-          ruleid: null,
-          rule_level: null,
-          task: null,
-          target_user_name: null,
-          target_domain_name: null
+          ...alert
         }));
         
         // Filter alerts within the last 7 days
@@ -105,12 +107,13 @@ export const useAlerts = (
               variant: "destructive",
             });
           }
+          console.error('Error fetching alerts:', error);
         }
         throw error;
       }
     },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 30 * 60 * 1000,   // 30 minutes
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
   });

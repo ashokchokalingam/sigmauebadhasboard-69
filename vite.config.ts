@@ -1,26 +1,25 @@
-import path from "path";
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
     },
   },
   server: {
-    host: '0.0.0.0',
     port: 8080,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://172.16.0.75:5000',
         changeOrigin: true,
         secure: false,
         ws: true,
         configure: (proxy, _options) => {
           proxy.on('error', (err, _req, _res) => {
-            console.log('proxy error', err);
+            console.log('Proxy error:', err);
           });
           proxy.on('proxyReq', (proxyReq, req, _res) => {
             console.log('Sending Request to the Target:', req.method, req.url);
@@ -32,9 +31,19 @@ export default defineConfig({
             console.log('Timeout occurred while connecting to the API');
           });
         },
-        timeout: 5000,
-        proxyTimeout: 5000
+        timeout: 10000,
+        proxyTimeout: 10000
       }
     }
+  },
+  build: {
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+        },
+      },
+    },
   },
 });
