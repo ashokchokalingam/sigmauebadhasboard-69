@@ -88,12 +88,16 @@
     @apply border-border;
   }
 
+  html, body {
+    @apply h-full w-full overflow-x-hidden m-0 p-0;
+  }
+
   body {
     @apply bg-background text-foreground min-h-screen;
   }
 
   #root {
-    @apply min-h-screen bg-background;
+    @apply min-h-screen bg-background w-full;
   }
 }
 
@@ -113,15 +117,15 @@
 
 /* Table Styles */
 .table-container {
-  position: relative;
-  width: 100%;
-  overflow-x: auto;
-  @apply bg-black/40 backdrop-blur-sm scrollbar-thin;
+  @apply relative w-full overflow-x-auto bg-black/40 backdrop-blur-sm scrollbar-thin;
 }
 
 .overflow-x-auto {
   @apply bg-black/40 backdrop-blur-sm;
-  overflow-x: auto;
+}
+
+tbody tr {
+  @apply text-base;
 }
 
 tbody tr:hover {
@@ -135,4 +139,31 @@ html, body {
 
 .card {
   @apply relative z-10;
+}
+
+/* Responsive Text Sizes */
+h1 {
+  @apply text-2xl md:text-3xl lg:text-4xl;
+}
+
+h2 {
+  @apply text-xl md:text-2xl lg:text-3xl;
+}
+
+h3 {
+  @apply text-lg md:text-xl lg:text-2xl;
+}
+
+p, span, div {
+  @apply text-base md:text-lg;
+}
+
+/* Card and Table Spacing */
+.card, .table {
+  @apply my-4;
+}
+
+/* Responsive Grid */
+.grid {
+  @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6;
 }
