@@ -16,6 +16,7 @@ const Index = () => {
   
   const { isLoading, error, data, refetch } = useAlerts(currentPage, (alerts, totalRecords) => {
     const now = new Date();
+    // Filter to only get new alerts since last fetch
     const newAlerts = alerts.filter(alert => 
       new Date(alert.system_time) > lastFetchTime
     );
@@ -24,6 +25,7 @@ const Index = () => {
       setCurrentAlerts(alerts);
       setAllAlerts(alerts);
     } else {
+      // Append only new alerts to the beginning of the list
       setCurrentAlerts(prev => [...newAlerts, ...prev]);
       setAllAlerts(prev => [...newAlerts, ...prev]);
     }
@@ -32,9 +34,9 @@ const Index = () => {
     setCurrentTotalRecords(totalRecords);
   });
 
-  const handleLoadMore = async (): Promise<void> => {
+  const handleLoadMore = async () => {
     setCurrentPage(prev => prev + 1);
-    await refetch();
+    return refetch();
   };
 
   if (isLoading && currentAlerts.length === 0) {
