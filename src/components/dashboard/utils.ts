@@ -14,12 +14,13 @@ const TACTIC_BASE_SCORES: { [key: string]: number } = {
   'impact': 10
 };
 
-export const extractTacticsAndTechniques = (tags: string) => {
-  const tagArray = tags.split(',').map(t => t.trim());
+export const extractTacticsAndTechniques = (tags: string[] | null) => {
+  if (!tags) return { tactics: '', techniques: [] };
+  
   const tactics: string[] = [];
   const techniques: string[] = [];
 
-  tagArray.forEach(tag => {
+  tags.forEach(tag => {
     if (tag.includes('t1') || tag.includes('T1')) {
       techniques.push(tag.toUpperCase());
     } else if (tag.includes('attack.')) {
@@ -29,7 +30,7 @@ export const extractTacticsAndTechniques = (tags: string) => {
 
   return {
     tactics: tactics.join(', '),
-    techniques: techniques // Return as array instead of joined string
+    techniques
   };
 };
 

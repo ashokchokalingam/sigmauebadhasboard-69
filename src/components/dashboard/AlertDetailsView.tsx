@@ -2,6 +2,7 @@ import { Alert } from "./types";
 import { X } from "lucide-react";
 import TimelineRawLog from "./TimelineRawLog";
 import { Card } from "@/components/ui/card";
+import { extractTacticsAndTechniques } from "./utils";
 
 interface AlertDetailsViewProps {
   alert: Alert;
@@ -19,16 +20,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     year: 'numeric',
   });
 
-  const tactics = alert.tags?.split(',')
-    .filter(tag => tag.includes('attack.') && !tag.toLowerCase().includes('t1'))
-    .map(tag => tag.replace('attack.', ''))
-    .map(tactic => tactic.split('_').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' '));
-
-  const techniques = alert.tags?.split(',')
-    .filter(tag => tag.toLowerCase().includes('t1'))
-    .map(tag => tag.trim().toUpperCase());
+  const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
 
   const getSeverityColor = (level: string = '') => {
     const l = level.toLowerCase();
@@ -168,6 +160,3 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
       </div>
     </div>
   );
-};
-
-export default AlertDetailsView;
