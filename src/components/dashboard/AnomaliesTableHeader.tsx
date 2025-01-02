@@ -1,7 +1,7 @@
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import ColumnFilter from "./ColumnFilter";
 import { Alert } from "./types";
-import { defaultColumns } from "./TableConfig";
+import { allColumns } from "./TableConfig";
 
 interface AnomaliesTableHeaderProps {
   alerts: Alert[];
@@ -61,7 +61,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
   return (
     <TableHeader className="sticky top-0 z-50 bg-black/90">
       <TableRow className="hover:bg-blue-950/30">
-        {defaultColumns
+        {allColumns
           .filter(column => visibleColumns.includes(column.key))
           .map(column => (
             <TableHead 

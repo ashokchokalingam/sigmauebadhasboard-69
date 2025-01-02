@@ -10,19 +10,15 @@ import { Button } from "@/components/ui/button";
 import { Filter, X } from "lucide-react";
 import { useToast } from "../ui/use-toast";
 import { useState } from "react";
-
-interface Column {
-  label: string;
-  key: string;
-}
+import { allColumns } from "./TableConfig";
 
 interface ColumnSelectorProps {
-  columns: Column[];
+  columns: typeof allColumns;
   visibleColumns: string[];
   onColumnToggle: (columns: string[]) => void;
 }
 
-const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelectorProps) => {
+const ColumnSelector = ({ visibleColumns, onColumnToggle }: ColumnSelectorProps) => {
   const { toast } = useToast();
   const [pendingColumns, setPendingColumns] = useState<string[]>(visibleColumns);
   const [isOpen, setIsOpen] = useState(false);
@@ -30,14 +26,13 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
   const handleSelectAll = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const allColumnKeys = columns.map(col => col.key);
+    const allColumnKeys = allColumns.map(col => col.key);
     setPendingColumns(allColumnKeys);
   };
 
   const handleClearAll = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    // Keep at least one column visible (Time)
     setPendingColumns(['system_time']);
   };
 
@@ -45,7 +40,6 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
     if (checked) {
       setPendingColumns(prev => [...prev, columnKey]);
     } else {
-      // Prevent hiding all columns - keep at least one
       if (pendingColumns.length > 1) {
         setPendingColumns(prev => prev.filter(key => key !== columnKey));
       } else {
@@ -101,7 +95,7 @@ const ColumnSelector = ({ columns, visibleColumns, onColumnToggle }: ColumnSelec
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-blue-500/20" />
         <div className="max-h-[300px] overflow-y-auto">
-          {columns.map((column) => (
+          {allColumns.map((column) => (
             <DropdownMenuCheckboxItem
               key={column.key}
               className="text-blue-300 hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer"
