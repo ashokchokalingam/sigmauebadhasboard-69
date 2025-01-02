@@ -3,14 +3,16 @@ import { Alert } from "@/components/dashboard/types";
 import { INITIAL_LOAD_SIZE } from "@/constants/pagination";
 
 interface ApiResponse {
-  alerts: Alert[];
+  alerts: {
+    system_time: string;
+    title: string;
+  }[];
   pagination: {
     current_page: number;
     per_page: number;
-    total_pages: number;
     total_records: number;
+    total_pages: number;
   };
-  total_count: number; // This should match the COUNT(*) from sigma_alerts
 }
 
 interface FetchAlertsResponse {
@@ -35,12 +37,7 @@ export const useAlerts = (
     queryFn: async () => {
       console.log(`Fetching alerts for page ${page}`);
       
-      const response = await fetch(`/api/alerts?page=${page}&per_page=${INITIAL_LOAD_SIZE}`, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(`/api/alerts?page=${page}&per_page=${INITIAL_LOAD_SIZE}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -49,20 +46,37 @@ export const useAlerts = (
       const data: ApiResponse = await response.json();
       console.log('Received data:', data);
       
-      // Get all alerts within the last 7 days
-      const filteredAlerts = data.alerts.filter(alert => isWithinLastSevenDays(alert.system_time));
+      // Convert the simplified API response to our frontend Alert type
+      const alerts: Alert[] = data.alerts.map(alert => ({
+        id: crypto.randomUUID(), // Generate a unique ID since it's not provided by the API
+        system_time: alert.system_time,
+        title: alert.title,
+        tags: null,
+        description: null,
+        computer_name: null,
+        user_id: null,
+        event_id: null,
+        provider_name: null,
+        dbscan_cluster: null,
+        raw: null,
+        ip_address: null,
+        ruleid: null,
+        rule_level: null,
+        task: null,
+        target_user_name: null,
+        target_domain_name: null
+      }));
       
-      // Use the total_count from the API response
-      const totalRecords = data.total_count || 0;
-      console.log('Total records from sigma_alerts:', totalRecords);
+      // Filter alerts within the last 7 days
+      const filteredAlerts = alerts.filter(alert => isWithinLastSevenDays(alert.system_time));
       
       // Update UI with current data
-      onProgressUpdate(filteredAlerts, totalRecords);
+      onProgressUpdate(filteredAlerts, data.pagination.total_records);
       
       return {
         alerts: filteredAlerts,
-        totalRecords: totalRecords,
-        hasMore: page < Math.ceil(totalRecords / INITIAL_LOAD_SIZE),
+        totalRecords: data.pagination.total_records,
+        hasMore: page < data.pagination.total_pages,
         currentPage: page
       };
     },
