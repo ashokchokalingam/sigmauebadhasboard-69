@@ -33,6 +33,17 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
+  // Reset filters when visible columns change
+  useEffect(() => {
+    const updatedFilters = { ...filters };
+    Object.keys(updatedFilters).forEach(key => {
+      if (!visibleColumns.includes(key)) {
+        delete updatedFilters[key];
+      }
+    });
+    setFilters(updatedFilters);
+  }, [visibleColumns]);
+
   const sortedAlerts = [...alerts]
     .filter(alert => {
       const alertDate = new Date(alert.system_time);
@@ -52,17 +63,20 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
 
         if (key === 'system_time') {
           const timeString = new Date(alert[key]).toLocaleTimeString();
-          return timeString === value;
+          return timeString.toLowerCase().includes(value.toLowerCase());
         }
 
         if (key === 'users') {
-          return alert.user_id?.includes(value) || alert.target_user_name?.includes(value);
+          const userOrigin = String(alert.user_id || '').toLowerCase();
+          const userImpacted = String(alert.target_user_name || '').toLowerCase();
+          const searchValue = value.toLowerCase();
+          return userOrigin.includes(searchValue) || userImpacted.includes(searchValue);
         }
 
         const alertValue = alert[key as keyof Alert];
         if (!alertValue) return false;
         
-        return String(alertValue).toLowerCase().includes(String(value).toLowerCase());
+        return String(alertValue).toLowerCase().includes(value.toLowerCase());
       });
     })
     .slice(0, ALERTS_PER_PAGE);
@@ -72,22 +86,17 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   };
 
   const handleFilterChange = (column: string, value: string) => {
+    if (!visibleColumns.includes(column)) {
+      return;
+    }
+    
     setFilters(prev => ({
       ...prev,
-      [column]: value === prev[column] ? '' : value
+      [column]: value
     }));
   };
 
   const handleColumnToggle = (columns: string[]) => {
-    // Remove filters for columns that are no longer visible
-    const updatedFilters = { ...filters };
-    Object.keys(filters).forEach(key => {
-      if (!columns.includes(key)) {
-        delete updatedFilters[key];
-      }
-    });
-    
-    setFilters(updatedFilters);
     setVisibleColumns(columns);
     
     toast({
