@@ -1,7 +1,7 @@
 export interface Alert {
   id: string;
   title: string | null;
-  tags: string[] | null;  // Changed from string to string[]
+  tags: string | null;
   description: string | null;
   system_time: string | null;
   computer_name: string | null;

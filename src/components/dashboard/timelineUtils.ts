@@ -32,7 +32,7 @@ interface EventMetricsAccumulator {
 
 export const calculateEventMetrics = (alerts: Alert[]): EventMetric[] => {
   const eventMetrics = alerts.reduce((acc: EventMetricsAccumulator, alert) => {
-    const eventTypes = alert.tags || [];
+    const eventTypes = alert.tags.split(',').map(tag => tag.trim());
     const title = alert.title;
     const alertDate = new Date(alert.system_time);
     

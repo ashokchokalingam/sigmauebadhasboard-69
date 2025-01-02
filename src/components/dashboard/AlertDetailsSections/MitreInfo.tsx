@@ -1,12 +1,18 @@
 import { Alert } from "../types";
-import { extractTacticsAndTechniques } from "../utils";
 
 interface MitreInfoProps {
   alert: Alert;
 }
 
 const MitreInfo = ({ alert }: MitreInfoProps) => {
-  const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
+  const tactics = alert.tags?.split(',')
+    .filter(tag => tag.includes('attack.'))
+    .map(tag => tag.replace('attack.', ''))
+    .join(', ');
+
+  const techniques = alert.tags?.split(',')
+    .filter(tag => tag.toLowerCase().includes('t1'))
+    .map(tag => tag.trim().toUpperCase());
 
   return (
     <div className="space-y-4 pl-7">

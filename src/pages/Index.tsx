@@ -10,31 +10,28 @@ const Index = () => {
   const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
   const [currentTotalRecords, setCurrentTotalRecords] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [lastFetchTime, setLastFetchTime] = useState<Date>(new Date());
   const { toast } = useToast();
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
   
   const { isLoading, error, data, refetch } = useAlerts(currentPage, (alerts, totalRecords) => {
-    const now = new Date();
-    const newAlerts = alerts.filter(alert => 
-      new Date(alert.system_time) > lastFetchTime
-    );
-    
     if (currentPage === 1) {
       setCurrentAlerts(alerts);
-      setAllAlerts(alerts);
     } else {
-      setCurrentAlerts(prev => [...newAlerts, ...prev]);
-      setAllAlerts(prev => [...newAlerts, ...prev]);
+      setCurrentAlerts(prev => [...prev, ...alerts]);
     }
     
-    setLastFetchTime(now);
+    if (currentPage === 1) {
+      setAllAlerts(alerts);
+    } else {
+      setAllAlerts(prev => [...prev, ...alerts]);
+    }
+    
     setCurrentTotalRecords(totalRecords);
   });
 
-  const handleLoadMore = async (): Promise<void> => {
+  const handleLoadMore = async () => {
     setCurrentPage(prev => prev + 1);
-    await refetch();
+    return refetch(); // Return the Promise from refetch
   };
 
   if (isLoading && currentAlerts.length === 0) {
