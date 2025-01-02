@@ -129,8 +129,9 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
   if (type === "users" && (isLoadingOrigin || isLoadingImpacted)) {
     return (
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-blue-100 mb-4">
-          Active Users
+        <h3 className="text-lg font-semibold text-blue-100 mb-4 flex items-center justify-between">
+          <span>Active Users</span>
+          <span className="text-sm font-normal text-blue-400/60">Loading...</span>
         </h3>
         <div className="text-center text-blue-400/60 py-6 text-sm">
           Loading...
@@ -141,8 +142,11 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-blue-100 mb-4">
-        Active Users
+      <h3 className="text-lg font-semibold text-blue-100 mb-4 flex items-center justify-between">
+        <span>Active Users</span>
+        <span className="text-sm font-normal text-blue-400">
+          {entities.length} active
+        </span>
       </h3>
       
       <ScrollArea className="h-[400px] pr-4">
