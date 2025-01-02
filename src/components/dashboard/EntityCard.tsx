@@ -59,7 +59,7 @@ const EntityCard = ({ id, eventCount, uniqueTitles, onClick }: EntityCardProps) 
               "text-purple-200",
               "animate-pulse"
             )}>
-              Shadow Master
+              Risk Watch
             </span>
           )}
         </div>
