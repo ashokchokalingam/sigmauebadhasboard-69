@@ -20,6 +20,7 @@ interface ApiResponse {
     target_user_name: string;
     target_domain_name: string;
     tags: string[];
+    raw: string | null;  // Added raw field to match API response
   }[];
   pagination: {
     current_page: number;
@@ -77,7 +78,8 @@ export const useAlerts = (
         // Convert the API response to our frontend Alert type
         const alerts: Alert[] = data.alerts.map(alert => ({
           id: crypto.randomUUID(),
-          ...alert
+          ...alert,
+          raw: alert.raw || null  // Ensure raw is always present, even if null
         }));
         
         // Filter alerts within the last 7 days
