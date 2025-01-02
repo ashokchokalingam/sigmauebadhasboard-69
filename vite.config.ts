@@ -14,7 +14,7 @@ export default defineConfig({
     port: 8080,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000', // Changed to localhost instead of IP
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
         ws: true,
@@ -28,15 +28,12 @@ export default defineConfig({
           proxy.on('proxyRes', (proxyRes, req, _res) => {
             console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
           });
-          // Add timeout handling
           proxy.on('timeout', () => {
             console.log('Timeout occurred while connecting to the API');
           });
         },
-        // Add proxy options for better reliability
         timeout: 5000,
-        proxyTimeout: 5000,
-        retry: true
+        proxyTimeout: 5000
       }
     }
   },
