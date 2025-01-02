@@ -10,28 +10,33 @@ const Index = () => {
   const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
   const [currentTotalRecords, setCurrentTotalRecords] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [lastFetchTime, setLastFetchTime] = useState<Date>(new Date());
   const { toast } = useToast();
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
   
   const { isLoading, error, data, refetch } = useAlerts(currentPage, (alerts, totalRecords) => {
+    const now = new Date();
+    // Filter to only get new alerts since last fetch
+    const newAlerts = alerts.filter(alert => 
+      new Date(alert.system_time) > lastFetchTime
+    );
+    
     if (currentPage === 1) {
       setCurrentAlerts(alerts);
-    } else {
-      setCurrentAlerts(prev => [...prev, ...alerts]);
-    }
-    
-    if (currentPage === 1) {
       setAllAlerts(alerts);
     } else {
-      setAllAlerts(prev => [...prev, ...alerts]);
+      // Append only new alerts to the beginning of the list
+      setCurrentAlerts(prev => [...newAlerts, ...prev]);
+      setAllAlerts(prev => [...newAlerts, ...prev]);
     }
     
+    setLastFetchTime(now);
     setCurrentTotalRecords(totalRecords);
   });
 
   const handleLoadMore = async () => {
     setCurrentPage(prev => prev + 1);
-    return refetch(); // Return the Promise from refetch
+    return refetch();
   };
 
   if (isLoading && currentAlerts.length === 0) {
