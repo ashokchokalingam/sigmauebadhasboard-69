@@ -1,9 +1,10 @@
 import React from "react";
-import { User, Monitor, Activity, AlertTriangle } from "lucide-react";
-import { Alert } from "./types";
-import { sanitizeEntityName } from "./utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
+import EntityHeader from "./EntityHeader";
+import EntityCard from "./EntityCard";
+import { Alert } from "./types";
+import { sanitizeEntityName } from "./utils";
 
 interface UserData {
   user_impacted: string;
@@ -121,21 +122,13 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
   };
 
   const entities = getUniqueEntities()
-    .sort((a, b) => b.uniqueTitles - a.uniqueTitles); // Sort by uniqueTitles in descending order
-  
-  const EntityIcon = type === "users" ? User : Monitor;
+    .sort((a, b) => b.uniqueTitles - a.uniqueTitles);
 
   if (type === "users" && (isLoadingOrigin || isLoadingImpacted)) {
     return (
       <div className="space-y-4">
-        <h3 className="text-xl font-bold text-blue-100 mb-4 flex items-center justify-between bg-gradient-to-r from-blue-500/10 to-purple-500/10 p-4 rounded-lg backdrop-blur-sm">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-yellow-500" />
-            <span>Active Users</span>
-          </div>
-          <span className="text-sm font-normal text-blue-400/60">Loading...</span>
-        </h3>
-        <div className="text-center text-blue-400/60 py-6 text-sm">
+        <EntityHeader totalEntities={0} isLoading={true} />
+        <div className="text-center text-purple-400/60 py-6 text-sm">
           Loading...
         </div>
       </div>
@@ -144,63 +137,24 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-blue-100 mb-4 flex items-center justify-between bg-gradient-to-r from-blue-500/10 to-purple-500/10 p-4 rounded-lg backdrop-blur-sm border border-blue-500/20">
-        <div className="flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5 text-yellow-500" />
-          <span>Active Users</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="px-3 py-1 bg-blue-500/20 rounded-full text-sm font-semibold text-blue-300">
-            {entities.length} active
-          </span>
-        </div>
-      </h3>
+      <EntityHeader 
+        totalEntities={entities.length} 
+        isLoading={isLoadingOrigin || isLoadingImpacted} 
+      />
       
       <ScrollArea className="h-[400px] pr-4">
         <div className="space-y-3">
           {entities?.map((entity) => (
-            <div 
+            <EntityCard
               key={entity.id}
-              className="group relative flex flex-col rounded-lg transition-all duration-300 cursor-pointer overflow-hidden hover:scale-[1.02]"
+              id={entity.id}
+              eventCount={entity.eventCount}
+              uniqueTitles={entity.uniqueTitles}
               onClick={() => onEntitySelect(entity.id)}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-950/90 to-purple-950/90 backdrop-blur-sm border border-blue-500/20 rounded-lg opacity-90 group-hover:opacity-100 transition-opacity" />
-              
-              <div className="relative flex items-center justify-between p-4">
-                <div className="flex items-center gap-4">
-                  <div className="p-2 rounded-lg bg-blue-500/20 backdrop-blur-sm border border-blue-400/30">
-                    <EntityIcon className="h-6 w-6 text-blue-400" />
-                  </div>
-                  
-                  <div className="flex flex-col">
-                    <span className="font-mono text-sm text-blue-100 font-semibold">{entity.id}</span>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="flex items-center gap-1.5">
-                        <Activity className="h-3.5 w-3.5 text-red-400" />
-                        <span className="text-xs font-medium text-red-300">
-                          {entity.uniqueTitles} unique alerts
-                        </span>
-                      </div>
-                      <span className="text-xs text-blue-400/70">•</span>
-                      <span className="text-xs text-blue-400/70">
-                        {entity.eventCount.toLocaleString()} total events
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  {entity.uniqueTitles > 1 && (
-                    <span className="px-2 py-1 rounded-full text-xs font-semibold bg-red-500/20 text-red-300 border border-red-500/30">
-                      High Risk
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
+            />
           ))}
           {(!entities || entities.length === 0) && (
-            <div className="text-center text-blue-400/60 py-6 text-sm">
+            <div className="text-center text-purple-400/60 py-6 text-sm">
               No active users detected
             </div>
           )}
