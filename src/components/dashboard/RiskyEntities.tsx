@@ -140,7 +140,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-blue-100 mb-4">
-        {type === "users" ? "Active Users" : "Active Computers"}
+        Active Users
       </h3>
       
       <ScrollArea className="h-[400px] pr-4">
@@ -160,7 +160,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
                       <Activity className="h-3 w-3 text-blue-400" />
                       <span className="text-xs text-blue-300">{entity.uniqueTitles} unique alerts</span>
                       <span className="text-xs text-blue-300">•</span>
-                      <span className="text-xs text-blue-300">{entity.eventCount} events</span>
+                      <span className="text-xs text-blue-300/70">{entity.eventCount} total events</span>
                     </div>
                   </div>
                 </div>
