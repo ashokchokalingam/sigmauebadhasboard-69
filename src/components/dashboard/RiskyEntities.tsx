@@ -18,7 +18,7 @@ interface RiskyEntitiesProps {
 }
 
 const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => {
-  const { data: originUsers } = useQuery({
+  const { data: originUsers, isLoading: isLoadingOrigin } = useQuery({
     queryKey: ['userOrigin'],
     queryFn: async () => {
       const response = await fetch('/api/user_origin');
@@ -30,7 +30,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
     enabled: type === "users"
   });
 
-  const { data: impactedUsers } = useQuery({
+  const { data: impactedUsers, isLoading: isLoadingImpacted } = useQuery({
     queryKey: ['userImpacted'],
     queryFn: async () => {
       const response = await fetch('/api/user_impacted');
@@ -46,42 +46,46 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
     if (type === "users") {
       const combinedUsers = new Map<string, { id: string; eventCount: number; uniqueTitles: number }>();
       
-      // Process origin users
-      originUsers?.forEach((user: UserData) => {
-        if (!user.user_id || user.user_id.trim() === '') return;
-        const entityId = sanitizeEntityName(user.user_id);
-        
-        combinedUsers.set(entityId, {
-          id: entityId,
-          eventCount: user.event_count,
-          uniqueTitles: user.unique_alerts
-        });
-      });
-
-      // Process impacted users
-      impactedUsers?.forEach((user: UserData) => {
-        if (!user.user_id || user.user_id.trim() === '') return;
-        const entityId = sanitizeEntityName(user.user_id);
-        
-        if (combinedUsers.has(entityId)) {
-          const existing = combinedUsers.get(entityId)!;
-          combinedUsers.set(entityId, {
-            ...existing,
-            eventCount: existing.eventCount + user.event_count,
-            uniqueTitles: existing.uniqueTitles + user.unique_alerts
-          });
-        } else {
+      // Process origin users if available
+      if (originUsers?.length) {
+        originUsers.forEach((user: UserData) => {
+          if (!user.user_id || user.user_id.trim() === '') return;
+          const entityId = sanitizeEntityName(user.user_id);
+          
           combinedUsers.set(entityId, {
             id: entityId,
             eventCount: user.event_count,
             uniqueTitles: user.unique_alerts
           });
-        }
-      });
+        });
+      }
+
+      // Process impacted users if available
+      if (impactedUsers?.length) {
+        impactedUsers.forEach((user: UserData) => {
+          if (!user.user_id || user.user_id.trim() === '') return;
+          const entityId = sanitizeEntityName(user.user_id);
+          
+          if (combinedUsers.has(entityId)) {
+            const existing = combinedUsers.get(entityId)!;
+            combinedUsers.set(entityId, {
+              ...existing,
+              eventCount: existing.eventCount + user.event_count,
+              uniqueTitles: existing.uniqueTitles + user.unique_alerts
+            });
+          } else {
+            combinedUsers.set(entityId, {
+              id: entityId,
+              eventCount: user.event_count,
+              uniqueTitles: user.unique_alerts
+            });
+          }
+        });
+      }
 
       return Array.from(combinedUsers.values());
     } else {
-      // Handle computers case (keeping existing logic)
+      // Handle computers case
       const entities = new Map<string, { id: string; eventCount: number; uniqueTitles: Set<string> }>();
 
       alerts.forEach((alert) => {
@@ -91,10 +95,6 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
         const entityId = sanitizeEntityName(rawEntityId);
         
         if (!entities.has(entityId)) {
-          const entityAlerts = alerts.filter(a => 
-            sanitizeEntityName(a.computer_name) === entityId
-          );
-          
           entities.set(entityId, {
             id: entityId,
             eventCount: 1,
@@ -118,6 +118,20 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
 
   const entities = getUniqueEntities();
   const EntityIcon = type === "users" ? User : Monitor;
+
+  // Show loading state while fetching data
+  if (type === "users" && (isLoadingOrigin || isLoadingImpacted)) {
+    return (
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-blue-100 mb-4">
+          {type === "users" ? "Active Users" : "Active Computers"}
+        </h3>
+        <div className="text-center text-blue-400/60 py-6 text-sm">
+          Loading...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
