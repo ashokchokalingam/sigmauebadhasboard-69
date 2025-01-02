@@ -127,7 +127,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
   if (type === "users" && (isLoadingOrigin || isLoadingImpacted)) {
     return (
       <div className="space-y-4">
-        <EntityHeader totalEntities={0} isLoading={true} />
+        <EntityHeader totalEntities={0} isLoading={true} type={type} />
         <div className="text-center text-purple-400/60 py-6 text-sm">
           Loading...
         </div>
