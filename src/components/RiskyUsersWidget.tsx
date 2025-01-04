@@ -4,34 +4,23 @@ import { AlertTriangle, Loader2, Skull, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface RiskyUser {
-  username: string;
+  user_id: string;
   risk_score: number;
-  anomalies: number;
+}
+
+interface ApiResponse {
+  risky_users: RiskyUser[];
 }
 
 const RiskyUsersWidget = () => {
-  const { data: riskyUsers, isLoading, error } = useQuery<RiskyUser[]>({
+  const { data, isLoading, error } = useQuery<ApiResponse>({
     queryKey: ['risky-users'],
     queryFn: async () => {
-      try {
-        const response = await fetch('http://172.16.0.75:5001/api/risky_users');
-        if (!response.ok) {
-          throw new Error('Failed to fetch risky users');
-        }
-        const data = await response.json();
-        // Ensure the data is in the correct format
-        if (!Array.isArray(data)) {
-          throw new Error('Invalid response format');
-        }
-        return data.map((user: any) => ({
-          username: user.user_id || 'Unknown User',
-          risk_score: Number(user.risk_score) || 0,
-          anomalies: Number(user.anomalies) || 0
-        }));
-      } catch (err) {
-        console.error('Error fetching risky users:', err);
-        throw err;
+      const response = await fetch('http://172.16.0.75:5001/api/risky_users');
+      if (!response.ok) {
+        throw new Error('Failed to fetch risky users');
       }
+      return response.json();
     },
     retry: 2,
     staleTime: 30000,
@@ -87,8 +76,8 @@ const RiskyUsersWidget = () => {
           </div>
         ) : (
           <div className="grid gap-4">
-            {Array.isArray(riskyUsers) && riskyUsers.length > 0 ? (
-              riskyUsers
+            {data?.risky_users && data.risky_users.length > 0 ? (
+              data.risky_users
                 .sort((a, b) => b.risk_score - a.risk_score)
                 .map((user, index) => (
                   <div
@@ -102,7 +91,7 @@ const RiskyUsersWidget = () => {
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-gray-400" />
-                        <span className="font-mono text-gray-200">{user.username}</span>
+                        <span className="font-mono text-gray-200">{user.user_id || 'Unknown User'}</span>
                       </div>
                       <div className={cn(
                         "px-2 py-1 rounded text-sm font-bold",
@@ -110,10 +99,6 @@ const RiskyUsersWidget = () => {
                       )}>
                         {user.risk_score}% Risk
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <AlertTriangle className="h-3.5 w-3.5 text-gray-400" />
-                      <span className="text-gray-400">{user.anomalies} anomalies detected</span>
                     </div>
                   </div>
                 ))
