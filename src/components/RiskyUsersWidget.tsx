@@ -54,9 +54,12 @@ const RiskyUsersWidget = () => {
         return mockData;
       }
     },
-    retry: 1,
-    staleTime: 30000,
-    refetchOnWindowFocus: false
+    staleTime: 5 * 60 * 1000, // Data stays fresh for 5 minutes
+    cacheTime: 30 * 60 * 1000, // Cache persists for 30 minutes
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnMount: false, // Don't refetch on component mount if data exists
+    refetchOnReconnect: false, // Don't refetch when reconnecting
+    retry: false // Don't retry failed requests
   });
 
   const getRiskColor = (score: number) => {

@@ -8,7 +8,6 @@ import TimelineView from "./TimelineView";
 import AnomaliesTable from "./AnomaliesTable";
 import { calculateStats } from "./alertUtils";
 import { Button } from "../ui/button";
-import { useQuery } from "@tanstack/react-query";
 import RiskyUsersWidget from "../RiskyUsersWidget";
 
 interface DashboardLayoutProps {
@@ -32,19 +31,7 @@ const DashboardLayout = ({
   onLoadMore,
   hasMore
 }: DashboardLayoutProps) => {
-  const { data: totalCount } = useQuery({
-    queryKey: ['totalCount'],
-    queryFn: async () => {
-      const response = await fetch('/api/total_count');
-      if (!response.ok) {
-        throw new Error('Failed to fetch total count');
-      }
-      const data = await response.json();
-      return data.count;
-    }
-  });
-
-  const stats = calculateStats(allAlerts, totalCount || totalRecords);
+  const stats = calculateStats(allAlerts, totalRecords);
 
   if (selectedEntity) {
     return (
@@ -70,7 +57,7 @@ const DashboardLayout = ({
       </div>
 
       <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10 mb-8">
-        <StatsSection stats={stats} totalAlerts={totalCount || totalRecords} />
+        <StatsSection stats={stats} totalAlerts={totalRecords} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
