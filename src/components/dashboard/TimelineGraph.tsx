@@ -7,30 +7,36 @@ interface TimelineGraphProps {
 }
 
 const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
-  // Process alerts to create hourly data points
+  // Process alerts to create data points based on timeframe
   const processData = () => {
-    const hourlyData: { [key: string]: { time: string; count: number } } = {};
+    const timeData: { [key: string]: { time: string; fullDate: string; count: number } } = {};
     
-    // Initialize all hours
-    for (let i = 0; i < 24; i++) {
-      const hour = i.toString().padStart(2, '0');
-      hourlyData[hour] = {
-        time: `${hour}:00`,
-        count: 0
-      };
-    }
-
-    // Count alerts per hour
     alerts.forEach(alert => {
       const date = new Date(alert.system_time);
       const hour = date.getHours().toString().padStart(2, '0');
-      if (hourlyData[hour]) {
-        hourlyData[hour].count++;
+      const formattedDate = date.toLocaleString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      
+      const key = `${date.toISOString().split('T')[0]} ${hour}:00`;
+      
+      if (!timeData[key]) {
+        timeData[key] = {
+          time: `${hour}:00`,
+          fullDate: formattedDate,
+          count: 1
+        };
+      } else {
+        timeData[key].count++;
       }
     });
 
     // Convert to array and sort by time
-    return Object.values(hourlyData).sort((a, b) => 
+    return Object.values(timeData).sort((a, b) => 
       a.time.localeCompare(b.time)
     );
   };
@@ -38,28 +44,30 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
   const data = processData();
 
   return (
-    <div className="w-full h-[250px]"> {/* Reduced from 400px to 250px */}
+    <div className="w-full h-[250px]">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}
           margin={{
-            top: 5, // Reduced from 10
+            top: 5,
             right: 10,
             left: 10,
-            bottom: 5 // Reduced from 10
+            bottom: 5
           }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#2a3441" />
           <XAxis 
-            dataKey="time" 
+            dataKey="fullDate" 
             stroke="#4b5563"
             tick={{ fill: '#4b5563' }}
-            height={20} // Added explicit height
+            height={40}
+            angle={-45}
+            textAnchor="end"
           />
           <YAxis 
             stroke="#4b5563"
             tick={{ fill: '#4b5563' }}
-            width={25} // Added explicit width
+            width={25}
           />
           <Tooltip
             contentStyle={{
@@ -69,6 +77,7 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
             }}
             labelStyle={{ color: '#93c5fd' }}
             itemStyle={{ color: '#93c5fd' }}
+            labelFormatter={(label) => `Time: ${label}`}
           />
           <Legend />
           <Line

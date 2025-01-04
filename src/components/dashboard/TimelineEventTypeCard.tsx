@@ -16,6 +16,17 @@ interface TimelineEventTypeCardProps {
 }
 
 const TimelineEventTypeCard = ({ metric, isSelected, onSelect }: TimelineEventTypeCardProps) => {
+  const formatDateTime = (date: Date) => {
+    return date.toLocaleString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
+  };
+
   return (
     <Card
       className={`relative bg-[#1a2234] border-slate-700/50 hover:bg-[#1e2943] transition-all duration-300 overflow-hidden group cursor-pointer
@@ -107,16 +118,16 @@ const TimelineEventTypeCard = ({ metric, isSelected, onSelect }: TimelineEventTy
           ))}
         </div>
 
-        {/* Updated First/Last seen layout */}
+        {/* Updated First/Last seen layout with full dates */}
         <div className="flex items-center gap-4 text-sm text-blue-300/70">
           <div className="flex items-center gap-1.5 text-base">
             <span className="text-blue-300">First:</span>
-            <span className="font-mono text-blue-200">{metric.firstSeen.toLocaleTimeString()}</span>
+            <span className="font-mono text-blue-200">{formatDateTime(metric.firstSeen)}</span>
           </div>
           <div className="w-px h-4 bg-blue-500/20" />
           <div className="flex items-center gap-1.5 text-base">
             <span className="text-blue-300">Last:</span>
-            <span className="font-mono text-blue-200">{metric.lastSeen.toLocaleTimeString()}</span>
+            <span className="font-mono text-blue-200">{formatDateTime(metric.lastSeen)}</span>
           </div>
         </div>
       </div>
