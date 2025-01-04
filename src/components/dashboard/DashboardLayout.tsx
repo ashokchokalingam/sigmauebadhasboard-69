@@ -8,7 +8,6 @@ import TimelineView from "./TimelineView";
 import AnomaliesTable from "./AnomaliesTable";
 import { calculateStats } from "./alertUtils";
 import { Button } from "../ui/button";
-import RiskyUsersWidget from "../RiskyUsersWidget";
 
 interface DashboardLayoutProps {
   alerts: Alert[];
@@ -58,10 +57,6 @@ const DashboardLayout = ({
 
       <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10 mb-8">
         <StatsSection stats={stats} totalAlerts={totalRecords} />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <RiskyUsersWidget />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
