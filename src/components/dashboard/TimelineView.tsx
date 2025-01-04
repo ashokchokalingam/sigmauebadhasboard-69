@@ -28,20 +28,23 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     if (entityType === "user") {
       return `${baseUrl}/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}`;
     } else {
-      return `${baseUrl}/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}`;
+      const endpoint = `${baseUrl}/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}`;
+      console.log('Calling computer timeline endpoint:', endpoint);
+      return endpoint;
     }
   };
 
   const { data: timelineData, isLoading, error } = useQuery({
     queryKey: ['timeline', entityType, entityId, page],
     queryFn: async () => {
-      console.log('Fetching from endpoint:', getApiEndpoint()); // Debug log
+      console.log('Making request to:', getApiEndpoint());
       const response = await fetch(getApiEndpoint());
+      console.log('Response status:', response.status);
       if (!response.ok) {
         throw new Error('Failed to fetch timeline data');
       }
       const data = await response.json();
-      console.log('API Response:', data); // Debug log
+      console.log('Timeline data received:', data);
       return data;
     },
     meta: {
