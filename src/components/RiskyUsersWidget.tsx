@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertTriangle, Loader2, Skull, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -80,37 +81,39 @@ const RiskyUsersWidget = () => {
             <Loader2 className="h-8 w-8 animate-spin text-red-500" />
           </div>
         ) : (
-          <div className="grid gap-4">
-            {data?.risky_users && data.risky_users.length > 0 ? (
-              data.risky_users
-                .sort((a, b) => b.risk_score - a.risk_score)
-                .map((user, index) => (
-                  <div
-                    key={index}
-                    className={cn(
-                      "p-4 rounded-lg border transition-all duration-300 hover:scale-[1.02]",
-                      getRiskBgColor(user.risk_score),
-                      getRiskBorderColor(user.risk_score)
-                    )}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-gray-400" />
-                        <span className="font-mono text-gray-200">{user.user_id || 'Unknown User'}</span>
-                      </div>
-                      <div className={cn(
-                        "px-2 py-1 rounded text-sm font-bold",
-                        getRiskColor(user.risk_score)
-                      )}>
-                        {user.risk_score}% Risk
+          <ScrollArea className="h-[400px] pr-4">
+            <div className="grid gap-4">
+              {data?.risky_users && data.risky_users.length > 0 ? (
+                data.risky_users
+                  .sort((a, b) => b.risk_score - a.risk_score)
+                  .map((user, index) => (
+                    <div
+                      key={index}
+                      className={cn(
+                        "p-4 rounded-lg border transition-all duration-300 hover:scale-[1.02]",
+                        getRiskBgColor(user.risk_score),
+                        getRiskBorderColor(user.risk_score)
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-gray-400" />
+                          <span className="font-mono text-gray-200">{user.user_id || 'Unknown User'}</span>
+                        </div>
+                        <span className={cn(
+                          "px-2 py-1 rounded text-sm font-bold whitespace-nowrap",
+                          getRiskColor(user.risk_score)
+                        )}>
+                          {user.risk_score}% Risk
+                        </span>
                       </div>
                     </div>
-                  </div>
-                ))
-            ) : (
-              <p className="text-center text-gray-400 py-4">No high-risk users detected</p>
-            )}
-          </div>
+                  ))
+              ) : (
+                <p className="text-center text-gray-400 py-4">No high-risk users detected</p>
+              )}
+            </div>
+          </ScrollArea>
         )}
       </CardContent>
     </Card>
