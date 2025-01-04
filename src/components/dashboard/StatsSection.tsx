@@ -9,26 +9,28 @@ interface StatsSectionProps {
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
-  const { data: totalCount } = useQuery({
-    queryKey: ['totalCount'],
+  const { data: totalCountData, isLoading } = useQuery({
+    queryKey: ['total_count'],
     queryFn: async () => {
       const response = await fetch('/api/total_count');
       if (!response.ok) {
         throw new Error('Failed to fetch total count');
       }
       const data = await response.json();
-      console.log('Total count response:', data);
-      return data;
-    }
+      return data.total_count;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    cacheTime: 1000 * 60 * 30, // 30 minutes
   });
 
   if (!stats) {
     return null;
   }
 
-  const totalEvents = totalCount?.total_counts?.find(count => count.rule_level === "Total")?.event_count || 0;
-  const criticalEvents = totalCount?.total_counts?.find(count => count.rule_level === "Critical")?.event_count || 0;
-  const highEvents = totalCount?.total_counts?.find(count => count.rule_level === "High")?.event_count || 0;
+  // Use the totalCountData directly from the API response
+  const totalEvents = totalCountData || 0;
+  const criticalEvents = stats.severity?.critical || 0;
+  const highEvents = stats.severity?.high || 0;
 
   const breakdown = [
     { rule_level: 'Critical', event_count: criticalEvents },
@@ -39,7 +41,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatsCard
         title="Total Events (24h)"
-        value={totalEvents}
+        value={isLoading ? "Loading..." : totalEvents}
         icon={Database}
         subtitle="Total events in last 24 hours"
         subtitleIcon={AlertTriangle}
