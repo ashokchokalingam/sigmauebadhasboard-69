@@ -17,14 +17,22 @@ const RiskyUsersWidget = () => {
   const { data, isLoading, error } = useQuery<ApiResponse>({
     queryKey: ['risky-users'],
     queryFn: async () => {
+      console.log('Fetching risky users...');
       const response = await fetch('http://172.16.0.75:5001/api/risky_users');
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch risky users');
+        throw new Error(`Failed to fetch risky users: ${response.status}`);
       }
+      
       const jsonData = await response.json();
+      console.log('Received data:', jsonData);
+      
       if (!jsonData || !Array.isArray(jsonData.risky_users)) {
+        console.error('Invalid response format:', jsonData);
         throw new Error('Invalid response format');
       }
+      
       return jsonData;
     },
     retry: 2,
@@ -50,6 +58,8 @@ const RiskyUsersWidget = () => {
     return "border-[#8B5CF6]/20";
   };
 
+  console.log('Component state:', { isLoading, error, data });
+
   if (error) {
     return (
       <Card className="bg-black/40 border-red-900/20">
@@ -60,7 +70,7 @@ const RiskyUsersWidget = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-red-400">Failed to load risky users data. Please try again later.</p>
+          <p className="text-red-400">Failed to load risky users data: {error.message}</p>
         </CardContent>
       </Card>
     );
@@ -101,7 +111,7 @@ const RiskyUsersWidget = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <span className={cn(
-                            "text-3xl font-bold tracking-tighter",
+                            "text-4xl font-bold tracking-tighter",
                             getRiskColor(user.risk_score)
                           )}>
                             {user.risk_score}
@@ -112,7 +122,9 @@ const RiskyUsersWidget = () => {
                     </div>
                   ))
               ) : (
-                <p className="text-center text-gray-400 py-4">No high-risk users detected</p>
+                <p className="text-center text-gray-400 py-4">
+                  {data ? 'No high-risk users detected' : 'No data available'}
+                </p>
               )}
             </div>
           </ScrollArea>
