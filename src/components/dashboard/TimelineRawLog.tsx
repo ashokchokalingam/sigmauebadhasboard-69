@@ -15,10 +15,10 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
-    if (codeRef.current) {
+    if (codeRef.current && isExpanded) {
       Prism.highlightElement(codeRef.current);
     }
-  }, [alert.raw]);
+  }, [alert.raw, isExpanded]);
 
   if (!alert.raw) {
     return (
@@ -48,7 +48,7 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
           "h-4 w-4 transition-transform duration-200",
           isExpanded && "transform rotate-90"
         )} />
-        <Terminal className="h-4 w-4" />
+        <span className="font-mono text-sm">{">"}_</span>
         Raw Log
       </button>
       
