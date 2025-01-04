@@ -5,6 +5,7 @@ import { useState } from "react";
 import TimelineEventCard from "./TimelineEventCard";
 import TimelineEventTypes from "./TimelineEventTypes";
 import TimelineGraph from "./TimelineGraph";
+import { useQuery } from "@tanstack/react-query";
 
 interface TimelineViewProps {
   alerts: Alert[];
@@ -17,14 +18,26 @@ interface TimelineViewProps {
 const TimelineView = ({ alerts, entityType, entityId, onClose, inSidebar = false }: TimelineViewProps) => {
   const [expandedAlert, setExpandedAlert] = useState<string | null>(null);
   const [selectedEventType, setSelectedEventType] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
 
-  // Filter alerts for the specific entity and event type
-  const filteredAlerts = alerts
-    .filter(alert => 
-      entityType === "user" 
-        ? alert.user_id === entityId
-        : alert.computer_name === entityId
-    )
+  const { data: timelineData, isLoading } = useQuery({
+    queryKey: ['timeline', entityType, entityId, page],
+    queryFn: async () => {
+      const response = await fetch(`/api/timeline?entityType=${entityType}&entityId=${entityId}&page=${page}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch timeline data');
+      }
+      return response.json();
+    },
+    meta: {
+      onError: (error: Error) => {
+        console.error('Timeline fetch error:', error);
+      }
+    }
+  });
+
+  // Filter alerts based on selected event type
+  const filteredAlerts = (timelineData?.logs || [])
     .filter(alert => !selectedEventType || alert.title === selectedEventType)
     .sort((a, b) => new Date(b.system_time).getTime() - new Date(a.system_time).getTime());
 
@@ -56,44 +69,60 @@ const TimelineView = ({ alerts, entityType, entityId, onClose, inSidebar = false
         )}
       </div>
 
-      {/* Activity Graph with reduced height */}
-      <div className="bg-black/40 border border-blue-500/10 rounded-xl p-4 mb-4">
-        <h2 className="text-lg font-semibold text-blue-100 mb-2">Activity Overview</h2>
-        <div className="h-[200px]">
-          <TimelineGraph alerts={filteredAlerts} />
+      {isLoading ? (
+        <div className="flex items-center justify-center h-[200px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
         </div>
-      </div>
+      ) : (
+        <>
+          <div className="bg-black/40 border border-blue-500/10 rounded-xl p-4 mb-4">
+            <h2 className="text-lg font-semibold text-blue-100 mb-2">Activity Overview</h2>
+            <div className="h-[200px]">
+              <TimelineGraph alerts={filteredAlerts} />
+            </div>
+          </div>
 
-      {/* Event Types Section */}
-      <div className="bg-black/40 border border-blue-500/10 rounded-xl p-4 mb-4">
-        <h2 className="text-lg font-semibold text-blue-100 mb-2">Event Types</h2>
-        <TimelineEventTypes 
-          alerts={filteredAlerts} 
-          onEventTypeSelect={setSelectedEventType}
-          selectedEventType={selectedEventType}
-        />
-      </div>
-
-      {/* Timeline Events */}
-      <div className="relative">
-        <div className="absolute left-8 top-0 bottom-0 w-px bg-blue-500/20" />
-        <div className="space-y-6">
-          {filteredAlerts.map((alert, index) => (
-            <TimelineEventCard
-              key={alert.id}
-              alert={alert}
-              isExpanded={expandedAlert === alert.id}
-              onToggleRaw={toggleRawLog}
-              isFirst={index === 0}
+          <div className="bg-black/40 border border-blue-500/10 rounded-xl p-4 mb-4">
+            <h2 className="text-lg font-semibold text-blue-100 mb-2">Event Types</h2>
+            <TimelineEventTypes 
+              alerts={filteredAlerts} 
+              onEventTypeSelect={setSelectedEventType}
+              selectedEventType={selectedEventType}
             />
-          ))}
-          {filteredAlerts.length === 0 && (
-            <div className="text-center text-lg text-blue-400/60 py-8">
-              No events found for the selected filters
+          </div>
+
+          <div className="relative">
+            <div className="absolute left-8 top-0 bottom-0 w-px bg-blue-500/20" />
+            <div className="space-y-6">
+              {filteredAlerts.map((alert, index) => (
+                <TimelineEventCard
+                  key={alert.id}
+                  alert={alert}
+                  isExpanded={expandedAlert === alert.id}
+                  onToggleRaw={toggleRawLog}
+                  isFirst={index === 0}
+                />
+              ))}
+              {filteredAlerts.length === 0 && (
+                <div className="text-center text-lg text-blue-400/60 py-8">
+                  No events found for the selected filters
+                </div>
+              )}
+            </div>
+          </div>
+
+          {timelineData?.pagination?.has_more && (
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={() => setPage(p => p + 1)}
+                className="px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg transition-colors"
+              >
+                Load More
+              </button>
             </div>
           )}
-        </div>
-      </div>
+        </>
+      )}
     </>
   );
 
