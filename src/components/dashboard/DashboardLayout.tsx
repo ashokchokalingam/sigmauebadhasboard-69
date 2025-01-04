@@ -10,7 +10,6 @@ import { calculateStats } from "./alertUtils";
 import { Button } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
 import RiskyUsersWidget from "../RiskyUsersWidget";
-import OutliersWidget from "../OutliersWidget";
 
 interface DashboardLayoutProps {
   alerts: Alert[];
@@ -76,7 +75,6 @@ const DashboardLayout = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <RiskyUsersWidget />
-        <OutliersWidget />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
