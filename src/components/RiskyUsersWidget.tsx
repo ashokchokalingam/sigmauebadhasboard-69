@@ -22,7 +22,6 @@ const RiskyUsersWidget = () => {
         throw new Error('Failed to fetch risky users');
       }
       const jsonData = await response.json();
-      // Ensure the response has the expected structure
       if (!jsonData || !Array.isArray(jsonData.risky_users)) {
         throw new Error('Invalid response format');
       }
@@ -34,21 +33,21 @@ const RiskyUsersWidget = () => {
   });
 
   const getRiskColor = (score: number) => {
-    if (score >= 80) return "text-red-500";
-    if (score >= 50) return "text-orange-500";
-    return "text-yellow-400";
+    if (score >= 80) return "text-[#F97316]"; // Bright Orange
+    if (score >= 50) return "text-[#D946EF]"; // Magenta Pink
+    return "text-[#8B5CF6]"; // Vivid Purple
   };
 
   const getRiskBgColor = (score: number) => {
-    if (score >= 80) return "bg-red-950/20";
-    if (score >= 50) return "bg-orange-950/20";
-    return "bg-yellow-950/20";
+    if (score >= 80) return "bg-[#F97316]/10";
+    if (score >= 50) return "bg-[#D946EF]/10";
+    return "bg-[#8B5CF6]/10";
   };
 
   const getRiskBorderColor = (score: number) => {
-    if (score >= 80) return "border-red-900/30";
-    if (score >= 50) return "border-orange-900/30";
-    return "border-yellow-900/30";
+    if (score >= 80) return "border-[#F97316]/20";
+    if (score >= 50) return "border-[#D946EF]/20";
+    return "border-[#8B5CF6]/20";
   };
 
   if (error) {
@@ -100,12 +99,15 @@ const RiskyUsersWidget = () => {
                           <User className="h-4 w-4 text-gray-400" />
                           <span className="font-mono text-gray-200">{user.user_id || 'Unknown User'}</span>
                         </div>
-                        <span className={cn(
-                          "px-2 py-1 rounded text-sm font-bold whitespace-nowrap",
-                          getRiskColor(user.risk_score)
-                        )}>
-                          {user.risk_score}% Risk
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className={cn(
+                            "text-3xl font-bold tracking-tighter",
+                            getRiskColor(user.risk_score)
+                          )}>
+                            {user.risk_score}
+                          </span>
+                          <span className="text-sm text-gray-400 whitespace-nowrap">Risk Score</span>
+                        </div>
                       </div>
                     </div>
                   ))
