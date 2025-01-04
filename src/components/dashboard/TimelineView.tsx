@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "../ui/use-toast";
-import { Alert } from "./types";
 import TimelineHeader from "./TimelineComponents/TimelineHeader";
 import TimelineLoader from "./TimelineComponents/TimelineLoader";
 import TimelineContent from "./TimelineComponents/TimelineContent";
@@ -19,22 +18,15 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const [page, setPage] = useState(1);
   const { toast } = useToast();
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://172.16.0.75:5000';
-
   // Query for user origin timeline
   const { data: originTimelineData, isLoading: isLoadingOrigin } = useQuery({
     queryKey: ['timeline-origin', entityId, page],
     queryFn: async () => {
-      const endpoint = `${baseUrl}/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}`;
-      console.log('Making request to origin timeline:', endpoint);
-      const response = await fetch(endpoint);
-      console.log('Origin timeline response status:', response.status);
+      const response = await fetch(`/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}`);
       if (!response.ok) {
         throw new Error('Failed to fetch origin timeline data');
       }
-      const data = await response.json();
-      console.log('Origin timeline data received:', data);
-      return data;
+      return response.json();
     },
     enabled: entityType === "user",
     meta: {
@@ -53,16 +45,11 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const { data: impactedTimelineData, isLoading: isLoadingImpacted } = useQuery({
     queryKey: ['timeline-impacted', entityId, page],
     queryFn: async () => {
-      const endpoint = `${baseUrl}/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${page}`;
-      console.log('Making request to impacted timeline:', endpoint);
-      const response = await fetch(endpoint);
-      console.log('Impacted timeline response status:', response.status);
+      const response = await fetch(`/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${page}`);
       if (!response.ok) {
         throw new Error('Failed to fetch impacted timeline data');
       }
-      const data = await response.json();
-      console.log('Impacted timeline data received:', data);
-      return data;
+      return response.json();
     },
     enabled: entityType === "user",
     meta: {
@@ -81,16 +68,11 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const { data: computerTimelineData, isLoading: isLoadingComputer } = useQuery({
     queryKey: ['timeline-computer', entityId, page],
     queryFn: async () => {
-      const endpoint = `${baseUrl}/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}`;
-      console.log('Making request to computer timeline:', endpoint);
-      const response = await fetch(endpoint);
-      console.log('Computer timeline response status:', response.status);
+      const response = await fetch(`/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}`);
       if (!response.ok) {
         throw new Error('Failed to fetch computer timeline data');
       }
-      const data = await response.json();
-      console.log('Computer timeline data received:', data);
-      return data;
+      return response.json();
     },
     enabled: entityType === "computer",
     meta: {
@@ -147,8 +129,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       )}
 
       {/* Load More Button */}
-      {(entityType === "user" && (originTimelineData?.pagination?.has_more || impactedTimelineData?.pagination?.has_more)) ||
-       (entityType === "computer" && computerTimelineData?.pagination?.has_more) ? (
+      {alerts.length >= 5000 && (
         <div className="flex justify-center mt-6">
           <button
             onClick={() => setPage(p => p + 1)}
@@ -157,7 +138,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
             Load More
           </button>
         </div>
-      ) : null}
+      )}
     </>
   );
 
