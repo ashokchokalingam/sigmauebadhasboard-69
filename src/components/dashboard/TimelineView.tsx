@@ -22,47 +22,101 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const [page, setPage] = useState(1);
   const { toast } = useToast();
 
-  // Construct the API endpoint based on entityType
-  const getApiEndpoint = () => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://172.16.0.75:5000';
-    if (entityType === "user") {
-      return `${baseUrl}/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}`;
-    } else {
-      const endpoint = `${baseUrl}/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}`;
-      console.log('Calling computer timeline endpoint:', endpoint);
-      return endpoint;
-    }
-  };
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://172.16.0.75:5000';
 
-  const { data: timelineData, isLoading, error } = useQuery({
-    queryKey: ['timeline', entityType, entityId, page],
+  // Query for user origin timeline
+  const { data: originTimelineData, isLoading: isLoadingOrigin } = useQuery({
+    queryKey: ['timeline-origin', entityId, page],
     queryFn: async () => {
-      console.log('Making request to:', getApiEndpoint());
-      const response = await fetch(getApiEndpoint());
-      console.log('Response status:', response.status);
+      const endpoint = `${baseUrl}/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}`;
+      console.log('Making request to origin timeline:', endpoint);
+      const response = await fetch(endpoint);
+      console.log('Origin timeline response status:', response.status);
       if (!response.ok) {
-        throw new Error('Failed to fetch timeline data');
+        throw new Error('Failed to fetch origin timeline data');
       }
       const data = await response.json();
-      console.log('Timeline data received:', data);
+      console.log('Origin timeline data received:', data);
       return data;
     },
+    enabled: entityType === "user",
     meta: {
       onError: (error: Error) => {
-        console.error('Timeline fetch error:', error);
+        console.error('Origin timeline fetch error:', error);
         toast({
           title: "Error",
-          description: "Failed to fetch timeline data. Please try again.",
+          description: "Failed to fetch origin timeline data.",
           variant: "destructive",
         });
       }
     }
   });
 
-  // Extract alerts from the response based on the endpoint
-  const alerts = entityType === "user" 
-    ? timelineData?.user_origin_timeline_logs || []
-    : timelineData?.computer_impacted_timeline_logs || [];
+  // Query for user impacted timeline
+  const { data: impactedTimelineData, isLoading: isLoadingImpacted } = useQuery({
+    queryKey: ['timeline-impacted', entityId, page],
+    queryFn: async () => {
+      const endpoint = `${baseUrl}/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${page}`;
+      console.log('Making request to impacted timeline:', endpoint);
+      const response = await fetch(endpoint);
+      console.log('Impacted timeline response status:', response.status);
+      if (!response.ok) {
+        throw new Error('Failed to fetch impacted timeline data');
+      }
+      const data = await response.json();
+      console.log('Impacted timeline data received:', data);
+      return data;
+    },
+    enabled: entityType === "user",
+    meta: {
+      onError: (error: Error) => {
+        console.error('Impacted timeline fetch error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch impacted timeline data.",
+          variant: "destructive",
+        });
+      }
+    }
+  });
+
+  // Query for computer timeline
+  const { data: computerTimelineData, isLoading: isLoadingComputer } = useQuery({
+    queryKey: ['timeline-computer', entityId, page],
+    queryFn: async () => {
+      const endpoint = `${baseUrl}/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}`;
+      console.log('Making request to computer timeline:', endpoint);
+      const response = await fetch(endpoint);
+      console.log('Computer timeline response status:', response.status);
+      if (!response.ok) {
+        throw new Error('Failed to fetch computer timeline data');
+      }
+      const data = await response.json();
+      console.log('Computer timeline data received:', data);
+      return data;
+    },
+    enabled: entityType === "computer",
+    meta: {
+      onError: (error: Error) => {
+        console.error('Computer timeline fetch error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch computer timeline data.",
+          variant: "destructive",
+        });
+      }
+    }
+  });
+
+  // Combine and process the timeline data
+  const alerts = entityType === "user"
+    ? [
+        ...(originTimelineData?.user_origin_timeline_logs || []),
+        ...(impactedTimelineData?.user_impacted_timeline_logs || [])
+      ].sort((a: Alert, b: Alert) => 
+        new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
+      )
+    : computerTimelineData?.computer_impacted_timeline_logs || [];
 
   // Filter alerts based on selected event type
   const filteredAlerts = alerts
@@ -75,6 +129,10 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     event.stopPropagation();
     setExpandedAlert(expandedAlert === alertId ? null : alertId);
   };
+
+  const isLoading = entityType === "user" 
+    ? (isLoadingOrigin || isLoadingImpacted)
+    : isLoadingComputer;
 
   const content = (
     <>
@@ -102,10 +160,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       {isLoading ? (
         <div className="flex items-center justify-center h-[200px]">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-        </div>
-      ) : error ? (
-        <div className="text-center text-red-400 py-8">
-          Failed to load timeline data. Please try again.
         </div>
       ) : alerts.length === 0 ? (
         <div className="text-center text-purple-400/60 py-8">
@@ -149,7 +203,17 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
             </div>
           </div>
 
-          {timelineData?.pagination?.has_more && (
+          {entityType === "user" && (originTimelineData?.pagination?.has_more || impactedTimelineData?.pagination?.has_more) && (
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={() => setPage(p => p + 1)}
+                className="px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-lg transition-colors"
+              >
+                Load More
+              </button>
+            </div>
+          )}
+          {entityType === "computer" && computerTimelineData?.pagination?.has_more && (
             <div className="flex justify-center mt-6">
               <button
                 onClick={() => setPage(p => p + 1)}
