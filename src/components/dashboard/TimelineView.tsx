@@ -22,19 +22,27 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const [page, setPage] = useState(1);
   const { toast } = useToast();
 
-  const apiEndpoint = entityType === "user" 
-    ? `/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}`
-    : `/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}`;
+  // Construct the API endpoint based on entityType
+  const getApiEndpoint = () => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://172.16.0.75:5000';
+    if (entityType === "user") {
+      return `${baseUrl}/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}`;
+    } else {
+      return `${baseUrl}/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}`;
+    }
+  };
 
   const { data: timelineData, isLoading, error } = useQuery({
     queryKey: ['timeline', entityType, entityId, page],
     queryFn: async () => {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://172.16.0.75:5000';
-      const response = await fetch(`${baseUrl}${apiEndpoint}`);
+      console.log('Fetching from endpoint:', getApiEndpoint()); // Debug log
+      const response = await fetch(getApiEndpoint());
       if (!response.ok) {
         throw new Error('Failed to fetch timeline data');
       }
-      return response.json();
+      const data = await response.json();
+      console.log('API Response:', data); // Debug log
+      return data;
     },
     meta: {
       onError: (error: Error) => {
@@ -49,9 +57,9 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   });
 
   // Extract alerts from the response based on the endpoint
-  const alerts = timelineData?.user_origin_timeline_logs || 
-                timelineData?.computer_impacted_timeline_logs || 
-                [];
+  const alerts = entityType === "user" 
+    ? timelineData?.user_origin_timeline_logs || []
+    : timelineData?.computer_impacted_timeline_logs || [];
 
   // Filter alerts based on selected event type
   const filteredAlerts = alerts
@@ -95,6 +103,10 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       ) : error ? (
         <div className="text-center text-red-400 py-8">
           Failed to load timeline data. Please try again.
+        </div>
+      ) : alerts.length === 0 ? (
+        <div className="text-center text-purple-400/60 py-8">
+          No events found for this {entityType}
         </div>
       ) : (
         <>
