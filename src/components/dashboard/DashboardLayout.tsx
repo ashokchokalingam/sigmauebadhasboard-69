@@ -9,6 +9,8 @@ import AnomaliesTable from "./AnomaliesTable";
 import { calculateStats } from "./alertUtils";
 import { Button } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
+import RiskyUsersWidget from "../RiskyUsersWidget";
+import OutliersWidget from "../OutliersWidget";
 
 interface DashboardLayoutProps {
   alerts: Alert[];
@@ -70,6 +72,11 @@ const DashboardLayout = ({
 
       <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10 mb-8">
         <StatsSection stats={stats} totalAlerts={totalCount || totalRecords} />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <RiskyUsersWidget />
+        <OutliersWidget />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
