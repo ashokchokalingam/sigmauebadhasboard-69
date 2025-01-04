@@ -20,7 +20,12 @@ const RiskyUsersWidget = () => {
       if (!response.ok) {
         throw new Error('Failed to fetch risky users');
       }
-      return response.json();
+      const jsonData = await response.json();
+      // Ensure the response has the expected structure
+      if (!jsonData || !Array.isArray(jsonData.risky_users)) {
+        throw new Error('Invalid response format');
+      }
+      return jsonData;
     },
     retry: 2,
     staleTime: 30000,
