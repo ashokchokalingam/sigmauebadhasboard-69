@@ -14,6 +14,9 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
     alerts.forEach(alert => {
       const date = new Date(alert.system_time);
       const hour = date.getHours().toString().padStart(2, '0');
+      const minute = date.getMinutes().toString().padStart(2, '0');
+      
+      // Format the date for display
       const formattedDate = date.toLocaleString(undefined, {
         month: 'short',
         day: 'numeric',
@@ -22,11 +25,11 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
         hour12: true
       });
       
-      const key = `${date.toISOString().split('T')[0]} ${hour}:00`;
+      const key = `${date.toISOString().split('T')[0]} ${hour}:${minute}`;
       
       if (!timeData[key]) {
         timeData[key] = {
-          time: `${hour}:00`,
+          time: `${hour}:${minute}`,
           fullDate: formattedDate,
           count: 1
         };
@@ -44,50 +47,81 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
   const data = processData();
 
   return (
-    <div className="w-full h-[250px]">
+    <div className="w-full h-[300px]"> {/* Increased height for better visibility */}
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}
           margin={{
             top: 5,
-            right: 10,
-            left: 10,
-            bottom: 5
+            right: 30,
+            left: 20,
+            bottom: 60  // Increased bottom margin for date labels
           }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#2a3441" />
           <XAxis 
             dataKey="fullDate" 
-            stroke="#4b5563"
-            tick={{ fill: '#4b5563' }}
-            height={40}
+            stroke="#93c5fd"
+            tick={{ 
+              fill: '#93c5fd',
+              fontSize: 12,
+              fontFamily: 'monospace'
+            }}
+            height={50}  // Increased height for better label visibility
             angle={-45}
             textAnchor="end"
+            interval={Math.floor(data.length / 8)}  // Show fewer labels to prevent overlap
           />
           <YAxis 
-            stroke="#4b5563"
-            tick={{ fill: '#4b5563' }}
-            width={25}
+            stroke="#93c5fd"
+            tick={{ 
+              fill: '#93c5fd',
+              fontSize: 12,
+              fontFamily: 'monospace'
+            }}
+            width={40}
           />
           <Tooltip
             contentStyle={{
               backgroundColor: '#1a2234',
               border: '1px solid #3b82f6',
               borderRadius: '8px',
+              padding: '8px'
             }}
-            labelStyle={{ color: '#93c5fd' }}
-            itemStyle={{ color: '#93c5fd' }}
+            labelStyle={{ 
+              color: '#93c5fd',
+              fontFamily: 'monospace',
+              fontSize: '12px'
+            }}
+            itemStyle={{ 
+              color: '#93c5fd',
+              fontFamily: 'monospace',
+              fontSize: '12px'
+            }}
             labelFormatter={(label) => `Time: ${label}`}
           />
-          <Legend />
+          <Legend 
+            wrapperStyle={{
+              paddingTop: '20px'
+            }}
+          />
           <Line
             type="monotone"
             dataKey="count"
             name="Events"
             stroke="#3b82f6"
             strokeWidth={2}
-            dot={{ fill: '#3b82f6', r: 4 }}
-            activeDot={{ r: 6, fill: '#60a5fa' }}
+            dot={{ 
+              fill: '#3b82f6', 
+              r: 4,
+              strokeWidth: 2
+            }}
+            activeDot={{ 
+              r: 6, 
+              fill: '#60a5fa',
+              stroke: '#93c5fd',
+              strokeWidth: 2
+            }}
           />
         </LineChart>
       </ResponsiveContainer>
