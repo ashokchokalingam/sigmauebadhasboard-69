@@ -1,15 +1,12 @@
-import { Alert } from "./types";
-import { Card } from "@/components/ui/card";
-import { Monitor, User, X } from "lucide-react";
 import { useState } from "react";
-import TimelineEventCard from "./TimelineEventCard";
-import TimelineEventTypes from "./TimelineEventTypes";
-import TimelineGraph from "./TimelineGraph";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "../ui/use-toast";
+import { Alert } from "./types";
+import TimelineHeader from "./TimelineComponents/TimelineHeader";
+import TimelineLoader from "./TimelineComponents/TimelineLoader";
+import TimelineContent from "./TimelineComponents/TimelineContent";
 
 interface TimelineViewProps {
-  alerts: Alert[];
   entityType: "user" | "computer";
   entityId: string;
   onClose: () => void;
@@ -108,123 +105,59 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     }
   });
 
-  // Combine and process the timeline data
   const alerts = entityType === "user"
     ? [
         ...(originTimelineData?.user_origin_timeline_logs || []),
         ...(impactedTimelineData?.user_impacted_timeline_logs || [])
-      ].sort((a: Alert, b: Alert) => 
-        new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
-      )
+      ]
     : computerTimelineData?.computer_impacted_timeline_logs || [];
 
-  // Filter alerts based on selected event type
-  const filteredAlerts = alerts
-    .filter(alert => !selectedEventType || alert.title === selectedEventType)
-    .sort((a: Alert, b: Alert) => 
-      new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
-    );
+  const isLoading = entityType === "user" 
+    ? (isLoadingOrigin || isLoadingImpacted)
+    : isLoadingComputer;
 
   const toggleRawLog = (alertId: string, event: React.MouseEvent) => {
     event.stopPropagation();
     setExpandedAlert(expandedAlert === alertId ? null : alertId);
   };
 
-  const isLoading = entityType === "user" 
-    ? (isLoadingOrigin || isLoadingImpacted)
-    : isLoadingComputer;
-
   const content = (
     <>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-4">
-          {entityType === "user" ? (
-            <User className="h-6 w-6 text-purple-500" />
-          ) : (
-            <Monitor className="h-6 w-6 text-purple-500" />
-          )}
-          <h1 className="text-xl font-bold text-purple-100">
-            {entityId} Timeline
-          </h1>
-        </div>
-        {!inSidebar && (
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-purple-500/10 rounded-full transition-colors"
-          >
-            <X className="h-5 w-5 text-purple-400" />
-          </button>
-        )}
-      </div>
+      <TimelineHeader 
+        entityType={entityType} 
+        entityId={entityId} 
+        onClose={onClose} 
+        inSidebar={inSidebar} 
+      />
 
       {isLoading ? (
-        <div className="flex items-center justify-center h-[200px]">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-        </div>
+        <TimelineLoader />
       ) : alerts.length === 0 ? (
         <div className="text-center text-purple-400/60 py-8">
           No events found for this {entityType}
         </div>
       ) : (
-        <>
-          <div className="bg-black/40 border border-purple-500/10 rounded-xl p-4 mb-4">
-            <h2 className="text-lg font-semibold text-purple-100 mb-2">Activity Overview</h2>
-            <div className="h-[200px]">
-              <TimelineGraph alerts={filteredAlerts} />
-            </div>
-          </div>
-
-          <div className="bg-black/40 border border-purple-500/10 rounded-xl p-4 mb-4">
-            <h2 className="text-lg font-semibold text-purple-100 mb-2">Event Types</h2>
-            <TimelineEventTypes 
-              alerts={filteredAlerts} 
-              onEventTypeSelect={setSelectedEventType}
-              selectedEventType={selectedEventType}
-            />
-          </div>
-
-          <div className="relative">
-            <div className="absolute left-8 top-0 bottom-0 w-px bg-purple-500/20" />
-            <div className="space-y-6">
-              {filteredAlerts.map((alert: Alert, index: number) => (
-                <TimelineEventCard
-                  key={alert.id}
-                  alert={alert}
-                  isExpanded={expandedAlert === alert.id}
-                  onToggleRaw={toggleRawLog}
-                  isFirst={index === 0}
-                />
-              ))}
-              {filteredAlerts.length === 0 && (
-                <div className="text-center text-lg text-purple-400/60 py-8">
-                  No events found for the selected filters
-                </div>
-              )}
-            </div>
-          </div>
-
-          {entityType === "user" && (originTimelineData?.pagination?.has_more || impactedTimelineData?.pagination?.has_more) && (
-            <div className="flex justify-center mt-6">
-              <button
-                onClick={() => setPage(p => p + 1)}
-                className="px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-lg transition-colors"
-              >
-                Load More
-              </button>
-            </div>
-          )}
-          {entityType === "computer" && computerTimelineData?.pagination?.has_more && (
-            <div className="flex justify-center mt-6">
-              <button
-                onClick={() => setPage(p => p + 1)}
-                className="px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-lg transition-colors"
-              >
-                Load More
-              </button>
-            </div>
-          )}
-        </>
+        <TimelineContent
+          alerts={alerts}
+          expandedAlert={expandedAlert}
+          selectedEventType={selectedEventType}
+          onEventTypeSelect={setSelectedEventType}
+          onToggleRaw={toggleRawLog}
+        />
       )}
+
+      {/* Load More Button */}
+      {(entityType === "user" && (originTimelineData?.pagination?.has_more || impactedTimelineData?.pagination?.has_more)) ||
+       (entityType === "computer" && computerTimelineData?.pagination?.has_more) ? (
+        <div className="flex justify-center mt-6">
+          <button
+            onClick={() => setPage(p => p + 1)}
+            className="px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 rounded-lg transition-colors"
+          >
+            Load More
+          </button>
+        </div>
+      ) : null}
     </>
   );
 
