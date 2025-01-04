@@ -1,14 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
 
-export const useTimelineData = (entityType: "user" | "computer", entityId: string, page: number) => {
+export const useTimelineData = (
+  entityType: "user" | "computer", 
+  entityId: string, 
+  page: number,
+  timeframe: string = "24h"
+) => {
   const { toast } = useToast();
 
   // Query for user origin timeline
   const { data: originTimelineData, isLoading: isLoadingOrigin } = useQuery({
-    queryKey: ['timeline-origin', entityId, page],
+    queryKey: ['timeline-origin', entityId, page, timeframe],
     queryFn: async () => {
-      const response = await fetch(`/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}`);
+      const response = await fetch(`/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}&timeframe=${timeframe}`);
       if (!response.ok) {
         throw new Error('Failed to fetch origin timeline data');
       }
@@ -29,9 +34,9 @@ export const useTimelineData = (entityType: "user" | "computer", entityId: strin
 
   // Query for user impacted timeline
   const { data: impactedTimelineData, isLoading: isLoadingImpacted } = useQuery({
-    queryKey: ['timeline-impacted', entityId, page],
+    queryKey: ['timeline-impacted', entityId, page, timeframe],
     queryFn: async () => {
-      const response = await fetch(`/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${page}`);
+      const response = await fetch(`/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${page}&timeframe=${timeframe}`);
       if (!response.ok) {
         throw new Error('Failed to fetch impacted timeline data');
       }
@@ -52,9 +57,9 @@ export const useTimelineData = (entityType: "user" | "computer", entityId: strin
 
   // Query for computer timeline
   const { data: computerTimelineData, isLoading: isLoadingComputer } = useQuery({
-    queryKey: ['timeline-computer', entityId, page],
+    queryKey: ['timeline-computer', entityId, page, timeframe],
     queryFn: async () => {
-      const response = await fetch(`/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}`);
+      const response = await fetch(`/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}&timeframe=${timeframe}`);
       if (!response.ok) {
         throw new Error('Failed to fetch computer timeline data');
       }

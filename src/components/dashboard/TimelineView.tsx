@@ -3,6 +3,7 @@ import TimelineHeader from "./TimelineComponents/TimelineHeader";
 import TimelineLoader from "./TimelineComponents/TimelineLoader";
 import TimelineContent from "./TimelineComponents/TimelineContent";
 import LoadMoreButton from "./TimelineComponents/LoadMoreButton";
+import TimeRangeSelector from "./TimeRangeSelector";
 import { useTimelineData } from "./hooks/useTimelineData";
 
 interface TimelineViewProps {
@@ -16,22 +17,34 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const [expandedAlert, setExpandedAlert] = useState<string | null>(null);
   const [selectedEventType, setSelectedEventType] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [timeframe, setTimeframe] = useState("24h");
 
-  const { alerts, isLoading } = useTimelineData(entityType, entityId, page);
+  const { alerts, isLoading } = useTimelineData(entityType, entityId, page, timeframe);
 
   const toggleRawLog = (alertId: string, event: React.MouseEvent) => {
     event.stopPropagation();
     setExpandedAlert(expandedAlert === alertId ? null : alertId);
   };
 
+  const handleTimeframeChange = (value: string) => {
+    setTimeframe(value);
+    setPage(1); // Reset pagination when timeframe changes
+  };
+
   const content = (
     <>
-      <TimelineHeader 
-        entityType={entityType} 
-        entityId={entityId} 
-        onClose={onClose} 
-        inSidebar={inSidebar} 
-      />
+      <div className="flex items-center justify-between mb-4">
+        <TimelineHeader 
+          entityType={entityType} 
+          entityId={entityId} 
+          onClose={onClose} 
+          inSidebar={inSidebar} 
+        />
+        <TimeRangeSelector
+          value={timeframe}
+          onChange={handleTimeframeChange}
+        />
+      </div>
 
       {isLoading ? (
         <TimelineLoader />
