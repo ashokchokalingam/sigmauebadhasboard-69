@@ -1,10 +1,10 @@
-import React from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import EntityHeader from "./EntityHeader";
-import EntityCard from "./EntityCard";
 import { Alert } from "./types";
 import { sanitizeEntityName } from "./utils";
+import EntitySearchInput from "./EntitySearchInput";
+import EntityList from "./EntityList";
+import { useEntitySearch } from "./hooks/useEntitySearch";
 
 interface UserData {
   user_impacted: string;
@@ -68,7 +68,6 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
   });
 
   const normalizeComputerName = (name: string): string => {
-    // Remove all spaces from the computer name
     return name.replace(/\s+/g, '');
   };
 
@@ -101,7 +100,6 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
     if (type === "users") {
       const combinedUsers = new Map<string, { id: string; eventCount: number; uniqueTitles: number }>();
       
-      // Process impacted users if available
       if (impactedUsers?.length) {
         impactedUsers.forEach((user: UserData) => {
           if (!user.user_impacted || user.user_impacted.trim() === '') return;
@@ -115,7 +113,6 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
         });
       }
 
-      // Process origin users if available and merge with existing data
       if (originUsers?.length) {
         originUsers.forEach((user: UserData) => {
           if (!user.user_impacted || user.user_impacted.trim() === '') return;
@@ -140,7 +137,6 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
 
       return Array.from(combinedUsers.values());
     } else {
-      // Handle computers case using the new API data
       if (impactedComputers) {
         const aggregatedComputers = aggregateComputerData(impactedComputers);
         return aggregatedComputers.map(computer => ({
@@ -155,6 +151,8 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
 
   const entities = getUniqueEntities()
     .sort((a, b) => b.uniqueTitles - a.uniqueTitles);
+
+  const { searchQuery, setSearchQuery, filteredEntities } = useEntitySearch(entities);
 
   if (type === "users" && (isLoadingOrigin || isLoadingImpacted)) {
     return (
@@ -186,24 +184,15 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
         type={type}
       />
       
-      <ScrollArea className="h-[400px] pr-4">
-        <div className="space-y-2">
-          {entities?.map((entity) => (
-            <EntityCard
-              key={entity.id}
-              id={entity.id}
-              eventCount={entity.eventCount}
-              uniqueTitles={entity.uniqueTitles}
-              onClick={() => onEntitySelect(entity.id)}
-            />
-          ))}
-          {(!entities || entities.length === 0) && (
-            <div className="text-center text-blue-400/60 py-6 text-sm">
-              No {type === "computers" ? "active computers" : "active users"} detected
-            </div>
-          )}
-        </div>
-      </ScrollArea>
+      <EntitySearchInput
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
+      
+      <EntityList
+        entities={filteredEntities}
+        onEntitySelect={onEntitySelect}
+      />
     </div>
   );
 };
