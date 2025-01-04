@@ -48,10 +48,10 @@ const DashboardLayout = ({
   if (selectedEntity) {
     return (
       <TimelineView
-        alerts={allAlerts}
         entityType={selectedEntity.type}
         entityId={selectedEntity.id}
         onClose={() => onEntitySelect(null)}
+        inSidebar={false}
       />
     );
   }
