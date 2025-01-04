@@ -107,12 +107,14 @@ const TimelineEventTypeCard = ({ metric, isSelected, onSelect }: TimelineEventTy
           ))}
         </div>
 
-        <div className="flex items-center justify-between text-sm text-blue-300/70">
-          <div className="flex items-center gap-2 text-base">
+        {/* Updated First/Last seen layout */}
+        <div className="flex items-center gap-4 text-sm text-blue-300/70">
+          <div className="flex items-center gap-1.5 text-base">
             <span className="text-blue-300">First:</span>
             <span className="font-mono text-blue-200">{metric.firstSeen.toLocaleTimeString()}</span>
           </div>
-          <div className="flex items-center gap-2 text-base">
+          <div className="w-px h-4 bg-blue-500/20" />
+          <div className="flex items-center gap-1.5 text-base">
             <span className="text-blue-300">Last:</span>
             <span className="font-mono text-blue-200">{metric.lastSeen.toLocaleTimeString()}</span>
           </div>
