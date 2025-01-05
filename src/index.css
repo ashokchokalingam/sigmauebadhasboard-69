@@ -6,94 +6,107 @@
   :root {
     --background: 232 24% 14%;
     --foreground: 240 4.8% 95.9%;
-
     --card: 232 24% 14%;
     --card-foreground: 240 4.8% 95.9%;
-
     --popover: 232 24% 14%;
     --popover-foreground: 240 4.8% 95.9%;
-
     --primary: 262 60% 75%;
     --primary-foreground: 240 5.9% 10%;
-
     --secondary: 262 32% 54%;
     --secondary-foreground: 240 4.8% 95.9%;
-
     --muted: 262 32% 54%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 262 32% 54%;
     --accent-foreground: 240 4.8% 95.9%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 240 4.8% 95.9%;
-
     --border: 262 32% 54%;
     --input: 262 32% 54%;
     --ring: 262 60% 75%;
-
     --radius: 0.5rem;
 
-    --stats-text: 0 84% 90%;
-    --stats-accent: 262 60% 75%;
-    --stats-bg: 232 24% 18%;
-    --stats-border: 262 32% 54%;
-  }
-
-  .dark {
-    --background: 232 24% 14%;
-    --foreground: 240 4.8% 95.9%;
-
-    --card: 232 24% 14%;
-    --card-foreground: 240 4.8% 95.9%;
-
-    --popover: 232 24% 14%;
-    --popover-foreground: 240 4.8% 95.9%;
-
-    --primary: 262 60% 75%;
-    --primary-foreground: 240 5.9% 10%;
-
-    --secondary: 262 32% 54%;
-    --secondary-foreground: 240 4.8% 95.9%;
-
-    --muted: 262 32% 54%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 262 32% 54%;
-    --accent-foreground: 240 4.8% 95.9%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 240 4.8% 95.9%;
-
-    --border: 262 32% 54%;
-    --input: 262 32% 54%;
-    --ring: 262 60% 75%;
-
-    --stats-text: 0 84% 90%;
+    /* Stats specific colors */
+    --stats-text: 220 20% 98%;
     --stats-accent: 262 60% 75%;
     --stats-bg: 232 24% 18%;
     --stats-border: 262 32% 54%;
   }
 }
 
+@layer components {
+  .stats-card {
+    @apply relative overflow-hidden bg-stats-bg border-stats-border;
+    background: linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.05) 0%,
+      rgba(168, 85, 247, 0.05) 50%,
+      rgba(59, 130, 246, 0.05) 100%
+    );
+    transition: all 0.3s ease-in-out;
+  }
+
+  .stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  .stats-value {
+    @apply text-4xl font-bold;
+    background: linear-gradient(to right, #60A5FA, #8B5CF6, #60A5FA);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 200% auto;
+    animation: shine 3s linear infinite;
+  }
+
+  .stats-subtitle {
+    @apply text-xs flex items-center gap-1 text-blue-300/80;
+  }
+
+  .stats-icon {
+    @apply opacity-80;
+    filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.3));
+  }
+
+  .stats-breakdown {
+    @apply mt-4 space-y-2 text-xs;
+  }
+
+  .stats-breakdown-item {
+    @apply flex justify-between items-center px-2 py-1 rounded transition-all duration-300 bg-black/40 hover:bg-black/60;
+  }
+
+  .stats-breakdown-label {
+    @apply text-blue-200/70;
+  }
+
+  .stats-breakdown-value {
+    @apply text-blue-100/90 font-mono;
+  }
+}
+
+@keyframes shine {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Base styles */
 @layer base {
   * {
     @apply border-border;
   }
-
   body {
     @apply bg-background text-foreground min-h-screen;
   }
-
   #root {
     @apply min-h-screen bg-background;
   }
 }
 
-/* Custom Scrollbar Styles */
+/* Scrollbar styles */
 .scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  @apply w-1.5 h-1.5;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
@@ -102,107 +115,4 @@
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
   @apply bg-blue-500/30 rounded hover:bg-blue-500/50 transition-colors;
-}
-
-/* Table Styles */
-.table-container {
-  position: relative;
-  width: 100%;
-  overflow-x: auto;
-  @apply bg-black/40 backdrop-blur-sm scrollbar-thin;
-}
-
-.overflow-x-auto {
-  @apply bg-black/40 backdrop-blur-sm;
-  overflow-x: auto;
-}
-
-tbody tr:hover {
-  @apply bg-blue-950/30 transition-colors duration-200;
-}
-
-/* Ensure consistent background color when scrolling */
-html, body {
-  @apply bg-background overflow-x-hidden min-h-screen;
-}
-
-.card {
-  @apply relative z-10;
-}
-
-/* Stats Card Styles */
-.stats-card {
-  @apply relative overflow-hidden;
-  background: linear-gradient(
-    135deg,
-    rgba(99, 102, 241, 0.05) 0%,
-    rgba(168, 85, 247, 0.05) 50%,
-    rgba(59, 130, 246, 0.05) 100%
-  );
-  transition: all 0.3s ease-in-out;
-}
-
-.stats-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-}
-
-.stats-value {
-  @apply text-4xl font-bold;
-  background: linear-gradient(to right, #60A5FA, #8B5CF6, #60A5FA);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  background-size: 200% auto;
-  animation: shine 3s linear infinite;
-}
-
-.stats-subtitle {
-  @apply text-xs flex items-center gap-1;
-  color: rgba(148, 163, 184, 0.8);
-}
-
-.stats-icon {
-  @apply opacity-80;
-  filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.3));
-}
-
-.stats-breakdown {
-  @apply mt-4 space-y-2 text-xs;
-}
-
-.stats-breakdown-item {
-  @apply flex justify-between items-center px-2 py-1 rounded transition-all duration-300;
-  background: rgba(30, 41, 59, 0.4);
-}
-
-.stats-breakdown-item:hover {
-  background: rgba(30, 41, 59, 0.6);
-  transform: translateX(4px);
-}
-
-.stats-breakdown-label {
-  @apply text-blue-200/70;
-}
-
-.stats-breakdown-value {
-  @apply text-blue-100/90 font-mono;
-}
-
-@keyframes shine {
-  0% {
-    background-position: 0% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
-}
-
-/* Ensure consistent background color when scrolling */
-html, body {
-  @apply bg-background overflow-x-hidden min-h-screen;
-}
-
-.card {
-  @apply relative z-10;
 }
