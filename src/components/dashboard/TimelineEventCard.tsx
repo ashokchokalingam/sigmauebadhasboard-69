@@ -13,15 +13,25 @@ interface TimelineEventCardProps {
   isLast?: boolean;
 }
 
+interface DetailedLogResponse {
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total_pages: number;
+    total_records: number;
+  };
+  user_impacted_logs: Alert[];
+}
+
 const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const { data: detailedLogs, isLoading } = useQuery({
-    queryKey: ['detailed-logs', event.user_impacted, event.title, isExpanded],
+  const { data: detailedLogs, isLoading } = useQuery<DetailedLogResponse>({
+    queryKey: ['detailed-logs', event.target_user_name, event.title, isExpanded],
     queryFn: async () => {
       if (!isExpanded) return null;
       const response = await fetch(
-        `/api/user_impacted_logs?user_impacted=${encodeURIComponent(event.user_impacted || '')}&title=${encodeURIComponent(event.title)}&page=1&per_page=500`
+        `/api/user_impacted_logs?user_impacted=${encodeURIComponent(event.target_user_name || '')}&title=${encodeURIComponent(event.title)}&page=1&per_page=500`
       );
       if (!response.ok) throw new Error('Failed to fetch logs');
       return response.json();
@@ -47,7 +57,7 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
 
   const formatValue = (value: any): string => {
     if (value === null || value === undefined) return 'N/A';
-    if (typeof value === 'object') return JSON.stringify(value);
+    if (typeof value === 'object') return JSON.stringify(value, null, 2);
     return String(value);
   };
 
@@ -85,7 +95,7 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
               </span>
               <div className="flex items-center gap-2 text-sm text-green-400/70">
                 <Activity className="h-4 w-4" />
-                <span>{event.total_events || 0} events</span>
+                <span>{detailedLogs?.pagination?.total_records || 0} events</span>
               </div>
             </div>
           </div>
@@ -118,22 +128,26 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
           {/* Detailed Logs Section */}
           {isExpanded && (
             <div className="mt-4 border-t border-blue-500/10 pt-4">
-              <h4 className="text-blue-100 font-medium mb-3">Detailed Logs</h4>
+              <h4 className="text-blue-100 font-medium mb-3">Detailed Logs ({detailedLogs?.pagination?.total_records || 0} events)</h4>
               {isLoading ? (
                 <div className="flex justify-center py-4">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
                 </div>
-              ) : detailedLogs?.length > 0 ? (
+              ) : detailedLogs?.user_impacted_logs?.length > 0 ? (
                 <ScrollArea className="h-[300px] w-full rounded-md border border-blue-500/10 p-4">
                   <div className="space-y-4">
-                    {detailedLogs.map((log: Alert, index: number) => (
+                    {detailedLogs.user_impacted_logs.map((log, index) => (
                       <div key={index} className="p-3 rounded-md bg-black/20 border border-blue-500/5">
-                        {allColumns.map(column => (
-                          <div key={column.key} className="mb-2">
-                            <span className="text-blue-300/70 text-sm">{column.label}: </span>
-                            <span className="text-blue-100">{formatValue(log[column.key as keyof Alert])}</span>
-                          </div>
-                        ))}
+                        <div className="grid grid-cols-2 gap-4">
+                          {Object.entries(log).map(([key, value]) => (
+                            <div key={key} className="mb-2">
+                              <span className="text-blue-300/70 text-sm">{key}: </span>
+                              <span className="text-blue-100 break-all font-mono text-xs">
+                                {formatValue(value)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </div>
