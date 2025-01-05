@@ -55,7 +55,10 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
         </div>
       </div>
       
-      <div className="flex items-center">
+      <div className="flex items-center gap-4">
+        <span className="text-xs text-blue-300/40">
+          {safeEventCount.toLocaleString()} total events
+        </span>
         {safeUniqueTitles > 1 && (
           <div className={cn(
             "px-2.5 py-1 rounded text-xs font-medium",
