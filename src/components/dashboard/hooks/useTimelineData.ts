@@ -20,9 +20,9 @@ export const useTimelineData = (
   const queryClient = useQueryClient();
 
   const fetchTimelineData = async (pageNum: number): Promise<TimelineResponse> => {
-    console.log(`Fetching timeline data for page ${pageNum}`);
+    console.log(`Fetching timeline data for page ${pageNum}, timeframe ${timeframe}`);
     const response = await fetch(
-      `/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${pageNum}&per_page=1000&timeframe=${timeframe}`
+      `/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${pageNum}&per_page=100&timeframe=${timeframe}`
     );
     if (!response.ok) {
       throw new Error('Failed to fetch timeline data');
@@ -39,6 +39,7 @@ export const useTimelineData = (
     retry: 2,
     meta: {
       onSuccess: async (data: TimelineResponse) => {
+        // If there are more pages, prefetch the next one
         if (data.pagination.current_page < data.pagination.total_pages) {
           const nextPage = page + 1;
           console.log(`Prefetching next page ${nextPage}`);
@@ -53,14 +54,16 @@ export const useTimelineData = (
   });
 
   const alerts: Alert[] = data?.user_impacted_timeline_logs || [];
-  const pagination = data?.pagination || { current_page: 0, total_pages: 0, per_page: 1000, total_records: 0 };
+  const pagination = data?.pagination || { current_page: 0, total_pages: 0, per_page: 100, total_records: 0 };
   const hasMore = pagination.current_page < pagination.total_pages;
 
   console.log('Current timeline state:', {
     page,
     hasMore,
     alertsCount: alerts.length,
-    isLoading
+    isLoading,
+    currentPage: pagination.current_page,
+    totalPages: pagination.total_pages
   });
 
   return {

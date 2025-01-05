@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import TimelineHeader from "./TimelineComponents/TimelineHeader";
 import TimelineLoader from "./TimelineComponents/TimelineLoader";
 import TimelineContent from "./TimelineComponents/TimelineContent";
-import LoadMoreButton from "./TimelineComponents/LoadMoreButton";
 import TimeRangeSelector from "./TimeRangeSelector";
 import { useTimelineData } from "./hooks/useTimelineData";
 import { useToast } from "@/hooks/use-toast";
