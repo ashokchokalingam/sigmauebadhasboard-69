@@ -1,85 +1,54 @@
-import { Computer, Network, Hash, Terminal, User, Globe, Clock } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Alert } from "../types";
 
 interface SystemInfoProps {
   alert: Alert;
+  browserTime: string;
 }
 
-const SystemInfo = ({ alert }: SystemInfoProps) => {
-  const browserTime = new Date(alert.system_time).toLocaleString(undefined, {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
-    month: 'numeric',
-    day: 'numeric',
-    year: 'numeric',
-  });
-
+const SystemInfo = ({ alert, browserTime }: SystemInfoProps) => {
   return (
-    <div className="space-y-2">
-      <h3 className="text-lg font-medium text-blue-100 border-b border-blue-500/10 pb-2">
-        System Information
-      </h3>
+    <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
+      <h3 className="text-lg font-semibold text-[#E0E0E0] mb-3">System Information</h3>
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-blue-400">
-            <Computer className="h-4 w-4" />
-            <span className="text-sm">Computer Name</span>
-          </div>
-          <p className="text-blue-200 pl-6 text-sm font-mono">{alert.computer_name || 'N/A'}</p>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">Computer Name</h4>
+          <p className="text-sm text-[#E0E0E0] font-mono">{alert.computer_name || 'N/A'}</p>
         </div>
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-blue-400">
-            <Network className="h-4 w-4" />
-            <span className="text-sm">IP Address</span>
-          </div>
-          <p className="text-blue-200 pl-6 text-sm font-mono">{alert.ip_address || 'N/A'}</p>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">IP Address</h4>
+          <p className="text-sm text-[#E0E0E0] font-mono">{alert.ip_address || 'N/A'}</p>
         </div>
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-blue-400">
-            <User className="h-4 w-4" />
-            <span className="text-sm">User ID</span>
-          </div>
-          <p className="text-blue-200 pl-6 text-sm font-mono">{alert.user_id || 'N/A'}</p>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">User ID</h4>
+          <p className="text-sm text-[#E0E0E0] font-mono">{alert.user_id || 'N/A'}</p>
         </div>
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-blue-400">
-            <Hash className="h-4 w-4" />
-            <span className="text-sm">Event ID</span>
-          </div>
-          <p className="text-blue-200 pl-6 text-sm font-mono">{alert.event_id || 'N/A'}</p>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">Event ID</h4>
+          <p className="text-sm text-[#1E90FF] font-mono">{alert.event_id || 'N/A'}</p>
         </div>
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-blue-400">
-            <Terminal className="h-4 w-4" />
-            <span className="text-sm">Provider</span>
-          </div>
-          <p className="text-blue-200 pl-6 text-sm font-mono">{alert.provider_name || 'N/A'}</p>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">Provider</h4>
+          <p className="text-sm text-[#E0E0E0] font-mono">{alert.provider_name || 'N/A'}</p>
         </div>
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-blue-400">
-            <User className="h-4 w-4" />
-            <span className="text-sm">Target User</span>
-          </div>
-          <p className="text-blue-200 pl-6 text-sm font-mono">{alert.target_user_name || 'N/A'}</p>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">Target User</h4>
+          <p className="text-sm text-[#1E90FF] font-mono">{alert.target_user_name || 'N/A'}</p>
         </div>
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-blue-400">
-            <Globe className="h-4 w-4" />
-            <span className="text-sm">Target Domain</span>
-          </div>
-          <p className="text-blue-200 pl-6 text-sm font-mono">{alert.target_domain_name || 'N/A'}</p>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">User Impacted</h4>
+          <p className="text-sm text-[#1E90FF] font-mono">{alert.user_impacted || 'N/A'}</p>
         </div>
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-blue-400">
-            <Clock className="h-4 w-4" />
-            <span className="text-sm">System Time</span>
-          </div>
-          <p className="text-blue-200 pl-6 text-sm font-mono">{browserTime || 'N/A'}</p>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">Target Domain</h4>
+          <p className="text-sm text-[#E0E0E0] font-mono">{alert.target_domain_name || 'N/A'}</p>
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">System Time</h4>
+          <p className="text-sm text-[#E0E0E0] font-mono">{browserTime || 'N/A'}</p>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
