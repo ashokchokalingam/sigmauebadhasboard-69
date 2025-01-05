@@ -59,7 +59,7 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
               <svg className="w-full h-full" preserveAspectRatio="none">
                 <path
                   d="M0,10 L20,10 L40,10 L60,10 L80,2 L100,18 L120,10 L140,10 L160,10 L180,2 L200,18 L220,10 L240,10 L260,10 L280,10"
-                  className="stroke-[#D946EF] stroke-[1.5] fill-none animate-cardiogram"
+                  className="stroke-[#8B5CF6] stroke-[1.5] fill-none animate-cardiogram"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   pathLength="100"
