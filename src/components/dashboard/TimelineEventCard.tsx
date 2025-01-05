@@ -45,6 +45,12 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
     return format(new Date(dateStr), "MMM d, yyyy 'at' h:mm a");
   };
 
+  const formatValue = (value: any): string => {
+    if (value === null || value === undefined) return 'N/A';
+    if (typeof value === 'object') return JSON.stringify(value);
+    return String(value);
+  };
+
   const handleCardClick = () => {
     setIsExpanded(!isExpanded);
   };
@@ -125,7 +131,7 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
                         {allColumns.map(column => (
                           <div key={column.key} className="mb-2">
                             <span className="text-blue-300/70 text-sm">{column.label}: </span>
-                            <span className="text-blue-100">{log[column.key as keyof Alert] || 'N/A'}</span>
+                            <span className="text-blue-100">{formatValue(log[column.key as keyof Alert])}</span>
                           </div>
                         ))}
                       </div>
