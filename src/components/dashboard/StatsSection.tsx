@@ -9,12 +9,7 @@ interface StatsSectionProps {
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   // Calculate high risk users (users with risk score > 80)
-  const highRiskUsers = stats.uniqueUsers?.users?.filter(user => {
-    if (typeof user === 'object' && user !== null && 'risk_score' in user) {
-      return (user as { risk_score: number }).risk_score > 80;
-    }
-    return false;
-  })?.length || 0;
+  const highRiskUsers = stats.uniqueUsers?.users?.filter(user => user.risk_score > 80)?.length || 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">

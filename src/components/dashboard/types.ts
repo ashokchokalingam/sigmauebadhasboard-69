@@ -21,7 +21,7 @@ export interface Alert {
   is_anomaly?: boolean;
 }
 
-interface User {
+export interface User {
   id: string;
   risk_score: number;
 }
