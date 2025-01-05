@@ -2,6 +2,9 @@ import { Clock, Activity, AlertTriangle, Shield } from "lucide-react";
 import { EventSummary } from "./types";
 import { Card } from "../ui/card";
 import { extractTacticsAndTechniques } from "./utils";
+import TimelineRawLog from "./TimelineRawLog";
+import TimelineMetadataGrid from "./TimelineMetadataGrid";
+import TimelineMitreSection from "./TimelineMitreSection";
 
 interface TimelineEventCardProps {
   event: EventSummary;
@@ -52,33 +55,17 @@ const TimelineEventCard = ({ event }: TimelineEventCardProps) => {
             <div className="bg-blue-500/10 px-3 py-1.5 rounded-full flex items-center gap-2">
               <Activity className="h-4 w-4 text-blue-400" />
               <span className="text-sm font-medium text-blue-400">
-                {event.total_events.toLocaleString()} events
+                {event.total_events?.toLocaleString()} events
               </span>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {techniques.map((technique, index) => (
-            <span
-              key={index}
-              className="px-2 py-1 bg-blue-500/10 text-blue-300 text-xs rounded-full border border-blue-500/20"
-            >
-              {technique}
-            </span>
-          ))}
-        </div>
+        <TimelineMetadataGrid alert={event} />
+        
+        <TimelineMitreSection alert={event} />
 
-        <div className="grid grid-cols-2 gap-4 text-sm text-blue-300/70">
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            <span>First seen: {formatDate(event.first_time_seen)}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            <span>Last seen: {formatDate(event.last_time_seen)}</span>
-          </div>
-        </div>
+        <TimelineRawLog alert={event} />
       </div>
     </Card>
   );

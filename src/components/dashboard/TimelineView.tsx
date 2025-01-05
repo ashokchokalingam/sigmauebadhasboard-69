@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import TimelineHeader from "./TimelineComponents/TimelineHeader";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Alert } from "./types";
 import { Card } from "@/components/ui/card";
 import TimelineEventCard from "./TimelineEventCard";
 import TimelineHistogram from "./TimelineHistogram/TimelineHistogram";
+import TimeRangeSelector from "./TimeRangeSelector";
+import InfiniteScrollLoader from "./InfiniteScrollLoader";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
 
 interface TimelineViewProps {
   entityType: "user" | "computer";
@@ -13,19 +17,27 @@ interface TimelineViewProps {
   inSidebar?: boolean;
 }
 
-const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: TimelineViewProps) => {
-  const [timeframe, setTimeframe] = useState<'24h' | '7d'>('24h');
+const EVENTS_PER_PAGE = 500;
 
-  const { data: timelineData, isLoading } = useQuery({
-    queryKey: ['timeline', entityType, entityId, timeframe],
-    queryFn: async () => {
+const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: TimelineViewProps) => {
+  const [timeRange, setTimeRange] = useState<string>('24h');
+  const { ref, inView } = useInView();
+
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery({
+    queryKey: ['timeline', entityType, entityId, timeRange],
+    queryFn: async ({ pageParam = 1 }) => {
       let endpoint = '';
       
-      // Select the correct endpoint based on entity type
       if (entityType === 'user') {
-        endpoint = `http://172.16.0.75:5000/api/user_impacted_timeline?user_impacted=${entityId}`;
+        endpoint = `http://172.16.0.75:5000/api/user_impacted_logs?user_impacted=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`;
       } else if (entityType === 'computer') {
-        endpoint = `http://172.16.0.75:5000/api/computer_impacted_timeline?computer_name=${entityId}`;
+        endpoint = `http://172.16.0.75:5000/api/computer_impacted_timeline?computer_name=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`;
       }
 
       const response = await fetch(endpoint);
@@ -33,11 +45,25 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         throw new Error('Failed to fetch timeline data');
       }
       const data = await response.json();
-      console.log('Timeline data:', data); // Debug log
+      console.log('Timeline data page:', pageParam, data);
       return data;
+    },
+    getNextPageParam: (lastPage, pages) => {
+      if (lastPage.user_impacted_timeline?.length === EVENTS_PER_PAGE) {
+        return pages.length + 1;
+      }
+      return undefined;
     },
     enabled: Boolean(entityType && entityId)
   });
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const allEvents = data?.pages.flatMap(page => page.user_impacted_timeline || []) || [];
 
   const content = (
     <div className="space-y-8">
@@ -48,19 +74,28 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         inSidebar={inSidebar}
       />
 
+      <div className="flex justify-end">
+        <TimeRangeSelector 
+          value={timeRange} 
+          onChange={(value) => setTimeRange(value)} 
+        />
+      </div>
+
       {isLoading ? (
         <div className="flex items-center justify-center p-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
         </div>
-      ) : timelineData?.user_impacted_timeline && timelineData.user_impacted_timeline.length > 0 ? (
+      ) : allEvents.length > 0 ? (
         <div className="space-y-8">
-          <TimelineHistogram alerts={timelineData.user_impacted_timeline as Alert[]} />
+          <TimelineHistogram alerts={allEvents as Alert[]} />
           
           <div className="space-y-4 mt-8">
-            {timelineData.user_impacted_timeline.map((event: any, index: number) => (
+            {allEvents.map((event: any, index: number) => (
               <TimelineEventCard key={index} event={event} />
             ))}
           </div>
+
+          <InfiniteScrollLoader ref={ref} hasMore={hasNextPage || false} />
         </div>
       ) : (
         <Card className="bg-black/40 border-blue-500/10 p-8">
