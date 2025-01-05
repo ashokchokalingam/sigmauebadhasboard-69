@@ -36,16 +36,18 @@ export const useTimelineData = (
     queryFn: () => fetchTimelineData(page),
     staleTime: 30000,
     retry: 2,
-    onSuccess: (data: TimelineResponse) => {
-      // Prefetch next page if there are more pages
-      if (data.pagination.current_page < data.pagination.total_pages) {
-        const nextPage = page + 1;
-        console.log(`Prefetching next page ${nextPage}`);
-        queryClient.prefetchQuery({
-          queryKey: ['timeline-impacted', entityId, nextPage, timeframe],
-          queryFn: () => fetchTimelineData(nextPage),
-          staleTime: 30000,
-        });
+    meta: {
+      onSuccess: (data: TimelineResponse) => {
+        // Prefetch next page if there are more pages
+        if (data.pagination.current_page < data.pagination.total_pages) {
+          const nextPage = page + 1;
+          console.log(`Prefetching next page ${nextPage}`);
+          queryClient.prefetchQuery({
+            queryKey: ['timeline-impacted', entityId, nextPage, timeframe],
+            queryFn: () => fetchTimelineData(nextPage),
+            staleTime: 30000,
+          });
+        }
       }
     }
   });
