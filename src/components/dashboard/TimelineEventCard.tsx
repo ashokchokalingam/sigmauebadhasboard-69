@@ -36,14 +36,17 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
         return null;
       }
 
-      const params = new URLSearchParams({
-        user_impacted: event.target_user_name,
-        title: event.title,
-        page: '1',
-        per_page: '500'
-      });
+      // Create URL with properly encoded parameters
+      const baseUrl = '/api/user_impacted_logs';
+      const params = new URLSearchParams();
+      params.append('user_impacted', event.target_user_name);
+      params.append('title', event.title);
+      params.append('page', '1');
+      params.append('per_page', '500');
 
-      const response = await fetch(`/api/user_impacted_logs?${params.toString()}`);
+      console.log('Fetching logs with params:', baseUrl + '?' + params.toString());
+
+      const response = await fetch(`${baseUrl}?${params.toString()}`);
       
       if (!response.ok) {
         const errorData = await response.json();
