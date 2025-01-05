@@ -132,19 +132,39 @@ html, body {
 
 /* Stats Card Styles */
 .stats-card {
-  @apply bg-[hsl(var(--stats-bg))] border-[hsl(var(--stats-border))]/20 hover:bg-[hsl(var(--stats-bg))]/80 transition-all duration-300;
+  @apply relative overflow-hidden;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.05) 0%,
+    rgba(168, 85, 247, 0.05) 50%,
+    rgba(59, 130, 246, 0.05) 100%
+  );
+  transition: all 0.3s ease-in-out;
+}
+
+.stats-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
 .stats-value {
-  @apply text-4xl font-bold text-[hsl(var(--stats-text))];
+  @apply text-4xl font-bold;
+  background: linear-gradient(to right, #60A5FA, #8B5CF6, #60A5FA);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% auto;
+  animation: shine 3s linear infinite;
 }
 
 .stats-subtitle {
-  @apply text-xs text-[hsl(var(--stats-accent))] flex items-center gap-1;
+  @apply text-xs flex items-center gap-1;
+  color: rgba(148, 163, 184, 0.8);
 }
 
 .stats-icon {
-  @apply text-[hsl(var(--stats-accent))] opacity-80;
+  @apply opacity-80;
+  filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.3));
 }
 
 .stats-breakdown {
@@ -152,13 +172,37 @@ html, body {
 }
 
 .stats-breakdown-item {
-  @apply flex justify-between items-center;
+  @apply flex justify-between items-center px-2 py-1 rounded transition-all duration-300;
+  background: rgba(30, 41, 59, 0.4);
+}
+
+.stats-breakdown-item:hover {
+  background: rgba(30, 41, 59, 0.6);
+  transform: translateX(4px);
 }
 
 .stats-breakdown-label {
-  @apply text-[hsl(var(--stats-accent))] opacity-80;
+  @apply text-blue-200/70;
 }
 
 .stats-breakdown-value {
-  @apply text-[hsl(var(--stats-text))] font-semibold;
+  @apply text-blue-100/90 font-mono;
+}
+
+@keyframes shine {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Ensure consistent background color when scrolling */
+html, body {
+  @apply bg-background overflow-x-hidden min-h-screen;
+}
+
+.card {
+  @apply relative z-10;
 }
