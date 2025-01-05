@@ -59,15 +59,13 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
               <div className="w-full h-px bg-blue-400/10" />
             </div>
             <div className="relative flex items-center justify-between w-full h-full">
-              {Array.from({ length: 12 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-6 w-0.5 bg-blue-400/40 animate-cardiogram"
-                  style={{
-                    animationDelay: `${i * 0.1}s`
-                  }}
-                />
-              ))}
+              <div className="w-full h-full flex items-center">
+                <div className="w-full h-4 relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full h-[2px] bg-blue-400/40 animate-cardiogram" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

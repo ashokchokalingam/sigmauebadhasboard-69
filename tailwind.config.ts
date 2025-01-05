@@ -78,40 +78,24 @@ export default {
           to: { height: '0' }
         },
         'cardiogram': {
-          '0%, 100%': {
-            height: '4px',
-            marginTop: '14px'
-          },
-          '15%': {
-            height: '4px',
-            marginTop: '14px'
-          },
-          '20%': {
-            height: '20px',
-            marginTop: '0px'
-          },
-          '25%': {
-            height: '4px',
-            marginTop: '14px'
-          },
-          '30%': {
-            height: '24px',
-            marginTop: '0px'
-          },
-          '35%, 50%': {
-            height: '4px',
-            marginTop: '14px'
-          },
-          '70%': {
-            height: '8px',
-            marginTop: '10px'
-          }
+          '0%': { transform: 'translateX(0%) scaleY(1)' },
+          '5%': { transform: 'translateX(-2%) scaleY(1)' },
+          '10%': { transform: 'translateX(-4%) scaleY(6)' },
+          '15%': { transform: 'translateX(-6%) scaleY(1)' },
+          '20%': { transform: 'translateX(-8%) scaleY(-4)' },
+          '25%': { transform: 'translateX(-10%) scaleY(1)' },
+          '30%': { transform: 'translateX(-12%) scaleY(8)' },
+          '35%': { transform: 'translateX(-14%) scaleY(1)' },
+          '40%': { transform: 'translateX(-16%) scaleY(-2)' },
+          '45%': { transform: 'translateX(-18%) scaleY(1)' },
+          '50%': { transform: 'translateX(-20%) scaleY(1)' },
+          '100%': { transform: 'translateX(-100%) scaleY(1)' }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'cardiogram': 'cardiogram 1.5s ease-in-out infinite'
+        'cardiogram': 'cardiogram 3s linear infinite'
       }
     }
   },
