@@ -1,5 +1,6 @@
 import { Alert } from './types';
-import { getSeverityColor } from './utils/timelineDataUtils';
+import { getSeverityColor, getCategoryColor } from './utils/timelineDataUtils';
+import { Badge } from "@/components/ui/badge";
 
 interface TimelineTooltipProps {
   active?: boolean;
@@ -9,13 +10,38 @@ interface TimelineTooltipProps {
 const TimelineTooltip = ({ active, payload }: TimelineTooltipProps) => {
   if (!active || !payload || !payload.length) return null;
 
-  const { fullDate, count, events } = payload[0].payload;
+  const { fullDate, count, events, categories, anomalyCount } = payload[0].payload;
 
   return (
-    <div className="bg-black/90 p-4 rounded-lg border border-blue-500/20 shadow-xl backdrop-blur-sm">
+    <div className="bg-black/90 p-4 rounded-lg border border-blue-500/20 shadow-xl backdrop-blur-sm max-w-md">
       <p className="text-blue-300 font-mono text-sm mb-2">{fullDate}</p>
-      <p className="text-white font-medium mb-2">Total Events: {count}</p>
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-white font-medium">Total Events:</span>
+        <Badge variant="secondary">{count}</Badge>
+        {anomalyCount > 0 && (
+          <Badge variant="destructive">
+            {anomalyCount} Anomalies
+          </Badge>
+        )}
+      </div>
+      
+      <div className="mb-3">
+        <p className="text-sm text-blue-200 mb-1">Categories:</p>
+        <div className="flex flex-wrap gap-1">
+          {Object.entries(categories).map(([category, count]) => (
+            <Badge
+              key={category}
+              style={{ backgroundColor: getCategoryColor(category) }}
+              className="text-white"
+            >
+              {category}: {count}
+            </Badge>
+          ))}
+        </div>
+      </div>
+
       <div className="max-h-32 overflow-y-auto">
+        <p className="text-sm text-blue-200 mb-1">Recent Events:</p>
         {events.slice(0, 3).map((event: Alert, index: number) => (
           <div 
             key={index} 

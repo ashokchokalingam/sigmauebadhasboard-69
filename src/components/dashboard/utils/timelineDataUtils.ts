@@ -6,6 +6,8 @@ export interface TimelineDataPoint {
   count: number;
   severity: string;
   events: Alert[];
+  categories: { [key: string]: number };
+  anomalyCount: number;
 }
 
 export const processTimelineData = (alerts: Alert[]): TimelineDataPoint[] => {
@@ -19,6 +21,7 @@ export const processTimelineData = (alerts: Alert[]): TimelineDataPoint[] => {
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) return;
       
+      // Group by 15-minute intervals for better granularity
       const minutes = Math.floor(date.getMinutes() / 15) * 15;
       const hour = date.getHours();
       
@@ -32,17 +35,36 @@ export const processTimelineData = (alerts: Alert[]): TimelineDataPoint[] => {
       
       const key = `${date.toISOString().split('T')[0]} ${hour}:${minutes}`;
       
+      // Extract event categories from tags
+      const categories = alert.tags.split(',').reduce((acc: { [key: string]: number }, tag) => {
+        const category = tag.trim();
+        acc[category] = (acc[category] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Check if it's an anomaly
+      const isAnomaly = typeof alert.dbscan_cluster === 'number' && alert.dbscan_cluster === -1;
+      
       if (!timeData[key]) {
         timeData[key] = {
           time: `${hour}:${minutes}`,
           fullDate: formattedDate,
           count: 1,
           severity: alert.rule_level || 'unknown',
-          events: [alert]
+          events: [alert],
+          categories,
+          anomalyCount: isAnomaly ? 1 : 0
         };
       } else {
         timeData[key].count++;
         timeData[key].events.push(alert);
+        timeData[key].anomalyCount += isAnomaly ? 1 : 0;
+        
+        // Merge categories
+        Object.entries(categories).forEach(([category, count]) => {
+          timeData[key].categories[category] = (timeData[key].categories[category] || 0) + count;
+        });
+        
         if (alert.rule_level === 'critical' || alert.rule_level === 'high') {
           timeData[key].severity = alert.rule_level;
         }
@@ -66,4 +88,16 @@ export const getSeverityColor = (severity: string = ''): string => {
   if (s.includes('low')) return '#32CD32';
   if (s.includes('informational')) return '#1E90FF';
   return '#3b82f6';
+};
+
+export const getCategoryColor = (category: string): string => {
+  // Hash the category string to generate a consistent color
+  let hash = 0;
+  for (let i = 0; i < category.length; i++) {
+    hash = category.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  
+  // Convert to HSL color with fixed saturation and lightness
+  const hue = hash % 360;
+  return `hsl(${hue}, 70%, 50%)`;
 };
