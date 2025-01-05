@@ -1,57 +1,54 @@
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ZoomIn, ZoomOut } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
 
 interface TimelineControlsProps {
-  onZoomIn: () => void;
-  onZoomOut: () => void;
+  timeRange: '1h' | '24h' | '7d';
+  onTimeRangeChange: (range: '1h' | '24h' | '7d') => void;
   selectedSeverity: string | null;
   onSeveritySelect: (severity: string | null) => void;
-  severities: string[];
-  timeGranularity: '5min' | 'hour' | 'day';
-  onGranularityChange: (granularity: '5min' | 'hour' | 'day') => void;
 }
 
 const TimelineControls = ({
-  onZoomIn,
-  onZoomOut,
-  timeGranularity,
-  onGranularityChange
+  timeRange,
+  onTimeRangeChange,
+  selectedSeverity,
+  onSeveritySelect,
 }: TimelineControlsProps) => {
   return (
-    <div className="flex items-center gap-2 mb-4">
-      <Select
-        value={timeGranularity}
-        onValueChange={(value: '5min' | 'hour' | 'day') => onGranularityChange(value)}
-      >
-        <SelectTrigger className="w-[140px] h-8 text-xs bg-black/40 border-blue-500/20">
-          <SelectValue placeholder="Time format" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="5min">1 hour per column</SelectItem>
-          <SelectItem value="hour">1 day per column</SelectItem>
-          <SelectItem value="day">1 week per column</SelectItem>
-        </SelectContent>
-      </Select>
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        {['1h', '24h', '7d'].map((range) => (
+          <Badge
+            key={range}
+            variant={timeRange === range ? "default" : "outline"}
+            className={`cursor-pointer ${
+              timeRange === range 
+                ? 'bg-blue-500 hover:bg-blue-600' 
+                : 'hover:bg-blue-500/10'
+            }`}
+            onClick={() => onTimeRangeChange(range as '1h' | '24h' | '7d')}
+          >
+            {range}
+          </Badge>
+        ))}
+      </div>
 
-      <div className="flex items-center gap-1">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onZoomOut}
-          className="h-8 px-2 text-xs bg-black/40 border-blue-500/20 hover:bg-blue-500/10"
-        >
-          <ZoomOut className="h-3 w-3 mr-1" /> Zoom Out
-        </Button>
-        
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onZoomIn}
-          className="h-8 px-2 text-xs bg-black/40 border-blue-500/20 hover:bg-blue-500/10"
-        >
-          <ZoomIn className="h-3 w-3 mr-1" /> Zoom to Selection
-        </Button>
+      <div className="flex items-center gap-2">
+        {['Critical', 'High', 'Medium'].map((severity) => (
+          <Button
+            key={severity}
+            variant="outline"
+            size="sm"
+            className={`h-8 px-2 text-xs ${
+              selectedSeverity === severity
+                ? 'bg-blue-500/20 border-blue-500'
+                : 'bg-black/40 border-blue-500/20 hover:bg-blue-500/10'
+            }`}
+            onClick={() => onSeveritySelect(selectedSeverity === severity ? null : severity)}
+          >
+            {severity}
+          </Button>
+        ))}
       </div>
     </div>
   );
