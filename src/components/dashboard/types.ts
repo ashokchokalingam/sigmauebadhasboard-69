@@ -3,7 +3,7 @@ export interface Alert {
   title: string;
   description: string;
   system_time: string;
-  first_time_seen?: string;  // Added this property
+  first_time_seen?: string;
   user_id?: string;
   target_user_name?: string;
   computer_name?: string;
@@ -44,6 +44,9 @@ export interface Stats {
   severity?: {
     critical: number;
     high: number;
+    medium: number;
+    low: number;
+    informational: number;
   };
   uniqueUsers?: {
     current: number;
