@@ -1,65 +1,30 @@
 export interface Alert {
   id: string;
-  title: string | null;
-  tags: string | null;
-  description: string | null;
-  system_time: string | null;
-  computer_name: string | null;
-  user_id: string | null;
-  event_id: string | null;
-  provider_name: string | null;
-  dbscan_cluster: number | null;
-  raw: string | null;
-  ip_address: string | null;
-  ruleid: string | null;
-  rule_level: string | null;
-  task: string | null;
-  target_user_name: string | null;
-  target_domain_name: string | null;
-  severity?: string;
-  risk_score?: number;
-  is_anomaly?: boolean;
+  title: string;
+  description: string;
+  system_time: string;
+  user_id?: string;
+  target_user_name?: string;
+  computer_name?: string;
+  event_id?: string;
+  provider_name?: string;
+  dbscan_cluster?: string;
+  ip_address?: string;
+  ruleid?: string;
+  rule_level?: string;
+  task?: string;
+  target_domain_name?: string;
+  tags: string;
 }
 
 export interface EventSummary {
   title: string;
-  tags: string;
   description: string;
-  total_count: number;
-  first_seen: string;
-  last_seen: string;
-}
-
-export interface User {
-  id: string;
-  risk_score: number;
-}
-
-export interface Stats {
-  totalEvents?: number;
-  severity?: {
-    critical: number;
-    high: number;
-    medium: number;
-    low: number;
-  };
-  uniqueUsers?: {
-    current: number;
-    change: number;
-    users: User[];
-  };
-  uniqueComputers?: {
-    current: number;
-    change: number;
-    computers: string[];
-  };
-  uniqueIPs?: number;
-  riskScore?: {
-    current: number;
-    change: number;
-  };
-  anomalies?: {
-    current: number;
-    change: number;
-  };
+  tags: string;
+  first_time_seen: string;
+  last_time_seen: string;
+  total_events: number;
+  user_impacted?: string;
+  user_origin?: string;
+  computer_name?: string;
 }

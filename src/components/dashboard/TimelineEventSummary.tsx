@@ -1,6 +1,7 @@
 import { Activity, Clock } from "lucide-react";
 import { EventSummary } from "./types";
 import { Card } from "../ui/card";
+import { Badge } from "../ui/badge";
 
 interface TimelineEventSummaryProps {
   summary: EventSummary[];
@@ -43,9 +44,9 @@ const TimelineEventSummary = ({ summary, isLoading }: TimelineEventSummaryProps)
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-blue-100 font-medium">{event.title}</h3>
-              <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
-                {event.total_count} occurrences
-              </span>
+              <Badge variant="secondary" className="bg-blue-500/20 text-blue-300">
+                {event.total_events} events
+              </Badge>
             </div>
             
             {event.description && (
@@ -55,12 +56,13 @@ const TimelineEventSummary = ({ summary, isLoading }: TimelineEventSummaryProps)
             {event.tags && (
               <div className="flex flex-wrap gap-2">
                 {event.tags.split(',').map((tag, i) => (
-                  <span 
+                  <Badge 
                     key={i}
-                    className="px-2 py-1 bg-blue-950/50 text-blue-300 text-xs rounded"
+                    variant="outline" 
+                    className="bg-blue-950/50 text-blue-300 border-blue-500/20"
                   >
-                    {tag}
-                  </span>
+                    {tag.trim()}
+                  </Badge>
                 ))}
               </div>
             )}
@@ -68,17 +70,23 @@ const TimelineEventSummary = ({ summary, isLoading }: TimelineEventSummaryProps)
             <div className="flex items-center gap-4 text-sm text-blue-300/70">
               <div className="flex items-center gap-1">
                 <Clock className="h-4 w-4" />
-                First seen: {formatDateTime(event.first_seen)}
+                First seen: {formatDateTime(event.first_time_seen)}
               </div>
               <div className="w-px h-4 bg-blue-500/20" />
               <div className="flex items-center gap-1">
                 <Clock className="h-4 w-4" />
-                Last seen: {formatDateTime(event.last_seen)}
+                Last seen: {formatDateTime(event.last_time_seen)}
               </div>
             </div>
           </div>
         </Card>
       ))}
+
+      {summary.length === 0 && (
+        <div className="text-center text-blue-300/70 py-8">
+          No events found for this time period
+        </div>
+      )}
     </div>
   );
 };
