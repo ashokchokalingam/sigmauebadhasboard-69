@@ -8,31 +8,43 @@ interface TimelineGraphProps {
 
 const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
   const processData = () => {
-    const timeData: { [key: string]: { time: string; fullDate: string; count: number } } = {};
+    const timeData: { [key: string]: { time: string; fullDate: string; count: number; severity: string } } = {};
     
     alerts.forEach(alert => {
-      const date = new Date(alert.system_time);
-      const hour = date.getHours().toString().padStart(2, '0');
-      const minute = date.getMinutes().toString().padStart(2, '0');
-      
-      const formattedDate = date.toLocaleString(undefined, {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
-      
-      const key = `${date.toISOString().split('T')[0]} ${hour}:${minute}`;
-      
-      if (!timeData[key]) {
-        timeData[key] = {
-          time: `${hour}:${minute}`,
-          fullDate: formattedDate,
-          count: 1
-        };
-      } else {
-        timeData[key].count++;
+      // Ensure we have a valid date string
+      const dateStr = alert.system_time || alert.first_time_seen;
+      if (!dateStr) return;
+
+      try {
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return; // Skip invalid dates
+        
+        const hour = date.getHours().toString().padStart(2, '0');
+        const minute = date.getMinutes().toString().padStart(2, '0');
+        
+        const formattedDate = date.toLocaleString(undefined, {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        });
+        
+        const key = `${date.toISOString().split('T')[0]} ${hour}:${minute}`;
+        
+        if (!timeData[key]) {
+          timeData[key] = {
+            time: `${hour}:${minute}`,
+            fullDate: formattedDate,
+            count: 1,
+            severity: alert.rule_level || 'unknown'
+          };
+        } else {
+          timeData[key].count++;
+        }
+      } catch (error) {
+        console.warn('Invalid date encountered:', dateStr);
+        return;
       }
     });
 
@@ -41,14 +53,22 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
     );
   };
 
+  const getSeverityColor = (severity: string = '') => {
+    const s = severity.toLowerCase();
+    if (s.includes('critical')) return '#FF4500';
+    if (s.includes('high')) return '#FF8C00';
+    if (s.includes('medium')) return '#FFD700';
+    if (s.includes('low')) return '#32CD32';
+    if (s.includes('informational')) return '#1E90FF';
+    return '#3b82f6';
+  };
+
   const data = processData();
 
   return (
     <div className="w-full h-[400px] relative group">
-      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-xl" />
       
-      {/* Main chart container */}
       <div className="relative w-full h-full p-4 backdrop-blur-sm rounded-xl border border-white/10 shadow-lg transition-all duration-300 hover:border-blue-500/30">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
@@ -60,14 +80,12 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
               bottom: 60
             }}
           >
-            {/* Stylish grid */}
             <CartesianGrid 
               strokeDasharray="3 3" 
               stroke="rgba(147, 197, 253, 0.1)"
               vertical={false}
             />
             
-            {/* X-axis with enhanced styling */}
             <XAxis 
               dataKey="fullDate"
               stroke="#93c5fd"
@@ -84,7 +102,6 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
               tickLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
             />
             
-            {/* Y-axis with enhanced styling */}
             <YAxis 
               stroke="#93c5fd"
               tick={{ 
@@ -97,7 +114,6 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
               tickLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
             />
             
-            {/* Enhanced tooltip */}
             <Tooltip
               contentStyle={{
                 backgroundColor: 'rgba(26, 34, 52, 0.95)',
@@ -122,7 +138,6 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
               labelFormatter={(label) => `Time: ${label}`}
             />
             
-            {/* Styled legend */}
             <Legend 
               wrapperStyle={{
                 paddingTop: '20px',
@@ -130,24 +145,24 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
               }}
             />
             
-            {/* Gradient area */}
-            <defs>
-              <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
+            {data.map((item, index) => (
+              <defs key={index}>
+                <linearGradient id={`colorCount${index}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={getSeverityColor(item.severity)} stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor={getSeverityColor(item.severity)} stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+            ))}
             
-            {/* Area with gradient */}
             <Area
               type="monotone"
               dataKey="count"
               name="Events"
-              stroke="#3b82f6"
+              stroke={getSeverityColor(data[0]?.severity)}
               strokeWidth={2}
-              fill="url(#colorCount)"
+              fill={`url(#colorCount0)`}
               dot={{ 
-                fill: '#3b82f6', 
+                fill: getSeverityColor(data[0]?.severity), 
                 r: 4,
                 strokeWidth: 2,
                 strokeOpacity: 0.8
@@ -163,7 +178,6 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
         </ResponsiveContainer>
       </div>
       
-      {/* Animated glow effect */}
       <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10 animate-pulse rounded-xl" />
       </div>
