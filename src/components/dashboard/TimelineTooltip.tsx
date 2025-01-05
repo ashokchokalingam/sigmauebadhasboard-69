@@ -4,7 +4,15 @@ import { Badge } from "@/components/ui/badge";
 
 interface TimelineTooltipProps {
   active?: boolean;
-  payload?: any[];
+  payload?: Array<{
+    payload: {
+      fullDate: string;
+      count: number;
+      events: Alert[];
+      categories: { [key: string]: number };
+      anomalyCount: number;
+    };
+  }>;
 }
 
 const TimelineTooltip = ({ active, payload }: TimelineTooltipProps) => {
