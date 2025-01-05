@@ -14,9 +14,14 @@ interface TimelineGraphProps {
 const TimelineGraph = ({ alerts, onTimeRangeChange }: TimelineGraphProps) => {
   const [zoomDomain, setZoomDomain] = useState<{ start: number; end: number } | null>(null);
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
-  const [timeGranularity, setTimeGranularity] = useState<'5min' | 'hour' | 'day'>('5min');
+  const [timeGranularity, setTimeGranularity] = useState<'5min' | 'hour' | 'day'>('hour');
 
-  const data = useMemo(() => processTimelineData(alerts, timeGranularity), [alerts, timeGranularity]);
+  const data = useMemo(() => {
+    console.log('Processing alerts:', alerts);
+    const processedData = processTimelineData(alerts, timeGranularity);
+    console.log('Processed timeline data:', processedData);
+    return processedData;
+  }, [alerts, timeGranularity]);
 
   const handleZoomIn = () => {
     if (data.length > 1) {
@@ -43,6 +48,16 @@ const TimelineGraph = ({ alerts, onTimeRangeChange }: TimelineGraphProps) => {
     Array.from(new Set(alerts.map(alert => alert.rule_level))).filter(Boolean),
     [alerts]
   );
+
+  if (!alerts || alerts.length === 0) {
+    return (
+      <Card className="p-6 bg-black/40 border-blue-500/10">
+        <div className="text-center text-gray-400">
+          No timeline data available
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <div className="w-full space-y-8">
