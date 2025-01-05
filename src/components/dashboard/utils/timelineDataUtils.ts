@@ -21,8 +21,8 @@ export const processTimelineData = (alerts: Alert[]): TimelineDataPoint[] => {
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) return;
       
-      // Group by 15-minute intervals for better granularity
-      const minutes = Math.floor(date.getMinutes() / 15) * 15;
+      // Group by 5-minute intervals for better granularity
+      const minutes = Math.floor(date.getMinutes() / 5) * 5;
       const hour = date.getHours();
       
       const formattedDate = date.toLocaleString(undefined, {
@@ -47,7 +47,7 @@ export const processTimelineData = (alerts: Alert[]): TimelineDataPoint[] => {
       
       if (!timeData[key]) {
         timeData[key] = {
-          time: `${hour}:${minutes}`,
+          time: `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`,
           fullDate: formattedDate,
           count: 1,
           severity: alert.rule_level || 'unknown',
@@ -65,6 +65,7 @@ export const processTimelineData = (alerts: Alert[]): TimelineDataPoint[] => {
           timeData[key].categories[category] = (timeData[key].categories[category] || 0) + count;
         });
         
+        // Update severity if higher priority
         if (alert.rule_level === 'critical' || alert.rule_level === 'high') {
           timeData[key].severity = alert.rule_level;
         }
@@ -82,11 +83,11 @@ export const processTimelineData = (alerts: Alert[]): TimelineDataPoint[] => {
 
 export const getSeverityColor = (severity: string = ''): string => {
   const s = severity.toLowerCase();
-  if (s.includes('critical')) return '#FF4500';
-  if (s.includes('high')) return '#FF8C00';
-  if (s.includes('medium')) return '#FFD700';
-  if (s.includes('low')) return '#32CD32';
-  if (s.includes('informational')) return '#1E90FF';
+  if (s.includes('critical')) return '#ef4444';
+  if (s.includes('high')) return '#f97316';
+  if (s.includes('medium')) return '#eab308';
+  if (s.includes('low')) return '#22c55e';
+  if (s.includes('informational')) return '#3b82f6';
   return '#3b82f6';
 };
 

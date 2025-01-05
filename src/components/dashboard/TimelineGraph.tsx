@@ -6,18 +6,13 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   Brush,
-  ReferenceArea,
 } from 'recharts';
 import { Alert } from './types';
-import { processTimelineData, getSeverityColor, getCategoryColor } from './utils/timelineDataUtils';
+import { processTimelineData, getSeverityColor } from './utils/timelineDataUtils';
 import TimelineTooltip from './TimelineTooltip';
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { ZoomIn, ZoomOut, Filter } from 'lucide-react';
+import TimelineControls from './TimelineComponents/TimelineControls';
 
 interface TimelineGraphProps {
   alerts: Alert[];
@@ -27,7 +22,6 @@ interface TimelineGraphProps {
 const TimelineGraph = ({ alerts, onTimeRangeChange }: TimelineGraphProps) => {
   const [zoomDomain, setZoomDomain] = useState<{ start: number; end: number } | null>(null);
   const [selectedSeverity, setSelectedSeverity] = useState<string | null>(null);
-  const [brushActive, setBrushActive] = useState(false);
 
   const data = useMemo(() => processTimelineData(alerts), [alerts]);
 
@@ -62,50 +56,13 @@ const TimelineGraph = ({ alerts, onTimeRangeChange }: TimelineGraphProps) => {
       <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-xl" />
       
       <div className="relative w-full h-full p-4 backdrop-blur-sm rounded-xl border border-white/10 shadow-lg transition-all duration-300 hover:border-blue-500/30">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleZoomIn}
-              className="bg-blue-500/10 hover:bg-blue-500/20"
-            >
-              <ZoomIn className="h-4 w-4 mr-1" /> Zoom In
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleZoomOut}
-              className="bg-blue-500/10 hover:bg-blue-500/20"
-            >
-              <ZoomOut className="h-4 w-4 mr-1" /> Reset
-            </Button>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-blue-400" />
-            <div className="flex gap-1">
-              {severities.map((severity) => (
-                <Badge
-                  key={severity}
-                  variant="outline"
-                  className={`cursor-pointer transition-all ${
-                    selectedSeverity === severity ? 'bg-blue-500/20' : ''
-                  }`}
-                  style={{
-                    borderColor: getSeverityColor(severity),
-                    color: getSeverityColor(severity),
-                  }}
-                  onClick={() => setSelectedSeverity(
-                    selectedSeverity === severity ? null : severity
-                  )}
-                >
-                  {severity}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        </div>
+        <TimelineControls
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+          selectedSeverity={selectedSeverity}
+          onSeveritySelect={setSelectedSeverity}
+          severities={severities}
+        />
 
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
@@ -136,7 +93,8 @@ const TimelineGraph = ({ alerts, onTimeRangeChange }: TimelineGraphProps) => {
               height={50}
               angle={-45}
               textAnchor="end"
-              interval={Math.floor(data.length / 8)}
+              interval="preserveStartEnd"
+              minTickGap={50}
               axisLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
               tickLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
               label={{
@@ -166,7 +124,6 @@ const TimelineGraph = ({ alerts, onTimeRangeChange }: TimelineGraphProps) => {
             />
             
             <Tooltip content={<TimelineTooltip />} />
-            <Legend />
             
             <Area
               type="monotone"
@@ -206,6 +163,8 @@ const TimelineGraph = ({ alerts, onTimeRangeChange }: TimelineGraphProps) => {
               stroke="#3b82f6"
               fill="#1a1f2c"
               onChange={handleBrushChange}
+              startIndex={zoomDomain?.start}
+              endIndex={zoomDomain?.end}
             />
           </AreaChart>
         </ResponsiveContainer>

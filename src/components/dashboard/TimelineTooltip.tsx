@@ -11,11 +11,13 @@ interface TimelineTooltipProps {
       events: Alert[];
       categories: { [key: string]: number };
       anomalyCount: number;
+      severity?: string;
     };
   }>;
+  label?: string;
 }
 
-const TimelineTooltip = ({ active, payload }: TimelineTooltipProps) => {
+const TimelineTooltip = ({ active, payload, label }: TimelineTooltipProps) => {
   if (!active || !payload || !payload.length) return null;
 
   const { fullDate, count, events, categories, anomalyCount } = payload[0].payload;
