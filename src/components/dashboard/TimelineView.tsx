@@ -5,6 +5,7 @@ import TimelineContent from "./TimelineComponents/TimelineContent";
 import LoadMoreButton from "./TimelineComponents/LoadMoreButton";
 import TimeRangeSelector from "./TimeRangeSelector";
 import { useTimelineData } from "./hooks/useTimelineData";
+import { useToast } from "../ui/use-toast";
 
 interface TimelineViewProps {
   entityType: "user" | "computer";
@@ -18,8 +19,28 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const [selectedEventType, setSelectedEventType] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [timeframe, setTimeframe] = useState("24h");
+  const [allAlerts, setAllAlerts] = useState<any[]>([]);
+  const { toast } = useToast();
 
-  const { alerts, isLoading } = useTimelineData(entityType, entityId, page, timeframe);
+  const { alerts, isLoading, hasMore } = useTimelineData(entityType, entityId, page, timeframe);
+
+  // Update allAlerts when new data is fetched
+  React.useEffect(() => {
+    if (alerts && !isLoading) {
+      if (page === 1) {
+        setAllAlerts(alerts);
+      } else {
+        // Combine new alerts with existing ones, avoiding duplicates
+        const newAlerts = [...allAlerts];
+        alerts.forEach(alert => {
+          if (!newAlerts.some(existing => existing.id === alert.id)) {
+            newAlerts.push(alert);
+          }
+        });
+        setAllAlerts(newAlerts);
+      }
+    }
+  }, [alerts, isLoading, page]);
 
   const toggleRawLog = (alertId: string, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -28,7 +49,16 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
 
   const handleTimeframeChange = (value: string) => {
     setTimeframe(value);
-    setPage(1); // Reset pagination when timeframe changes
+    setPage(1);
+    setAllAlerts([]);
+  };
+
+  const handleLoadMore = () => {
+    setPage(prev => prev + 1);
+    toast({
+      title: "Loading more events",
+      description: "Fetching the next batch of timeline events...",
+    });
   };
 
   const content = (
@@ -46,26 +76,36 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         />
       </div>
 
-      {isLoading ? (
+      {isLoading && page === 1 ? (
         <TimelineLoader />
-      ) : alerts.length === 0 ? (
+      ) : allAlerts.length === 0 ? (
         <div className="text-center text-purple-400/60 py-8">
           No events found for this {entityType}
         </div>
       ) : (
-        <TimelineContent
-          alerts={alerts}
-          expandedAlert={expandedAlert}
-          selectedEventType={selectedEventType}
-          onEventTypeSelect={setSelectedEventType}
-          onToggleRaw={toggleRawLog}
-        />
-      )}
+        <>
+          <TimelineContent
+            alerts={allAlerts}
+            expandedAlert={expandedAlert}
+            selectedEventType={selectedEventType}
+            onEventTypeSelect={setSelectedEventType}
+            onToggleRaw={toggleRawLog}
+          />
+          
+          {isLoading && page > 1 && (
+            <div className="flex justify-center py-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+            </div>
+          )}
 
-      <LoadMoreButton 
-        show={alerts.length >= 5000}
-        onLoadMore={() => setPage(p => p + 1)}
-      />
+          {hasMore && !isLoading && (
+            <LoadMoreButton 
+              show={true}
+              onLoadMore={handleLoadMore}
+            />
+          )}
+        </>
+      )}
     </>
   );
 
