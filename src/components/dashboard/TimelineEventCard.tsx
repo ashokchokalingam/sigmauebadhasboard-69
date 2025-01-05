@@ -6,6 +6,7 @@ import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineDetailedLogs from "./TimelineDetailedLogs";
+import { User } from "lucide-react";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -25,19 +26,19 @@ interface DetailedLogResponse {
 const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const { data: detailedLogs, isLoading } = useQuery<DetailedLogResponse>({
-    queryKey: ['detailed-logs', event.target_user_name, event.title, isExpanded],
+  const { data: detailedLogs, isLoading } = useQuery({
+    queryKey: ['detailed-logs', event.user_impacted, event.title, isExpanded],
     queryFn: async () => {
       if (!isExpanded) return null;
       
-      if (!event.target_user_name) {
-        console.error('No target_user_name provided for detailed logs query');
+      if (!event.user_impacted) {
+        console.error('No user_impacted provided for detailed logs query');
         return null;
       }
 
       const baseUrl = '/api/user_impacted_logs';
       const params = new URLSearchParams();
-      params.append('user_impacted', event.target_user_name);
+      params.append('user_impacted', event.user_impacted);
       params.append('title', event.title);
       params.append('page', '1');
       params.append('per_page', '500');
@@ -54,7 +55,7 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
       
       return response.json();
     },
-    enabled: isExpanded && !!event.target_user_name
+    enabled: isExpanded && !!event.user_impacted
   });
 
   return (
@@ -79,6 +80,14 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
             title={event.title}
             description={event.description}
           />
+
+          {/* Add User Impacted Section */}
+          <div className="flex items-center gap-2 mt-2 mb-3">
+            <User className="h-4 w-4 text-blue-400" />
+            <span className="text-sm text-blue-300">
+              User Impacted: <span className="font-mono text-blue-400">{event.user_impacted}</span>
+            </span>
+          </div>
 
           <TimelineEventTimestamps
             firstTimeSeen={event.first_time_seen || ''}
