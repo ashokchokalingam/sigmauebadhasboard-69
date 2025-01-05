@@ -12,27 +12,25 @@ interface StatsCardProps {
 
 const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleIcon, breakdown }: StatsCardProps) => {
   return (
-    <Card className="bg-black/40 border-0 hover:bg-black/50 transition-all duration-300">
+    <Card className="stats-card">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-gray-400">{title}</CardTitle>
-        <Icon className="h-5 w-5 text-gray-400" />
+        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        <Icon className="stats-icon h-5 w-5" />
       </CardHeader>
       <CardContent>
-        <div className="text-4xl font-bold text-red-400">
+        <div className="stats-value">
           {typeof value === 'number' ? value.toLocaleString() : value}
         </div>
-        <div className="flex items-center mt-2">
-          <SubtitleIcon className="h-4 w-4 mr-1 text-red-400" />
-          <p className="text-xs text-red-400">
-            {subtitle}
-          </p>
+        <div className="stats-subtitle">
+          <SubtitleIcon className="h-4 w-4" />
+          <p>{subtitle}</p>
         </div>
         {breakdown && breakdown.length > 0 && (
-          <div className="mt-4 space-y-2">
+          <div className="stats-breakdown">
             {breakdown.map((item) => (
-              <div key={item.rule_level} className="flex justify-between items-center text-xs">
-                <span className="text-gray-400">{item.rule_level}</span>
-                <span className="text-red-400 font-semibold">
+              <div key={item.rule_level} className="stats-breakdown-item">
+                <span className="stats-breakdown-label">{item.rule_level}</span>
+                <span className="stats-breakdown-value">
                   {typeof item.event_count === 'number' ? item.event_count.toLocaleString() : item.event_count}
                 </span>
               </div>
