@@ -2,9 +2,7 @@ import { db } from '@/lib/db';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { computer_name, page = '1', timeframe = '24h' } = req.query;
-  const per_page = 100;
-  const offset = (parseInt(page as string) - 1) * per_page;
+  const { computer_name, timeframe = '24h' } = req.query;
 
   if (!computer_name) {
     return res.status(400).json({ error: 'computer_name is required' });
@@ -14,34 +12,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const timeInterval = timeframe === '7d' ? '7 DAY' : '24 HOUR';
     
     const query = `
-      SELECT *
+      SELECT 
+        computer_name,
+        title,
+        tags,
+        description,
+        MIN(system_time) AS first_time_seen,
+        MAX(system_time) AS last_time_seen,
+        COUNT(*) AS total_events
       FROM sigma_alerts
       WHERE 
         system_time >= NOW() - INTERVAL ${timeInterval}
         AND computer_name = ?
-      ORDER BY system_time DESC
-      LIMIT ? OFFSET ?
+      GROUP BY
+        computer_name, title, tags, description
+      ORDER BY
+        last_time_seen DESC
     `;
 
-    const countQuery = `
-      SELECT COUNT(*) as total
-      FROM sigma_alerts
-      WHERE 
-        system_time >= NOW() - INTERVAL ${timeInterval}
-        AND computer_name = ?
-    `;
-
-    const [rows] = await db.query(query, [computer_name, per_page, offset]);
-    const [countResult] = await db.query(countQuery, [computer_name]);
-    const total = (countResult as any)[0].total;
+    const [rows] = await db.query(query, [computer_name]);
 
     res.status(200).json({
-      computer_impacted_timeline_logs: rows,
+      event_summary: rows,
       pagination: {
-        current_page: parseInt(page as string),
-        per_page,
-        total_pages: Math.ceil(total / per_page),
-        total_records: total
+        current_page: 1,
+        per_page: 1000,
+        has_more: false
       }
     });
   } catch (error) {

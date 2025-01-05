@@ -1,51 +1,49 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '@/lib/db';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { user_id, page = 1, timeframe = '24h' } = req.query;
-  const perPage = 5000;
-  const offset = (Number(page) - 1) * perPage;
+  const { user_id, timeframe = '24h' } = req.query;
+
+  if (!user_id) {
+    return res.status(400).json({ error: 'user_id is required' });
+  }
 
   try {
-    let timeCondition = '';
-    switch (timeframe) {
-      case '24h':
-        timeCondition = 'AND system_time >= NOW() - INTERVAL 24 HOUR';
-        break;
-      case '7d':
-        timeCondition = 'AND system_time >= NOW() - INTERVAL 7 DAY';
-        break;
-      case '30d':
-        timeCondition = 'AND system_time >= NOW() - INTERVAL 30 DAY';
-        break;
-      default:
-        timeCondition = 'AND system_time >= NOW() - INTERVAL 24 HOUR';
-    }
-
+    const timeInterval = timeframe === '7d' ? '7 DAY' : '24 HOUR';
+    
     const query = `
-      SELECT *
+      SELECT 
+        user_id AS user_origin,
+        title,
+        tags,
+        description,
+        MIN(system_time) AS first_time_seen,
+        MAX(system_time) AS last_time_seen,
+        COUNT(*) AS total_events
       FROM sigma_alerts
-      WHERE user_id = ?
-      ${timeCondition}
-      ORDER BY system_time DESC
-      LIMIT ? OFFSET ?
+      WHERE 
+        system_time >= NOW() - INTERVAL ${timeInterval}
+        AND user_id = ?
+      GROUP BY
+        user_id, title, tags, description
+      ORDER BY
+        last_time_seen DESC
     `;
 
-    const [rows] = await db.query(query, [user_id, perPage, offset]);
+    const [rows] = await db.query(query, [user_id]);
     
     console.log('User origin timeline query result:', {
       user_id,
       timeframe,
-      page,
       resultCount: Array.isArray(rows) ? rows.length : 0
     });
 
     res.status(200).json({
-      user_origin_timeline_logs: rows,
+      event_summary: rows,
       pagination: {
-        current_page: Number(page),
-        per_page: perPage,
-        has_more: Array.isArray(rows) && rows.length === perPage
+        current_page: 1,
+        per_page: 1000,
+        has_more: false
       }
     });
   } catch (error) {
