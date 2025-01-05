@@ -29,9 +29,9 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
   return (
     <div className="group relative pl-6">
       {/* Timeline dot and line */}
-      <div className="absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2 border-blue-400 bg-background" />
+      <div className="absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2 border-green-400 bg-background" />
       {!isLast && (
-        <div className="absolute left-0 top-8 -ml-[1px] h-full w-[2px] bg-gradient-to-b from-blue-400/50 to-transparent" />
+        <div className="absolute left-0 top-8 -ml-[1px] h-full w-[2px] bg-gradient-to-b from-green-400/50 to-transparent" />
       )}
 
       <div className="relative ml-6 mb-6">
