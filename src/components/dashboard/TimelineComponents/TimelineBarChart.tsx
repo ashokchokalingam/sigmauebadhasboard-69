@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Brush, Legend, Line, CompositeChart } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Brush, Legend, Line, ComposedChart } from 'recharts';
 import { Alert } from '../types';
 import { getSeverityColor } from '../utils/timelineDataUtils';
 import TimelineTooltip from '../TimelineTooltip';
@@ -28,7 +28,7 @@ const TimelineBarChart = ({
 
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <CompositeChart
+      <ComposedChart
         data={dataWithCumulative}
         margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
         barSize={20}
@@ -131,7 +131,7 @@ const TimelineBarChart = ({
             return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           }}
         />
-      </CompositeChart>
+      </ComposedChart>
     </ResponsiveContainer>
   );
 };
