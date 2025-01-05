@@ -27,8 +27,8 @@ const TimelineEventCard = ({ event }: TimelineEventCardProps) => {
   };
 
   return (
-    <div className="group ml-12">
-      <div className="max-w-2xl p-4 rounded-xl bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm">
+    <div className="group max-w-3xl mx-auto">
+      <div className="p-4 rounded-xl bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm">
         {/* Header Section with Severity and Event Count */}
         <div className="flex items-center gap-3 mb-3">
           {getSeverityIcon(event.rule_level)}

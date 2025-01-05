@@ -27,13 +27,9 @@ const TimelineEventSummary = ({ summary, isLoading }: TimelineEventSummaryProps)
       </div>
       
       <ScrollArea className="h-[600px] pr-4">
-        <div className="relative space-y-0">
-          <div className="absolute left-6 top-[60px] bottom-0 w-0.5 bg-green-500/30" />
+        <div className="space-y-4">
           {summary.map((event, index) => (
-            <div key={index} className="relative pb-6">
-              <div className="absolute left-5 top-[30px] w-3 h-3 rounded-full bg-green-500" />
-              <TimelineEventCard event={event} />
-            </div>
+            <TimelineEventCard key={index} event={event} />
           ))}
           
           {summary.length === 0 && (
