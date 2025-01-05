@@ -28,3 +28,9 @@ export interface EventSummary {
   user_origin?: string;
   computer_name?: string;
 }
+
+export interface TimelineResponse {
+  user_impacted_timeline?: EventSummary[];
+  user_origin_timeline?: EventSummary[];
+  computer_impacted_timeline?: EventSummary[];
+}
