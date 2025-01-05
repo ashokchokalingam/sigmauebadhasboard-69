@@ -1,8 +1,12 @@
+import React, { useState } from 'react';
 import { Shield, AlertTriangle, Activity, Clock, Calendar, Info } from "lucide-react";
 import { Alert } from "./types";
 import TimelineMitreSection from "./TimelineMitreSection";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+import { ScrollArea } from "../ui/scroll-area";
+import TimelineRawLog from "./TimelineRawLog";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -10,6 +14,26 @@ interface TimelineEventCardProps {
 }
 
 const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const { data: detailedLogs, isLoading } = useQuery({
+    queryKey: ['detailed-logs', event.target_user_name, event.title, isExpanded],
+    queryFn: async () => {
+      if (!isExpanded) return null;
+      
+      const response = await fetch(
+        `/api/user_impacted_logs?user_impacted=${encodeURIComponent(event.target_user_name || '')}&title=${encodeURIComponent(event.title || '')}&page=1&per_page=500`
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch detailed logs');
+      }
+      
+      return response.json();
+    },
+    enabled: isExpanded
+  });
+
   const getSeverityIcon = (level?: string) => {
     switch (level?.toLowerCase()) {
       case 'critical':
@@ -35,7 +59,13 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
       )}
 
       <div className="relative ml-6 mb-6">
-        <div className="p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm">
+        <div 
+          className={cn(
+            "p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer max-w-2xl",
+            isExpanded && "border-green-500/30"
+          )}
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
           {/* Header Section with Severity and Event Count */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
@@ -79,6 +109,28 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
 
           {/* MITRE ATT&CK Section */}
           <TimelineMitreSection alert={event} />
+
+          {/* Detailed Logs Section */}
+          {isExpanded && (
+            <div className="mt-4 border-t border-blue-500/10 pt-4">
+              <h4 className="text-sm font-medium text-blue-100 mb-2">Detailed Logs</h4>
+              {isLoading ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-400"></div>
+                </div>
+              ) : detailedLogs?.logs?.length > 0 ? (
+                <ScrollArea className="h-[300px]">
+                  <div className="space-y-2">
+                    {detailedLogs.logs.map((log: Alert, index: number) => (
+                      <TimelineRawLog key={index} alert={log} />
+                    ))}
+                  </div>
+                </ScrollArea>
+              ) : (
+                <p className="text-sm text-gray-400">No detailed logs available</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
