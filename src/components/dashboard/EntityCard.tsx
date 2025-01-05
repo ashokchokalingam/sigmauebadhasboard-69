@@ -53,13 +53,13 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
       </div>
       
       <div className="flex items-center gap-4">
-        <div className="flex items-center h-8 w-24">
+        <div className="flex items-center h-8 w-32">
           <div className="w-full h-full relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full h-px bg-blue-400/10" />
             </div>
             <div className="relative flex items-center justify-between w-full h-full">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              {Array.from({ length: 12 }).map((_, i) => (
                 <div
                   key={i}
                   className="h-6 w-0.5 bg-blue-400/40 animate-cardiogram"

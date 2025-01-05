@@ -79,27 +79,39 @@ export default {
         },
         'cardiogram': {
           '0%, 100%': {
-            height: '8px',
-            marginTop: '12px'
+            height: '4px',
+            marginTop: '14px'
           },
-          '50%': {
+          '15%': {
+            height: '4px',
+            marginTop: '14px'
+          },
+          '20%': {
+            height: '20px',
+            marginTop: '0px'
+          },
+          '25%': {
+            height: '4px',
+            marginTop: '14px'
+          },
+          '30%': {
             height: '24px',
             marginTop: '0px'
           },
-          '20%, 80%': {
-            height: '8px',
-            marginTop: '12px'
-          },
-          '45%, 55%': {
+          '35%, 50%': {
             height: '4px',
             marginTop: '14px'
+          },
+          '70%': {
+            height: '8px',
+            marginTop: '10px'
           }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'cardiogram': 'cardiogram 2s ease-in-out infinite'
+        'cardiogram': 'cardiogram 1.5s ease-in-out infinite'
       }
     }
   },
