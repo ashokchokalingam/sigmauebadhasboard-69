@@ -19,7 +19,7 @@ export interface Alert {
   tags: string;
   raw?: string | object;
   total_events?: number;
-  user_impacted?: string; // Added this field
+  user_impacted: string; // Changed from optional to required
 }
 
 export interface EventSummary extends Alert {

@@ -37,7 +37,7 @@ const SystemInfo = ({ alert, browserTime }: SystemInfoProps) => {
         </div>
         <div>
           <h4 className="text-sm font-medium text-[#A9A9A9]">User Impacted</h4>
-          <p className="text-sm text-[#1E90FF] font-mono">{alert.user_impacted || 'N/A'}</p>
+          <p className="text-sm text-[#1E90FF] font-mono">{alert.user_impacted}</p>
         </div>
         <div>
           <h4 className="text-sm font-medium text-[#A9A9A9]">Target Domain</h4>
