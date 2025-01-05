@@ -3,15 +3,19 @@ import { Activity, Computer, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EntityCardProps {
-  id: string;
-  eventCount: number;
-  uniqueTitles: number;
+  id: string | null;
+  eventCount?: number | null;
+  uniqueTitles?: number | null;
   onClick: () => void;
 }
 
 const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCardProps) => {
   // Safely check if id exists and if it ends with '$'
-  const isComputer = id?.endsWith('$') || false;
+  const isComputer = id?.endsWith('$') ?? false;
+  
+  // Ensure we have valid numbers for display
+  const safeEventCount = typeof eventCount === 'number' ? eventCount : 0;
+  const safeUniqueTitles = typeof uniqueTitles === 'number' ? uniqueTitles : 0;
   
   return (
     <div 
@@ -40,19 +44,19 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
             <div className="flex items-center gap-1.5">
               <Activity className="h-3.5 w-3.5 text-blue-400/60" />
               <span className="text-xs font-medium text-blue-300/60">
-                {uniqueTitles || 0} unique anomalies
+                {safeUniqueTitles} unique anomalies
               </span>
             </div>
             <span className="text-xs text-blue-400/30">•</span>
             <span className="text-xs text-blue-300/40">
-              {(eventCount || 0).toLocaleString()} total events
+              {safeEventCount.toLocaleString()} total events
             </span>
           </div>
         </div>
       </div>
       
       <div className="flex items-center">
-        {(uniqueTitles || 0) > 1 && (
+        {safeUniqueTitles > 1 && (
           <div className={cn(
             "px-2.5 py-1 rounded text-xs font-medium",
             "bg-blue-500/5 backdrop-blur-sm",
