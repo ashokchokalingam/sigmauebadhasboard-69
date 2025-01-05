@@ -10,10 +10,7 @@ interface EntityCardProps {
 }
 
 const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCardProps) => {
-  // Safely check if id exists and if it ends with '$'
   const isComputer = id?.endsWith('$') ?? false;
-  
-  // Ensure we have valid numbers for display
   const safeEventCount = typeof eventCount === 'number' ? eventCount : 0;
   const safeUniqueTitles = typeof uniqueTitles === 'number' ? uniqueTitles : 0;
   
@@ -56,9 +53,22 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
       </div>
       
       <div className="flex items-center gap-4">
-        <span className="text-xs text-blue-300/40">
-          {safeEventCount.toLocaleString()} total events
-        </span>
+        <div className="flex gap-1 h-4 items-center">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div
+              key={i}
+              className={cn(
+                "h-full w-0.5 rounded-full bg-blue-400/40",
+                "animate-pulse",
+                `delay-${i * 100}`
+              )}
+              style={{
+                animationDelay: `${i * 0.1}s`,
+                animationDuration: '1s'
+              }}
+            />
+          ))}
+        </div>
         {safeUniqueTitles > 1 && (
           <div className={cn(
             "px-2.5 py-1 rounded text-xs font-medium",

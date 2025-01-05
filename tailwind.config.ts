@@ -80,18 +80,18 @@ export default {
         'pulse': {
           '0%, 100%': {
             opacity: '0.9',
-            transform: 'scale(1)'
+            transform: 'scaleY(1)'
           },
           '50%': {
-            opacity: '0.7',
-            transform: 'scale(0.98)'
+            opacity: '0.4',
+            transform: 'scaleY(0.4)'
           }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'pulse': 'pulse 3s ease-in-out infinite'
+        'pulse': 'pulse 1s ease-in-out infinite'
       }
     }
   },
