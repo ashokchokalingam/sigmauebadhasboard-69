@@ -8,14 +8,16 @@ import { useEntitySearch } from "./hooks/useEntitySearch";
 
 interface UserData {
   user_impacted: string;
-  total_events: number;
-  unique_anomalies: number;
+  unique_titles: number;
+  first_event_time: string;
+  last_event_time: string;
 }
 
 interface ComputerData {
   computer_name: string;
-  total_events: number;
-  unique_anomalies: number;
+  unique_titles: number;
+  first_event_time: string;
+  last_event_time: string;
 }
 
 interface RiskyEntitiesProps {
@@ -81,14 +83,16 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
         const existing = computerMap.get(normalizedName)!;
         computerMap.set(normalizedName, {
           computer_name: normalizedName,
-          total_events: existing.total_events + computer.total_events,
-          unique_anomalies: Math.max(existing.unique_anomalies, computer.unique_anomalies)
+          unique_titles: Math.max(existing.unique_titles, computer.unique_titles),
+          first_event_time: computer.first_event_time,
+          last_event_time: computer.last_event_time
         });
       } else {
         computerMap.set(normalizedName, {
           computer_name: normalizedName,
-          total_events: computer.total_events,
-          unique_anomalies: computer.unique_anomalies
+          unique_titles: computer.unique_titles,
+          first_event_time: computer.first_event_time,
+          last_event_time: computer.last_event_time
         });
       }
     });
@@ -107,8 +111,8 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
           
           combinedUsers.set(entityId, {
             id: entityId,
-            eventCount: user.total_events,
-            uniqueTitles: user.unique_anomalies
+            eventCount: 0, // We don't have total events in the API response
+            uniqueTitles: user.unique_titles
           });
         });
       }
@@ -122,14 +126,13 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
             const existing = combinedUsers.get(entityId)!;
             combinedUsers.set(entityId, {
               ...existing,
-              eventCount: existing.eventCount + user.total_events,
-              uniqueTitles: Math.max(existing.uniqueTitles, user.unique_anomalies)
+              uniqueTitles: Math.max(existing.uniqueTitles, user.unique_titles)
             });
           } else {
             combinedUsers.set(entityId, {
               id: entityId,
-              eventCount: user.total_events,
-              uniqueTitles: user.unique_anomalies
+              eventCount: 0, // We don't have total events in the API response
+              uniqueTitles: user.unique_titles
             });
           }
         });
@@ -141,8 +144,8 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
         const aggregatedComputers = aggregateComputerData(impactedComputers);
         return aggregatedComputers.map(computer => ({
           id: computer.computer_name,
-          eventCount: computer.total_events,
-          uniqueTitles: computer.unique_anomalies
+          eventCount: 0, // We don't have total events in the API response
+          uniqueTitles: computer.unique_titles
         }));
       }
       return [];
