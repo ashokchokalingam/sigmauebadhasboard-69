@@ -62,7 +62,7 @@ export const getRiskScore = (alert: Alert) => {
   if (alert.rule_level === 'medium') score += 1;
   
   // Add score for outliers
-  if (alert.dbscan_cluster === -1) score += 2;
+  if (typeof alert.dbscan_cluster === 'number' && alert.dbscan_cluster === -1) score += 2;
   
   // Add scores based on tactics
   const { tactics } = extractTacticsAndTechniques(alert.tags || '');

@@ -17,7 +17,7 @@ const AlertDistribution = ({ alerts }: AlertDistributionProps) => {
     };
 
     alerts.forEach((alert) => {
-      if (alert.rule_level === "critical" || alert.dbscan_cluster === -1) {
+      if (alert.rule_level === "critical" || (typeof alert.dbscan_cluster === 'number' && alert.dbscan_cluster === -1)) {
         severityCounts.Critical++;
       } else if (alert.rule_level === "high") {
         severityCounts.High++;

@@ -14,7 +14,7 @@ const UserRiskLevels = ({ alerts }: UserRiskLevelsProps) => {
       if (!alert.user_id) return;
       
       let riskLevel = "Low";
-      if (alert.rule_level === "critical" || alert.dbscan_cluster === -1) {
+      if (alert.rule_level === "critical" || (typeof alert.dbscan_cluster === 'number' && alert.dbscan_cluster === -1)) {
         riskLevel = "Critical";
       } else if (alert.rule_level === "high") {
         riskLevel = "High";
