@@ -7,6 +7,7 @@ import TimeRangeSelector from "./TimeRangeSelector";
 import { useTimelineData } from "./hooks/useTimelineData";
 import { useToast } from "@/hooks/use-toast";
 import { Alert } from "./types";
+import InfiniteScrollLoader from "./InfiniteScrollLoader";
 
 interface TimelineViewProps {
   entityType: "user" | "computer";
@@ -63,7 +64,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   };
 
   const handleLoadMore = () => {
-    if (!isLoadingMore) {
+    if (!isLoadingMore && hasMore) {
       setIsLoadingMore(true);
       setPage(prev => prev + 1);
       toast({
@@ -111,6 +112,8 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
             onEventTypeSelect={setSelectedEventType}
             onToggleRaw={toggleRawLog}
           />
+          
+          <InfiniteScrollLoader ref={null} hasMore={hasMore} />
           
           {(isLoading || isLoadingMore) && page > 1 && (
             <div className="flex justify-center py-4">
