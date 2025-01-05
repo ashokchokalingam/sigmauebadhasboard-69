@@ -21,6 +21,15 @@ export interface Alert {
   is_anomaly?: boolean;
 }
 
+export interface EventSummary {
+  title: string;
+  tags: string;
+  description: string;
+  total_count: number;
+  first_seen: string;
+  last_seen: string;
+}
+
 export interface User {
   id: string;
   risk_score: number;

@@ -103,7 +103,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       {isLoading && page === 1 ? (
         <TimelineLoader />
       ) : allAlerts.length === 0 ? (
-        <div className="text-center text-purple-400/60 py-8">
+        <div className="text-center text-blue-400/60 py-8">
           No events found for this {entityType}
         </div>
       ) : (
@@ -113,12 +113,15 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
           selectedEventType={selectedEventType}
           onEventTypeSelect={setSelectedEventType}
           onToggleRaw={toggleRawLog}
+          entityType={entityType}
+          entityId={entityId}
+          timeframe={timeframe}
         />
       )}
       
       {(isLoading && page > 1) && (
         <div className="flex justify-center py-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
         </div>
       )}
     </>
