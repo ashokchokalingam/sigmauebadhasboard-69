@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Shield, AlertTriangle, Activity, Clock, Calendar, Hash, Info } from "lucide-react";
+import { ChevronDown, Shield, AlertTriangle, Activity, Clock, Calendar, Info } from "lucide-react";
 import { Alert } from "./types";
 import TimelineMitreSection from "./TimelineMitreSection";
 import { cn } from "@/lib/utils";
