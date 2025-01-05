@@ -14,6 +14,14 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
   const safeEventCount = typeof eventCount === 'number' ? eventCount : 0;
   const safeUniqueTitles = typeof uniqueTitles === 'number' ? uniqueTitles : 0;
   
+  // Array of different colors for the cardiogram
+  const colors = {
+    purple: "#8B5CF6",
+    blue: "#0EA5E9",
+    orange: "#F97316",
+    pink: "#D946EF"
+  };
+  
   return (
     <div 
       onClick={onClick}
@@ -53,16 +61,35 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
       </div>
       
       <div className="flex items-center gap-4">
-        <div className="flex items-center h-8 flex-1 min-w-[200px]">
+        <div className="flex items-center h-8 flex-1 min-w-[300px]">
           <div className="w-full h-full relative overflow-hidden">
             <div className="absolute inset-0">
               <svg className="w-full h-full" preserveAspectRatio="none">
                 <path
-                  d="M0,10 L20,10 L40,10 L60,10 L80,2 L100,18 L120,10 L140,10 L160,10 L180,2 L200,18 L220,10 L240,10 L260,10 L280,10"
-                  className="stroke-[#8B5CF6] stroke-[1.5] fill-none animate-cardiogram"
+                  d="M0,10 L20,10 L40,2 L60,18 L80,2 L100,18 L120,2 L140,18 L160,2 L180,18 L200,2 L220,18 L240,2 L260,18 L280,2 L300,18 L320,10 L340,10 L360,10"
+                  className="stroke-[1.5] fill-none animate-cardiogram"
+                  style={{ stroke: colors.purple }}
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   pathLength="100"
+                />
+                <path
+                  d="M0,10 L20,10 L40,2 L60,18 L80,2 L100,18 L120,2 L140,18 L160,2 L180,18 L200,2 L220,18 L240,2 L260,18 L280,2 L300,18 L320,10 L340,10 L360,10"
+                  className="stroke-[1.5] fill-none animate-cardiogram opacity-30"
+                  style={{ stroke: colors.blue }}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  pathLength="100"
+                  transform="translate(20, 0)"
+                />
+                <path
+                  d="M0,10 L20,10 L40,2 L60,18 L80,2 L100,18 L120,2 L140,18 L160,2 L180,18 L200,2 L220,18 L240,2 L260,18 L280,2 L300,18 L320,10 L340,10 L360,10"
+                  className="stroke-[1.5] fill-none animate-cardiogram opacity-20"
+                  style={{ stroke: colors.orange }}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  pathLength="100"
+                  transform="translate(40, 0)"
                 />
               </svg>
             </div>
