@@ -17,10 +17,10 @@ const TimelineBarChart = ({
   zoomDomain 
 }: TimelineBarChartProps) => {
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height={400}>
       <BarChart
         data={data}
-        margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+        margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
         barSize={20}
       >
         <CartesianGrid 
@@ -37,13 +37,14 @@ const TimelineBarChart = ({
             fontSize: 12,
             fontFamily: 'monospace'
           }}
-          height={50}
+          height={60}
           angle={-45}
           textAnchor="end"
           interval="preserveStartEnd"
-          minTickGap={50}
+          minTickGap={30}
           axisLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
           tickLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
+          dy={20}
         />
         
         <YAxis 
@@ -59,7 +60,13 @@ const TimelineBarChart = ({
         />
         
         <Tooltip content={<TimelineTooltip />} />
-        <Legend />
+        <Legend 
+          verticalAlign="top"
+          height={36}
+          wrapperStyle={{
+            paddingBottom: '20px'
+          }}
+        />
         
         {['high', 'medium', 'low', 'informational'].map((severity) => (
           <Bar
@@ -74,7 +81,7 @@ const TimelineBarChart = ({
 
         <Brush
           dataKey="fullDate"
-          height={30}
+          height={40}
           stroke="#3b82f6"
           fill="#1a1f2c"
           onChange={onBrushChange}
@@ -82,6 +89,11 @@ const TimelineBarChart = ({
           endIndex={zoomDomain?.end}
           travellerWidth={10}
           gap={1}
+          y={320}
+          tickFormatter={(value) => {
+            const date = new Date(value);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          }}
         />
       </BarChart>
     </ResponsiveContainer>
