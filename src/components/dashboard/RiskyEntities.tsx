@@ -5,6 +5,8 @@ import EntityList from "./EntityList";
 import { useEntitySearch } from "./hooks/useEntitySearch";
 import { useEntityData } from "./hooks/useEntityData";
 import { getUniqueEntities } from "./utils/entityUtils";
+import TimelineView from "./TimelineView";
+import { useState } from "react";
 
 interface RiskyEntitiesProps {
   alerts: Alert[];
@@ -13,6 +15,8 @@ interface RiskyEntitiesProps {
 }
 
 const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => {
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+
   const {
     originUsers,
     impactedUsers,
@@ -31,6 +35,13 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
 
   const { searchQuery, setSearchQuery, filteredEntities } = useEntitySearch(entities);
 
+  const handleEntityClick = (entityId: string) => {
+    if (type === "users-impacted") {
+      setSelectedUser(entityId);
+    }
+    onEntitySelect(entityId);
+  };
+
   const isLoading = type === "users-origin" ? isLoadingOrigin : 
                    type === "users-impacted" ? isLoadingImpacted : 
                    isLoadingComputers;
@@ -43,6 +54,17 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
           Loading...
         </div>
       </div>
+    );
+  }
+
+  if (selectedUser && type === "users-impacted") {
+    return (
+      <TimelineView
+        entityType="user"
+        entityId={selectedUser}
+        onClose={() => setSelectedUser(null)}
+        inSidebar={true}
+      />
     );
   }
 
@@ -61,7 +83,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
       
       <EntityList
         entities={filteredEntities}
-        onEntitySelect={onEntitySelect}
+        onEntitySelect={handleEntityClick}
       />
     </div>
   );

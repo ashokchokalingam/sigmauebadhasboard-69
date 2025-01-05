@@ -1,37 +1,57 @@
 import { Alert, Stats } from "./types";
+import { extractTacticsAndTechniques } from "./utils";
 
 export const calculateStats = (alerts: Alert[], totalRecords: number): Stats => {
-  return {
-    totalEvents: totalRecords,
+  const stats: Stats = {
+    total: totalRecords,
+    high: 0,
+    medium: 0,
+    low: 0,
+    lastDay: 0,
+    totalEvents: alerts.length,
     severity: {
-      critical: 25,
-      high: 45,
-      medium: 80,
-      low: 150
+      critical: 0,
+      high: 0
     },
     uniqueUsers: {
-      current: 156,
-      change: 12,
-      users: [
-        { id: "john.doe", risk_score: 85 },
-        { id: "jane.smith", risk_score: 92 },
-        { id: "bob.wilson", risk_score: 75 },
-        { id: "alice.johnson", risk_score: 88 }
-      ]
+      current: 0,
+      users: []
     },
     uniqueComputers: {
-      current: 89,
-      change: -3,
-      computers: ["DESKTOP-001", "LAPTOP-002", "SERVER-003"]
-    },
-    uniqueIPs: 234,
-    riskScore: {
-      current: 78,
-      change: 5
+      current: 0,
+      computers: []
     },
     anomalies: {
-      current: 34,
-      change: 8
+      current: 0
     }
   };
+
+  // Calculate severity counts
+  alerts.forEach(alert => {
+    if (alert.rule_level === "critical" || (typeof alert.dbscan_cluster === 'number' && alert.dbscan_cluster === -1)) {
+      stats.severity.critical++;
+    } else if (alert.rule_level === "high") {
+      stats.severity.high++;
+    }
+  });
+
+  // Calculate unique users
+  const uniqueUsers = new Set(alerts.map(alert => alert.user_id).filter(Boolean));
+  stats.uniqueUsers.current = uniqueUsers.size;
+  stats.uniqueUsers.users = Array.from(uniqueUsers).map(id => ({
+    id: id as string,
+    risk_score: 0
+  }));
+
+  // Calculate unique computers
+  const uniqueComputers = new Set(alerts.map(alert => alert.computer_name).filter(Boolean));
+  stats.uniqueComputers.current = uniqueComputers.size;
+  stats.uniqueComputers.computers = Array.from(uniqueComputers) as string[];
+
+  // Calculate anomalies
+  stats.anomalies.current = alerts.filter(alert => 
+    typeof alert.dbscan_cluster === 'number' && alert.dbscan_cluster === -1
+  ).length;
+
+  return stats;
 };
