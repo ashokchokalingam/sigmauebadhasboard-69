@@ -24,21 +24,22 @@ const TimelineControls = ({
   onGranularityChange
 }: TimelineControlsProps) => {
   return (
-    <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center justify-between mb-6 bg-[#0D1117] p-4 rounded-lg border border-blue-500/5">
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
           size="sm"
           onClick={onZoomIn}
-          className="bg-blue-500/10 hover:bg-blue-500/20"
+          className="bg-transparent border-blue-500/20 hover:bg-blue-500/10 text-blue-400"
         >
           <ZoomIn className="h-4 w-4 mr-1" /> Zoom In
         </Button>
+        
         <Button
           variant="outline"
           size="sm"
           onClick={onZoomOut}
-          className="bg-blue-500/10 hover:bg-blue-500/20"
+          className="bg-transparent border-blue-500/20 hover:bg-blue-500/10 text-blue-400"
         >
           <ZoomOut className="h-4 w-4 mr-1" /> Reset
         </Button>
@@ -47,7 +48,7 @@ const TimelineControls = ({
           value={timeGranularity}
           onValueChange={(value: '5min' | 'hour' | 'day') => onGranularityChange(value)}
         >
-          <SelectTrigger className="w-[180px] bg-blue-500/10">
+          <SelectTrigger className="w-[180px] bg-transparent border-blue-500/20 text-blue-400">
             <SelectValue placeholder="Select granularity" />
           </SelectTrigger>
           <SelectContent>
@@ -58,18 +59,17 @@ const TimelineControls = ({
         </Select>
       </div>
       
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         <Filter className="h-4 w-4 text-blue-400" />
-        <div className="flex gap-1">
+        <div className="flex gap-2">
           {severities.map((severity) => (
             <Badge
               key={severity}
               variant="outline"
-              className={`cursor-pointer transition-all ${
-                selectedSeverity === severity ? 'bg-blue-500/20' : ''
-              }`}
+              className={`cursor-pointer transition-all hover:bg-blue-500/10 ${
+                selectedSeverity === severity ? 'bg-blue-500/20' : 'bg-transparent'
+              } border-blue-500/20`}
               style={{
-                borderColor: getSeverityColor(severity),
                 color: getSeverityColor(severity),
               }}
               onClick={() => onSeveritySelect(
