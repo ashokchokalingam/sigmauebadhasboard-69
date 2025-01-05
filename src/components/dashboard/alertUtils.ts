@@ -1,7 +1,6 @@
 import { Alert, Stats } from "./types";
 
 export const calculateStats = (alerts: Alert[], totalRecords: number): Stats => {
-  // Dummy data implementation
   return {
     totalEvents: totalRecords,
     severity: {

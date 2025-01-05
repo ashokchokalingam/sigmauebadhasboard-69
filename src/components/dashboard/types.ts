@@ -27,29 +27,29 @@ export interface User {
 }
 
 export interface Stats {
-  totalEvents: number;
-  severity: {
+  totalEvents?: number;
+  severity?: {
     critical: number;
     high: number;
     medium: number;
     low: number;
   };
-  uniqueUsers: {
+  uniqueUsers?: {
     current: number;
     change: number;
     users: User[];
   };
-  uniqueComputers: {
+  uniqueComputers?: {
     current: number;
     change: number;
     computers: string[];
   };
-  uniqueIPs: number;
-  riskScore: {
+  uniqueIPs?: number;
+  riskScore?: {
     current: number;
     change: number;
   };
-  anomalies: {
+  anomalies?: {
     current: number;
     change: number;
   };
