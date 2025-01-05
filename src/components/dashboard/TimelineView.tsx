@@ -72,7 +72,10 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   return (
     <div className={`flex flex-col ${inSidebar ? 'h-full' : 'min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212]'}`}>
       <div className="flex items-center justify-between p-6 border-b border-blue-500/10 bg-black/40">
-        <h2 className="text-2xl font-bold text-blue-100">{entityId}</h2>
+        <div>
+          <h2 className="text-3xl font-bold text-blue-100">{entityId}</h2>
+          <p className="text-sm text-blue-300/80 mt-1">Timeline Events</p>
+        </div>
         <button
           onClick={onClose}
           className="p-2 hover:bg-white/5 rounded-lg transition-colors"
