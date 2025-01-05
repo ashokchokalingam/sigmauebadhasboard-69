@@ -1,14 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { useToast } from "@/components/ui/use-toast";
+import { Alert } from "../types";
 
 export const useTimelineData = (
-  entityType: "user" | "computer", 
-  entityId: string, 
-  page: number,
+  entityType: "user" | "computer",
+  entityId: string,
+  page: number = 1,
   timeframe: string = "24h"
 ) => {
-  const { toast } = useToast();
-
   // Query for user origin timeline
   const { data: originTimelineData, isLoading: isLoadingOrigin } = useQuery({
     queryKey: ['timeline-origin', entityId, page, timeframe],
@@ -17,19 +15,11 @@ export const useTimelineData = (
       if (!response.ok) {
         throw new Error('Failed to fetch origin timeline data');
       }
-      return response.json();
+      const data = await response.json();
+      console.log('Origin timeline data:', data);
+      return data.user_origin_timeline_logs || [];
     },
     enabled: entityType === "user",
-    meta: {
-      onError: (error: Error) => {
-        console.error('Origin timeline fetch error:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch origin timeline data.",
-          variant: "destructive",
-        });
-      }
-    }
   });
 
   // Query for user impacted timeline
@@ -40,19 +30,11 @@ export const useTimelineData = (
       if (!response.ok) {
         throw new Error('Failed to fetch impacted timeline data');
       }
-      return response.json();
+      const data = await response.json();
+      console.log('Impacted timeline data:', data);
+      return data.user_impacted_timeline_logs || [];
     },
     enabled: entityType === "user",
-    meta: {
-      onError: (error: Error) => {
-        console.error('Impacted timeline fetch error:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch impacted timeline data.",
-          variant: "destructive",
-        });
-      }
-    }
   });
 
   // Query for computer timeline
@@ -63,31 +45,51 @@ export const useTimelineData = (
       if (!response.ok) {
         throw new Error('Failed to fetch computer timeline data');
       }
-      return response.json();
+      const data = await response.json();
+      console.log('Computer timeline data:', data);
+      return data.computer_impacted_timeline_logs || [];
     },
     enabled: entityType === "computer",
-    meta: {
-      onError: (error: Error) => {
-        console.error('Computer timeline fetch error:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch computer timeline data.",
-          variant: "destructive",
-        });
-      }
-    }
   });
 
-  const alerts = entityType === "user"
-    ? [
-        ...(originTimelineData?.user_origin_timeline_logs || []),
-        ...(impactedTimelineData?.user_impacted_timeline_logs || [])
-      ]
-    : computerTimelineData?.computer_impacted_timeline_logs || [];
+  let alerts: Alert[] = [];
+  if (entityType === "user") {
+    // Combine and deduplicate user origin and impacted timeline data
+    const originAlerts = originTimelineData || [];
+    const impactedAlerts = impactedTimelineData || [];
+    
+    // Create a Map to store unique alerts by ID
+    const alertMap = new Map();
+    
+    // Add origin alerts to the map
+    originAlerts.forEach((alert: Alert) => {
+      alertMap.set(alert.id, { ...alert, source: 'origin' });
+    });
+    
+    // Add impacted alerts to the map, potentially overwriting duplicates
+    impactedAlerts.forEach((alert: Alert) => {
+      if (!alertMap.has(alert.id)) {
+        alertMap.set(alert.id, { ...alert, source: 'impacted' });
+      }
+    });
+    
+    // Convert map values back to array
+    alerts = Array.from(alertMap.values());
+    
+    // Sort by system_time in descending order
+    alerts.sort((a: Alert, b: Alert) => 
+      new Date(b.system_time || '').getTime() - new Date(a.system_time || '').getTime()
+    );
+  } else {
+    alerts = computerTimelineData || [];
+  }
 
   const isLoading = entityType === "user" 
     ? (isLoadingOrigin || isLoadingImpacted)
     : isLoadingComputer;
 
-  return { alerts, isLoading };
+  return {
+    alerts,
+    isLoading,
+  };
 };
