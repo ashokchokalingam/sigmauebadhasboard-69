@@ -38,13 +38,20 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-  } = useInfiniteQuery<TimelineResponse>({
+  } = useInfiniteQuery({
     queryKey: ["timeline", entityType, entityId],
     queryFn: async ({ pageParam = 1 }) => {
+      console.log("Fetching timeline data:", { entityType, entityId, pageParam });
+      const endpoint = entityType === "user" ? "user_impacted_timeline" : "computer_impacted_timeline";
       const response = await fetch(
-        `/api/${entityType}_impacted_timeline?${entityType}_impacted=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`
+        `/api/${endpoint}?${entityType === "user" ? "user_impacted" : "computer_name"}=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`
       );
-      return response.json();
+      if (!response.ok) {
+        throw new Error(`Failed to fetch timeline data: ${response.statusText}`);
+      }
+      const data = await response.json();
+      console.log("Timeline data received:", data);
+      return data;
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
@@ -60,14 +67,16 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     (page) => page.user_impacted_timeline
   ) || [];
 
+  console.log("All events:", allEvents);
+
   if (inView && !isFetchingNextPage && hasNextPage) {
     fetchNextPage();
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className={`flex flex-col ${inSidebar ? 'h-full' : 'min-h-screen bg-[#1A1F2C]'}`}>
       <div className="flex items-center justify-between p-4 border-b border-gray-800">
-        <h2 className="text-lg font-semibold text-white">Timeline</h2>
+        <h2 className="text-lg font-semibold text-white">Timeline for {entityId}</h2>
         <button
           onClick={onClose}
           className="p-1 hover:bg-gray-800 rounded-lg transition-colors"
@@ -83,21 +92,27 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
             value={timeRange} 
             onChange={(value) => setTimeRange(value)} 
           />
-          <TimelineGraph alerts={allEvents} />
+          {allEvents.length > 0 && <TimelineGraph alerts={allEvents} />}
           <TimelineEventTypes 
             alerts={allEvents}
             onEventTypeSelect={() => {}}
           />
 
-          <div className="space-y-4">
-            {allEvents.map((event, index) => (
-              <TimelineEventCard
-                key={`${event.id}-${index}`}
-                event={event}
-                isLast={index === allEvents.length - 1}
-              />
-            ))}
-          </div>
+          {isLoading && allEvents.length === 0 ? (
+            <div className="text-center text-blue-400 py-8">Loading timeline data...</div>
+          ) : allEvents.length === 0 ? (
+            <div className="text-center text-blue-400 py-8">No events found for this entity</div>
+          ) : (
+            <div className="space-y-4">
+              {allEvents.map((event, index) => (
+                <TimelineEventCard
+                  key={`${event.id}-${index}`}
+                  event={event}
+                  isLast={index === allEvents.length - 1}
+                />
+              ))}
+            </div>
+          )}
 
           <InfiniteScrollLoader
             ref={ref}
