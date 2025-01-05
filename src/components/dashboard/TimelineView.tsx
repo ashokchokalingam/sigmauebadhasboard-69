@@ -25,21 +25,26 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
 
   const { alerts, isLoading, hasMore } = useTimelineData(entityType, entityId, page, timeframe);
 
+  // Update allAlerts immediately when new data arrives
   useEffect(() => {
-    if (alerts && !isLoading) {
+    if (alerts) {
       if (page === 1) {
+        console.log('Setting initial alerts:', alerts.length);
         setAllAlerts(alerts);
       } else {
-        const newAlerts = [...allAlerts];
-        alerts.forEach(alert => {
-          if (!newAlerts.some(existing => existing.id === alert.id)) {
-            newAlerts.push(alert);
-          }
+        console.log('Adding new alerts:', alerts.length);
+        setAllAlerts(prev => {
+          const newAlerts = [...prev];
+          alerts.forEach(alert => {
+            if (!newAlerts.some(existing => existing.id === alert.id)) {
+              newAlerts.push(alert);
+            }
+          });
+          return newAlerts;
         });
-        setAllAlerts(newAlerts);
       }
     }
-  }, [alerts, isLoading, page]);
+  }, [alerts, page]);
 
   const toggleRawLog = (alertId: string, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -56,7 +61,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     setPage(prev => prev + 1);
     toast({
       title: "Loading more events",
-      description: "Fetching the next batch of timeline events...",
+      description: `Fetching batch ${page + 1} of timeline events...`,
     });
   };
 

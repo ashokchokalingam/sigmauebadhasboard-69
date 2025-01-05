@@ -7,34 +7,19 @@ export const useTimelineData = (
   page: number = 1,
   timeframe: string = "24h"
 ) => {
-  // Query for user origin timeline
-  const { data: originTimelineData, isLoading: isLoadingOrigin } = useQuery({
-    queryKey: ['timeline-origin', entityId, page, timeframe],
-    queryFn: async () => {
-      const response = await fetch(`/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}&per_page=5000&timeframe=${timeframe}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch origin timeline data');
-      }
-      const data = await response.json();
-      console.log('Origin timeline data:', data);
-      return data;
-    },
-    enabled: entityType === "user",
-  });
-
-  // Query for user impacted timeline
+  // Query for user impacted timeline only
   const { data: impactedTimelineData, isLoading: isLoadingImpacted } = useQuery({
     queryKey: ['timeline-impacted', entityId, page, timeframe],
     queryFn: async () => {
+      console.log(`Fetching page ${page} for user ${entityId}`);
       const response = await fetch(`/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${page}&per_page=5000&timeframe=${timeframe}`);
       if (!response.ok) {
         throw new Error('Failed to fetch impacted timeline data');
       }
       const data = await response.json();
-      console.log('Impacted timeline data:', data);
+      console.log(`Received data for page ${page}:`, data);
       return data;
     },
-    enabled: entityType === "user",
   });
 
   // Query for computer timeline
@@ -56,51 +41,18 @@ export const useTimelineData = (
   let hasMore = false;
 
   if (entityType === "user") {
-    // Combine and deduplicate user origin and impacted timeline data
-    const originAlerts = originTimelineData?.user_origin_timeline_logs || [];
-    const impactedAlerts = impactedTimelineData?.user_impacted_timeline_logs || [];
-    const originPagination = originTimelineData?.pagination;
+    alerts = impactedTimelineData?.user_impacted_timeline_logs || [];
     const impactedPagination = impactedTimelineData?.pagination;
-    
-    // Create a Map to store unique alerts by ID
-    const alertMap = new Map();
-    
-    // Add origin alerts to the map
-    originAlerts.forEach((alert: Alert) => {
-      alertMap.set(alert.id, { ...alert, source: 'origin' });
-    });
-    
-    // Add impacted alerts to the map, potentially overwriting duplicates
-    impactedAlerts.forEach((alert: Alert) => {
-      if (!alertMap.has(alert.id)) {
-        alertMap.set(alert.id, { ...alert, source: 'impacted' });
-      }
-    });
-    
-    // Convert map values back to array
-    alerts = Array.from(alertMap.values());
-    
-    // Sort by system_time in descending order
-    alerts.sort((a: Alert, b: Alert) => 
-      new Date(b.system_time || '').getTime() - new Date(a.system_time || '').getTime()
-    );
-
-    // Check if there's more data to load
-    hasMore = originPagination?.current_page < originPagination?.total_pages ||
-              impactedPagination?.current_page < impactedPagination?.total_pages;
+    hasMore = impactedPagination?.current_page < impactedPagination?.total_pages;
   } else {
     alerts = computerTimelineData?.computer_impacted_timeline_logs || [];
     const computerPagination = computerTimelineData?.pagination;
     hasMore = computerPagination?.current_page < computerPagination?.total_pages;
   }
 
-  const isLoading = entityType === "user" 
-    ? (isLoadingOrigin || isLoadingImpacted)
-    : isLoadingComputer;
-
   return {
     alerts,
-    isLoading,
+    isLoading: entityType === "user" ? isLoadingImpacted : isLoadingComputer,
     hasMore,
   };
 };
