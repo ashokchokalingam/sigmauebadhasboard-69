@@ -65,17 +65,15 @@ export const processTimelineData = (
       const timeKey = getTimeKey(date, granularity);
       const formattedDate = getFormattedDate(date, granularity);
       
-      // Extract event categories from tags
-      const categories = alert.tags.split(',').reduce((acc: { [key: string]: number }, tag) => {
+      const categories = alert.tags?.split(',').reduce((acc: { [key: string]: number }, tag) => {
         const trimmedTag = tag.trim();
         if (trimmedTag) {
           acc[trimmedTag] = (acc[trimmedTag] || 0) + 1;
         }
         return acc;
-      }, {});
+      }, {}) || {};
 
-      // Check for anomalies (you can customize this logic)
-      const isAnomaly = alert.tags.toLowerCase().includes('anomaly');
+      const isAnomaly = alert.tags?.toLowerCase().includes('anomaly') || false;
       
       if (!timeData[timeKey]) {
         timeData[timeKey] = {
@@ -93,30 +91,25 @@ export const processTimelineData = (
         };
       }
       
-      // Update counts based on severity
-      const severity = alert.rule_level.toLowerCase();
+      const severity = alert.rule_level?.toLowerCase() || 'informational';
       if (timeData[timeKey].counts.hasOwnProperty(severity)) {
         timeData[timeKey].counts[severity]++;
       }
       
-      // Update categories
       Object.entries(categories).forEach(([category, count]) => {
         timeData[timeKey].categories[category] = (timeData[timeKey].categories[category] || 0) + count;
       });
       
-      // Update anomalies count
       if (isAnomaly) {
         timeData[timeKey].anomalies++;
       }
       
-      // Add event to the list
       timeData[timeKey].events.push(alert);
     } catch (error) {
       console.error('Error processing alert:', error);
     }
   });
 
-  // Sort by time and calculate cumulative totals
   const sortedData = Object.values(timeData)
     .sort((a, b) => new Date(a.fullDate).getTime() - new Date(b.fullDate).getTime())
     .map(point => {
@@ -128,7 +121,6 @@ export const processTimelineData = (
       };
     });
 
-  // If data is too sparse, default to hourly aggregation
   if (sortedData.length < 5 && granularity === '5min') {
     return processTimelineData(alerts, 'hour');
   }
@@ -149,4 +141,19 @@ export const getSeverityColor = (severity: string = ''): string => {
     default:
       return '#94A3B8'; // Gray
   }
+};
+
+export const getCategoryColor = (category: string = ''): string => {
+  // Hash the category string to generate a consistent color
+  let hash = 0;
+  for (let i = 0; i < category.length; i++) {
+    hash = category.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  // Convert hash to RGB color with blue tones (for consistency with the theme)
+  const h = Math.abs(hash % 360);  // Hue
+  const s = 70 + (hash % 20);      // Saturation between 70-90%
+  const l = 45 + (hash % 15);      // Lightness between 45-60%
+
+  return `hsl(${h}, ${s}%, ${l}%)`;
 };
