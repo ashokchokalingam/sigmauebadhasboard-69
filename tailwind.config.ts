@@ -77,21 +77,29 @@ export default {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' }
         },
-        'pulse': {
+        'cardiogram': {
           '0%, 100%': {
-            opacity: '0.9',
-            transform: 'scaleY(1)'
+            height: '8px',
+            marginTop: '12px'
           },
           '50%': {
-            opacity: '0.4',
-            transform: 'scaleY(0.4)'
+            height: '24px',
+            marginTop: '0px'
+          },
+          '20%, 80%': {
+            height: '8px',
+            marginTop: '12px'
+          },
+          '45%, 55%': {
+            height: '4px',
+            marginTop: '14px'
           }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'pulse': 'pulse 1s ease-in-out infinite'
+        'cardiogram': 'cardiogram 2s ease-in-out infinite'
       }
     }
   },

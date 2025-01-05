@@ -53,21 +53,23 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
       </div>
       
       <div className="flex items-center gap-4">
-        <div className="flex gap-1 h-4 items-center">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div
-              key={i}
-              className={cn(
-                "h-full w-0.5 rounded-full bg-blue-400/40",
-                "animate-pulse",
-                `delay-${i * 100}`
-              )}
-              style={{
-                animationDelay: `${i * 0.1}s`,
-                animationDuration: '1s'
-              }}
-            />
-          ))}
+        <div className="flex items-center h-8 w-24">
+          <div className="w-full h-full relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full h-px bg-blue-400/10" />
+            </div>
+            <div className="relative flex items-center justify-between w-full h-full">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div
+                  key={i}
+                  className="h-6 w-0.5 bg-blue-400/40 animate-cardiogram"
+                  style={{
+                    animationDelay: `${i * 0.1}s`
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </div>
         {safeUniqueTitles > 1 && (
           <div className={cn(
