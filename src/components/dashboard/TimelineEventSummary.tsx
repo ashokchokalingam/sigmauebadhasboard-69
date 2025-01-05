@@ -27,11 +27,11 @@ const TimelineEventSummary = ({ summary, isLoading }: TimelineEventSummaryProps)
       </div>
       
       <ScrollArea className="h-[600px] pr-4">
-        <div className="relative">
+        <div className="relative flex flex-col items-center">
           {/* Timeline vertical line */}
-          <div className="absolute left-[26px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-blue-500/50 to-purple-500/50" />
+          <div className="absolute left-1/2 top-8 bottom-8 w-0.5 bg-gradient-to-b from-blue-500/50 to-purple-500/50 transform -translate-x-1/2" />
           
-          <div className="space-y-6">
+          <div className="space-y-6 w-full max-w-3xl">
             {summary.map((event, index) => (
               <TimelineEventCard 
                 key={index} 

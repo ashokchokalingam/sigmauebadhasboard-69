@@ -27,11 +27,11 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
   };
 
   return (
-    <div className="group relative pl-14">
+    <div className="group relative w-full">
       {/* Timeline dot */}
-      <div className="absolute left-[22px] top-4 w-2 h-2 rounded-full bg-blue-400 ring-4 ring-blue-400/20" />
+      <div className="absolute left-1/2 top-4 w-3 h-3 rounded-full bg-blue-400 ring-4 ring-blue-400/20 transform -translate-x-1/2 z-10" />
       
-      <div className="max-w-4xl p-4 rounded-xl bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm">
+      <div className="w-full p-4 rounded-xl bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm">
         {/* Header Section with Severity and Event Count */}
         <div className="flex items-center gap-3 mb-3">
           {getSeverityIcon(event.rule_level)}
