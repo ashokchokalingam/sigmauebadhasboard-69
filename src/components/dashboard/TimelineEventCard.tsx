@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, AlertTriangle, Activity, Clock, Calendar, Info } from "lucide-react";
+import { Shield, AlertTriangle, Activity, Clock, Calendar, Info, User } from "lucide-react";
 import { Alert } from "./types";
 import TimelineMitreSection from "./TimelineMitreSection";
 import { cn } from "@/lib/utils";
@@ -61,12 +61,12 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
       <div className="relative ml-6 mb-6">
         <div 
           className={cn(
-            "p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer max-w-2xl",
+            "p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer max-w-4xl",
             isExpanded && "border-green-500/30"
           )}
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          {/* Header Section with Severity and Event Count */}
+          {/* Header Section with Severity, Event Count, and User */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               {getSeverityIcon(event.rule_level)}
@@ -81,6 +81,10 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
               <div className="flex items-center gap-2 text-sm text-green-400/70">
                 <Activity className="h-4 w-4" />
                 <span>{event.total_events || 0} events</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-purple-400/70">
+                <User className="h-4 w-4" />
+                <span>{event.target_user_name || 'Unknown User'}</span>
               </div>
             </div>
           </div>
