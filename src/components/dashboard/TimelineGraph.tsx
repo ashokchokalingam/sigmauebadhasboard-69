@@ -1,8 +1,9 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { Alert } from './types';
 
 interface TimelineGraphProps {
-  alerts: any[];
+  alerts: Alert[];
 }
 
 const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
@@ -43,12 +44,14 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
   const data = processData();
 
   return (
-    <div className="w-full h-[300px] relative group">
-      <div className="absolute inset-0 bg-[#1a1f2c]/90 rounded-xl" />
+    <div className="w-full h-[400px] relative group">
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-xl" />
       
-      <div className="relative w-full h-full p-4 backdrop-blur-sm rounded-xl border border-[#3b82f6]/20">
+      {/* Main chart container */}
+      <div className="relative w-full h-full p-4 backdrop-blur-sm rounded-xl border border-white/10 shadow-lg transition-all duration-300 hover:border-blue-500/30">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
+          <AreaChart
             data={data}
             margin={{
               top: 20,
@@ -57,17 +60,19 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
               bottom: 60
             }}
           >
+            {/* Stylish grid */}
             <CartesianGrid 
               strokeDasharray="3 3" 
-              stroke="rgba(59, 130, 246, 0.1)"
+              stroke="rgba(147, 197, 253, 0.1)"
               vertical={false}
             />
             
+            {/* X-axis with enhanced styling */}
             <XAxis 
               dataKey="fullDate"
-              stroke="#3b82f6"
+              stroke="#93c5fd"
               tick={{ 
-                fill: '#3b82f6',
+                fill: '#93c5fd',
                 fontSize: 12,
                 fontFamily: 'monospace'
               }}
@@ -75,22 +80,24 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
               angle={-45}
               textAnchor="end"
               interval={Math.floor(data.length / 8)}
-              axisLine={{ stroke: '#3b82f6', strokeWidth: 1, opacity: 0.3 }}
-              tickLine={{ stroke: '#3b82f6', strokeWidth: 1, opacity: 0.3 }}
+              axisLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
+              tickLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
             />
             
+            {/* Y-axis with enhanced styling */}
             <YAxis 
-              stroke="#3b82f6"
+              stroke="#93c5fd"
               tick={{ 
-                fill: '#3b82f6',
+                fill: '#93c5fd',
                 fontSize: 12,
                 fontFamily: 'monospace'
               }}
               width={40}
-              axisLine={{ stroke: '#3b82f6', strokeWidth: 1, opacity: 0.3 }}
-              tickLine={{ stroke: '#3b82f6', strokeWidth: 1, opacity: 0.3 }}
+              axisLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
+              tickLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
             />
             
+            {/* Enhanced tooltip */}
             <Tooltip
               contentStyle={{
                 backgroundColor: 'rgba(26, 34, 52, 0.95)',
@@ -98,23 +105,47 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
                 borderRadius: '8px',
                 padding: '12px',
                 boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                backdropFilter: 'blur(4px)',
-                color: '#3b82f6',
-                fontFamily: 'monospace'
+                backdropFilter: 'blur(4px)'
               }}
               labelStyle={{ 
-                color: '#3b82f6',
+                color: '#93c5fd',
                 fontFamily: 'monospace',
                 fontSize: '13px',
+                fontWeight: 'bold',
                 marginBottom: '8px'
+              }}
+              itemStyle={{ 
+                color: '#93c5fd',
+                fontFamily: 'monospace',
+                fontSize: '12px'
+              }}
+              labelFormatter={(label) => `Time: ${label}`}
+            />
+            
+            {/* Styled legend */}
+            <Legend 
+              wrapperStyle={{
+                paddingTop: '20px',
+                fontFamily: 'monospace'
               }}
             />
             
-            <Line
+            {/* Gradient area */}
+            <defs>
+              <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            
+            {/* Area with gradient */}
+            <Area
               type="monotone"
               dataKey="count"
+              name="Events"
               stroke="#3b82f6"
               strokeWidth={2}
+              fill="url(#colorCount)"
               dot={{ 
                 fill: '#3b82f6', 
                 r: 4,
@@ -128,8 +159,13 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
                 strokeWidth: 2
               }}
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
+      </div>
+      
+      {/* Animated glow effect */}
+      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10 animate-pulse rounded-xl" />
       </div>
     </div>
   );
