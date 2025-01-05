@@ -26,7 +26,7 @@ export interface EventSummary extends Alert {
   first_time_seen: string;
   last_time_seen: string;
   total_events: number;
-  user_impacted?: string;
+  user_impacted: string;
 }
 
 export interface TimelineResponse {

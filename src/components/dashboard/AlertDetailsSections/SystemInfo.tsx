@@ -47,6 +47,18 @@ const SystemInfo = ({ alert, browserTime }: SystemInfoProps) => {
           <h4 className="text-sm font-medium text-[#A9A9A9]">System Time</h4>
           <p className="text-sm text-[#E0E0E0] font-mono">{browserTime || 'N/A'}</p>
         </div>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">Total Events</h4>
+          <p className="text-sm text-[#E0E0E0] font-mono">{alert.total_events || '0'}</p>
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">First Seen</h4>
+          <p className="text-sm text-[#E0E0E0] font-mono">{alert.first_time_seen || 'N/A'}</p>
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">Last Seen</h4>
+          <p className="text-sm text-[#E0E0E0] font-mono">{alert.last_time_seen || 'N/A'}</p>
+        </div>
       </div>
     </Card>
   );
