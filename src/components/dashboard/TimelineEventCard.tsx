@@ -9,7 +9,7 @@ interface TimelineEventCardProps {
   isLast?: boolean;
 }
 
-const TimelineEventCard = ({ event }: TimelineEventCardProps) => {
+const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
   const getSeverityIcon = (level?: string) => {
     switch (level?.toLowerCase()) {
       case 'critical':
@@ -27,8 +27,11 @@ const TimelineEventCard = ({ event }: TimelineEventCardProps) => {
   };
 
   return (
-    <div className="group max-w-3xl mx-auto">
-      <div className="p-4 rounded-xl bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm">
+    <div className="group relative pl-14">
+      {/* Timeline dot */}
+      <div className="absolute left-[22px] top-4 w-2 h-2 rounded-full bg-blue-400 ring-4 ring-blue-400/20" />
+      
+      <div className="max-w-4xl p-4 rounded-xl bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm">
         {/* Header Section with Severity and Event Count */}
         <div className="flex items-center gap-3 mb-3">
           {getSeverityIcon(event.rule_level)}
