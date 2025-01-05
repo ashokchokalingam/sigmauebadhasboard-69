@@ -51,13 +51,15 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
 
   const observer = useRef<IntersectionObserver>();
   const lastAlertElementRef = useCallback((node: HTMLDivElement) => {
-    if (isLoading) return;
+    if (isLoading || isLoadingMore) return;
+    
     if (observer.current) observer.current.disconnect();
     
     observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+      if (entries[0].isIntersecting && hasMore) {
         console.log('Intersection observed, loading more...');
-        handleLoadMore();
+        setPage(prev => prev + 1);
+        setIsLoadingMore(true);
       }
     });
 
@@ -77,17 +79,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       title: "Loading new timeframe",
       description: `Fetching events for ${value} timeframe...`,
     });
-  };
-
-  const handleLoadMore = () => {
-    if (!isLoadingMore && hasMore) {
-      setIsLoadingMore(true);
-      setPage(prev => prev + 1);
-      toast({
-        title: "Loading more events",
-        description: `Fetching batch ${page + 1} of timeline events...`,
-      });
-    }
   };
 
   if (error) {
@@ -137,13 +128,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
             <div className="flex justify-center py-4">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
             </div>
-          )}
-
-          {hasMore && !isLoading && !isLoadingMore && (
-            <LoadMoreButton 
-              show={true}
-              onLoadMore={handleLoadMore}
-            />
           )}
         </>
       )}
