@@ -1,4 +1,4 @@
-import { Shield, AlertTriangle, Activity, Clock, Calendar, Info } from "lucide-react";
+import { Shield, AlertTriangle, Activity, Clock, Calendar, Info, User } from "lucide-react";
 import { Alert } from "./types";
 import TimelineMitreSection from "./TimelineMitreSection";
 import { cn } from "@/lib/utils";
@@ -29,8 +29,8 @@ const TimelineEventCard = ({ event }: TimelineEventCardProps) => {
   return (
     <div className="space-y-2">
       <div className="p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300">
-        {/* Header Section */}
-        <div className="flex items-start justify-between mb-3">
+        {/* Header Section with Severity and Event Count */}
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             {getSeverityIcon(event.rule_level)}
             <span className={cn(
@@ -41,25 +41,29 @@ const TimelineEventCard = ({ event }: TimelineEventCardProps) => {
             )}>
               {event.rule_level?.toUpperCase() || 'INFO'}
             </span>
+            <div className="flex items-center gap-1.5 text-xs text-green-400/70 ml-2">
+              <Activity className="h-3.5 w-3.5" />
+              <span>{event.total_events || 0} events</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-green-400/70">
-            <Activity className="h-4 w-4" />
-            <span>{event.total_events || 0} events</span>
+          <div className="flex items-center gap-1.5 text-blue-300/80">
+            <User className="h-3.5 w-3.5" />
+            <span className="text-xs font-mono">{event.user_impacted || 'N/A'}</span>
           </div>
         </div>
 
         {/* Title and Description */}
-        <div className="mb-3">
-          <h3 className="text-base font-medium text-blue-100 mb-1">
+        <div className="mb-2">
+          <h3 className="text-sm font-medium text-blue-100 mb-1">
             {event.title || "Unknown Event"}
           </h3>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-400 leading-relaxed">
             {event.description || "No description available"}
           </p>
         </div>
 
         {/* Timestamps */}
-        <div className="grid grid-cols-2 gap-4 mb-3 text-xs">
+        <div className="grid grid-cols-2 gap-2 mb-2 text-xs">
           <div className="flex items-center gap-1.5 text-blue-400/70">
             <Calendar className="h-3 w-3" />
             <span>First: {formatDateTime(event.first_time_seen || '')}</span>
@@ -72,20 +76,6 @@ const TimelineEventCard = ({ event }: TimelineEventCardProps) => {
 
         {/* MITRE ATT&CK Section */}
         <TimelineMitreSection alert={event} />
-        
-        {/* Event Details */}
-        <div className="mt-3 pt-3 border-t border-blue-500/10">
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">User Impacted</span>
-              <span className="text-blue-100 font-mono">{event.user_impacted || 'N/A'}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-400">Domain</span>
-              <span className="text-blue-100 font-mono">{event.target_domain_name || 'N/A'}</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
