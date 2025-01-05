@@ -74,10 +74,10 @@ const TableRow = ({ alert, visibleColumns, onToggleRaw }: TableRowProps) => {
             <span className="text-blue-100">{alert.computer_name}</span>
           </TableCell>
         );
-      case "severity":
+      case "rule_level":  // Changed from "severity" to "rule_level"
         return (
           <TableCell>
-            <span className="text-blue-100">{alert.severity}</span>
+            <span className="text-blue-100">{alert.rule_level}</span>
           </TableCell>
         );
       case "tags":
