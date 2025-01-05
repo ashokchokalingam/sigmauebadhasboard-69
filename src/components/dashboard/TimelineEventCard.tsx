@@ -13,21 +13,6 @@ interface TimelineEventCardProps {
 const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const getSeverityColor = (level?: string) => {
-    switch (level?.toLowerCase()) {
-      case 'critical':
-        return 'bg-red-500';
-      case 'high':
-        return 'bg-orange-500';
-      case 'medium':
-        return 'bg-yellow-500';
-      case 'informational':
-        return 'bg-blue-500';
-      default:
-        return 'bg-blue-500';
-    }
-  };
-
   const getSeverityIcon = (level?: string) => {
     switch (level?.toLowerCase()) {
       case 'critical':
@@ -51,7 +36,8 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
         className="w-full text-left group"
       >
         <div className="p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300">
-          <div className="flex items-center justify-between mb-2">
+          {/* Header with Severity */}
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               {getSeverityIcon(event.rule_level)}
               <span className={cn(
@@ -69,33 +55,37 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
             )} />
           </div>
 
-          <h3 className="text-lg font-medium text-blue-100 group-hover:text-white transition-colors">
-            {event.title || "Unknown Event"}
-          </h3>
-          
-          <p className="text-sm text-gray-400 mt-1 group-hover:text-gray-300 transition-colors">
-            {event.description || "No description available"}
-          </p>
+          {/* Title and Description */}
+          <div className="mb-4">
+            <h3 className="text-lg font-medium text-blue-100 group-hover:text-white transition-colors mb-2">
+              {event.title || "Unknown Event"}
+            </h3>
+            <p className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">
+              {event.description || "No description available"}
+            </p>
+          </div>
 
-          <div className="flex flex-wrap items-center gap-4 mt-3 text-sm">
+          {/* Event Metadata */}
+          <div className="grid grid-cols-3 gap-4 text-sm">
             <div className="flex items-center gap-1.5 text-blue-400/70">
               <Calendar className="h-4 w-4" />
-              First seen: {formatDateTime(event.first_time_seen)}
+              <span>First: {formatDateTime(event.first_time_seen || '')}</span>
             </div>
             <div className="flex items-center gap-1.5 text-purple-400/70">
               <Clock className="h-4 w-4" />
-              Last seen: {formatDateTime(event.last_time_seen)}
+              <span>Last: {formatDateTime(event.last_time_seen || '')}</span>
             </div>
             {event.total_events && (
               <div className="flex items-center gap-1.5 text-green-400/70">
                 <Activity className="h-4 w-4" />
-                {event.total_events} events
+                <span>{event.total_events} events</span>
               </div>
             )}
           </div>
         </div>
       </button>
 
+      {/* Expanded Content */}
       <div className={cn(
         "space-y-4 overflow-hidden transition-all duration-300",
         isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
@@ -105,25 +95,33 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
           
           <div className="mt-4 pt-4 border-t border-blue-500/10">
             <h4 className="text-sm font-medium text-blue-400 mb-2">Event Details</h4>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-400">User Impacted</span>
-                <span className="text-blue-100 font-mono">{event.user_impacted}</span>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">User Impacted</span>
+                  <span className="text-blue-100 font-mono">{event.user_impacted || 'N/A'}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Total Events</span>
+                  <span className="text-blue-100 font-mono">{event.total_events || '0'}</span>
+                </div>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-400">Total Events</span>
-                <span className="text-blue-100 font-mono">{event.total_events}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-400">Rule Level</span>
-                <span className={cn(
-                  "px-2 py-0.5 rounded-full text-xs",
-                  event.rule_level?.toLowerCase() === 'high' && "bg-orange-500/10 text-orange-400",
-                  event.rule_level?.toLowerCase() === 'medium' && "bg-yellow-500/10 text-yellow-400",
-                  event.rule_level?.toLowerCase() === 'informational' && "bg-blue-500/10 text-blue-400"
-                )}>
-                  {event.rule_level?.toUpperCase()}
-                </span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Rule Level</span>
+                  <span className={cn(
+                    "px-2 py-0.5 rounded-full text-xs",
+                    event.rule_level?.toLowerCase() === 'high' && "bg-orange-500/10 text-orange-400",
+                    event.rule_level?.toLowerCase() === 'medium' && "bg-yellow-500/10 text-yellow-400",
+                    event.rule_level?.toLowerCase() === 'informational' && "bg-blue-500/10 text-blue-400"
+                  )}>
+                    {event.rule_level?.toUpperCase() || 'N/A'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Domain</span>
+                  <span className="text-blue-100 font-mono">{event.target_domain_name || 'N/A'}</span>
+                </div>
               </div>
             </div>
           </div>
