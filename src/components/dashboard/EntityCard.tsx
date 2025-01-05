@@ -54,18 +54,17 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
       
       <div className="flex items-center gap-4">
         <div className="flex items-center h-8 w-32">
-          <div className="w-full h-full relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full h-px bg-blue-400/10" />
-            </div>
-            <div className="relative flex items-center justify-between w-full h-full">
-              <div className="w-full h-full flex items-center">
-                <div className="w-full h-4 relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full h-[2px] bg-blue-400/40 animate-cardiogram" />
-                  </div>
-                </div>
-              </div>
+          <div className="w-full h-full relative overflow-hidden">
+            <div className="absolute inset-0">
+              <svg className="w-full h-full" preserveAspectRatio="none">
+                <path
+                  d="M0,10 L2,10 L4,10 L6,10 L8,2 L10,18 L12,10 L14,10 L16,10 L18,2 L20,18 L22,10 L24,10 L26,10 L28,10"
+                  className="stroke-black stroke-[1.5] fill-none animate-cardiogram"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  pathLength="100"
+                />
+              </svg>
             </div>
           </div>
         </div>
