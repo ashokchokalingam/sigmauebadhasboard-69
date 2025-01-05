@@ -34,19 +34,21 @@ export const useTimelineData = (
   const { data, isLoading, error } = useQuery({
     queryKey: ['timeline-impacted', entityId, page, timeframe],
     queryFn: () => fetchTimelineData(page),
-    staleTime: 30000, // Cache data for 30 seconds
+    staleTime: 30000,
     retry: 2,
-    onSuccess: (data) => {
-      // Prefetch next page if there are more pages
-      if (data.pagination.current_page < data.pagination.total_pages) {
-        const nextPage = page + 1;
-        queryClient.prefetchQuery({
-          queryKey: ['timeline-impacted', entityId, nextPage, timeframe],
-          queryFn: () => fetchTimelineData(nextPage),
-          staleTime: 30000,
-        });
+    meta: {
+      onSuccess: (data: TimelineResponse) => {
+        // Prefetch next page if there are more pages
+        if (data.pagination.current_page < data.pagination.total_pages) {
+          const nextPage = page + 1;
+          queryClient.prefetchQuery({
+            queryKey: ['timeline-impacted', entityId, nextPage, timeframe],
+            queryFn: () => fetchTimelineData(nextPage),
+            staleTime: 30000,
+          });
+        }
       }
-    },
+    }
   });
 
   const alerts: Alert[] = data?.user_impacted_timeline_logs || [];

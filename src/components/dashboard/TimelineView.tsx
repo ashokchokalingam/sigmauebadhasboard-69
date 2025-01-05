@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import TimelineHeader from "./TimelineComponents/TimelineHeader";
 import TimelineLoader from "./TimelineComponents/TimelineLoader";
 import TimelineContent from "./TimelineComponents/TimelineContent";
@@ -24,6 +24,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { toast } = useToast();
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   const { alerts, isLoading, error, hasMore } = useTimelineData(entityType, entityId, page, timeframe);
 
@@ -47,6 +48,21 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       setIsLoadingMore(false);
     }
   }, [alerts, page]);
+
+  const observer = useRef<IntersectionObserver>();
+  const lastAlertElementRef = useCallback((node: HTMLDivElement) => {
+    if (isLoading) return;
+    if (observer.current) observer.current.disconnect();
+    
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+        console.log('Intersection observed, loading more...');
+        handleLoadMore();
+      }
+    });
+
+    if (node) observer.current.observe(node);
+  }, [isLoading, hasMore, isLoadingMore]);
 
   const toggleRawLog = (alertId: string, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -113,7 +129,9 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
             onToggleRaw={toggleRawLog}
           />
           
-          <InfiniteScrollLoader ref={null} hasMore={hasMore} />
+          <div ref={lastAlertElementRef}>
+            <InfiniteScrollLoader ref={loaderRef} hasMore={hasMore} />
+          </div>
           
           {(isLoading || isLoadingMore) && page > 1 && (
             <div className="flex justify-center py-4">
