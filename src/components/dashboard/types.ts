@@ -21,6 +21,11 @@ export interface Alert {
   is_anomaly?: boolean;
 }
 
+interface User {
+  id: string;
+  risk_score: number;
+}
+
 export interface Stats {
   totalEvents: number;
   severity: {
@@ -32,7 +37,7 @@ export interface Stats {
   uniqueUsers: {
     current: number;
     change: number;
-    users: string[];
+    users: User[];
   };
   uniqueComputers: {
     current: number;

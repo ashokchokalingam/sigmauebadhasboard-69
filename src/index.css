@@ -24,18 +24,12 @@
     --input: 262 32% 54%;
     --ring: 262 60% 75%;
     --radius: 0.5rem;
-
-    /* Stats specific colors */
-    --stats-text: 220 20% 98%;
-    --stats-accent: 262 60% 75%;
-    --stats-bg: 232 24% 18%;
-    --stats-border: 262 32% 54%;
   }
 }
 
 @layer components {
   .stats-card {
-    @apply relative overflow-hidden bg-stats-bg border-stats-border;
+    @apply relative overflow-hidden bg-black/40 border-blue-500/10;
     background: linear-gradient(
       135deg,
       rgba(99, 102, 241, 0.05) 0%,
