@@ -150,6 +150,10 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
                 <p className="text-sm text-[#1E90FF] font-mono">{alert.target_user_name || 'N/A'}</p>
               </div>
               <div>
+                <h4 className="text-sm font-medium text-[#A9A9A9]">User Impacted</h4>
+                <p className="text-sm text-[#1E90FF] font-mono">{alert.user_impacted || 'N/A'}</p>
+              </div>
+              <div>
                 <h4 className="text-sm font-medium text-[#A9A9A9]">Target Domain</h4>
                 <p className="text-sm text-[#E0E0E0] font-mono">{alert.target_domain_name || 'N/A'}</p>
               </div>
