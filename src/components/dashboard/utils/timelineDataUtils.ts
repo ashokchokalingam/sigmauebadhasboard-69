@@ -131,11 +131,11 @@ export const processTimelineData = (
 export const getSeverityColor = (severity: string = ''): string => {
   switch (severity.toLowerCase()) {
     case 'high':
-      return '#F97316'; // Orange
+      return '#F87171'; // Warm red
     case 'medium':
-      return '#FBBF24'; // Yellow
+      return '#FBBF24'; // Warm yellow
     case 'low':
-      return '#22C55E'; // Green
+      return '#34D399'; // Emerald green
     case 'informational':
       return '#60A5FA'; // Blue
     default:
