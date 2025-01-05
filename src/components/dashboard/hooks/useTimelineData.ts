@@ -53,7 +53,7 @@ export const useTimelineData = (
   });
 
   const alerts: Alert[] = data?.user_impacted_timeline_logs || [];
-  const pagination = data?.pagination || {};
+  const pagination = data?.pagination || { current_page: 0, total_pages: 0, per_page: 1000, total_records: 0 };
   const hasMore = pagination.current_page < pagination.total_pages;
 
   console.log('Current timeline state:', {
