@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Brush, Legend, Line, ComposedChart } from 'recharts';
+import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Brush, Legend } from 'recharts';
 import { getSeverityColor } from '../utils/timelineDataUtils';
 import TimelineTooltip from '../TimelineTooltip';
 
@@ -27,114 +27,84 @@ const TimelineBarChart = ({
   zoomDomain 
 }: TimelineBarChartProps) => {
   return (
-    <div className="w-full h-[400px] bg-gradient-to-b from-black/40 to-black/20 backdrop-blur-sm rounded-lg p-4 border border-blue-500/10">
+    <div className="w-full h-[400px] bg-gradient-to-b from-black/20 to-black/10 backdrop-blur-sm rounded-lg p-4 border border-blue-500/10">
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
           data={data}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
         >
           <defs>
-            {['high', 'medium', 'low', 'informational'].map((severity) => (
-              <linearGradient key={severity} id={`gradient-${severity}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={getSeverityColor(severity)} stopOpacity={0.8}/>
-                <stop offset="95%" stopColor={getSeverityColor(severity)} stopOpacity={0.3}/>
-              </linearGradient>
-            ))}
-            <linearGradient id="lineGradient" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#60A5FA" stopOpacity={1}/>
-              <stop offset="50%" stopColor="#8B5CF6" stopOpacity={1}/>
-              <stop offset="100%" stopColor="#60A5FA" stopOpacity={1}/>
+            <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#10B981" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#10B981" stopOpacity={0.3}/>
             </linearGradient>
           </defs>
           <CartesianGrid 
             strokeDasharray="3 3" 
-            className="opacity-10"
             vertical={false}
+            stroke="rgba(255,255,255,0.05)"
           />
           <XAxis
             dataKey="fullDate"
-            scale="band"
-            tick={{ fill: '#94a3b8', fontSize: 11 }}
-            axisLine={{ stroke: '#1e293b' }}
-            tickLine={{ stroke: '#1e293b' }}
+            axisLine={false}
+            tickLine={false}
+            tick={{ 
+              fill: '#94A3B8', 
+              fontSize: 10,
+              dy: 10
+            }}
+            interval="preserveStartEnd"
           />
           <YAxis
-            yAxisId="left"
-            orientation="left"
-            tick={{ fill: '#94a3b8', fontSize: 11 }}
-            axisLine={{ stroke: '#1e293b' }}
-            tickLine={{ stroke: '#1e293b' }}
+            axisLine={false}
+            tickLine={false}
+            tick={{ 
+              fill: '#94A3B8', 
+              fontSize: 10,
+              dx: -10
+            }}
+            width={40}
           />
-          <YAxis
-            yAxisId="right"
-            orientation="right"
-            tick={{ fill: '#94a3b8', fontSize: 11 }}
-            axisLine={{ stroke: '#1e293b' }}
-            tickLine={{ stroke: '#1e293b' }}
+          <Tooltip 
+            content={<TimelineTooltip />}
+            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
           />
-          <Tooltip content={<TimelineTooltip />} />
           <Legend 
-            verticalAlign="bottom" 
+            verticalAlign="top"
             height={36}
-            wrapperStyle={{
-              paddingTop: '10px',
-              borderTop: '1px solid rgba(148, 163, 184, 0.1)'
-            }}
+            content={({ payload }) => (
+              <div className="flex justify-end gap-4 mb-4 text-xs text-gray-400">
+                {payload?.map((entry: any) => (
+                  <div key={entry.value} className="flex items-center gap-2">
+                    <div 
+                      className="w-3 h-3 rounded"
+                      style={{ backgroundColor: entry.color }}
+                    />
+                    {entry.value}
+                  </div>
+                ))}
+              </div>
+            )}
           />
           <Bar
-            yAxisId="left"
-            dataKey="counts.high"
-            stackId="a"
-            fill="url(#gradient-high)"
-            name="High"
-            radius={[4, 4, 0, 0]}
-          />
-          <Bar
-            yAxisId="left"
-            dataKey="counts.medium"
-            stackId="a"
-            fill="url(#gradient-medium)"
-            name="Medium"
-            radius={[4, 4, 0, 0]}
-          />
-          <Bar
-            yAxisId="left"
-            dataKey="counts.low"
-            stackId="a"
-            fill="url(#gradient-low)"
-            name="Low"
-            radius={[4, 4, 0, 0]}
-          />
-          <Bar
-            yAxisId="left"
-            dataKey="counts.informational"
-            stackId="a"
-            fill="url(#gradient-informational)"
-            name="Info"
-            radius={[4, 4, 0, 0]}
-          />
-          <Line
-            yAxisId="right"
-            type="monotone"
             dataKey="cumulativeTotal"
-            stroke="url(#lineGradient)"
-            strokeWidth={2}
-            dot={{ 
-              fill: '#8B5CF6',
-              strokeWidth: 2,
-              r: 4,
-              stroke: '#1e293b'
-            }}
-            name="Cumulative Events"
+            fill="url(#barGradient)"
+            radius={[2, 2, 0, 0]}
+            maxBarSize={40}
+            isAnimationActive={true}
+            animationDuration={300}
+            animationBegin={0}
           />
           <Brush
             dataKey="fullDate"
             height={30}
             stroke="#4B5563"
-            fill="#1F2937"
-            travellerWidth={10}
-            className="opacity-50"
-          />
+            fill="rgba(17, 24, 39, 0.7)"
+            tickFormatter={(value) => ''}
+            startIndex={Math.max(0, data.length - 50)}
+          >
+            <rect x={0} y={0} width="100%" height="100%" fill="rgba(17, 24, 39, 0.7)" />
+          </Brush>
         </ComposedChart>
       </ResponsiveContainer>
     </div>
