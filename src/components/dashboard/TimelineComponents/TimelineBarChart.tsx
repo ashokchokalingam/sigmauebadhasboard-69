@@ -1,5 +1,4 @@
-import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Brush, Area } from 'recharts';
-import { getSeverityColor } from '../utils/timelineDataUtils';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import TimelineTooltip from '../TimelineTooltip';
 
 interface TimelineDataPoint {
@@ -27,20 +26,17 @@ const TimelineBarChart = ({
   zoomDomain 
 }: TimelineBarChartProps) => {
   return (
-    <div className="w-full h-[400px] bg-[#0D1117] rounded-lg p-4 border border-blue-500/5">
+    <div className="w-full h-[300px] bg-black/40 rounded-lg border border-blue-500/10">
       <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart
+        <BarChart
           data={data}
-          margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
+          margin={{ top: 10, right: 0, left: -20, bottom: 0 }}
+          barSize={4}
         >
           <defs>
-            <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.3}/>
-              <stop offset="100%" stopColor="#3B82F6" stopOpacity={0}/>
-            </linearGradient>
             <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#60A5FA" stopOpacity={0.8}/>
-              <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.3}/>
+              <stop offset="0%" stopColor="#34D399" stopOpacity={1}/>
+              <stop offset="100%" stopColor="#34D399" stopOpacity={0.6}/>
             </linearGradient>
           </defs>
           
@@ -56,7 +52,7 @@ const TimelineBarChart = ({
             tickLine={false}
             tick={{ 
               fill: '#64748B', 
-              fontSize: 11,
+              fontSize: 10,
               dy: 10
             }}
             interval="preserveStartEnd"
@@ -67,47 +63,26 @@ const TimelineBarChart = ({
             tickLine={false}
             tick={{ 
               fill: '#64748B', 
-              fontSize: 11,
+              fontSize: 10,
               dx: -10
             }}
-            width={40}
+            width={30}
           />
           
           <Tooltip 
             content={<TimelineTooltip />}
             cursor={{ fill: 'rgba(255,255,255,0.02)' }}
           />
-
-          <Area
-            type="monotone"
-            dataKey="cumulativeTotal"
-            stroke="#3B82F6"
-            strokeWidth={2}
-            fill="url(#areaGradient)"
-            animationDuration={1000}
-          />
           
           <Bar
             dataKey="cumulativeTotal"
             fill="url(#barGradient)"
-            radius={[4, 4, 0, 0]}
-            maxBarSize={40}
+            radius={[2, 2, 0, 0]}
             isAnimationActive={true}
-            animationDuration={1000}
+            animationDuration={300}
             animationBegin={0}
           />
-          
-          <Brush
-            dataKey="fullDate"
-            height={40}
-            stroke="#3B82F6"
-            fill="#0D1117"
-            travellerWidth={8}
-            className="mt-4"
-          >
-            <rect x={0} y={0} width="100%" height="100%" fill="#0D1117" />
-          </Brush>
-        </ComposedChart>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );
