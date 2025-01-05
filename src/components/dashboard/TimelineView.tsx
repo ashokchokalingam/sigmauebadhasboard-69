@@ -5,7 +5,7 @@ import TimelineContent from "./TimelineComponents/TimelineContent";
 import LoadMoreButton from "./TimelineComponents/LoadMoreButton";
 import TimeRangeSelector from "./TimeRangeSelector";
 import { useTimelineData } from "./hooks/useTimelineData";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Alert } from "./types";
 
 interface TimelineViewProps {
@@ -21,11 +21,11 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const [page, setPage] = useState(1);
   const [timeframe, setTimeframe] = useState("24h");
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { toast } = useToast();
 
-  const { alerts, isLoading, hasMore } = useTimelineData(entityType, entityId, page, timeframe);
+  const { alerts, isLoading, error, hasMore } = useTimelineData(entityType, entityId, page, timeframe);
 
-  // Update allAlerts immediately when new data arrives
   useEffect(() => {
     if (alerts) {
       if (page === 1) {
@@ -43,6 +43,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
           return newAlerts;
         });
       }
+      setIsLoadingMore(false);
     }
   }, [alerts, page]);
 
@@ -55,15 +56,30 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     setTimeframe(value);
     setPage(1);
     setAllAlerts([]);
+    toast({
+      title: "Loading new timeframe",
+      description: `Fetching events for ${value} timeframe...`,
+    });
   };
 
   const handleLoadMore = () => {
-    setPage(prev => prev + 1);
-    toast({
-      title: "Loading more events",
-      description: `Fetching batch ${page + 1} of timeline events...`,
-    });
+    if (!isLoadingMore) {
+      setIsLoadingMore(true);
+      setPage(prev => prev + 1);
+      toast({
+        title: "Loading more events",
+        description: `Fetching batch ${page + 1} of timeline events...`,
+      });
+    }
   };
+
+  if (error) {
+    toast({
+      title: "Error loading timeline",
+      description: "Failed to load timeline data. Please try again.",
+      variant: "destructive",
+    });
+  }
 
   const content = (
     <>
@@ -96,13 +112,13 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
             onToggleRaw={toggleRawLog}
           />
           
-          {isLoading && page > 1 && (
+          {(isLoading || isLoadingMore) && page > 1 && (
             <div className="flex justify-center py-4">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
             </div>
           )}
 
-          {hasMore && !isLoading && (
+          {hasMore && !isLoading && !isLoadingMore && (
             <LoadMoreButton 
               show={true}
               onLoadMore={handleLoadMore}
