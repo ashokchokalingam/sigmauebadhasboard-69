@@ -25,12 +25,16 @@ export interface EventSummary {
   last_time_seen: string;
   total_events: number;
   user_impacted?: string;
-  user_origin?: string;
-  computer_name?: string;
 }
 
 export interface TimelineResponse {
-  user_impacted_timeline?: EventSummary[];
-  user_origin_timeline?: EventSummary[];
-  computer_impacted_timeline?: EventSummary[];
+  user_impacted_timeline: EventSummary[];
+}
+
+export interface Stats {
+  total: number;
+  high: number;
+  medium: number;
+  low: number;
+  lastDay: number;
 }

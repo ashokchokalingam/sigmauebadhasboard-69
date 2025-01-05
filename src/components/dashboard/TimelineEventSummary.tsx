@@ -1,6 +1,6 @@
 import { Activity } from "lucide-react";
 import { EventSummary } from "./types";
-import EventCard from "./EventCard";
+import TimelineEventCard from "./TimelineEventCard";
 import { ScrollArea } from "../ui/scroll-area";
 
 interface TimelineEventSummaryProps {
@@ -13,7 +13,7 @@ const TimelineEventSummary = ({ summary, isLoading }: TimelineEventSummaryProps)
     return (
       <div className="space-y-4 animate-pulse">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-32 bg-blue-950/50 rounded-lg" />
+          <div key={i} className="h-48 bg-blue-950/50 rounded-lg" />
         ))}
       </div>
     );
@@ -23,13 +23,13 @@ const TimelineEventSummary = ({ summary, isLoading }: TimelineEventSummaryProps)
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-lg font-semibold text-blue-100">
         <Activity className="h-5 w-5 text-blue-400" />
-        Event Summary
+        Event Timeline
       </div>
       
       <ScrollArea className="h-[600px] pr-4">
         <div className="space-y-4">
           {summary.map((event, index) => (
-            <EventCard key={index} event={event} />
+            <TimelineEventCard key={index} event={event} />
           ))}
           
           {summary.length === 0 && (

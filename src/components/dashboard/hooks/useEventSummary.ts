@@ -34,14 +34,8 @@ export const useEventSummary = (
 
       const data: TimelineResponse = await response.json();
       
-      // Extract the correct array based on the endpoint
-      const summaryArray = data.user_impacted_timeline || 
-                          data.user_origin_timeline || 
-                          data.computer_impacted_timeline || 
-                          [];
-
       return {
-        event_summary: summaryArray,
+        event_summary: data.user_impacted_timeline || [],
       };
     },
     enabled: Boolean(entityType && entityId),
