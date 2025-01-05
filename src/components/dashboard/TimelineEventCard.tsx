@@ -3,6 +3,10 @@ import { Alert } from "./types";
 import TimelineMitreSection from "./TimelineMitreSection";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ScrollArea } from "../ui/scroll-area";
+import { allColumns } from "./TableConfig";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -10,6 +14,21 @@ interface TimelineEventCardProps {
 }
 
 const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const { data: detailedLogs, isLoading } = useQuery({
+    queryKey: ['detailed-logs', event.user_impacted, event.title, isExpanded],
+    queryFn: async () => {
+      if (!isExpanded) return null;
+      const response = await fetch(
+        `/api/user_impacted_logs?user_impacted=${encodeURIComponent(event.user_impacted || '')}&title=${encodeURIComponent(event.title)}&page=1&per_page=500`
+      );
+      if (!response.ok) throw new Error('Failed to fetch logs');
+      return response.json();
+    },
+    enabled: isExpanded
+  });
+
   const getSeverityIcon = (level?: string) => {
     switch (level?.toLowerCase()) {
       case 'critical':
@@ -26,6 +45,10 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
     return format(new Date(dateStr), "MMM d, yyyy 'at' h:mm a");
   };
 
+  const handleCardClick = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <div className="group relative pl-6">
       {/* Timeline dot and line */}
@@ -35,7 +58,13 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
       )}
 
       <div className="relative ml-6 mb-6 w-[75%]">
-        <div className="p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm">
+        <div 
+          onClick={handleCardClick}
+          className={cn(
+            "p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer",
+            isExpanded && "border-blue-500/30"
+          )}
+        >
           {/* Header Section with Severity and Event Count */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
@@ -79,6 +108,35 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
 
           {/* MITRE ATT&CK Section */}
           <TimelineMitreSection alert={event} />
+
+          {/* Detailed Logs Section */}
+          {isExpanded && (
+            <div className="mt-4 border-t border-blue-500/10 pt-4">
+              <h4 className="text-blue-100 font-medium mb-3">Detailed Logs</h4>
+              {isLoading ? (
+                <div className="flex justify-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                </div>
+              ) : detailedLogs?.length > 0 ? (
+                <ScrollArea className="h-[300px] w-full rounded-md border border-blue-500/10 p-4">
+                  <div className="space-y-4">
+                    {detailedLogs.map((log: Alert, index: number) => (
+                      <div key={index} className="p-3 rounded-md bg-black/20 border border-blue-500/5">
+                        {allColumns.map(column => (
+                          <div key={column.key} className="mb-2">
+                            <span className="text-blue-300/70 text-sm">{column.label}: </span>
+                            <span className="text-blue-100">{log[column.key as keyof Alert] || 'N/A'}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              ) : (
+                <p className="text-blue-300/70 text-sm">No detailed logs available</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
