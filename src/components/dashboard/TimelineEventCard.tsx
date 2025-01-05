@@ -1,73 +1,61 @@
-import { Clock, Activity, AlertTriangle, Shield } from "lucide-react";
-import { EventSummary } from "./types";
-import { Card } from "../ui/card";
-import { extractTacticsAndTechniques } from "./utils";
-import TimelineRawLog from "./TimelineRawLog";
-import TimelineMetadataGrid from "./TimelineMetadataGrid";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { Alert } from "./types";
 import TimelineMitreSection from "./TimelineMitreSection";
+import TimelineMetadataGrid from "./TimelineMetadataGrid";
+import TimelineRawLog from "./TimelineRawLog";
+import { cn } from "@/lib/utils";
 
 interface TimelineEventCardProps {
-  event: EventSummary;
+  event: Alert;
+  isLast?: boolean;
 }
 
-const TimelineEventCard = ({ event }: TimelineEventCardProps) => {
-  const { tactics, techniques } = extractTacticsAndTechniques(event.tags);
-  
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleString(undefined, {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
-
-  const getSeverityColor = (level: string = '') => {
-    const l = level.toLowerCase();
-    if (l.includes('critical')) return "text-[#FF4500] bg-[#FF4500]/10";
-    if (l.includes('high')) return "text-[#FF8C00] bg-[#FF8C00]/10";
-    if (l.includes('medium')) return "text-[#FFD700] bg-[#FFD700]/10";
-    if (l.includes('low')) return "text-[#32CD32] bg-[#32CD32]/10";
-    if (l.includes('informational')) return "text-[#1E90FF] bg-[#1E90FF]/10";
-    return "text-blue-400 bg-blue-500/10";
-  };
-
-  const severityClass = getSeverityColor(event.rule_level);
+const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
-      <div className="p-4 space-y-4">
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className={`h-5 w-5 ${severityClass.split(' ')[0]}`} />
-              <h3 className="text-lg font-medium text-blue-100">{event.title}</h3>
+    <div className={cn(
+      "relative",
+      !isLast && "pb-4"
+    )}>
+      {!isLast && (
+        <div className="absolute left-4 top-8 bottom-0 w-px bg-purple-500/20" />
+      )}
+      
+      <div className="relative">
+        <div className="absolute left-4 top-4 w-2 h-2 rounded-full bg-purple-500" />
+        
+        <div className="pl-8 space-y-2">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full text-left"
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-medium text-white">
+                {event.title || "Unknown Event"}
+              </h3>
+              <ChevronDown className={cn(
+                "h-5 w-5 text-gray-400 transition-transform duration-200",
+                isExpanded && "transform rotate-180"
+              )} />
             </div>
-            <p className="text-sm text-blue-300/70">
-              {event.description}
+            <p className="text-sm text-gray-400">
+              {event.description || "No description available"}
             </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className={`px-3 py-1.5 rounded-full text-sm font-medium ${severityClass}`}>
-              {event.rule_level || 'Unknown'}
-            </span>
-            <div className="bg-blue-500/10 px-3 py-1.5 rounded-full flex items-center gap-2">
-              <Activity className="h-4 w-4 text-blue-400" />
-              <span className="text-sm font-medium text-blue-400">
-                {event.total_events?.toLocaleString()} events
-              </span>
-            </div>
+          </button>
+
+          <div className={cn(
+            "space-y-4 overflow-hidden transition-all duration-200",
+            isExpanded ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+          )}>
+            <TimelineMitreSection alert={event} />
+            <TimelineMetadataGrid alert={event} />
+            <TimelineRawLog alert={event} />
           </div>
         </div>
-
-        <TimelineMetadataGrid alert={event} />
-        
-        <TimelineMitreSection alert={event} />
-
-        <TimelineRawLog alert={event} />
       </div>
-    </Card>
+    </div>
   );
 };
 
