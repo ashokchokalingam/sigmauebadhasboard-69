@@ -34,7 +34,7 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
         <div className="absolute left-0 top-8 -ml-[1px] h-full w-[2px] bg-gradient-to-b from-green-400/50 to-transparent" />
       )}
 
-      <div className="relative ml-6 mb-6">
+      <div className="relative ml-6 mb-6 max-w-2xl">
         <div className="p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm">
           {/* Header Section with Severity and Event Count */}
           <div className="flex items-center justify-between mb-3">
