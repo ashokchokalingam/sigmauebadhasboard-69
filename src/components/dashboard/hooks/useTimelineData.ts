@@ -1,6 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { Alert } from "../types";
 
+interface TimelineResponse {
+  user_impacted_timeline_logs: Alert[];
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total_pages: number;
+    total_records: number;
+  };
+}
+
 export const useTimelineData = (
   entityType: "user" | "computer",
   entityId: string,
