@@ -8,6 +8,7 @@ import TimelineControls from "./TimelineControls";
 import TimeRangeSelector from "./TimeRangeSelector";
 import InfiniteScrollLoader from "./InfiniteScrollLoader";
 import { useInView } from "react-intersection-observer";
+import { useState } from "react";
 
 const EVENTS_PER_PAGE = 500;
 
@@ -29,6 +30,7 @@ interface TimelineViewProps {
 
 const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: TimelineViewProps) => {
   const { ref, inView } = useInView();
+  const [timeRange, setTimeRange] = useState("1h");
 
   const {
     data,
@@ -77,9 +79,15 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       <div className="flex-1 overflow-y-auto">
         <div className="p-4 space-y-4">
           <TimelineControls />
-          <TimeRangeSelector />
-          <TimelineGraph data={allEvents} />
-          <TimelineEventTypes />
+          <TimeRangeSelector 
+            value={timeRange} 
+            onChange={(value) => setTimeRange(value)} 
+          />
+          <TimelineGraph alerts={allEvents} />
+          <TimelineEventTypes 
+            alerts={allEvents}
+            onEventTypeSelect={() => {}}
+          />
 
           <div className="space-y-4">
             {allEvents.map((event, index) => (
@@ -91,12 +99,10 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
             ))}
           </div>
 
-          <div ref={ref}>
-            <InfiniteScrollLoader
-              isLoading={isFetchingNextPage}
-              hasMore={hasNextPage}
-            />
-          </div>
+          <InfiniteScrollLoader
+            ref={ref}
+            hasMore={!!hasNextPage}
+          />
         </div>
       </div>
     </div>
