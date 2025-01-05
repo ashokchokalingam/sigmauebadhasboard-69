@@ -25,6 +25,12 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     year: 'numeric',
   });
 
+  const formatRawData = (raw: string | object | undefined): string => {
+    if (!raw) return 'N/A';
+    if (typeof raw === 'string') return raw;
+    return JSON.stringify(raw, null, 2);
+  };
+
   const renderCell = (key: string) => {
     if (!visibleColumns.includes(key)) return null;
 
@@ -143,12 +149,16 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         return (
           <TableCell>
             <span className="text-blue-300/70 text-sm line-clamp-1">
-              {alert.raw || 'N/A'}
+              {formatRawData(alert.raw)}
             </span>
           </TableCell>
         );
       default:
-        return null;
+        return (
+          <TableCell className="text-blue-100">
+            N/A
+          </TableCell>
+        );
     }
   };
   
