@@ -25,9 +25,34 @@ const getTimeKey = (date: Date, granularity: '5min' | 'hour' | 'day'): string =>
   }
 };
 
+const getFormattedDate = (date: Date, granularity: '5min' | 'hour' | 'day'): string => {
+  switch (granularity) {
+    case '5min':
+      return date.toLocaleString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+    case 'hour':
+      return date.toLocaleString(undefined, {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        hour12: true
+      });
+    case 'day':
+      return date.toLocaleString(undefined, {
+        month: 'short',
+        day: 'numeric'
+      });
+  }
+};
+
 export const processTimelineData = (
   alerts: Alert[],
-  granularity: '5min' | 'hour' | 'day' = '5min'
+  granularity: '5min' | 'hour' | 'day' = 'hour'
 ): TimelineDataPoint[] => {
   const timeData: { [key: string]: TimelineDataPoint } = {};
   
@@ -40,14 +65,7 @@ export const processTimelineData = (
       if (isNaN(date.getTime())) return;
       
       const timeKey = getTimeKey(date, granularity);
-      
-      const formattedDate = date.toLocaleString(undefined, {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
+      const formattedDate = getFormattedDate(date, granularity);
       
       // Extract event categories from tags
       const categories = alert.tags.split(',').reduce((acc: { [key: string]: number }, tag) => {
@@ -94,9 +112,17 @@ export const processTimelineData = (
     }
   });
 
-  return Object.values(timeData).sort((a, b) => 
+  // Sort by time and ensure we have at least one data point per interval
+  const sortedData = Object.values(timeData).sort((a, b) => 
     new Date(a.fullDate).getTime() - new Date(b.fullDate).getTime()
   );
+
+  // If data is too sparse, default to hourly aggregation
+  if (sortedData.length < 5 && granularity === '5min') {
+    return processTimelineData(alerts, 'hour');
+  }
+
+  return sortedData;
 };
 
 export const getSeverityColor = (severity: string = ''): string => {
