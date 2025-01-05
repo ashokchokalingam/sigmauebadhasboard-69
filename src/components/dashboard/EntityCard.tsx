@@ -9,8 +9,9 @@ interface EntityCardProps {
   onClick: () => void;
 }
 
-const EntityCard = ({ id, eventCount, uniqueTitles, onClick }: EntityCardProps) => {
-  const isComputer = id.endsWith('$');
+const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCardProps) => {
+  // Safely check if id exists and if it ends with '$'
+  const isComputer = id?.endsWith('$') || false;
   
   return (
     <div 
@@ -33,25 +34,25 @@ const EntityCard = ({ id, eventCount, uniqueTitles, onClick }: EntityCardProps) 
         
         <div className="flex flex-col">
           <span className="font-mono text-sm text-blue-200/90 font-medium group-hover:text-blue-100">
-            {id}
+            {id || 'Unknown'}
           </span>
           <div className="flex items-center gap-2 mt-1">
             <div className="flex items-center gap-1.5">
               <Activity className="h-3.5 w-3.5 text-blue-400/60" />
               <span className="text-xs font-medium text-blue-300/60">
-                {uniqueTitles} unique anomalies
+                {uniqueTitles || 0} unique anomalies
               </span>
             </div>
             <span className="text-xs text-blue-400/30">•</span>
             <span className="text-xs text-blue-300/40">
-              {eventCount.toLocaleString()} total events
+              {(eventCount || 0).toLocaleString()} total events
             </span>
           </div>
         </div>
       </div>
       
       <div className="flex items-center">
-        {uniqueTitles > 1 && (
+        {(uniqueTitles || 0) > 1 && (
           <div className={cn(
             "px-2.5 py-1 rounded text-xs font-medium",
             "bg-blue-500/5 backdrop-blur-sm",
