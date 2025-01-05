@@ -1,23 +1,46 @@
 import React from "react";
-import { AlertTriangle, Computer } from "lucide-react";
+import { AlertTriangle, Computer, User, UserCog } from "lucide-react";
 
 interface EntityHeaderProps {
   totalEntities: number;
   isLoading: boolean;
-  type: "computers" | "users";
+  type: "users-origin" | "users-impacted" | "computers";
 }
 
 const EntityHeader = ({ totalEntities, isLoading, type }: EntityHeaderProps) => {
+  const getHeaderContent = () => {
+    switch (type) {
+      case "users-origin":
+        return {
+          icon: <User className="h-5 w-5 text-blue-400/80" />,
+          title: "Active Users Origin"
+        };
+      case "users-impacted":
+        return {
+          icon: <UserCog className="h-5 w-5 text-blue-400/80" />,
+          title: "Active Users Impacted"
+        };
+      case "computers":
+        return {
+          icon: <Computer className="h-5 w-5 text-blue-400/80" />,
+          title: "Active Computers"
+        };
+      default:
+        return {
+          icon: <AlertTriangle className="h-5 w-5 text-blue-400/80" />,
+          title: "Active Entities"
+        };
+    }
+  };
+
+  const { icon, title } = getHeaderContent();
+
   return (
     <div className="flex items-center justify-between bg-[#1e2c3d]/60 p-4 rounded-lg backdrop-blur-sm">
       <div className="flex items-center gap-2">
-        {type === "computers" ? (
-          <Computer className="h-5 w-5 text-blue-400/80" />
-        ) : (
-          <AlertTriangle className="h-5 w-5 text-blue-400/80" />
-        )}
+        {icon}
         <span className="text-lg font-semibold text-blue-100/90">
-          {type === "computers" ? "Active Computers" : "Active Users"}
+          {title}
         </span>
       </div>
       <span className="text-sm font-medium text-blue-400/80">

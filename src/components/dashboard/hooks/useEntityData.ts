@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { UserData, ComputerData } from "../types/entity";
 
-export const useEntityData = (type: "users" | "computers") => {
+export const useEntityData = (type: "users-origin" | "users-impacted" | "computers") => {
   const { data: originUsers, isLoading: isLoadingOrigin } = useQuery({
     queryKey: ['userOrigin'],
     queryFn: async () => {
@@ -13,7 +13,7 @@ export const useEntityData = (type: "users" | "computers") => {
       console.log('Origin users:', data);
       return data.user_origin_logs || [];
     },
-    enabled: type === "users"
+    enabled: type === "users-origin"
   });
 
   const { data: impactedUsers, isLoading: isLoadingImpacted } = useQuery({
@@ -27,7 +27,7 @@ export const useEntityData = (type: "users" | "computers") => {
       console.log('Impacted users:', data);
       return data.user_impacted_logs || [];
     },
-    enabled: type === "users"
+    enabled: type === "users-impacted"
   });
 
   const { data: impactedComputers, isLoading: isLoadingComputers } = useQuery({

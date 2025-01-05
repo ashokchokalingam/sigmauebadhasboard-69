@@ -8,7 +8,7 @@ import { getUniqueEntities } from "./utils/entityUtils";
 
 interface RiskyEntitiesProps {
   alerts: Alert[];
-  type: "users" | "computers";
+  type: "users-origin" | "users-impacted" | "computers";
   onEntitySelect: (entityId: string) => void;
 }
 
@@ -31,18 +31,11 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
 
   const { searchQuery, setSearchQuery, filteredEntities } = useEntitySearch(entities);
 
-  if (type === "users" && (isLoadingOrigin || isLoadingImpacted)) {
-    return (
-      <div className="space-y-4">
-        <EntityHeader totalEntities={0} isLoading={true} type={type} />
-        <div className="text-center text-blue-400/60 py-6 text-sm">
-          Loading...
-        </div>
-      </div>
-    );
-  }
+  const isLoading = type === "users-origin" ? isLoadingOrigin : 
+                   type === "users-impacted" ? isLoadingImpacted : 
+                   isLoadingComputers;
 
-  if (type === "computers" && isLoadingComputers) {
+  if (isLoading) {
     return (
       <div className="space-y-4">
         <EntityHeader totalEntities={0} isLoading={true} type={type} />
@@ -57,7 +50,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
     <div className="space-y-4">
       <EntityHeader 
         totalEntities={entities.length} 
-        isLoading={isLoadingOrigin || isLoadingImpacted || isLoadingComputers}
+        isLoading={isLoading}
         type={type}
       />
       
