@@ -9,11 +9,11 @@ export const useTimelineData = (
 ) => {
   const { toast } = useToast();
 
-  // Query for user origin timeline
+  // Query for user origin timeline - top 20 events
   const { data: originTimelineData, isLoading: isLoadingOrigin } = useQuery({
     queryKey: ['timeline-origin', entityId, page, timeframe],
     queryFn: async () => {
-      const response = await fetch(`/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}&timeframe=${timeframe}`);
+      const response = await fetch(`/api/user_origin_timeline?user_id=${encodeURIComponent(entityId)}&page=${page}&timeframe=${timeframe}&limit=20`);
       if (!response.ok) {
         throw new Error('Failed to fetch origin timeline data');
       }
@@ -32,11 +32,11 @@ export const useTimelineData = (
     }
   });
 
-  // Query for user impacted timeline
+  // Query for user impacted timeline - top 20 events
   const { data: impactedTimelineData, isLoading: isLoadingImpacted } = useQuery({
     queryKey: ['timeline-impacted', entityId, page, timeframe],
     queryFn: async () => {
-      const response = await fetch(`/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${page}&timeframe=${timeframe}`);
+      const response = await fetch(`/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${page}&timeframe=${timeframe}&limit=20`);
       if (!response.ok) {
         throw new Error('Failed to fetch impacted timeline data');
       }
@@ -55,11 +55,11 @@ export const useTimelineData = (
     }
   });
 
-  // Query for computer timeline
+  // Query for computer timeline - top 20 events
   const { data: computerTimelineData, isLoading: isLoadingComputer } = useQuery({
     queryKey: ['timeline-computer', entityId, page, timeframe],
     queryFn: async () => {
-      const response = await fetch(`/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}&timeframe=${timeframe}`);
+      const response = await fetch(`/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${page}&timeframe=${timeframe}&limit=20`);
       if (!response.ok) {
         throw new Error('Failed to fetch computer timeline data');
       }
