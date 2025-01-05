@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ZoomIn, ZoomOut, Filter } from 'lucide-react';
 import { getSeverityColor } from '../utils/timelineDataUtils';
 
@@ -9,6 +10,8 @@ interface TimelineControlsProps {
   selectedSeverity: string | null;
   onSeveritySelect: (severity: string | null) => void;
   severities: string[];
+  timeGranularity: '5min' | 'hour' | 'day';
+  onGranularityChange: (granularity: '5min' | 'hour' | 'day') => void;
 }
 
 const TimelineControls = ({
@@ -16,7 +19,9 @@ const TimelineControls = ({
   onZoomOut,
   selectedSeverity,
   onSeveritySelect,
-  severities
+  severities,
+  timeGranularity,
+  onGranularityChange
 }: TimelineControlsProps) => {
   return (
     <div className="flex items-center justify-between mb-4">
@@ -37,6 +42,20 @@ const TimelineControls = ({
         >
           <ZoomOut className="h-4 w-4 mr-1" /> Reset
         </Button>
+        
+        <Select
+          value={timeGranularity}
+          onValueChange={(value: '5min' | 'hour' | 'day') => onGranularityChange(value)}
+        >
+          <SelectTrigger className="w-[180px] bg-blue-500/10">
+            <SelectValue placeholder="Select granularity" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="5min">5 Minutes</SelectItem>
+            <SelectItem value="hour">Hourly</SelectItem>
+            <SelectItem value="day">Daily</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       
       <div className="flex items-center gap-2">

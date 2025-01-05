@@ -3,14 +3,32 @@ import { Alert } from '../types';
 export interface TimelineDataPoint {
   time: string;
   fullDate: string;
-  count: number;
-  severity: string;
+  counts: {
+    [key: string]: number;
+  };
   events: Alert[];
   categories: { [key: string]: number };
-  anomalyCount: number;
+  anomalies: number;
 }
 
-export const processTimelineData = (alerts: Alert[]): TimelineDataPoint[] => {
+const getTimeKey = (date: Date, granularity: '5min' | 'hour' | 'day'): string => {
+  switch (granularity) {
+    case '5min':
+      const minutes = Math.floor(date.getMinutes() / 5) * 5;
+      return `${date.getHours().toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    case 'hour':
+      return `${date.getHours().toString().padStart(2, '0')}:00`;
+    case 'day':
+      return date.toISOString().split('T')[0];
+    default:
+      return date.toISOString();
+  }
+};
+
+export const processTimelineData = (
+  alerts: Alert[],
+  granularity: '5min' | 'hour' | 'day' = '5min'
+): TimelineDataPoint[] => {
   const timeData: { [key: string]: TimelineDataPoint } = {};
   
   alerts.forEach(alert => {
@@ -21,9 +39,7 @@ export const processTimelineData = (alerts: Alert[]): TimelineDataPoint[] => {
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) return;
       
-      // Group by 5-minute intervals for better granularity
-      const minutes = Math.floor(date.getMinutes() / 5) * 5;
-      const hour = date.getHours();
+      const timeKey = getTimeKey(date, granularity);
       
       const formattedDate = date.toLocaleString(undefined, {
         month: 'short',
@@ -32,8 +48,6 @@ export const processTimelineData = (alerts: Alert[]): TimelineDataPoint[] => {
         minute: '2-digit',
         hour12: true
       });
-      
-      const key = `${date.toISOString().split('T')[0]} ${hour}:${minutes}`;
       
       // Extract event categories from tags
       const categories = alert.tags.split(',').reduce((acc: { [key: string]: number }, tag) => {
@@ -45,31 +59,35 @@ export const processTimelineData = (alerts: Alert[]): TimelineDataPoint[] => {
       // Check if it's an anomaly
       const isAnomaly = typeof alert.dbscan_cluster === 'number' && alert.dbscan_cluster === -1;
       
-      if (!timeData[key]) {
-        timeData[key] = {
-          time: `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`,
+      if (!timeData[timeKey]) {
+        timeData[timeKey] = {
+          time: timeKey,
           fullDate: formattedDate,
-          count: 1,
-          severity: alert.rule_level || 'unknown',
+          counts: {
+            critical: 0,
+            high: 0,
+            medium: 0,
+            low: 0,
+            informational: 0
+          },
           events: [alert],
           categories,
-          anomalyCount: isAnomaly ? 1 : 0
+          anomalies: isAnomaly ? 1 : 0
         };
       } else {
-        timeData[key].count++;
-        timeData[key].events.push(alert);
-        timeData[key].anomalyCount += isAnomaly ? 1 : 0;
+        timeData[timeKey].events.push(alert);
+        timeData[timeKey].anomalies += isAnomaly ? 1 : 0;
         
         // Merge categories
         Object.entries(categories).forEach(([category, count]) => {
-          timeData[key].categories[category] = (timeData[key].categories[category] || 0) + count;
+          timeData[timeKey].categories[category] = (timeData[timeKey].categories[category] || 0) + count;
         });
-        
-        // Update severity if higher priority
-        if (alert.rule_level === 'critical' || alert.rule_level === 'high') {
-          timeData[key].severity = alert.rule_level;
-        }
       }
+      
+      // Increment the count for the appropriate severity level
+      const severity = alert.rule_level?.toLowerCase() || 'informational';
+      timeData[timeKey].counts[severity] = (timeData[timeKey].counts[severity] || 0) + 1;
+      
     } catch (error) {
       console.warn('Invalid date encountered:', dateStr);
       return;
