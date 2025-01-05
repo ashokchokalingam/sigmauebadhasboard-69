@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TimelineHeader from "./TimelineComponents/TimelineHeader";
 import TimelineLoader from "./TimelineComponents/TimelineLoader";
 import TimelineContent from "./TimelineComponents/TimelineContent";
@@ -6,6 +6,7 @@ import LoadMoreButton from "./TimelineComponents/LoadMoreButton";
 import TimeRangeSelector from "./TimeRangeSelector";
 import { useTimelineData } from "./hooks/useTimelineData";
 import { useToast } from "../ui/use-toast";
+import { Alert } from "./types";
 
 interface TimelineViewProps {
   entityType: "user" | "computer";
@@ -19,18 +20,16 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const [selectedEventType, setSelectedEventType] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [timeframe, setTimeframe] = useState("24h");
-  const [allAlerts, setAllAlerts] = useState<any[]>([]);
+  const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
   const { toast } = useToast();
 
   const { alerts, isLoading, hasMore } = useTimelineData(entityType, entityId, page, timeframe);
 
-  // Update allAlerts when new data is fetched
-  React.useEffect(() => {
+  useEffect(() => {
     if (alerts && !isLoading) {
       if (page === 1) {
         setAllAlerts(alerts);
       } else {
-        // Combine new alerts with existing ones, avoiding duplicates
         const newAlerts = [...allAlerts];
         alerts.forEach(alert => {
           if (!newAlerts.some(existing => existing.id === alert.id)) {
