@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Brush, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Brush, Legend, Line, CompositeChart } from 'recharts';
 import { Alert } from '../types';
 import { getSeverityColor } from '../utils/timelineDataUtils';
 import TimelineTooltip from '../TimelineTooltip';
@@ -16,10 +16,20 @@ const TimelineBarChart = ({
   selectedSeverity,
   zoomDomain 
 }: TimelineBarChartProps) => {
+  // Calculate cumulative counts for trend line
+  const dataWithCumulative = data.map((item, index) => {
+    const previousTotal = index > 0 ? data[index - 1].cumulativeTotal || 0 : 0;
+    const currentTotal = Object.values(item.counts).reduce((sum: number, count: number) => sum + count, 0);
+    return {
+      ...item,
+      cumulativeTotal: previousTotal + currentTotal
+    };
+  });
+
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <BarChart
-        data={data}
+      <CompositeChart
+        data={dataWithCumulative}
         margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
         barSize={20}
       >
@@ -57,6 +67,21 @@ const TimelineBarChart = ({
           width={45}
           axisLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
           tickLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
+          yAxisId="left"
+        />
+        
+        <YAxis 
+          orientation="right"
+          stroke="#93c5fd"
+          tick={{ 
+            fill: '#93c5fd',
+            fontSize: 12,
+            fontFamily: 'monospace'
+          }}
+          width={45}
+          axisLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
+          tickLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
+          yAxisId="right"
         />
         
         <Tooltip content={<TimelineTooltip />} />
@@ -76,8 +101,19 @@ const TimelineBarChart = ({
             stackId="a"
             fill={getSeverityColor(severity)}
             opacity={selectedSeverity ? (selectedSeverity === severity ? 1 : 0.3) : 0.8}
+            yAxisId="left"
           />
         ))}
+
+        <Line
+          type="monotone"
+          dataKey="cumulativeTotal"
+          name="Cumulative Events"
+          stroke="#60A5FA"
+          strokeWidth={2}
+          dot={false}
+          yAxisId="right"
+        />
 
         <Brush
           dataKey="fullDate"
@@ -95,7 +131,7 @@ const TimelineBarChart = ({
             return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           }}
         />
-      </BarChart>
+      </CompositeChart>
     </ResponsiveContainer>
   );
 };
