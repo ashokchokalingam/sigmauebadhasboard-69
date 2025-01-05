@@ -4,6 +4,7 @@ export interface Alert {
   description: string;
   system_time: string;
   first_time_seen?: string;
+  last_time_seen?: string;
   user_id?: string;
   target_user_name?: string;
   computer_name?: string;
@@ -17,17 +18,14 @@ export interface Alert {
   target_domain_name?: string;
   tags: string;
   raw?: string | object;
+  total_events?: number;
 }
 
-export interface EventSummary {
-  title: string;
-  description: string;
-  tags: string;
+export interface EventSummary extends Alert {
   first_time_seen: string;
   last_time_seen: string;
   total_events: number;
   user_impacted?: string;
-  rule_level?: string;
 }
 
 export interface TimelineResponse {

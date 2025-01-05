@@ -1,14 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TimelineHeader from "./TimelineComponents/TimelineHeader";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Alert } from "./types";
+import { Alert, EventSummary, TimelineResponse } from "./types";
 import { Card } from "@/components/ui/card";
 import TimelineEventCard from "./TimelineEventCard";
 import TimelineHistogram from "./TimelineHistogram/TimelineHistogram";
 import TimeRangeSelector from "./TimeRangeSelector";
 import InfiniteScrollLoader from "./InfiniteScrollLoader";
 import { useInView } from "react-intersection-observer";
-import { useEffect } from "react";
 
 interface TimelineViewProps {
   entityType: "user" | "computer";
@@ -35,9 +34,9 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       let endpoint = '';
       
       if (entityType === 'user') {
-        endpoint = `http://172.16.0.75:5000/api/user_impacted_logs?user_impacted=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`;
+        endpoint = `/api/user_impacted_logs?user_impacted=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`;
       } else if (entityType === 'computer') {
-        endpoint = `http://172.16.0.75:5000/api/computer_impacted_timeline?computer_name=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`;
+        endpoint = `/api/computer_impacted_timeline?computer_name=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`;
       }
 
       const response = await fetch(endpoint);
@@ -46,15 +45,16 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       }
       const data = await response.json();
       console.log('Timeline data page:', pageParam, data);
-      return data;
+      return data as TimelineResponse;
     },
     getNextPageParam: (lastPage, pages) => {
-      if (lastPage.user_impacted_timeline?.length === EVENTS_PER_PAGE) {
+      if ((lastPage.user_impacted_timeline?.length || 0) === EVENTS_PER_PAGE) {
         return pages.length + 1;
       }
       return undefined;
     },
-    enabled: Boolean(entityType && entityId)
+    enabled: Boolean(entityType && entityId),
+    initialPageParam: 1
   });
 
   useEffect(() => {
@@ -90,8 +90,8 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
           <TimelineHistogram alerts={allEvents as Alert[]} />
           
           <div className="space-y-4 mt-8">
-            {allEvents.map((event: any, index: number) => (
-              <TimelineEventCard key={index} event={event} />
+            {allEvents.map((event: EventSummary, index: number) => (
+              <TimelineEventCard key={`${event.id}-${index}`} event={event} />
             ))}
           </div>
 
