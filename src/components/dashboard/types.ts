@@ -26,6 +26,7 @@ export interface EventSummary {
   last_time_seen: string;
   total_events: number;
   user_impacted?: string;
+  rule_level?: string;  // Added rule_level property
 }
 
 export interface TimelineResponse {
