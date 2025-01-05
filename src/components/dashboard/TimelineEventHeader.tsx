@@ -1,5 +1,5 @@
-import { Shield, AlertTriangle, Activity, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AlertTriangle, Shield, ShieldAlert, ShieldCheck } from "lucide-react";
 
 interface TimelineEventHeaderProps {
   ruleLevel?: string;
@@ -8,48 +8,59 @@ interface TimelineEventHeaderProps {
   description: string;
 }
 
-const TimelineEventHeader = ({ ruleLevel, totalRecords, title, description }: TimelineEventHeaderProps) => {
-  const getSeverityIcon = (level?: string) => {
-    switch (level?.toLowerCase()) {
+const TimelineEventHeader = ({
+  ruleLevel = 'medium',
+  totalRecords,
+  title,
+  description
+}: TimelineEventHeaderProps) => {
+  const getSeverityIcon = () => {
+    switch (ruleLevel?.toLowerCase()) {
       case 'critical':
+        return <AlertTriangle className="h-5 w-5 text-red-400" />;
       case 'high':
-        return <AlertTriangle className="h-5 w-5 text-orange-400" />;
+        return <ShieldAlert className="h-5 w-5 text-orange-400" />;
       case 'medium':
         return <Shield className="h-5 w-5 text-yellow-400" />;
       default:
-        return <Info className="h-5 w-5 text-blue-400" />;
+        return <ShieldCheck className="h-5 w-5 text-green-400" />;
+    }
+  };
+
+  const getSeverityColor = () => {
+    switch (ruleLevel?.toLowerCase()) {
+      case 'critical':
+        return 'text-red-400 bg-red-400/10';
+      case 'high':
+        return 'text-orange-400 bg-orange-400/10';
+      case 'medium':
+        return 'text-yellow-400 bg-yellow-400/10';
+      default:
+        return 'text-green-400 bg-green-400/10';
     }
   };
 
   return (
-    <>
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          {getSeverityIcon(ruleLevel)}
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {getSeverityIcon()}
           <span className={cn(
-            "text-sm font-medium px-3 py-1 rounded-full",
-            ruleLevel?.toLowerCase() === 'high' && "bg-orange-500/10 text-orange-400 border border-orange-500/20",
-            ruleLevel?.toLowerCase() === 'medium' && "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20",
-            ruleLevel?.toLowerCase() === 'informational' && "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+            "text-xs font-medium px-2.5 py-0.5 rounded-full capitalize",
+            getSeverityColor()
           )}>
-            {ruleLevel?.toUpperCase() || 'INFO'}
+            {ruleLevel}
           </span>
-          <div className="flex items-center gap-2 text-sm text-green-400/70">
-            <Activity className="h-4 w-4" />
-            <span>{totalRecords} events</span>
-          </div>
+          <span className="text-xs text-blue-400 bg-blue-400/10 px-2.5 py-0.5 rounded-full">
+            {totalRecords || 0} events
+          </span>
         </div>
       </div>
-
-      <div className="mb-4">
-        <h3 className="text-lg font-medium text-blue-100 mb-2 group-hover:text-blue-300 transition-colors">
-          {title || "Unknown Event"}
-        </h3>
-        <p className="text-sm text-gray-400 leading-relaxed">
-          {description || "No description available"}
-        </p>
+      <div className="space-y-1">
+        <h3 className="text-lg font-semibold text-blue-100">{title}</h3>
+        <p className="text-sm text-blue-300/70">{description}</p>
       </div>
-    </>
+    </div>
   );
 };
 

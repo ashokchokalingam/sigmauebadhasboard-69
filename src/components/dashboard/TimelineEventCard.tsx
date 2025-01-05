@@ -76,7 +76,7 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
         >
           <TimelineEventHeader
             ruleLevel={event.rule_level}
-            totalRecords={detailedLogs?.pagination?.total_records || 0}
+            totalRecords={event.total_events || 0}
             title={event.title}
             description={event.description}
           />
