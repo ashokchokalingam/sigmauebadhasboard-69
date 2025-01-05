@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import TimelineHeader from "./TimelineComponents/TimelineHeader";
 import { useQuery } from "@tanstack/react-query";
-import TimelineGraph from "./TimelineGraph";
 import { Alert } from "./types";
 import { Card } from "@/components/ui/card";
 import TimelineEventCard from "./TimelineEventCard";
+import TimelineHistogram from "./TimelineHistogram/TimelineHistogram";
 
 interface TimelineViewProps {
   entityType: "user" | "computer";
@@ -14,13 +14,15 @@ interface TimelineViewProps {
 }
 
 const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: TimelineViewProps) => {
+  const [timeframe, setTimeframe] = useState<'24h' | '7d'>('24h');
+
   const { data: timelineData, isLoading } = useQuery({
-    queryKey: ['timeline', entityType, entityId],
+    queryKey: ['timeline', entityType, entityId, timeframe],
     queryFn: async () => {
-      const response = await fetch(`/api/user_impacted_timeline?user_impacted=${entityId}`);
+      const response = await fetch(`/api/timeline?entityType=${entityType}&entityId=${entityId}&timeframe=${timeframe}`);
       if (!response.ok) throw new Error('Failed to fetch timeline data');
       const data = await response.json();
-      return data.user_impacted_timeline;
+      return data;
     }
   });
 
@@ -37,12 +39,12 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         <div className="flex items-center justify-center p-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
         </div>
-      ) : timelineData && timelineData.length > 0 ? (
+      ) : timelineData?.logs && timelineData.logs.length > 0 ? (
         <div className="space-y-8">
-          <TimelineGraph alerts={timelineData as unknown as Alert[]} />
+          <TimelineHistogram alerts={timelineData.logs as Alert[]} />
           
           <div className="space-y-4 mt-8">
-            {timelineData.map((event: any, index: number) => (
+            {timelineData.logs.map((event: any, index: number) => (
               <TimelineEventCard key={index} event={event} />
             ))}
           </div>
