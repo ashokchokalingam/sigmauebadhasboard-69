@@ -1,23 +1,35 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Brush, Legend, Line, ComposedChart } from 'recharts';
-import { Alert } from '../types';
 import { getSeverityColor } from '../utils/timelineDataUtils';
 import TimelineTooltip from '../TimelineTooltip';
 import { useMemo } from 'react';
 import { processTimelineData } from '../utils/timelineDataUtils';
 
-interface TimelineBarChartProps {
-  data: Alert[];
-  granularity?: '5min' | 'hour' | 'day';
+interface TimelineDataPoint {
+  fullDate: string;
+  counts: {
+    [key: string]: number;
+  };
+  cumulativeTotal: number;
 }
 
-const TimelineBarChart = ({ data, granularity = 'hour' }: TimelineBarChartProps) => {
-  const processedData = useMemo(() => processTimelineData(data, granularity), [data, granularity]);
+interface TimelineBarChartProps {
+  data: TimelineDataPoint[];
+  onBrushChange?: (domain: any) => void;
+  selectedSeverity?: string | null;
+  zoomDomain?: { start: number; end: number } | null;
+}
 
+const TimelineBarChart = ({ 
+  data, 
+  onBrushChange,
+  selectedSeverity,
+  zoomDomain 
+}: TimelineBarChartProps) => {
   return (
     <div className="w-full h-[400px]">
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
-          data={processedData}
+          data={data}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
         >
           <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
