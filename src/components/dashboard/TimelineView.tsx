@@ -22,7 +22,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
   const { toast } = useToast();
 
-  const { alerts, isLoading, error, hasMore, currentPage, totalPages } = useTimelineData(
+  const { alerts, isLoading, error, hasMore, currentPage } = useTimelineData(
     entityType,
     entityId,
     page,
@@ -52,15 +52,15 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
 
   // Effect to automatically fetch next page
   useEffect(() => {
-    if (!isLoading && hasMore && currentPage < totalPages) {
+    if (!isLoading && hasMore) {
       const timer = setTimeout(() => {
-        console.log('Auto-loading next page:', currentPage + 1);
+        console.log('Auto-loading next page:', page + 1);
         setPage(prev => prev + 1);
       }, 1000); // 1 second delay between page loads
       
       return () => clearTimeout(timer);
     }
-  }, [isLoading, hasMore, currentPage, totalPages]);
+  }, [isLoading, hasMore, page]);
 
   const toggleRawLog = (alertId: string, event: React.MouseEvent) => {
     event.stopPropagation();
