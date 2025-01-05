@@ -6,7 +6,6 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ScrollArea } from "../ui/scroll-area";
-import { allColumns } from "./TableConfig";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -30,13 +29,31 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
     queryKey: ['detailed-logs', event.target_user_name, event.title, isExpanded],
     queryFn: async () => {
       if (!isExpanded) return null;
-      const response = await fetch(
-        `/api/user_impacted_logs?user_impacted=${encodeURIComponent(event.target_user_name || '')}&title=${encodeURIComponent(event.title)}&page=1&per_page=500`
-      );
-      if (!response.ok) throw new Error('Failed to fetch logs');
+      
+      // Ensure we have a user_impacted value
+      if (!event.target_user_name) {
+        console.error('No target_user_name provided for detailed logs query');
+        return null;
+      }
+
+      const params = new URLSearchParams({
+        user_impacted: event.target_user_name,
+        title: event.title,
+        page: '1',
+        per_page: '500'
+      });
+
+      const response = await fetch(`/api/user_impacted_logs?${params.toString()}`);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Failed to fetch logs:', errorData);
+        throw new Error('Failed to fetch logs');
+      }
+      
       return response.json();
     },
-    enabled: isExpanded
+    enabled: isExpanded && !!event.target_user_name
   });
 
   const getSeverityIcon = (level?: string) => {
