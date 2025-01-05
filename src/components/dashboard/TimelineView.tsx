@@ -43,15 +43,28 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     queryFn: async ({ pageParam = 1 }) => {
       console.log("Fetching timeline data:", { entityType, entityId, pageParam });
       const endpoint = entityType === "user" ? "user_impacted_timeline" : "computer_impacted_timeline";
+      const queryParam = entityType === "user" ? "user_impacted" : "computer_name";
+      
       const response = await fetch(
-        `/api/${endpoint}?${entityType === "user" ? "user_impacted" : "computer_name"}=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`
+        `/api/${endpoint}?${queryParam}=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`
       );
+      
       if (!response.ok) {
         throw new Error(`Failed to fetch timeline data: ${response.statusText}`);
       }
+      
       const data = await response.json();
       console.log("Timeline data received:", data);
-      return data;
+      
+      // Ensure we return the correct structure
+      return {
+        user_impacted_timeline: data.user_impacted_timeline || data.computer_impacted_timeline || [],
+        pagination: {
+          current_page: pageParam,
+          per_page: EVENTS_PER_PAGE,
+          has_more: (data.user_impacted_timeline || data.computer_impacted_timeline || []).length === EVENTS_PER_PAGE
+        }
+      };
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
