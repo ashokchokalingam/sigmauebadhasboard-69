@@ -19,6 +19,7 @@ export interface Alert {
   tags: string;
   raw?: string | object;
   total_events?: number;
+  user_impacted?: string; // Added this field
 }
 
 export interface EventSummary extends Alert {

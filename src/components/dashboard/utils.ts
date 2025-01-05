@@ -16,3 +16,8 @@ export const extractTacticsAndTechniques = (tags: string) => {
 
   return { tactics, techniques };
 };
+
+export const sanitizeEntityName = (name?: string): string => {
+  if (!name) return '';
+  return name.trim().toLowerCase();
+};
