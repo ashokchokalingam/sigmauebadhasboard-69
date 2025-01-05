@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { Alert } from './types';
 
@@ -8,19 +8,19 @@ interface TimelineGraphProps {
 
 const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
   const processData = () => {
-    const timeData: { [key: string]: { time: string; fullDate: string; count: number; severity: string } } = {};
+    const timeData: { [key: string]: { time: string; fullDate: string; count: number; severity: string; events: Alert[] } } = {};
     
     alerts.forEach(alert => {
-      // Ensure we have a valid date string
       const dateStr = alert.system_time || alert.first_time_seen;
       if (!dateStr) return;
 
       try {
         const date = new Date(dateStr);
-        if (isNaN(date.getTime())) return; // Skip invalid dates
+        if (isNaN(date.getTime())) return;
         
-        const hour = date.getHours().toString().padStart(2, '0');
-        const minute = date.getMinutes().toString().padStart(2, '0');
+        // Group by 15-minute intervals for better data density
+        const minutes = Math.floor(date.getMinutes() / 15) * 15;
+        const hour = date.getHours();
         
         const formattedDate = date.toLocaleString(undefined, {
           month: 'short',
@@ -30,17 +30,23 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
           hour12: true
         });
         
-        const key = `${date.toISOString().split('T')[0]} ${hour}:${minute}`;
+        const key = `${date.toISOString().split('T')[0]} ${hour}:${minutes}`;
         
         if (!timeData[key]) {
           timeData[key] = {
-            time: `${hour}:${minute}`,
+            time: `${hour}:${minutes}`,
             fullDate: formattedDate,
             count: 1,
-            severity: alert.rule_level || 'unknown'
+            severity: alert.rule_level || 'unknown',
+            events: [alert]
           };
         } else {
           timeData[key].count++;
+          timeData[key].events.push(alert);
+          // Update severity to the highest level
+          if (alert.rule_level === 'critical' || alert.rule_level === 'high') {
+            timeData[key].severity = alert.rule_level;
+          }
         }
       } catch (error) {
         console.warn('Invalid date encountered:', dateStr);
@@ -49,7 +55,7 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
     });
 
     return Object.values(timeData).sort((a, b) => 
-      a.time.localeCompare(b.time)
+      new Date(a.fullDate).getTime() - new Date(b.fullDate).getTime()
     );
   };
 
@@ -63,7 +69,32 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
     return '#3b82f6';
   };
 
-  const data = processData();
+  const data = useMemo(() => processData(), [alerts]);
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (!active || !payload || !payload.length) return null;
+
+    const { fullDate, count, events } = payload[0].payload;
+
+    return (
+      <div className="bg-black/90 p-4 rounded-lg border border-blue-500/20 shadow-xl backdrop-blur-sm">
+        <p className="text-blue-300 font-mono text-sm mb-2">{fullDate}</p>
+        <p className="text-white font-medium mb-2">Total Events: {count}</p>
+        <div className="max-h-32 overflow-y-auto">
+          {events.slice(0, 3).map((event: Alert, index: number) => (
+            <div key={index} className="text-sm text-blue-200/80 mb-1 border-l-2 pl-2" style={{ borderColor: getSeverityColor(event.rule_level) }}>
+              {event.title}
+            </div>
+          ))}
+          {events.length > 3 && (
+            <p className="text-xs text-blue-300/60 mt-1">
+              +{events.length - 3} more events...
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="w-full h-[400px] relative group">
@@ -76,10 +107,17 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
             margin={{
               top: 20,
               right: 30,
-              left: 20,
+              left: 50,
               bottom: 60
             }}
           >
+            <defs>
+              <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            
             <CartesianGrid 
               strokeDasharray="3 3" 
               stroke="rgba(147, 197, 253, 0.1)"
@@ -100,6 +138,12 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
               interval={Math.floor(data.length / 8)}
               axisLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
               tickLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
+              label={{
+                value: "Timeline",
+                position: "bottom",
+                offset: 40,
+                style: { fill: '#93c5fd' }
+              }}
             />
             
             <YAxis 
@@ -109,34 +153,18 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
                 fontSize: 12,
                 fontFamily: 'monospace'
               }}
-              width={40}
+              width={45}
               axisLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
               tickLine={{ stroke: '#93c5fd', strokeWidth: 1, opacity: 0.3 }}
+              label={{
+                value: "Event Count",
+                angle: -90,
+                position: "insideLeft",
+                style: { fill: '#93c5fd' }
+              }}
             />
             
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'rgba(26, 34, 52, 0.95)',
-                border: '1px solid rgba(59, 130, 246, 0.5)',
-                borderRadius: '8px',
-                padding: '12px',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                backdropFilter: 'blur(4px)'
-              }}
-              labelStyle={{ 
-                color: '#93c5fd',
-                fontFamily: 'monospace',
-                fontSize: '13px',
-                fontWeight: 'bold',
-                marginBottom: '8px'
-              }}
-              itemStyle={{ 
-                color: '#93c5fd',
-                fontFamily: 'monospace',
-                fontSize: '12px'
-              }}
-              labelFormatter={(label) => `Time: ${label}`}
-            />
+            <Tooltip content={<CustomTooltip />} />
             
             <Legend 
               wrapperStyle={{
@@ -145,27 +173,26 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
               }}
             />
             
-            {data.map((item, index) => (
-              <defs key={index}>
-                <linearGradient id={`colorCount${index}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={getSeverityColor(item.severity)} stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor={getSeverityColor(item.severity)} stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-            ))}
-            
             <Area
               type="monotone"
               dataKey="count"
               name="Events"
-              stroke={getSeverityColor(data[0]?.severity)}
+              stroke="#3b82f6"
               strokeWidth={2}
-              fill={`url(#colorCount0)`}
-              dot={{ 
-                fill: getSeverityColor(data[0]?.severity), 
-                r: 4,
-                strokeWidth: 2,
-                strokeOpacity: 0.8
+              fill="url(#colorCount)"
+              dot={(props: any) => {
+                const severity = props.payload.severity;
+                return (
+                  <circle
+                    cx={props.cx}
+                    cy={props.cy}
+                    r={4}
+                    fill={getSeverityColor(severity)}
+                    stroke="#1a1f2c"
+                    strokeWidth={2}
+                    style={{ opacity: 0.8 }}
+                  />
+                );
               }}
               activeDot={{ 
                 r: 6, 
@@ -176,10 +203,6 @@ const TimelineGraph = ({ alerts }: TimelineGraphProps) => {
             />
           </AreaChart>
         </ResponsiveContainer>
-      </div>
-      
-      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-500/10 animate-pulse rounded-xl" />
       </div>
     </div>
   );

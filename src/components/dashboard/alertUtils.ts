@@ -11,7 +11,10 @@ export const calculateStats = (alerts: Alert[], totalRecords: number): Stats => 
     totalEvents: alerts.length,
     severity: {
       critical: 0,
-      high: 0
+      high: 0,
+      medium: 0,
+      low: 0,
+      informational: 0
     },
     uniqueUsers: {
       current: 0,
@@ -32,6 +35,12 @@ export const calculateStats = (alerts: Alert[], totalRecords: number): Stats => 
       stats.severity.critical++;
     } else if (alert.rule_level === "high") {
       stats.severity.high++;
+    } else if (alert.rule_level === "medium") {
+      stats.severity.medium++;
+    } else if (alert.rule_level === "low") {
+      stats.severity.low++;
+    } else {
+      stats.severity.informational++;
     }
   });
 
