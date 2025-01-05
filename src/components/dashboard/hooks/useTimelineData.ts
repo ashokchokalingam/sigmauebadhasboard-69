@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "../types";
+import { TIMELINE_LOAD_SIZE } from "@/constants/pagination";
 
 interface TimelineResponse {
   user_impacted_timeline_logs?: Alert[];
@@ -21,8 +22,8 @@ export const useTimelineData = (
   const fetchTimelineData = async (pageNum: number): Promise<TimelineResponse> => {
     console.log(`Fetching timeline data for page ${pageNum}, timeframe ${timeframe}`);
     const endpoint = entityType === "user" 
-      ? `/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${pageNum}&per_page=100&timeframe=${timeframe}`
-      : `/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${pageNum}&per_page=100&timeframe=${timeframe}`;
+      ? `/api/user_impacted_timeline?target_user_name=${encodeURIComponent(entityId)}&page=${pageNum}&per_page=${TIMELINE_LOAD_SIZE}&timeframe=${timeframe}`
+      : `/api/computer_impacted_timeline?computer_name=${encodeURIComponent(entityId)}&page=${pageNum}&per_page=${TIMELINE_LOAD_SIZE}&timeframe=${timeframe}`;
     
     const response = await fetch(endpoint);
     if (!response.ok) {
@@ -45,7 +46,7 @@ export const useTimelineData = (
     ? data?.user_impacted_timeline_logs || []
     : data?.computer_impacted_timeline_logs || [];
 
-  const hasMore = alerts.length === 100; // If we got full page, assume there's more
+  const hasMore = alerts.length === TIMELINE_LOAD_SIZE; // If we got full page, assume there's more
 
   return {
     alerts,
