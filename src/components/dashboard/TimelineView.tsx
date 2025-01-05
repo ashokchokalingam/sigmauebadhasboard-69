@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import TimelineHeader from "./TimelineComponents/TimelineHeader";
 import TimelineLoader from "./TimelineComponents/TimelineLoader";
 import TimelineContent from "./TimelineComponents/TimelineContent";
@@ -6,7 +6,6 @@ import TimeRangeSelector from "./TimeRangeSelector";
 import { useTimelineData } from "./hooks/useTimelineData";
 import { useToast } from "@/hooks/use-toast";
 import { Alert } from "./types";
-import InfiniteScrollLoader from "./InfiniteScrollLoader";
 
 interface TimelineViewProps {
   entityType: "user" | "computer";
@@ -21,12 +20,16 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const [page, setPage] = useState(1);
   const [timeframe, setTimeframe] = useState("24h");
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { toast } = useToast();
-  const loaderRef = useRef<HTMLDivElement>(null);
 
-  const { alerts, isLoading, error, hasMore } = useTimelineData(entityType, entityId, page, timeframe);
+  const { alerts, isLoading, error, hasMore, currentPage, totalPages } = useTimelineData(
+    entityType,
+    entityId,
+    page,
+    timeframe
+  );
 
+  // Effect to accumulate alerts as they come in
   useEffect(() => {
     if (alerts) {
       if (page === 1) {
@@ -44,26 +47,20 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
           return newAlerts;
         });
       }
-      setIsLoadingMore(false);
     }
   }, [alerts, page]);
 
-  const observer = useRef<IntersectionObserver>();
-  const lastAlertElementRef = useCallback((node: HTMLDivElement) => {
-    if (isLoading || isLoadingMore) return;
-    
-    if (observer.current) observer.current.disconnect();
-    
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        console.log('Intersection observed, loading more...');
+  // Effect to automatically fetch next page
+  useEffect(() => {
+    if (!isLoading && hasMore && currentPage < totalPages) {
+      const timer = setTimeout(() => {
+        console.log('Auto-loading next page:', currentPage + 1);
         setPage(prev => prev + 1);
-        setIsLoadingMore(true);
-      }
-    });
-
-    if (node) observer.current.observe(node);
-  }, [isLoading, hasMore, isLoadingMore]);
+      }, 1000); // 1 second delay between page loads
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, hasMore, currentPage, totalPages]);
 
   const toggleRawLog = (alertId: string, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -110,25 +107,19 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
           No events found for this {entityType}
         </div>
       ) : (
-        <>
-          <TimelineContent
-            alerts={allAlerts}
-            expandedAlert={expandedAlert}
-            selectedEventType={selectedEventType}
-            onEventTypeSelect={setSelectedEventType}
-            onToggleRaw={toggleRawLog}
-          />
-          
-          <div ref={lastAlertElementRef}>
-            <InfiniteScrollLoader ref={loaderRef} hasMore={hasMore} />
-          </div>
-          
-          {(isLoading || isLoadingMore) && page > 1 && (
-            <div className="flex justify-center py-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-            </div>
-          )}
-        </>
+        <TimelineContent
+          alerts={allAlerts}
+          expandedAlert={expandedAlert}
+          selectedEventType={selectedEventType}
+          onEventTypeSelect={setSelectedEventType}
+          onToggleRaw={toggleRawLog}
+        />
+      )}
+      
+      {(isLoading && page > 1) && (
+        <div className="flex justify-center py-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+        </div>
       )}
     </>
   );

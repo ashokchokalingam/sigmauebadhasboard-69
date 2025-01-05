@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "../types";
+import { useEffect } from "react";
 
 interface TimelineResponse {
   user_impacted_timeline_logs: Alert[];
@@ -36,22 +37,21 @@ export const useTimelineData = (
     queryKey: ['timeline-impacted', entityId, page, timeframe],
     queryFn: () => fetchTimelineData(page),
     staleTime: 30000,
-    retry: 2,
-    meta: {
-      onSuccess: async (data: TimelineResponse) => {
-        // If there are more pages, prefetch the next one
-        if (data.pagination.current_page < data.pagination.total_pages) {
-          const nextPage = page + 1;
-          console.log(`Prefetching next page ${nextPage}`);
-          await queryClient.prefetchQuery({
-            queryKey: ['timeline-impacted', entityId, nextPage, timeframe],
-            queryFn: () => fetchTimelineData(nextPage),
-            staleTime: 30000,
-          });
-        }
-      }
-    }
+    retry: 2
   });
+
+  // Auto-fetch next page when current page data is received
+  useEffect(() => {
+    if (data?.pagination && data.pagination.current_page < data.pagination.total_pages) {
+      const nextPage = data.pagination.current_page + 1;
+      console.log(`Auto-fetching next page ${nextPage}`);
+      queryClient.prefetchQuery({
+        queryKey: ['timeline-impacted', entityId, nextPage, timeframe],
+        queryFn: () => fetchTimelineData(nextPage),
+        staleTime: 30000,
+      });
+    }
+  }, [data, entityId, timeframe, queryClient]);
 
   const alerts: Alert[] = data?.user_impacted_timeline_logs || [];
   const pagination = data?.pagination || { current_page: 0, total_pages: 0, per_page: 100, total_records: 0 };
