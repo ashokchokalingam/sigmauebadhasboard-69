@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { X } from "lucide-react";
+import { X, Shield } from "lucide-react";
 import { Alert } from "./types";
 import TimelineEventCard from "./TimelineEventCard";
 import InfiniteScrollLoader from "./InfiniteScrollLoader";
@@ -71,22 +71,27 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
 
   return (
     <div className={`flex flex-col ${inSidebar ? 'h-full' : 'min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212]'}`}>
-      <div className="flex items-center justify-between p-6 border-b border-blue-500/10 bg-black/40">
-        <div>
-          <h2 className="text-3xl font-bold text-blue-100">{entityId}</h2>
-          <p className="text-sm text-blue-300/80 mt-1">Timeline Events</p>
+      <div className="flex items-center justify-between p-8 border-b border-blue-500/10 bg-black/40">
+        <div className="flex items-center gap-4">
+          <Shield className="h-8 w-8 text-blue-400" />
+          <div>
+            <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+              {entityId}
+            </h2>
+            <p className="text-lg text-blue-300/80 mt-2">Security Timeline Analysis</p>
+          </div>
         </div>
         <button
           onClick={onClose}
           className="p-2 hover:bg-white/5 rounded-lg transition-colors"
         >
-          <X className="h-5 w-5 text-gray-400" />
+          <X className="h-6 w-6 text-gray-400" />
         </button>
       </div>
 
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
-          <div className="p-6 space-y-4">
+          <div className="p-8 space-y-6">
             {isLoading && allEvents.length === 0 ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -96,7 +101,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
                 <p className="text-gray-400">No timeline events found</p>
               </div>
             ) : (
-              <div className="relative space-y-4">
+              <div className="relative space-y-6">
                 {allEvents.map((event, index) => (
                   <TimelineEventCard
                     key={`${event.id}-${index}`}
