@@ -1,5 +1,5 @@
 import { Alert } from "./types";
-import { format, parseISO, isValid } from "date-fns";
+import { format, parseISO, parse, isValid } from "date-fns";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TableCell, TableRow } from "../ui/table";
@@ -15,21 +15,26 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
     if (!dateString) return 'N/A';
     
     try {
+      // First, try to parse the GMT format
+      if (dateString.includes('GMT')) {
+        const date = parse(dateString, 'EEE, dd MMM yyyy HH:mm:ss GMT', new Date());
+        if (isValid(date)) {
+          return format(date, 'h:mm a');
+        }
+      }
+      
+      // If that fails, try parsing ISO format
       const date = parseISO(dateString);
       if (!isValid(date)) {
         console.warn('Invalid date:', dateString);
         return 'Invalid Date';
       }
-      return format(date, 'MMM dd, yyyy HH:mm:ss');
+      return format(date, 'h:mm a');
     } catch (error) {
       console.error("Date formatting error:", error, "for date:", dateString);
       return 'Invalid Date';
     }
   };
-
-  const tags = log.tags?.split(",").map(tag => tag.trim()) || [];
-  const tactics = tags.filter(tag => tag.startsWith("attack.") && !tag.includes("t1"));
-  const techniques = tags.filter(tag => tag.includes("t1"));
 
   const handleRowClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -71,22 +76,22 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
       <TableCell>
         <div className="space-y-2">
           <div className="flex flex-wrap gap-1">
-            {tactics.map((tactic, index) => (
+            {log.tags?.split(",").filter(tag => tag.startsWith("attack.") && !tag.includes("t1")).map((tactic, index) => (
               <span 
                 key={index}
                 className="px-2 py-0.5 text-[10px] bg-blue-500/10 rounded-full text-blue-300"
               >
-                {tactic.replace('attack.', '')}
+                {tactic.replace('attack.', '').trim()}
               </span>
             ))}
           </div>
           <div className="flex flex-wrap gap-1">
-            {techniques.map((technique, index) => (
+            {log.tags?.split(",").filter(tag => tag.includes("t1")).map((technique, index) => (
               <span 
                 key={index}
                 className="px-2 py-0.5 text-xs bg-blue-500/20 rounded-md text-blue-300 font-medium"
               >
-                {technique.toUpperCase()}
+                {technique.trim().toUpperCase()}
               </span>
             ))}
           </div>
