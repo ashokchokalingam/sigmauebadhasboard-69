@@ -22,6 +22,21 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     year: 'numeric',
   });
 
+  // Handle ESC key
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      onClose();
+    }
+  };
+
+  // Add event listener for ESC key
+  React.useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
     <div className="h-full bg-[#1E1E2F] border-l border-[#7B68EE]/20">
       {/* Header */}
@@ -30,7 +45,10 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
           Alert Details
         </h2>
         <button 
-          onClick={onClose}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            onClose();
+          }}
           className="p-2 hover:bg-[#2B2B3B] rounded-full transition-colors"
         >
           <X className="h-5 w-5 text-[#A9A9A9]" />

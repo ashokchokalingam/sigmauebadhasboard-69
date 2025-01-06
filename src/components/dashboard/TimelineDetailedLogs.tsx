@@ -68,7 +68,10 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-200">{selectedLog.title}</h2>
               <button 
-                onClick={() => setSelectedLog(null)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedLog(null);
+                }}
                 className="text-gray-400 hover:text-gray-200"
               >
                 ×
