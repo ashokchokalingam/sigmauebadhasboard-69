@@ -43,7 +43,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
 
   const handleTimelineView = (type: "user" | "computer", id: string) => {
     console.log("Timeline view requested for:", type, id);
-    // Add your timeline view logic here
   };
 
   const filteredAlerts = filterAlerts();
@@ -65,7 +64,14 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
         </CardHeader>
         <CardContent>
           {selectedAlert ? (
-            <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg border border-blue-500/10">
+            <ResizablePanelGroup 
+              direction="horizontal" 
+              className="min-h-[800px] rounded-lg border border-blue-500/10"
+              onLayout={(sizes) => {
+                // Prevent panel from closing when resizing
+                console.log("Layout changed:", sizes);
+              }}
+            >
               <ResizablePanel defaultSize={75} minSize={30}>
                 <div className="h-full overflow-hidden border-r border-blue-500/10">
                   <div className="relative h-full">
@@ -92,7 +98,18 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                 </div>
               </ResizablePanel>
               
-              <ResizableHandle withHandle className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors" />
+              <ResizableHandle 
+                withHandle 
+                className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
+              />
               
               <ResizablePanel defaultSize={25} minSize={20}>
                 <div className="h-full">
