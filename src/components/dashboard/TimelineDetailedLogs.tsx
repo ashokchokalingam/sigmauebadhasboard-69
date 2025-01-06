@@ -6,6 +6,9 @@ import TimelineMetadataGrid from "./TimelineMetadataGrid";
 import TimelineMitreSection from "./TimelineMitreSection";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
 import { ScrollArea } from "../ui/scroll-area";
+import ColumnSelector from "./ColumnSelector";
+import { Button } from "../ui/button";
+import { Filter } from "lucide-react";
 
 interface TimelineDetailedLogsProps {
   logs: Alert[];
@@ -15,6 +18,14 @@ interface TimelineDetailedLogsProps {
 
 const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetailedLogsProps) => {
   const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>([
+    "system_time",
+    "user_id",
+    "target_user_name",
+    "computer_name",
+    "title",
+    "tags"
+  ]);
   const detailsRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -41,6 +52,10 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
     setSelectedLog(log);
   };
 
+  const handleColumnToggle = (columns: string[]) => {
+    setVisibleColumns(columns);
+  };
+
   if (isLoading) {
     return (
       <div className="w-full p-8 flex items-center justify-center">
@@ -58,27 +73,31 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   }
 
   return (
-    <div className="mt-8">
+    <div className="mt-4">
       <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg border border-purple-400/20">
         <ResizablePanel defaultSize={60} minSize={30}>
           <ScrollArea className="h-[800px]">
             <div ref={tableRef} className="h-full">
               <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
-                {totalRecords !== undefined && (
-                  <div className="sticky top-0 z-20 p-4 text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
-                    <span className="font-semibold">Total Records:</span> {totalRecords.toLocaleString()}
+                <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
+                  <div>
+                    <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
                   </div>
-                )}
+                  <ColumnSelector
+                    visibleColumns={visibleColumns}
+                    onColumnToggle={handleColumnToggle}
+                  />
+                </div>
                 <div className="relative">
                   <Table>
                     <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
                       <TableRow className="hover:bg-transparent border-b border-purple-400/20">
-                        <TableHead className="w-[200px] text-purple-100 font-semibold">Time</TableHead>
-                        <TableHead className="w-[250px] text-purple-100 font-semibold">User Origin</TableHead>
-                        <TableHead className="w-[200px] text-purple-100 font-semibold">User Impacted</TableHead>
-                        <TableHead className="w-[200px] text-purple-100 font-semibold">Computer</TableHead>
-                        <TableHead className="min-w-[300px] text-purple-100 font-semibold">Event</TableHead>
-                        <TableHead className="min-w-[250px] text-purple-100 font-semibold">Tactics & Techniques</TableHead>
+                        <TableHead className="w-[160px] text-purple-100 font-semibold">Time</TableHead>
+                        <TableHead className="w-[120px] text-purple-100 font-semibold">User Origin</TableHead>
+                        <TableHead className="w-[120px] text-purple-100 font-semibold">User Impacted</TableHead>
+                        <TableHead className="w-[140px] text-purple-100 font-semibold">Computer</TableHead>
+                        <TableHead className="min-w-[200px] text-purple-100 font-semibold">Event</TableHead>
+                        <TableHead className="w-[200px] text-purple-100 font-semibold">Tactics & Techniques</TableHead>
                         <TableHead className="w-[50px]"></TableHead>
                       </TableRow>
                     </TableHeader>
@@ -89,6 +108,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                           log={log}
                           isExpanded={selectedLog?.id === log.id}
                           onToggleExpand={handleLogClick}
+                          visibleColumns={visibleColumns}
                         />
                       ))}
                     </TableBody>
