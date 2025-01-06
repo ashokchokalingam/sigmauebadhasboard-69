@@ -91,7 +91,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
 
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
-          <div className="p-8 space-y-6 max-w-[90%] mx-auto">
+          <div className="p-4 space-y-6 w-full">
             {isLoading && allEvents.length === 0 ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -101,7 +101,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
                 <p className="text-gray-400">No timeline events found</p>
               </div>
             ) : (
-              <div className="relative space-y-6">
+              <div className="relative space-y-6 w-full">
                 {allEvents.map((event, index) => (
                   <TimelineEventCard
                     key={`${event.id}-${index}`}
