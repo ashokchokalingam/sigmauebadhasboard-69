@@ -14,7 +14,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
 
   const handleLogClick = (log: Alert) => {
-    setSelectedLog(log);
+    setSelectedLog(selectedLog?.id === log.id ? null : log);
   };
 
   if (isLoading) {
@@ -26,7 +26,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   }
 
   return (
-    <div className="flex h-full">
+    <div className="flex gap-4">
       <div className="flex-1 overflow-hidden">
         <div className="w-full h-full border border-[#7B68EE]/20 rounded-md bg-[#1E1E2F]">
           {totalRecords !== undefined && (
@@ -62,7 +62,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       </div>
       
       {selectedLog && (
-        <div className="w-[600px]">
+        <div className="w-[600px] border-l border-[#7B68EE]/20 pl-4">
           <AlertDetailsView 
             alert={selectedLog} 
             onClose={() => setSelectedLog(null)}

@@ -37,12 +37,10 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
       )}
       onClick={() => onToggleExpand(log.id)}
     >
-      {/* Time Column */}
       <TableCell className="font-mono text-sm text-gray-300">
         {formatDate(log.system_time)}
       </TableCell>
 
-      {/* Users Column */}
       <TableCell>
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
@@ -58,7 +56,6 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
         </div>
       </TableCell>
 
-      {/* Computer Column */}
       <TableCell>
         <div className="flex items-center gap-2">
           <Monitor className="h-3.5 w-3.5 text-blue-400" />
@@ -66,7 +63,6 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
         </div>
       </TableCell>
 
-      {/* Event Column */}
       <TableCell>
         <div className="space-y-1">
           <div className="text-sm font-medium text-gray-200">{log.title}</div>
@@ -74,7 +70,6 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
         </div>
       </TableCell>
 
-      {/* Tactics & Techniques Column */}
       <TableCell>
         <div className="space-y-2">
           <div className="flex flex-wrap gap-1">
@@ -100,7 +95,6 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
         </div>
       </TableCell>
 
-      {/* Expand Button Column */}
       <TableCell>
         <ChevronRight 
           className={cn(
