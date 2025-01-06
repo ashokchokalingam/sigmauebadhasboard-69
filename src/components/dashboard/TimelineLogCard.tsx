@@ -11,14 +11,14 @@ interface TimelineLogCardProps {
 }
 
 const TimelineLogCard = ({ log, isExpanded, onToggleExpand, visibleColumns }: TimelineLogCardProps) => {
-  const formattedTime = format(new Date(log.system_time), "MMM d, yyyy HH:mm:ss");
+  const formattedTime = format(new Date(log.system_time), "MMM d, yyyy hh:mm:ss aa");
 
   return (
     <TableRow 
       className={`hover:bg-purple-400/5 cursor-pointer ${isExpanded ? 'bg-purple-400/10' : ''}`}
       onClick={() => onToggleExpand(log)}
     >
-      <TableCell className="w-[160px] font-mono text-purple-200/90 text-sm whitespace-nowrap">
+      <TableCell className="w-[180px] font-mono text-purple-200/90 text-sm whitespace-nowrap">
         {formattedTime}
       </TableCell>
       <TableCell className="w-[120px] text-purple-200/90">
