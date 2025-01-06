@@ -1,5 +1,5 @@
 import { Alert } from "./types";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, isValid } from "date-fns";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TableCell, TableRow } from "../ui/table";
@@ -12,11 +12,18 @@ interface TimelineLogCardProps {
 
 const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardProps) => {
   const formatDate = (dateString: string) => {
+    if (!dateString) return 'N/A';
+    
     try {
-      return format(parseISO(dateString), 'MMM dd, yyyy HH:mm:ss');
+      const date = parseISO(dateString);
+      if (!isValid(date)) {
+        console.warn('Invalid date:', dateString);
+        return 'Invalid Date';
+      }
+      return format(date, 'MMM dd, yyyy HH:mm:ss');
     } catch (error) {
-      console.error("Date formatting error:", error);
-      return dateString;
+      console.error("Date formatting error:", error, "for date:", dateString);
+      return 'Invalid Date';
     }
   };
 
