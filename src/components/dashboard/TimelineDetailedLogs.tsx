@@ -5,6 +5,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table"
 import TimelineMetadataGrid from "./TimelineMetadataGrid";
 import TimelineMitreSection from "./TimelineMitreSection";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface TimelineDetailedLogsProps {
   logs: Alert[];
@@ -58,90 +59,94 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
 
   return (
     <div className="mt-8">
-      <ResizablePanelGroup direction="horizontal" className="min-h-[600px] rounded-lg border border-purple-400/20">
+      <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg border border-purple-400/20">
         <ResizablePanel defaultSize={60} minSize={30}>
-          <div ref={tableRef} className="h-full overflow-hidden">
-            <div className="w-full h-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
-              {totalRecords !== undefined && (
-                <div className="p-4 text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
-                  <span className="font-semibold">Total Records:</span> {totalRecords.toLocaleString()}
+          <ScrollArea className="h-[800px]">
+            <div ref={tableRef} className="h-full">
+              <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
+                {totalRecords !== undefined && (
+                  <div className="sticky top-0 z-20 p-4 text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
+                    <span className="font-semibold">Total Records:</span> {totalRecords.toLocaleString()}
+                  </div>
+                )}
+                <div className="relative">
+                  <Table>
+                    <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
+                      <TableRow className="hover:bg-transparent border-b border-purple-400/20">
+                        <TableHead className="w-[200px] text-purple-100 font-semibold">Time</TableHead>
+                        <TableHead className="w-[250px] text-purple-100 font-semibold">User Origin</TableHead>
+                        <TableHead className="w-[200px] text-purple-100 font-semibold">User Impacted</TableHead>
+                        <TableHead className="w-[200px] text-purple-100 font-semibold">Computer</TableHead>
+                        <TableHead className="min-w-[300px] text-purple-100 font-semibold">Event</TableHead>
+                        <TableHead className="min-w-[250px] text-purple-100 font-semibold">Tactics & Techniques</TableHead>
+                        <TableHead className="w-[50px]"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {logs.map((log) => (
+                        <TimelineLogCard
+                          key={log.id}
+                          log={log}
+                          isExpanded={selectedLog?.id === log.id}
+                          onToggleExpand={handleLogClick}
+                        />
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
-              )}
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
-                    <TableRow className="hover:bg-transparent border-b border-purple-400/20">
-                      <TableHead className="w-[200px] text-purple-100 font-semibold">Time</TableHead>
-                      <TableHead className="w-[250px] text-purple-100 font-semibold">User Origin</TableHead>
-                      <TableHead className="w-[200px] text-purple-100 font-semibold">User Impacted</TableHead>
-                      <TableHead className="w-[200px] text-purple-100 font-semibold">Computer</TableHead>
-                      <TableHead className="min-w-[300px] text-purple-100 font-semibold">Event</TableHead>
-                      <TableHead className="min-w-[250px] text-purple-100 font-semibold">Tactics & Techniques</TableHead>
-                      <TableHead className="w-[50px]"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {logs.map((log) => (
-                      <TimelineLogCard
-                        key={log.id}
-                        log={log}
-                        isExpanded={selectedLog?.id === log.id}
-                        onToggleExpand={handleLogClick}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
               </div>
             </div>
-          </div>
+          </ScrollArea>
         </ResizablePanel>
 
         {selectedLog && (
           <>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={40} minSize={30}>
-              <div 
-                ref={detailsRef}
-                className="h-full overflow-y-auto"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="p-6 space-y-6 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] h-full">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold text-purple-100 bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-blue-200">
-                      {selectedLog.title}
-                    </h2>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedLog(null);
-                      }}
-                      className="text-purple-300 hover:text-purple-100 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-purple-400/10"
-                    >
-                      ×
-                    </button>
-                  </div>
-                  
-                  <div className="space-y-6">
-                    <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-                      <h3 className="text-sm font-medium text-purple-200 mb-2">Description</h3>
-                      <p className="text-sm text-purple-100/90 leading-relaxed">{selectedLog.description}</p>
+              <ScrollArea className="h-[800px]">
+                <div 
+                  ref={detailsRef}
+                  className="h-full"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="p-6 space-y-6 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
+                    <div className="flex justify-between items-center sticky top-0 z-30 bg-[#1E1E2F] py-4">
+                      <h2 className="text-xl font-semibold text-purple-100 bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-blue-200">
+                        {selectedLog.title}
+                      </h2>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedLog(null);
+                        }}
+                        className="text-purple-300 hover:text-purple-100 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-purple-400/10"
+                      >
+                        ×
+                      </button>
                     </div>
-
-                    <TimelineMetadataGrid alert={selectedLog} />
                     
-                    <TimelineMitreSection alert={selectedLog} />
+                    <div className="space-y-6">
+                      <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+                        <h3 className="text-sm font-medium text-purple-200 mb-2">Description</h3>
+                        <p className="text-sm text-purple-100/90 leading-relaxed">{selectedLog.description}</p>
+                      </div>
 
-                    <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-                      <h3 className="text-sm font-medium text-purple-200 mb-2">Raw Data</h3>
-                      <pre className="text-sm text-purple-100/90 bg-[#1A1F2C] p-4 rounded-md overflow-x-auto font-mono">
-                        {typeof selectedLog.raw === 'string' 
-                          ? JSON.stringify(JSON.parse(selectedLog.raw), null, 2)
-                          : JSON.stringify(selectedLog.raw, null, 2)}
-                      </pre>
+                      <TimelineMetadataGrid alert={selectedLog} />
+                      
+                      <TimelineMitreSection alert={selectedLog} />
+
+                      <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+                        <h3 className="text-sm font-medium text-purple-200 mb-2">Raw Data</h3>
+                        <pre className="text-sm text-purple-100/90 bg-[#1A1F2C] p-4 rounded-md overflow-x-auto font-mono">
+                          {typeof selectedLog.raw === 'string' 
+                            ? JSON.stringify(JSON.parse(selectedLog.raw), null, 2)
+                            : JSON.stringify(selectedLog.raw, null, 2)}
+                        </pre>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </ScrollArea>
             </ResizablePanel>
           </>
         )}
