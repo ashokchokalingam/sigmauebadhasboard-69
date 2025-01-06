@@ -7,22 +7,35 @@ import DetailTags from "./TimelineDetails/DetailTags";
 import DetailRawData from "./TimelineDetails/DetailRawData";
 
 interface TimelineDetailedLogsProps {
-  alert: Alert;
-  onClose: () => void;
+  logs: Alert[];
+  isLoading: boolean;
+  totalRecords: number;
 }
 
-const TimelineDetailedLogs = ({ alert, onClose }: TimelineDetailedLogsProps) => {
+const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetailedLogsProps) => {
+  if (isLoading) {
+    return (
+      <div className="mt-4 flex items-center justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   return (
     <ScrollArea className="h-[800px]">
       <div className="bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
-        <DetailHeader title={alert.title} onClose={onClose} />
-        
-        <div className="p-8 space-y-8">
-          <DetailDescription description={alert.description} />
-          <DetailGrid data={alert} />
-          <DetailTags tags={alert.tags} />
-          <DetailRawData raw={alert.raw} />
-        </div>
+        {logs.map((log, index) => (
+          <div key={`${log.id}-${index}`} className="border-b border-blue-500/10 last:border-0">
+            <DetailHeader title={log.title} />
+            
+            <div className="p-8 space-y-8">
+              <DetailDescription description={log.description} />
+              <DetailGrid data={log} />
+              <DetailTags tags={log.tags} />
+              <DetailRawData raw={log.raw} />
+            </div>
+          </div>
+        ))}
       </div>
     </ScrollArea>
   );
