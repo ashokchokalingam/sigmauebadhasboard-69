@@ -1,56 +1,45 @@
-import { Alert } from "./types";
-import { ScrollArea } from "../ui/scroll-area";
 import { useState } from "react";
+import { Alert } from "./types";
 import TimelineLogCard from "./TimelineLogCard";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table";
 
 interface TimelineDetailedLogsProps {
   logs: Alert[];
-  isLoading: boolean;
-  totalRecords: number;
 }
 
-const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetailedLogsProps) => {
-  const [expandedLogs, setExpandedLogs] = useState<string[]>([]);
+const TimelineDetailedLogs = ({ logs }: TimelineDetailedLogsProps) => {
+  const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
 
-  const toggleExpand = (logId: string) => {
-    setExpandedLogs(prev =>
-      prev.includes(logId)
-        ? prev.filter(id => id !== logId)
-        : [...prev, logId]
-    );
+  const handleToggleExpand = (id: string) => {
+    setExpandedLogId(expandedLogId === id ? null : id);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-4">
-        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  if (!logs?.length) {
-    return <p className="text-blue-300/70 text-sm">No detailed logs available</p>;
-  }
-
-  const sortedLogs = [...logs].sort((a, b) =>
-    new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
-  );
-
   return (
-    <div className="mt-4 border-t border-blue-500/10 pt-4">
-      <h4 className="text-blue-100 font-medium mb-3">Detailed Timeline ({totalRecords} events)</h4>
-      <ScrollArea className="h-[500px] w-full rounded-md border border-blue-500/10">
-        <div className="space-y-2 p-4">
-          {sortedLogs.map((log) => (
-            <TimelineLogCard
-              key={log.id}
-              log={log}
-              isExpanded={expandedLogs.includes(log.id)}
-              onToggleExpand={toggleExpand}
-            />
-          ))}
-        </div>
-      </ScrollArea>
+    <div className="w-full overflow-hidden border border-blue-500/10 rounded-md">
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader className="bg-black/90 backdrop-blur-sm sticky top-0 z-10">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="text-blue-300">Time</TableHead>
+              <TableHead className="text-blue-300">Users</TableHead>
+              <TableHead className="text-blue-300">Computer</TableHead>
+              <TableHead className="text-blue-300">Event</TableHead>
+              <TableHead className="text-blue-300">Tactics & Techniques</TableHead>
+              <TableHead className="w-[50px]"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {logs.map((log) => (
+              <TimelineLogCard
+                key={log.id}
+                log={log}
+                isExpanded={expandedLogId === log.id}
+                onToggleExpand={handleToggleExpand}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
