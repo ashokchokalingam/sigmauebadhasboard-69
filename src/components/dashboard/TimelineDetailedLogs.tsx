@@ -31,11 +31,11 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       <div className="flex-1 overflow-hidden">
         <div className="w-full h-full border border-[#7B68EE]/20 rounded-md bg-[#1E1E2F]">
           {totalRecords !== undefined && (
-            <div className="p-4 text-sm text-gray-400 border-b border-[#7B68EE]/20">
+            <div className="p-4 text-sm text-gray-400 border-b border-[#7B68EE]/20 mt-8">
               Total Records: {totalRecords}
             </div>
           )}
-          <div className="overflow-x-auto mt-6"> {/* Added mt-6 for top spacing */}
+          <div className="overflow-x-auto mt-6">
             <Table>
               <TableHeader className="bg-[#1E1E2F] sticky top-0 z-10">
                 <TableRow className="hover:bg-transparent border-b border-[#7B68EE]/20">
@@ -47,7 +47,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                   <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody className="space-y-2"> {/* Added space-y-2 for row spacing */}
+              <TableBody className="space-y-2">
                 {logs.map((log) => (
                   <TimelineLogCard
                     key={log.id}
@@ -65,7 +65,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       {selectedLog && (
         <div className="w-[600px] border-l border-[#7B68EE]/20 pl-4 overflow-y-auto max-h-screen">
           <div className="space-y-6">
-            <div className="flex justify-between items-center mb-6"> {/* Added mb-6 for bottom margin */}
+            <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-semibold text-gray-200">{selectedLog.title}</h2>
               <button 
                 onClick={(e) => {
@@ -78,7 +78,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
               </button>
             </div>
             
-            <div className="space-y-8"> {/* Increased space-y-6 to space-y-8 for more spacing */}
+            <div className="space-y-8">
               <div>
                 <h3 className="text-sm font-medium text-gray-400 mb-2">Description</h3>
                 <p className="text-sm text-gray-300">{selectedLog.description}</p>
