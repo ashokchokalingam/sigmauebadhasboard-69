@@ -64,22 +64,22 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
   });
 
   const handleCardClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent event from bubbling up
+    e.stopPropagation();
     setIsExpanded((prev) => !prev);
   };
 
   return (
-    <div className="group relative pl-6">
+    <div className="group relative pl-6 w-full">
       <div className="absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2 border-green-400 bg-background" />
       {!isLast && (
         <div className="absolute left-0 top-8 -ml-[1px] h-full w-[2px] bg-gradient-to-b from-green-400/50 to-transparent" />
       )}
 
-      <div className="relative ml-6 mb-6 w-[75%]">
+      <div className="relative ml-6 mb-6 w-full">
         <div 
           onClick={handleCardClick}
           className={cn(
-            "p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer",
+            "p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer w-full",
             isExpanded && "border-blue-500/30"
           )}
         >
