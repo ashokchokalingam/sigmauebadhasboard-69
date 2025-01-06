@@ -27,7 +27,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   }
 
   return (
-    <div className="flex gap-4 mt-12">
+    <div className="flex gap-4 mt-8">
       <div className="flex-1 overflow-hidden">
         <div className="w-full h-full border border-[#7B68EE]/20 rounded-md bg-[#1E1E2F]">
           {totalRecords !== undefined && (
