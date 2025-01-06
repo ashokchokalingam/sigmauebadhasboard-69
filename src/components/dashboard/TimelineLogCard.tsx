@@ -12,7 +12,7 @@ import { TableCell, TableRow } from "../ui/table";
 interface TimelineLogCardProps {
   log: Alert;
   isExpanded: boolean;
-  onToggleExpand: (id: string) => void;
+  onToggleExpand: (log: Alert) => void;
 }
 
 const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardProps) => {
@@ -24,7 +24,6 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
     }
   };
 
-  // Split tags into tactics and techniques
   const tags = log.tags.split(",").map(tag => tag.trim());
   const tactics = tags.filter(tag => tag.startsWith("attack.") && !tag.includes("t1"));
   const techniques = tags.filter(tag => tag.includes("t1"));
@@ -35,7 +34,7 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
         "hover:bg-[#1E1E2F] cursor-pointer transition-colors",
         isExpanded && "bg-[#1E1E2F]"
       )}
-      onClick={() => onToggleExpand(log.id)}
+      onClick={() => onToggleExpand(log)}
     >
       <TableCell className="font-mono text-sm text-gray-300">
         {formatDate(log.system_time)}

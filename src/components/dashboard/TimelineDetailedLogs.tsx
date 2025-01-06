@@ -14,7 +14,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
 
   const handleLogClick = (log: Alert) => {
-    setSelectedLog(selectedLog?.id === log.id ? null : log);
+    setSelectedLog(log);  // Remove the toggle behavior
   };
 
   if (isLoading) {
@@ -52,7 +52,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                     key={log.id}
                     log={log}
                     isExpanded={selectedLog?.id === log.id}
-                    onToggleExpand={() => handleLogClick(log)}
+                    onToggleExpand={handleLogClick}
                   />
                 ))}
               </TableBody>
@@ -63,10 +63,69 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       
       {selectedLog && (
         <div className="w-[600px] border-l border-[#7B68EE]/20 pl-4">
-          <AlertDetailsView 
-            alert={selectedLog} 
-            onClose={() => setSelectedLog(null)}
-          />
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-gray-200">{selectedLog.title}</h2>
+              <button 
+                onClick={() => setSelectedLog(null)}
+                className="text-gray-400 hover:text-gray-200"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">Event Details</h3>
+                <div className="space-y-2">
+                  <div className="text-sm text-gray-300">{selectedLog.description}</div>
+                  <div className="text-xs text-gray-400">
+                    First seen: {selectedLog.first_time_seen}
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    Last seen: {selectedLog.last_time_seen}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">User Information</h3>
+                <div className="space-y-2">
+                  <div className="text-sm text-gray-300">User ID: {selectedLog.user_id}</div>
+                  {selectedLog.target_user_name && (
+                    <div className="text-sm text-gray-300">
+                      Target User: {selectedLog.target_user_name}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">System Information</h3>
+                <div className="space-y-2">
+                  <div className="text-sm text-gray-300">
+                    Computer: {selectedLog.computer_name}
+                  </div>
+                  {selectedLog.event_id && (
+                    <div className="text-sm text-gray-300">
+                      Event ID: {selectedLog.event_id}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {selectedLog.raw && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-400 mb-2">Raw Data</h3>
+                  <pre className="text-xs text-gray-300 bg-[#1E1E2F] p-4 rounded-md overflow-x-auto">
+                    {typeof selectedLog.raw === 'string' 
+                      ? selectedLog.raw 
+                      : JSON.stringify(selectedLog.raw, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
