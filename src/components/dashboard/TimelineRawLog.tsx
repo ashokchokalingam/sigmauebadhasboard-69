@@ -48,7 +48,7 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
           "h-4 w-4 transition-transform duration-200",
           isExpanded && "transform rotate-90"
         )} />
-        <span className="font-mono text-sm">{">"}_</span>
+        <span className="font-mono text-base">{">"}_</span>
         Raw Log
       </button>
       
@@ -76,31 +76,40 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
               }
               .raw-log-content {
                 color: #FFFFFF;
+                font-size: 1rem !important;
+                line-height: 1.6 !important;
               }
               .raw-log-content .token.property {
                 color: #00FF00;
+                font-size: 1rem !important;
               }
               .raw-log-content .token.string {
                 color: #FFFF99;
+                font-size: 1rem !important;
               }
               .raw-log-content .token.number {
                 color: #FFA500;
+                font-size: 1rem !important;
               }
               .raw-log-content .token.boolean {
                 color: #1E90FF;
+                font-size: 1rem !important;
               }
               .raw-log-content .token.null {
                 color: #A9A9A9;
+                font-size: 1rem !important;
               }
               .raw-log-content .token.punctuation {
                 color: #FFFFFF;
+                font-size: 1rem !important;
               }
               .raw-log-content .token.timestamp {
                 color: #00FFFF;
+                font-size: 1rem !important;
               }
             `}
           </style>
-          <pre className="p-4 max-h-[400px] overflow-auto custom-scrollbar">
+          <pre className="p-6 max-h-[400px] overflow-auto custom-scrollbar">
             <code ref={codeRef} className="language-json whitespace-pre-wrap break-words raw-log-content">
               {formattedJson}
             </code>
