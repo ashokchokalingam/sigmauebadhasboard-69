@@ -5,7 +5,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
 import { ScrollArea } from "../ui/scroll-area";
 import ColumnSelector from "./ColumnSelector";
-import { Shield, Monitor, User, Hash, Database, Tag, Terminal, Info } from "lucide-react";
+import MetadataGrid from "./TimelineDetailedLogs/MetadataGrid";
 
 interface TimelineDetailedLogsProps {
   logs: Alert[];
@@ -102,76 +102,13 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <Monitor className="h-4 w-4" /> Computer
-              </h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.computer_name || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <User className="h-4 w-4" /> User Origin
-              </h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.user_id || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <Hash className="h-4 w-4" /> Event ID
-              </h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.event_id || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <Terminal className="h-4 w-4" /> Provider
-              </h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.provider_name || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <Shield className="h-4 w-4" /> Rule ID
-              </h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.ruleid || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <Info className="h-4 w-4" /> Rule Level
-              </h4>
-              <p className="text-sm text-blue-100 font-mono capitalize">{alert.rule_level || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Task</h4>
-              <p className="text-sm text-blue-100 font-mono capitalize">{alert.task || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Target Domain</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.target_domain_name || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Target User</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.target_user_name || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">System Time</h4>
-              <p className="text-sm text-blue-100 font-mono">{formatTime(alert.system_time)}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">IP Address</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.ip_address || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">ML Cluster</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.dbscan_cluster || 'N/A'}</p>
-            </div>
-          </div>
+          <MetadataGrid alert={alert} formatTime={formatTime} />
 
           <div className="space-y-4">
             <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-              <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
-                <Tag className="h-4 w-4" /> MITRE Tactics
-              </h3>
+              <h3 className="text-sm font-medium text-purple-200 mb-2">MITRE Tactics</h3>
               <div className="flex flex-wrap gap-2">
-                {tactics ? tactics.map((tactic, index) => (
+                {tactics && tactics.length > 0 ? tactics.map((tactic, index) => (
                   <span 
                     key={index}
                     className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
@@ -185,11 +122,9 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
             </div>
 
             <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-              <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
-                <Tag className="h-4 w-4" /> MITRE Techniques
-              </h3>
+              <h3 className="text-sm font-medium text-purple-200 mb-2">MITRE Techniques</h3>
               <div className="flex flex-wrap gap-2">
-                {techniques ? techniques.map((technique, index) => (
+                {techniques && techniques.length > 0 ? techniques.map((technique, index) => (
                   <span 
                     key={index}
                     className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
@@ -204,9 +139,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
           </div>
 
           <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-            <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
-              <Database className="h-4 w-4" /> Raw Data
-            </h3>
+            <h3 className="text-sm font-medium text-purple-200 mb-2">Raw Data</h3>
             <pre className="text-xs text-purple-100/90 bg-[#1A1F2C] p-4 rounded-md overflow-x-auto font-mono whitespace-pre-wrap">
               {typeof alert.raw === 'string' 
                 ? JSON.stringify(JSON.parse(alert.raw), null, 2)
