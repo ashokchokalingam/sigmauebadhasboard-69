@@ -35,7 +35,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
               Total Records: {totalRecords}
             </div>
           )}
-          <div className="overflow-x-auto mt-6">
+          <div className="overflow-x-auto mt-12">
             <Table>
               <TableHeader className="bg-[#1E1E2F] sticky top-0 z-10">
                 <TableRow className="hover:bg-transparent border-b border-[#7B68EE]/20">
@@ -64,8 +64,8 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       
       {selectedLog && (
         <div className="w-[600px] border-l border-[#7B68EE]/20 pl-4 overflow-y-auto max-h-screen">
-          <div className="space-y-6">
-            <div className="flex justify-between items-center mb-6">
+          <div className="space-y-8">
+            <div className="flex justify-between items-center mb-8">
               <h2 className="text-lg font-semibold text-gray-200">{selectedLog.title}</h2>
               <button 
                 onClick={(e) => {
@@ -78,7 +78,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
               </button>
             </div>
             
-            <div className="space-y-8">
+            <div className="space-y-12">
               <div>
                 <h3 className="text-sm font-medium text-gray-400 mb-2">Description</h3>
                 <p className="text-sm text-gray-300">{selectedLog.description}</p>
