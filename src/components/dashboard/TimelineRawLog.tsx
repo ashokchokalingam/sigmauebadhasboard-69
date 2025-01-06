@@ -85,52 +85,52 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
               }
               .raw-log-content {
                 color: #E5E7EB;
-                font-size: 1.4rem !important;
-                line-height: 2.2 !important;
+                font-size: 1.6rem !important;
+                line-height: 2.4 !important;
                 font-family: 'Monaco', 'Consolas', monospace !important;
-                letter-spacing: 0.025em !important;
+                letter-spacing: 0.03em !important;
               }
               .raw-log-content .token.property {
-                color: #A78BFA !important;
-                font-size: 1.4rem !important;
+                color: #C4B5FD !important;
+                font-size: 1.6rem !important;
                 font-weight: 600 !important;
-                text-shadow: 0 0 12px rgba(167, 139, 250, 0.4);
+                text-shadow: 0 0 12px rgba(196, 181, 253, 0.5);
               }
               .raw-log-content .token.string {
                 color: #86EFAC !important;
-                font-size: 1.4rem !important;
-                text-shadow: 0 0 8px rgba(134, 239, 172, 0.2);
+                font-size: 1.6rem !important;
+                text-shadow: 0 0 10px rgba(134, 239, 172, 0.3);
               }
               .raw-log-content .token.number {
-                color: #FB923C !important;
-                font-size: 1.4rem !important;
+                color: #FDBA74 !important;
+                font-size: 1.6rem !important;
                 font-weight: 500 !important;
-                text-shadow: 0 0 8px rgba(251, 146, 60, 0.3);
+                text-shadow: 0 0 10px rgba(253, 186, 116, 0.4);
               }
               .raw-log-content .token.boolean {
-                color: #E879F9 !important;
-                font-size: 1.4rem !important;
+                color: #F0ABFC !important;
+                font-size: 1.6rem !important;
                 font-weight: 500 !important;
-                text-shadow: 0 0 8px rgba(232, 121, 249, 0.3);
+                text-shadow: 0 0 10px rgba(240, 171, 252, 0.4);
               }
               .raw-log-content .token.null {
-                color: #F9A8D4 !important;
-                font-size: 1.4rem !important;
-                text-shadow: 0 0 8px rgba(249, 168, 212, 0.3);
+                color: #FDA4AF !important;
+                font-size: 1.6rem !important;
+                text-shadow: 0 0 10px rgba(253, 164, 175, 0.4);
               }
               .raw-log-content .token.punctuation {
-                color: #9CA3AF !important;
-                font-size: 1.4rem !important;
-                opacity: 0.8;
+                color: #D1D5DB !important;
+                font-size: 1.6rem !important;
+                opacity: 0.9;
               }
               .raw-log-content .highlight-critical {
                 color: #FF4500 !important;
                 font-weight: 600 !important;
-                text-shadow: 0 0 12px rgba(255, 69, 0, 0.4);
+                text-shadow: 0 0 12px rgba(255, 69, 0, 0.5);
               }
             `}
           </style>
-          <pre className="p-10 max-h-[800px] overflow-auto custom-scrollbar">
+          <pre className="p-12 max-h-[800px] overflow-auto custom-scrollbar">
             <code ref={codeRef} className="language-json whitespace-pre-wrap break-words raw-log-content">
               {formattedJson}
             </code>
