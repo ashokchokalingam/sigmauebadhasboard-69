@@ -1,7 +1,6 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { ChevronRight } from "lucide-react";
 import { Alert } from "./types";
-import { format } from "date-fns";
+import { extractTacticsAndTechniques } from "./utils";
 
 interface TimelineLogCardProps {
   log: Alert;
@@ -11,54 +10,70 @@ interface TimelineLogCardProps {
 }
 
 const TimelineLogCard = ({ log, isExpanded, onToggleExpand, visibleColumns }: TimelineLogCardProps) => {
-  const formattedTime = format(new Date(log.system_time), "MMM d, yyyy hh:mm:ss aa");
-
-  const handleRowClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onToggleExpand(log);
-  };
+  const { tactics, techniques } = extractTacticsAndTechniques(log.tags);
+  
+  const browserTime = new Date(log.system_time).toLocaleString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 
   return (
     <TableRow 
-      className={`hover:bg-purple-400/5 cursor-pointer ${isExpanded ? 'bg-purple-400/10' : ''}`}
-      onClick={handleRowClick}
+      className={`hover:bg-purple-950/30 cursor-pointer ${isExpanded ? 'bg-purple-950/20' : ''}`}
+      onClick={() => onToggleExpand(log)}
     >
-      <TableCell className="w-[180px] font-mono text-purple-200/90 text-sm whitespace-nowrap">
-        {formattedTime}
+      <TableCell className="font-mono text-purple-300 text-sm whitespace-nowrap">
+        {browserTime}
       </TableCell>
-      <TableCell className="w-[120px] text-purple-200/90">
+      <TableCell className="text-purple-100">
         {log.user_id || 'N/A'}
       </TableCell>
-      <TableCell className="w-[120px] text-purple-200/90">
+      <TableCell className="text-purple-100">
         {log.target_user_name || 'N/A'}
       </TableCell>
-      <TableCell className="w-[140px] text-purple-200/90">
-        {log.computer_name}
+      <TableCell className="text-purple-100">
+        {log.computer_name || 'N/A'}
       </TableCell>
-      <TableCell className="min-w-[200px] text-purple-200/90">
-        <div className="flex flex-col">
-          <span className="font-medium">{log.title}</span>
-          <span className="text-sm text-purple-200/70 line-clamp-1">
-            {log.description}
-          </span>
+      <TableCell>
+        <div className="space-y-1">
+          <p className="text-purple-100">{log.title}</p>
+          <p className="text-sm text-purple-300/70">{log.description}</p>
         </div>
       </TableCell>
-      <TableCell className="w-[200px]">
-        <div className="flex flex-wrap gap-1">
-          {log.tags.split(',').map((tag, index) => (
-            <span
-              key={index}
-              className="px-2 py-0.5 text-xs rounded-full bg-purple-400/10 text-purple-200/90"
-            >
-              {tag.trim()}
-            </span>
-          ))}
+      <TableCell>
+        <div className="space-y-2">
+          <div>
+            <span className="text-xs text-purple-400">MITRE ATT&CK Tactics</span>
+            <div className="flex flex-wrap gap-1 mt-1">
+              {tactics?.split(',').map((tactic, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-[#9b87f5]/10 text-[#9b87f5] text-xs rounded-full border border-[#9b87f5]/20"
+                >
+                  {tactic.trim()}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div>
+            <span className="text-xs text-purple-400">MITRE ATT&CK Techniques</span>
+            <div className="flex flex-wrap gap-1 mt-1">
+              {techniques.map((technique, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-[#F97316]/10 text-[#F97316] text-xs rounded-full border border-[#F97316]/20"
+                >
+                  {technique}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
-      </TableCell>
-      <TableCell className="w-[50px]">
-        <ChevronRight 
-          className={`h-4 w-4 text-purple-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-        />
       </TableCell>
     </TableRow>
   );
