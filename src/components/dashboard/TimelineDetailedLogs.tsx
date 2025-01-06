@@ -5,23 +5,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
 import { ScrollArea } from "../ui/scroll-area";
 import ColumnSelector from "./ColumnSelector";
-import { 
-  Shield, 
-  Monitor, 
-  User, 
-  Hash, 
-  Database, 
-  Tag, 
-  Terminal, 
-  Info,
-  Clock,
-  Globe,
-  Fingerprint,
-  Building2
-} from "lucide-react";
-import DetailHeader from "./DetailedLogComponents/DetailHeader";
-import DetailField from "./DetailedLogComponents/DetailField";
-import DetailSection from "./DetailedLogComponents/DetailSection";
+import DetailedLogPanel from "./DetailedLogComponents/DetailedLogPanel";
 
 interface TimelineDetailedLogsProps {
   logs: Alert[];
@@ -72,118 +56,6 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
 
   const handleColumnToggle = (columns: string[]) => {
     setVisibleColumns(columns);
-  };
-
-  const formatTime = (timeString: string) => {
-    return new Date(timeString).toLocaleString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
-    });
-  };
-
-  const renderDetailSection = (alert: Alert) => {
-    return (
-      <div className="p-6 space-y-6 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
-        <DetailHeader title={alert.title} onClose={() => setSelectedLog(null)} />
-
-        <div className="space-y-6">
-          <DetailSection title="Description" icon={<Info className="h-4 w-4" />}>
-            <p className="text-sm text-purple-100/90 leading-relaxed">
-              {alert.description || 'No description available'}
-            </p>
-          </DetailSection>
-
-          <div className="grid grid-cols-2 gap-4">
-            <DetailField 
-              label="Computer"
-              value={alert.computer_name}
-              icon={<Monitor className="h-4 w-4" />}
-            />
-            <DetailField 
-              label="User ID"
-              value={alert.user_id}
-              icon={<User className="h-4 w-4" />}
-            />
-            <DetailField 
-              label="Event ID"
-              value={alert.event_id}
-              icon={<Hash className="h-4 w-4" />}
-            />
-            <DetailField 
-              label="Provider"
-              value={alert.provider_name}
-              icon={<Terminal className="h-4 w-4" />}
-            />
-            <DetailField 
-              label="Rule ID"
-              value={alert.ruleid}
-              icon={<Shield className="h-4 w-4" />}
-            />
-            <DetailField 
-              label="Rule Level"
-              value={alert.rule_level}
-              icon={<Info className="h-4 w-4" />}
-            />
-            <DetailField 
-              label="Task"
-              value={alert.task}
-              icon={<Terminal className="h-4 w-4" />}
-            />
-            <DetailField 
-              label="Target Domain"
-              value={alert.target_domain_name}
-              icon={<Building2 className="h-4 w-4" />}
-            />
-            <DetailField 
-              label="Target User"
-              value={alert.target_user_name}
-              icon={<User className="h-4 w-4" />}
-            />
-            <DetailField 
-              label="System Time"
-              value={formatTime(alert.system_time)}
-              icon={<Clock className="h-4 w-4" />}
-            />
-            <DetailField 
-              label="IP Address"
-              value={alert.ip_address}
-              icon={<Globe className="h-4 w-4" />}
-            />
-            <DetailField 
-              label="DBSCAN Cluster"
-              value={alert.dbscan_cluster}
-              icon={<Fingerprint className="h-4 w-4" />}
-            />
-          </div>
-
-          <DetailSection title="Tags" icon={<Tag className="h-4 w-4" />}>
-            <div className="flex flex-wrap gap-2">
-              {alert.tags?.split(',').map((tag, index) => (
-                <span 
-                  key={index}
-                  className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
-                >
-                  {tag.trim()}
-                </span>
-              ))}
-            </div>
-          </DetailSection>
-
-          <DetailSection title="Raw Data" icon={<Database className="h-4 w-4" />}>
-            <pre className="text-xs text-purple-100/90 bg-[#1A1F2C] p-4 rounded-md overflow-x-auto font-mono whitespace-pre-wrap">
-              {typeof alert.raw === 'string' 
-                ? JSON.stringify(JSON.parse(alert.raw), null, 2)
-                : JSON.stringify(alert.raw, null, 2)}
-            </pre>
-          </DetailSection>
-        </div>
-      </div>
-    );
   };
 
   if (isLoading) {
@@ -259,15 +131,16 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
               defaultSize={40}
               minSize={30}
             >
-              <ScrollArea className="h-[800px]">
-                <div 
-                  ref={detailsRef}
-                  className="h-full"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {renderDetailSection(selectedLog)}
-                </div>
-              </ScrollArea>
+              <div 
+                ref={detailsRef}
+                className="h-full"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <DetailedLogPanel 
+                  alert={selectedLog}
+                  onClose={() => setSelectedLog(null)}
+                />
+              </div>
             </ResizablePanel>
           </>
         )}
