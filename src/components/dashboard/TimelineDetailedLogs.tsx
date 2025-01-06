@@ -26,23 +26,23 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   }
 
   return (
-    <div className="flex">
-      <div className="flex-1">
-        <div className="w-full overflow-hidden border border-blue-500/10 rounded-md">
+    <div className="flex h-full">
+      <div className="flex-1 overflow-hidden">
+        <div className="w-full h-full border border-[#7B68EE]/20 rounded-md bg-[#1E1E2F]">
           {totalRecords !== undefined && (
-            <div className="p-2 text-sm text-blue-400 border-b border-blue-500/10">
+            <div className="p-2 text-sm text-gray-400 border-b border-[#7B68EE]/20">
               Total Records: {totalRecords}
             </div>
           )}
-          <div className="overflow-x-auto w-full">
-            <Table className="w-full">
-              <TableHeader className="bg-black/90 backdrop-blur-sm sticky top-0 z-10">
-                <TableRow className="hover:bg-transparent border-b border-blue-500/10">
-                  <TableHead className="w-[200px] text-blue-300 font-semibold">Time</TableHead>
-                  <TableHead className="w-[250px] text-blue-300 font-semibold">Users</TableHead>
-                  <TableHead className="w-[200px] text-blue-300 font-semibold">Computer</TableHead>
-                  <TableHead className="min-w-[300px] text-blue-300 font-semibold">Event</TableHead>
-                  <TableHead className="min-w-[250px] text-blue-300 font-semibold">Tactics & Techniques</TableHead>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-[#1E1E2F] sticky top-0 z-10">
+                <TableRow className="hover:bg-transparent border-b border-[#7B68EE]/20">
+                  <TableHead className="w-[200px] text-gray-300 font-semibold">Time</TableHead>
+                  <TableHead className="w-[250px] text-gray-300 font-semibold">Users</TableHead>
+                  <TableHead className="w-[200px] text-gray-300 font-semibold">Computer</TableHead>
+                  <TableHead className="min-w-[300px] text-gray-300 font-semibold">Event</TableHead>
+                  <TableHead className="min-w-[250px] text-gray-300 font-semibold">Tactics & Techniques</TableHead>
                   <TableHead className="w-[50px]"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -62,7 +62,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       </div>
       
       {selectedLog && (
-        <div className="w-[600px] border-l border-blue-500/10">
+        <div className="w-[600px]">
           <AlertDetailsView 
             alert={selectedLog} 
             onClose={() => setSelectedLog(null)}

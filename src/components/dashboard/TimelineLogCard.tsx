@@ -32,13 +32,13 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
   return (
     <TableRow 
       className={cn(
-        "hover:bg-blue-950/30 cursor-pointer transition-colors",
-        isExpanded && "bg-blue-950/20"
+        "hover:bg-[#1E1E2F] cursor-pointer transition-colors",
+        isExpanded && "bg-[#1E1E2F]"
       )}
       onClick={() => onToggleExpand(log.id)}
     >
       {/* Time Column */}
-      <TableCell className="font-mono text-sm text-blue-300">
+      <TableCell className="font-mono text-sm text-gray-300">
         {formatDate(log.system_time)}
       </TableCell>
 
@@ -47,12 +47,12 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <User className="h-3.5 w-3.5 text-blue-400" />
-            <span className="text-sm text-blue-100">{log.user_id || 'N/A'}</span>
+            <span className="text-sm text-gray-200">{log.user_id || 'N/A'}</span>
           </div>
           {log.target_user_name && (
             <div className="flex items-center gap-2">
               <Target className="h-3.5 w-3.5 text-blue-400" />
-              <span className="text-sm text-blue-100">{log.target_user_name}</span>
+              <span className="text-sm text-gray-200">{log.target_user_name}</span>
             </div>
           )}
         </div>
@@ -62,15 +62,15 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
       <TableCell>
         <div className="flex items-center gap-2">
           <Monitor className="h-3.5 w-3.5 text-blue-400" />
-          <span className="text-sm text-blue-100">{log.computer_name}</span>
+          <span className="text-sm text-gray-200">{log.computer_name}</span>
         </div>
       </TableCell>
 
       {/* Event Column */}
       <TableCell>
         <div className="space-y-1">
-          <div className="text-sm font-medium text-blue-100">{log.title}</div>
-          <div className="text-xs text-blue-300/70 line-clamp-2">{log.description}</div>
+          <div className="text-sm font-medium text-gray-200">{log.title}</div>
+          <div className="text-xs text-gray-400 line-clamp-2">{log.description}</div>
         </div>
       </TableCell>
 
@@ -104,7 +104,7 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
       <TableCell>
         <ChevronRight 
           className={cn(
-            "h-4 w-4 text-blue-400 transition-transform duration-200",
+            "h-4 w-4 text-gray-400 transition-transform duration-200",
             isExpanded && "transform rotate-90"
           )} 
         />
