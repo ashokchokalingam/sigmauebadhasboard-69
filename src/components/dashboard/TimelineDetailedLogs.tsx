@@ -5,7 +5,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
 import { ScrollArea } from "../ui/scroll-area";
 import ColumnSelector from "./ColumnSelector";
-import { Shield, Monitor, User, Hash, Database, Tag, Terminal, Info } from "lucide-react";
+import { Shield, Monitor, User, Hash, Database, Tag, Terminal, Info, Clock, Calendar, Server, AlertTriangle } from "lucide-react";
 
 interface TimelineDetailedLogsProps {
   logs: Alert[];
@@ -76,90 +76,84 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   const renderDetailSection = (alert: Alert) => {
     return (
       <div className="p-6 space-y-6 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
-        <div className="flex justify-between items-center sticky top-0 z-30 bg-[#1E1E2F] py-4">
-          <h2 className="text-xl font-semibold text-purple-100">
-            {alert.title || 'N/A'}
-          </h2>
+        <div className="flex justify-between items-center sticky top-0 z-30 bg-[#1E1E2F] py-4 border-b border-purple-500/20">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-purple-400" />
+            <h2 className="text-xl font-semibold text-purple-100">
+              {alert.title || 'N/A'}
+            </h2>
+          </div>
           <button 
             onClick={() => setSelectedLog(null)}
-            className="text-purple-300 hover:text-purple-100 transition-colors"
+            className="text-purple-300 hover:text-purple-100 transition-colors rounded-full hover:bg-purple-500/10 p-2"
           >
             ×
           </button>
         </div>
 
         <div className="space-y-6">
-          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-            <h3 className="text-sm font-medium text-purple-200 mb-2">Description</h3>
+          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20 backdrop-blur-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <Info className="h-4 w-4 text-purple-400" />
+              <h3 className="text-sm font-medium text-purple-200">Description</h3>
+            </div>
             <p className="text-sm text-purple-100/90 leading-relaxed">
               {alert.description || 'No description available'}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
+            <div className="bg-purple-400/5 p-3 rounded-lg border border-purple-400/20">
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2 mb-1">
                 <Monitor className="h-4 w-4" /> Computer
               </h4>
               <p className="text-sm text-blue-100 font-mono">{alert.computer_name || 'N/A'}</p>
             </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
+            <div className="bg-purple-400/5 p-3 rounded-lg border border-purple-400/20">
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2 mb-1">
                 <User className="h-4 w-4" /> User ID
               </h4>
               <p className="text-sm text-blue-100 font-mono">{alert.user_id || 'N/A'}</p>
             </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
+            <div className="bg-purple-400/5 p-3 rounded-lg border border-purple-400/20">
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2 mb-1">
                 <Hash className="h-4 w-4" /> Event ID
               </h4>
               <p className="text-sm text-blue-100 font-mono">{alert.event_id || 'N/A'}</p>
             </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
+            <div className="bg-purple-400/5 p-3 rounded-lg border border-purple-400/20">
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2 mb-1">
                 <Terminal className="h-4 w-4" /> Provider
               </h4>
               <p className="text-sm text-blue-100 font-mono">{alert.provider_name || 'N/A'}</p>
             </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
+            <div className="bg-purple-400/5 p-3 rounded-lg border border-purple-400/20">
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2 mb-1">
                 <Shield className="h-4 w-4" /> Rule ID
               </h4>
               <p className="text-sm text-blue-100 font-mono">{alert.ruleid || 'N/A'}</p>
             </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <Info className="h-4 w-4" /> Rule Level
+            <div className="bg-purple-400/5 p-3 rounded-lg border border-purple-400/20">
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2 mb-1">
+                <Server className="h-4 w-4" /> Rule Level
               </h4>
               <p className="text-sm text-blue-100 font-mono capitalize">{alert.rule_level || 'N/A'}</p>
             </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Task</h4>
-              <p className="text-sm text-blue-100 font-mono capitalize">{alert.task || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Target Domain</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.target_domain_name || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Target User</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.target_user_name || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">System Time</h4>
+            <div className="bg-purple-400/5 p-3 rounded-lg border border-purple-400/20">
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2 mb-1">
+                <Calendar className="h-4 w-4" /> System Time
+              </h4>
               <p className="text-sm text-blue-100 font-mono">{formatTime(alert.system_time)}</p>
             </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">IP Address</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.ip_address || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">DBSCAN Cluster</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.dbscan_cluster || 'N/A'}</p>
+            <div className="bg-purple-400/5 p-3 rounded-lg border border-purple-400/20">
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2 mb-1">
+                <Clock className="h-4 w-4" /> Task
+              </h4>
+              <p className="text-sm text-blue-100 font-mono">{alert.task || 'N/A'}</p>
             </div>
           </div>
 
-          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20 backdrop-blur-sm">
             <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
               <Tag className="h-4 w-4" /> Tags
             </h3>
@@ -175,7 +169,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
             </div>
           </div>
 
-          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20 backdrop-blur-sm">
             <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
               <Database className="h-4 w-4" /> Raw Data
             </h3>
@@ -220,7 +214,8 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
             <div ref={tableRef} className="h-full">
               <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
                 <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
-                  <div>
+                  <div className="flex items-center gap-2">
+                    <Database className="h-4 w-4" />
                     <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
                   </div>
                   <ColumnSelector
