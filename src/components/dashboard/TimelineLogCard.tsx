@@ -1,12 +1,6 @@
 import { Alert } from "./types";
 import { format, parseISO } from "date-fns";
-import {
-  ChevronRight,
-  User,
-  Monitor,
-  Target,
-  Globe
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TableCell, TableRow } from "../ui/table";
 
@@ -21,13 +15,19 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
     try {
       return format(parseISO(dateString), 'MMM dd, yyyy HH:mm:ss');
     } catch (error) {
+      console.error("Date formatting error:", error);
       return dateString;
     }
   };
 
-  const tags = log.tags.split(",").map(tag => tag.trim());
+  const tags = log.tags?.split(",").map(tag => tag.trim()) || [];
   const tactics = tags.filter(tag => tag.startsWith("attack.") && !tag.includes("t1"));
   const techniques = tags.filter(tag => tag.includes("t1"));
+
+  const handleRowClick = () => {
+    console.log("Row clicked, log:", log);
+    onToggleExpand(log);
+  };
 
   return (
     <TableRow 
@@ -35,31 +35,22 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
         "hover:bg-[#1E1E2F] cursor-pointer transition-colors",
         isExpanded && "bg-[#1E1E2F]"
       )}
-      onClick={() => onToggleExpand(log)}
+      onClick={handleRowClick}
     >
       <TableCell className="font-mono text-sm text-gray-300">
         {formatDate(log.system_time)}
       </TableCell>
 
       <TableCell>
-        <div className="flex items-center gap-2">
-          <User className="h-3.5 w-3.5 text-blue-400" />
-          <span className="text-sm text-gray-200">{log.user_id || 'N/A'}</span>
-        </div>
+        <span className="text-sm text-gray-200">{log.user_id || 'N/A'}</span>
       </TableCell>
 
       <TableCell>
-        <div className="flex items-center gap-2">
-          <Target className="h-3.5 w-3.5 text-blue-400" />
-          <span className="text-sm text-gray-200">{log.target_user_name || 'N/A'}</span>
-        </div>
+        <span className="text-sm text-gray-200">{log.target_user_name || 'N/A'}</span>
       </TableCell>
 
       <TableCell>
-        <div className="flex items-center gap-2">
-          <Monitor className="h-3.5 w-3.5 text-blue-400" />
-          <span className="text-sm text-gray-200">{log.computer_name}</span>
-        </div>
+        <span className="text-sm text-gray-200">{log.computer_name}</span>
       </TableCell>
 
       <TableCell>

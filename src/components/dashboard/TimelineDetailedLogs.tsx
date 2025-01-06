@@ -16,6 +16,11 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   const detailsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    console.log("Current logs:", logs);
+    console.log("Selected log:", selectedLog);
+  }, [logs, selectedLog]);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
         setSelectedLog(null);
@@ -29,6 +34,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   }, []);
 
   const handleLogClick = (log: Alert) => {
+    console.log("Log clicked:", log);
     setSelectedLog(selectedLog?.id === log.id ? null : log);
   };
 
@@ -36,6 +42,14 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
     return (
       <div className="w-full p-8 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+      </div>
+    );
+  }
+
+  if (!logs || logs.length === 0) {
+    return (
+      <div className="w-full p-8 text-center text-gray-400">
+        No logs available
       </div>
     );
   }
@@ -85,10 +99,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                 {selectedLog.title}
               </h2>
               <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedLog(null);
-                }}
+                onClick={() => setSelectedLog(null)}
                 className="text-purple-300 hover:text-purple-100 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-purple-400/10"
               >
                 ×
@@ -101,35 +112,9 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                 <p className="text-sm text-purple-100/90 leading-relaxed">{selectedLog.description}</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-                  <h3 className="text-sm font-medium text-purple-200 mb-2">User Origin</h3>
-                  <p className="text-sm text-purple-100/90 font-mono">{selectedLog.user_id || 'N/A'}</p>
-                </div>
-                <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-                  <h3 className="text-sm font-medium text-purple-200 mb-2">User Impacted</h3>
-                  <p className="text-sm text-purple-100/90 font-mono">{selectedLog.target_user_name || 'N/A'}</p>
-                </div>
-                <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-                  <h3 className="text-sm font-medium text-purple-200 mb-2">Domain</h3>
-                  <p className="text-sm text-purple-100/90 font-mono">{selectedLog.target_domain_name || 'N/A'}</p>
-                </div>
-                <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-                  <h3 className="text-sm font-medium text-purple-200 mb-2">Severity</h3>
-                  <p className="text-sm text-purple-100/90 font-mono capitalize">{selectedLog.rule_level || 'N/A'}</p>
-                </div>
-              </div>
-
               <TimelineMetadataGrid alert={selectedLog} />
               
               <TimelineMitreSection alert={selectedLog} />
-
-              <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-                <h3 className="text-sm font-medium text-purple-200 mb-2">System Time</h3>
-                <div className="text-sm text-purple-100/90 font-mono">
-                  {selectedLog.system_time}
-                </div>
-              </div>
 
               <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
                 <h3 className="text-sm font-medium text-purple-200 mb-2">Raw Data</h3>
