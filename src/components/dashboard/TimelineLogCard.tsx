@@ -7,14 +7,12 @@ import {
   User,
   Shield,
   Network,
-  Tag,
   ChevronRight,
   Terminal,
   FileText,
   Activity,
   Info,
-  Target,
-  AlertTriangle
+  Target
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -45,43 +43,32 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
 
       <div className="ml-4">
         <div className="p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/50 transition-all duration-300">
-          {/* Header Section with Timestamp, Event ID, and Tactics */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2 text-blue-300">
-              <Clock className="h-4 w-4" />
-              <span className="text-sm">{formatDate(log.system_time)}</span>
-            </div>
+          {/* Top Row: Timestamp, Event ID, and Tactics */}
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Target className="h-4 w-4 text-blue-400" />
-                <div className="flex flex-wrap gap-1">
-                  {tactics.map((tactic, index) => (
-                    <span key={index} className="text-xs px-2 py-0.5 bg-blue-500/10 rounded-full text-blue-300">
-                      {tactic.replace('attack.', '')}
-                    </span>
-                  ))}
-                </div>
+              <div className="flex items-center gap-2 text-blue-300">
+                <Clock className="h-4 w-4" />
+                <span className="text-sm">{formatDate(log.system_time)}</span>
               </div>
               <div className="flex items-center gap-2 text-blue-300">
                 <Hash className="h-4 w-4" />
                 <span className="text-sm font-mono">Event ID: {log.event_id}</span>
               </div>
             </div>
-          </div>
-
-          {/* Techniques Section */}
-          <div className="mb-4">
-            <div className="flex flex-wrap gap-2">
-              {techniques.map((technique, index) => (
-                <span key={index} className="text-sm px-3 py-1 bg-blue-500/10 rounded-md text-blue-300 font-medium">
-                  {technique.toUpperCase()}
-                </span>
-              ))}
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4 text-blue-400" />
+              <div className="flex flex-wrap gap-1">
+                {tactics.map((tactic, index) => (
+                  <span key={index} className="text-xs px-2 py-0.5 bg-blue-500/10 rounded-full text-blue-300">
+                    {tactic.replace('attack.', '')}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Title and Description */}
-          <div className="space-y-2 mb-4">
+          <div className="space-y-2 mb-3">
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4 text-blue-400" />
               <h3 className="text-sm font-medium text-blue-100 capitalize">{log.title}</h3>
@@ -89,6 +76,17 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-blue-400" />
               <p className="text-sm text-blue-300">{log.description}</p>
+            </div>
+          </div>
+
+          {/* Techniques Section with larger font */}
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2">
+              {techniques.map((technique, index) => (
+                <span key={index} className="text-base px-4 py-1.5 bg-blue-500/10 rounded-md text-blue-300 font-medium hover:bg-blue-500/20 transition-colors">
+                  {technique.toUpperCase()}
+                </span>
+              ))}
             </div>
           </div>
 
