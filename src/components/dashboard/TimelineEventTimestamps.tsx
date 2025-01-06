@@ -8,7 +8,16 @@ interface TimelineEventTimestampsProps {
 
 const TimelineEventTimestamps = ({ firstTimeSeen, lastTimeSeen }: TimelineEventTimestampsProps) => {
   const formatDateTime = (dateStr: string) => {
-    return format(new Date(dateStr), "MMM d, yyyy 'at' h:mm a");
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) {
+        throw new Error('Invalid date');
+      }
+      return format(date, "MMM d, yyyy 'at' h:mm a");
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid Date';
+    }
   };
 
   return (

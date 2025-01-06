@@ -21,28 +21,28 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
       // 1. Try as standard date
       date = new Date(dateString);
       if (isValid(date)) {
-        return format(date, 'h:mm a');
+        return format(date, 'MMM d, yyyy h:mm a');
       }
       
       // 2. Try GMT format
       if (dateString.includes('GMT')) {
         date = parse(dateString, 'EEE, dd MMM yyyy HH:mm:ss GMT', new Date());
         if (isValid(date)) {
-          return format(date, 'h:mm a');
+          return format(date, 'MMM d, yyyy h:mm a');
         }
       }
       
       // 3. Try ISO format
       date = parseISO(dateString);
       if (isValid(date)) {
-        return format(date, 'h:mm a');
+        return format(date, 'MMM d, yyyy h:mm a');
       }
       
       // 4. Try UTC format
       if (dateString.includes('UTC') || dateString.includes('Z')) {
         date = new Date(dateString.replace('UTC', 'Z'));
         if (isValid(date)) {
-          return format(date, 'h:mm a');
+          return format(date, 'MMM d, yyyy h:mm a');
         }
       }
 

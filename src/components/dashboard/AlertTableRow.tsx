@@ -19,7 +19,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     minute: '2-digit',
     second: '2-digit',
     hour12: true,
-    month: 'numeric',
+    month: 'short',
     day: 'numeric',
     year: 'numeric',
   });

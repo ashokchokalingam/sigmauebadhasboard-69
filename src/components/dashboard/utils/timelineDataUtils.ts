@@ -28,25 +28,11 @@ const getTimeKey = (date: Date, granularity: '5min' | 'hour' | 'day'): string =>
 const getFormattedDate = (date: Date, granularity: '5min' | 'hour' | 'day'): string => {
   switch (granularity) {
     case '5min':
-      return date.toLocaleString(undefined, {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
+      return format(date, 'MMM d, yyyy h:mm a');
     case 'hour':
-      return date.toLocaleString(undefined, {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        hour12: true
-      });
+      return format(date, 'MMM d, yyyy h:mm a');
     case 'day':
-      return date.toLocaleString(undefined, {
-        month: 'short',
-        day: 'numeric'
-      });
+      return format(date, 'MMM d, yyyy');
   }
 };
 
