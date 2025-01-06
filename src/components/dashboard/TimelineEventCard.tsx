@@ -37,31 +37,39 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
         return null;
       }
 
-      const baseUrl = '/api/user_impacted_logs';
-      const params = new URLSearchParams();
-      params.append('user_impacted', event.user_impacted);
-      params.append('title', event.title);
-      params.append('page', '1');
-      params.append('per_page', '500');
+      try {
+        const baseUrl = '/api/user_impacted_logs';
+        const params = new URLSearchParams();
+        params.append('user_impacted', event.user_impacted);
+        params.append('title', event.title);
+        params.append('page', '1');
+        params.append('per_page', '500');
 
-      console.log('Fetching logs with params:', baseUrl + '?' + params.toString());
+        console.log('Fetching logs with params:', baseUrl + '?' + params.toString());
 
-      const response = await fetch(`${baseUrl}?${params.toString()}`);
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Failed to fetch logs:', errorData);
-        throw new Error('Failed to fetch logs');
+        const response = await fetch(`${baseUrl}?${params.toString()}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch logs');
+        }
+        
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching detailed logs:', error);
+        return null;
       }
-      
-      return response.json();
     },
     enabled: isExpanded && !!event.user_impacted
   });
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <div className="group relative pl-6">
-      {/* Timeline dot and line */}
       <div className="absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2 border-green-400 bg-background" />
       {!isLast && (
         <div className="absolute left-0 top-8 -ml-[1px] h-full w-[2px] bg-gradient-to-b from-green-400/50 to-transparent" />
@@ -69,7 +77,7 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
 
       <div className="relative ml-6 mb-6 w-[75%]">
         <div 
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={handleCardClick}
           className={cn(
             "p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer",
             isExpanded && "border-blue-500/30"
@@ -82,7 +90,6 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
             description={event.description}
           />
 
-          {/* Add User Impacted Section */}
           <div className="flex items-center gap-2 mt-2 mb-3">
             <User className="h-4 w-4 text-blue-400" />
             <span className="text-sm text-blue-300">
