@@ -31,9 +31,19 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
 
   let formattedJson;
   try {
-    formattedJson = typeof alert.raw === 'string' 
-      ? JSON.stringify(JSON.parse(alert.raw), null, 2)
-      : JSON.stringify(alert.raw, null, 2);
+    // Improved JSON parsing and formatting
+    const parseAndFormat = (data: any) => {
+      if (typeof data === 'string') {
+        try {
+          return JSON.stringify(JSON.parse(data), null, 4); // Using 4 spaces for indentation
+        } catch {
+          return data;
+        }
+      }
+      return JSON.stringify(data, null, 4);
+    };
+    
+    formattedJson = parseAndFormat(alert.raw);
   } catch (e) {
     formattedJson = typeof alert.raw === 'string' ? alert.raw : JSON.stringify(alert.raw);
   }
@@ -77,34 +87,35 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
               .raw-log-content {
                 color: #FFFFFF;
                 font-size: 1rem !important;
-                line-height: 1.6 !important;
+                line-height: 1.8 !important;
+                font-family: 'Monaco', 'Consolas', monospace !important;
               }
               .raw-log-content .token.property {
-                color: #00FF00;
+                color: #7DD3FC;
                 font-size: 1rem !important;
               }
               .raw-log-content .token.string {
-                color: #FFFF99;
+                color: #BBF7D0;
                 font-size: 1rem !important;
               }
               .raw-log-content .token.number {
-                color: #FFA500;
+                color: #FDA4AF;
                 font-size: 1rem !important;
               }
               .raw-log-content .token.boolean {
-                color: #1E90FF;
+                color: #93C5FD;
                 font-size: 1rem !important;
               }
               .raw-log-content .token.null {
-                color: #A9A9A9;
+                color: #F9A8D4;
                 font-size: 1rem !important;
               }
               .raw-log-content .token.punctuation {
-                color: #FFFFFF;
+                color: #E2E8F0;
                 font-size: 1rem !important;
               }
               .raw-log-content .token.timestamp {
-                color: #00FFFF;
+                color: #67E8F9;
                 font-size: 1rem !important;
               }
             `}
