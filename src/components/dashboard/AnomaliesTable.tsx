@@ -47,7 +47,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
 
   const filteredAlerts = filterAlerts();
 
-  const handlePanelClick = (e: React.MouseEvent) => {
+  const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Prevent click events from bubbling up when clicking the panel or handle
     e.stopPropagation();
   };
