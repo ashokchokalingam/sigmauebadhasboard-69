@@ -86,30 +86,20 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
               <TimelineMitreSection alert={selectedLog} />
 
               <div>
-                <h3 className="text-sm font-medium text-gray-400 mb-2">Timestamps</h3>
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-300">
-                    <span className="text-gray-400">First seen:</span> {selectedLog.first_time_seen}
-                  </div>
-                  <div className="text-sm text-gray-300">
-                    <span className="text-gray-400">Last seen:</span> {selectedLog.last_time_seen}
-                  </div>
-                  <div className="text-sm text-gray-300">
-                    <span className="text-gray-400">System time:</span> {selectedLog.system_time}
-                  </div>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">System Time</h3>
+                <div className="text-sm text-gray-300">
+                  {selectedLog.system_time}
                 </div>
               </div>
 
-              {selectedLog.raw && (
-                <div>
-                  <h3 className="text-sm font-medium text-gray-400 mb-2">Raw Data</h3>
-                  <pre className="text-xs text-gray-300 bg-[#1E1E2F] p-4 rounded-md overflow-x-auto">
-                    {typeof selectedLog.raw === 'string' 
-                      ? selectedLog.raw 
-                      : JSON.stringify(selectedLog.raw, null, 2)}
-                  </pre>
-                </div>
-              )}
+              <div>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">Raw Data</h3>
+                <pre className="text-xs text-gray-300 bg-[#1E1E2F] p-4 rounded-md overflow-x-auto">
+                  {typeof selectedLog.raw === 'string' 
+                    ? JSON.stringify(JSON.parse(selectedLog.raw), null, 2)
+                    : JSON.stringify(selectedLog.raw, null, 2)}
+                </pre>
+              </div>
             </div>
           </div>
         </div>
