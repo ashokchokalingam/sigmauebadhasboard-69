@@ -39,7 +39,7 @@ const TimelineMitreSection = ({ alert }: TimelineMitreSectionProps) => {
             {techniques.map((technique, index) => (
               <span 
                 key={index}
-                className="px-3 py-1 bg-[#FEC6A1]/10 text-[#FEC6A1] text-sm rounded-full border border-[#FEC6A1]/20"
+                className="px-3 py-1 bg-[#8B6D5C]/10 text-[#C4A484] text-sm rounded-full border border-[#8B6D5C]/20"
               >
                 {technique}
               </span>
