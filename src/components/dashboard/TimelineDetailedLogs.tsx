@@ -36,13 +36,22 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       const isClickInsideDetails = detailsRef.current?.contains(target);
       const isClickInsideTable = tableRef.current?.contains(target);
       
-      // Check if click is on a dropdown or menu
+      // Check if click is on a dropdown, menu, or scrollbar
       const isDropdownClick = target.closest('[role="dialog"]') || 
                             target.closest('[role="menu"]') ||
                             target.closest('[role="listbox"]');
+
+      // Check if the click target is a scrollbar
+      const isScrollbarClick = (
+        target.classList.contains('ps__thumb-y') ||
+        target.classList.contains('ps__rail-y') ||
+        target.closest('.ps__rail-y') ||
+        target.closest('.scroll-area') ||
+        target.closest('[data-radix-scroll-area-viewport]')
+      );
       
-      // Only close if click is outside both panels and not on a dropdown
-      if (!isClickInsideDetails && !isClickInsideTable && !isDropdownClick) {
+      // Only close if click is outside both panels and not on a dropdown or scrollbar
+      if (!isClickInsideDetails && !isClickInsideTable && !isDropdownClick && !isScrollbarClick) {
         setSelectedLog(null);
       }
     };
@@ -149,7 +158,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
             >
               <div 
                 ref={detailsRef}
-                className="h-full"
+                className="h-full scroll-area"
                 onClick={(e) => e.stopPropagation()}
               >
                 <DetailsPanel 
