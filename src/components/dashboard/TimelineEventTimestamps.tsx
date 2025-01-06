@@ -13,7 +13,7 @@ const TimelineEventTimestamps = ({ firstTimeSeen, lastTimeSeen }: TimelineEventT
       if (isNaN(date.getTime())) {
         throw new Error('Invalid date');
       }
-      return format(date, "MMM d, yyyy 'at' h:mm a");
+      return format(date, "MMM d, yyyy 'at' h:mm:ss a");
     } catch (error) {
       console.error('Error formatting date:', error);
       return 'Invalid Date';
