@@ -6,6 +6,7 @@ import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineDetailedLogs from "./TimelineDetailedLogs";
+import TimelineEventBarChart from "./TimelineEventBarChart";
 import { User } from "lucide-react";
 
 interface TimelineEventCardProps {
@@ -97,11 +98,16 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
           <TimelineMitreSection alert={event} />
 
           {isExpanded && (
-            <TimelineDetailedLogs
-              logs={detailedLogs?.user_impacted_logs || []}
-              isLoading={isLoading}
-              totalRecords={detailedLogs?.pagination?.total_records || 0}
-            />
+            <>
+              {detailedLogs?.user_impacted_logs && (
+                <TimelineEventBarChart logs={detailedLogs.user_impacted_logs} />
+              )}
+              <TimelineDetailedLogs
+                logs={detailedLogs?.user_impacted_logs || []}
+                isLoading={isLoading}
+                totalRecords={detailedLogs?.pagination?.total_records || 0}
+              />
+            </>
           )}
         </div>
       </div>
