@@ -4,7 +4,6 @@ import TimelineLogCard from "./TimelineLogCard";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
 import { ScrollArea } from "../ui/scroll-area";
-import ColumnSelector from "./ColumnSelector";
 import DetailsPanel from "./TimelineDetailedLogs/DetailsPanel";
 
 interface TimelineDetailedLogsProps {
@@ -15,7 +14,7 @@ interface TimelineDetailedLogsProps {
 
 const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetailedLogsProps) => {
   const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
-  const [visibleColumns, setVisibleColumns] = useState<string[]>([
+  const [visibleColumns] = useState<string[]>([
     "system_time",
     "user_id",
     "target_user_name",
@@ -41,13 +40,15 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                             target.closest('[role="menu"]') ||
                             target.closest('[role="listbox"]');
 
-      // Check if the click target is a scrollbar
+      // Check if the click target is a scrollbar or scroll container
       const isScrollbarClick = (
         target.classList.contains('ps__thumb-y') ||
         target.classList.contains('ps__rail-y') ||
         target.closest('.ps__rail-y') ||
         target.closest('.scroll-area') ||
-        target.closest('[data-radix-scroll-area-viewport]')
+        target.closest('[data-radix-scroll-area-viewport]') ||
+        target.closest('.scrollbar-thumb') ||
+        target.closest('.scrollbar-track')
       );
       
       // Only close if click is outside both panels and not on a dropdown or scrollbar
@@ -65,10 +66,6 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   const handleLogClick = (log: Alert) => {
     console.log("Log clicked:", log);
     setSelectedLog(log);
-  };
-
-  const handleColumnToggle = (columns: string[]) => {
-    setVisibleColumns(columns);
   };
 
   const formatTime = (timeString: string) => {
@@ -116,10 +113,6 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                   <div>
                     <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
                   </div>
-                  <ColumnSelector
-                    visibleColumns={visibleColumns}
-                    onColumnToggle={handleColumnToggle}
-                  />
                 </div>
                 <Table>
                   <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
@@ -158,7 +151,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
             >
               <div 
                 ref={detailsRef}
-                className="h-full scroll-area"
+                className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-purple-400/20 scrollbar-track-transparent"
                 onClick={(e) => e.stopPropagation()}
               >
                 <DetailsPanel 
