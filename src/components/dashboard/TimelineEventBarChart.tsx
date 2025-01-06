@@ -1,6 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Alert } from './types';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isValid } from 'date-fns';
 
 interface TimelineEventBarChartProps {
   logs: Alert[];
@@ -12,14 +12,25 @@ const TimelineEventBarChart = ({ logs }: TimelineEventBarChartProps) => {
     const timeMap = new Map<string, number>();
     
     logs.forEach(log => {
-      const date = format(parseISO(log.system_time), 'MM/dd HH:mm');
-      timeMap.set(date, (timeMap.get(date) || 0) + 1);
+      try {
+        const parsedDate = parseISO(log.system_time);
+        if (!isValid(parsedDate)) {
+          console.warn('Invalid date found:', log.system_time);
+          return;
+        }
+        const date = format(parsedDate, 'MM/dd HH:mm');
+        timeMap.set(date, (timeMap.get(date) || 0) + 1);
+      } catch (error) {
+        console.warn('Error processing date:', log.system_time, error);
+      }
     });
 
-    return Array.from(timeMap.entries()).map(([time, count]) => ({
-      time,
-      count
-    })).sort((a, b) => a.time.localeCompare(b.time));
+    return Array.from(timeMap.entries())
+      .map(([time, count]) => ({
+        time,
+        count
+      }))
+      .sort((a, b) => a.time.localeCompare(b.time));
   };
 
   const data = processData();
