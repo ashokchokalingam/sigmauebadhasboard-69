@@ -16,7 +16,7 @@ interface TimelineDetailedLogsProps {
 const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, onClose }: TimelineDetailedLogsProps) => {
   if (isLoading) {
     return (
-      <div className="mt-4 flex items-center justify-center py-8">
+      <div className="absolute right-0 top-0 w-[600px] h-full flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -30,25 +30,27 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, onClose }: Timeli
   };
 
   return (
-    <ScrollArea className="h-[800px]">
-      <div className="bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
-        {logs.map((log, index) => (
-          <div key={`${log.id}-${index}`} className="border-b border-blue-500/10 last:border-0">
-            <DetailHeader 
-              title={log.title} 
-              onClose={handleClose}
-            />
-            
-            <div className="p-8 space-y-8">
-              <DetailDescription description={log.description} />
-              <DetailGrid data={log} />
-              <DetailTags tags={log.tags} />
-              <DetailRawData raw={log.raw} />
+    <div className="absolute right-0 top-0 w-[600px] h-full border-l border-blue-500/10 bg-black/40 backdrop-blur-sm">
+      <ScrollArea className="h-full">
+        <div className="bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
+          {logs.map((log, index) => (
+            <div key={`${log.id}-${index}`} className="border-b border-blue-500/10 last:border-0">
+              <DetailHeader 
+                title={log.title} 
+                onClose={handleClose}
+              />
+              
+              <div className="p-8 space-y-8">
+                <DetailDescription description={log.description} />
+                <DetailGrid data={log} />
+                <DetailTags tags={log.tags} />
+                <DetailRawData raw={log.raw} />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </ScrollArea>
+          ))}
+        </div>
+      </ScrollArea>
+    </div>
   );
 };
 
