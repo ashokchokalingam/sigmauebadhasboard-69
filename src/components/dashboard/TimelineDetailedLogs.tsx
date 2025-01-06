@@ -5,7 +5,23 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
 import { ScrollArea } from "../ui/scroll-area";
 import ColumnSelector from "./ColumnSelector";
-import { Shield, Monitor, User, Hash, Database, Tag, Terminal, Info } from "lucide-react";
+import { 
+  Shield, 
+  Monitor, 
+  User, 
+  Hash, 
+  Database, 
+  Tag, 
+  Terminal, 
+  Info,
+  Clock,
+  Globe,
+  Fingerprint,
+  Building2
+} from "lucide-react";
+import DetailHeader from "./DetailedLogComponents/DetailHeader";
+import DetailField from "./DetailedLogComponents/DetailField";
+import DetailSection from "./DetailedLogComponents/DetailSection";
 
 interface TimelineDetailedLogsProps {
   logs: Alert[];
@@ -28,14 +44,11 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Check if the click is outside both the details pane and the table
       const isClickOutsideDetails = detailsRef.current && !detailsRef.current.contains(event.target as Node);
       const isClickOutsideTable = tableRef.current && !tableRef.current.contains(event.target as Node);
       
-      // Only close if the click is outside both elements and not on any dropdown or modal
       if (isClickOutsideDetails && isClickOutsideTable) {
         const target = event.target as HTMLElement;
-        // Check if the click is not on a dropdown or its children
         const isDropdownClick = target.closest('[role="dialog"]') || 
                               target.closest('[role="menu"]') ||
                               target.closest('[role="listbox"]');
@@ -76,93 +89,79 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   const renderDetailSection = (alert: Alert) => {
     return (
       <div className="p-6 space-y-6 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
-        <div className="flex justify-between items-center sticky top-0 z-30 bg-[#1E1E2F] py-4">
-          <h2 className="text-xl font-semibold text-purple-100">
-            {alert.title || 'N/A'}
-          </h2>
-          <button 
-            onClick={() => setSelectedLog(null)}
-            className="text-purple-300 hover:text-purple-100 transition-colors"
-          >
-            ×
-          </button>
-        </div>
+        <DetailHeader title={alert.title} onClose={() => setSelectedLog(null)} />
 
         <div className="space-y-6">
-          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-            <h3 className="text-sm font-medium text-purple-200 mb-2">Description</h3>
+          <DetailSection title="Description" icon={<Info className="h-4 w-4" />}>
             <p className="text-sm text-purple-100/90 leading-relaxed">
               {alert.description || 'No description available'}
             </p>
-          </div>
+          </DetailSection>
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <Monitor className="h-4 w-4" /> Computer
-              </h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.computer_name || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <User className="h-4 w-4" /> User ID
-              </h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.user_id || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <Hash className="h-4 w-4" /> Event ID
-              </h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.event_id || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <Terminal className="h-4 w-4" /> Provider
-              </h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.provider_name || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <Shield className="h-4 w-4" /> Rule ID
-              </h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.ruleid || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <Info className="h-4 w-4" /> Rule Level
-              </h4>
-              <p className="text-sm text-blue-100 font-mono capitalize">{alert.rule_level || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Task</h4>
-              <p className="text-sm text-blue-100 font-mono capitalize">{alert.task || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Target Domain</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.target_domain_name || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Target User</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.target_user_name || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">System Time</h4>
-              <p className="text-sm text-blue-100 font-mono">{formatTime(alert.system_time)}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">IP Address</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.ip_address || 'N/A'}</p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">DBSCAN Cluster</h4>
-              <p className="text-sm text-blue-100 font-mono">{alert.dbscan_cluster || 'N/A'}</p>
-            </div>
+            <DetailField 
+              label="Computer"
+              value={alert.computer_name}
+              icon={<Monitor className="h-4 w-4" />}
+            />
+            <DetailField 
+              label="User ID"
+              value={alert.user_id}
+              icon={<User className="h-4 w-4" />}
+            />
+            <DetailField 
+              label="Event ID"
+              value={alert.event_id}
+              icon={<Hash className="h-4 w-4" />}
+            />
+            <DetailField 
+              label="Provider"
+              value={alert.provider_name}
+              icon={<Terminal className="h-4 w-4" />}
+            />
+            <DetailField 
+              label="Rule ID"
+              value={alert.ruleid}
+              icon={<Shield className="h-4 w-4" />}
+            />
+            <DetailField 
+              label="Rule Level"
+              value={alert.rule_level}
+              icon={<Info className="h-4 w-4" />}
+            />
+            <DetailField 
+              label="Task"
+              value={alert.task}
+              icon={<Terminal className="h-4 w-4" />}
+            />
+            <DetailField 
+              label="Target Domain"
+              value={alert.target_domain_name}
+              icon={<Building2 className="h-4 w-4" />}
+            />
+            <DetailField 
+              label="Target User"
+              value={alert.target_user_name}
+              icon={<User className="h-4 w-4" />}
+            />
+            <DetailField 
+              label="System Time"
+              value={formatTime(alert.system_time)}
+              icon={<Clock className="h-4 w-4" />}
+            />
+            <DetailField 
+              label="IP Address"
+              value={alert.ip_address}
+              icon={<Globe className="h-4 w-4" />}
+            />
+            <DetailField 
+              label="DBSCAN Cluster"
+              value={alert.dbscan_cluster}
+              icon={<Fingerprint className="h-4 w-4" />}
+            />
           </div>
 
-          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-            <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
-              <Tag className="h-4 w-4" /> Tags
-            </h3>
+          <DetailSection title="Tags" icon={<Tag className="h-4 w-4" />}>
             <div className="flex flex-wrap gap-2">
               {alert.tags?.split(',').map((tag, index) => (
                 <span 
@@ -173,18 +172,15 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                 </span>
               ))}
             </div>
-          </div>
+          </DetailSection>
 
-          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-            <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
-              <Database className="h-4 w-4" /> Raw Data
-            </h3>
+          <DetailSection title="Raw Data" icon={<Database className="h-4 w-4" />}>
             <pre className="text-xs text-purple-100/90 bg-[#1A1F2C] p-4 rounded-md overflow-x-auto font-mono whitespace-pre-wrap">
               {typeof alert.raw === 'string' 
                 ? JSON.stringify(JSON.parse(alert.raw), null, 2)
                 : JSON.stringify(alert.raw, null, 2)}
             </pre>
-          </div>
+          </DetailSection>
         </div>
       </div>
     );
