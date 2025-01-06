@@ -12,7 +12,9 @@ import {
   Terminal,
   FileText,
   Activity,
-  Info
+  Info,
+  Target,
+  AlertTriangle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +33,11 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
     }
   };
 
+  // Split tags into tactics and techniques
+  const tags = log.tags.split(",").map(tag => tag.trim());
+  const tactics = tags.filter(tag => tag.startsWith("attack.") && !tag.includes("t1"));
+  const techniques = tags.filter(tag => tag.includes("t1"));
+
   return (
     <div className="relative pl-4 py-2">
       <div className="absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2 border-blue-400 bg-background" />
@@ -38,15 +45,38 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
 
       <div className="ml-4">
         <div className="p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/50 transition-all duration-300">
-          {/* Header with Timestamp and Event ID */}
-          <div className="flex items-center justify-between mb-4">
+          {/* Header Section with Timestamp, Event ID, and Tactics */}
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2 text-blue-300">
               <Clock className="h-4 w-4" />
               <span className="text-sm">{formatDate(log.system_time)}</span>
             </div>
-            <div className="flex items-center gap-2 text-blue-300">
-              <Hash className="h-4 w-4" />
-              <span className="text-sm font-mono">Event ID: {log.event_id}</span>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Target className="h-4 w-4 text-blue-400" />
+                <div className="flex flex-wrap gap-1">
+                  {tactics.map((tactic, index) => (
+                    <span key={index} className="text-xs px-2 py-0.5 bg-blue-500/10 rounded-full text-blue-300">
+                      {tactic.replace('attack.', '')}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-blue-300">
+                <Hash className="h-4 w-4" />
+                <span className="text-sm font-mono">Event ID: {log.event_id}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Techniques Section */}
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2">
+              {techniques.map((technique, index) => (
+                <span key={index} className="text-sm px-3 py-1 bg-blue-500/10 rounded-md text-blue-300 font-medium">
+                  {technique.toUpperCase()}
+                </span>
+              ))}
             </div>
           </div>
 
@@ -88,24 +118,6 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
               <Shield className="h-4 w-4 text-blue-400" />
               <span className="text-sm text-blue-300">Rule Level: </span>
               <span className="text-sm text-blue-100">{log.rule_level}</span>
-            </div>
-          </div>
-
-          {/* Tags Section */}
-          <div className="mb-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Tag className="h-4 w-4 text-blue-400" />
-              <span className="text-sm text-blue-300">Tags:</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {log.tags.split(",").map((tag, tagIndex) => (
-                <span
-                  key={tagIndex}
-                  className="px-2 py-1 bg-blue-500/10 text-blue-300 text-xs rounded-full"
-                >
-                  {tag.trim()}
-                </span>
-              ))}
             </div>
           </div>
 
