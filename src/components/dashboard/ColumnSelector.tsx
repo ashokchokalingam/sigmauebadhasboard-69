@@ -35,7 +35,8 @@ const ColumnSelector = ({ visibleColumns, onColumnToggle }: ColumnSelectorProps)
     setPendingColumns(['system_time']);
   };
 
-  const handleColumnToggle = (columnKey: string, checked: boolean) => {
+  const handleColumnToggle = (columnKey: string, checked: boolean, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (checked) {
       setPendingColumns(prev => [...prev, columnKey]);
     } else {
@@ -62,15 +63,23 @@ const ColumnSelector = ({ visibleColumns, onColumnToggle }: ColumnSelectorProps)
     });
   };
 
+  const handleDropdownClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen} modal={false}>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild onClick={handleDropdownClick}>
         <Button variant="outline" size="sm" className="h-8 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/20">
           <Filter className="mr-2 h-4 w-4" />
           <span>Filter Columns</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-[200px] bg-slate-900 border border-blue-500/20">
+      <DropdownMenuContent 
+        align="start" 
+        className="w-[200px] bg-slate-900 border border-blue-500/20"
+        onClick={handleDropdownClick}
+      >
         <DropdownMenuLabel className="text-blue-400 flex items-center justify-between">
           <span>Toggle Columns</span>
           <div className="flex gap-1">
