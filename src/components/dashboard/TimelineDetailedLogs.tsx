@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Alert } from "./types";
 import TimelineLogCard from "./TimelineLogCard";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -13,6 +13,20 @@ interface TimelineDetailedLogsProps {
 
 const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetailedLogsProps) => {
   const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
+  const detailsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
+        setSelectedLog(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleLogClick = (log: Alert) => {
     setSelectedLog(selectedLog?.id === log.id ? null : log);
@@ -64,7 +78,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       </div>
       
       {selectedLog && (
-        <div className="w-[600px] border-l border-purple-400/20 pl-6 overflow-y-auto max-h-screen">
+        <div ref={detailsRef} className="w-[600px] border-l border-purple-400/20 pl-6 overflow-y-auto max-h-screen">
           <div className="space-y-6 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] rounded-lg p-6 shadow-xl border border-purple-400/20">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold text-purple-100 bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-blue-200">
