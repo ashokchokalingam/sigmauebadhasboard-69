@@ -1,7 +1,21 @@
 import { Alert } from "./types";
 import { ScrollArea } from "../ui/scroll-area";
 import { format, parseISO } from "date-fns";
-import { ChevronRight, Clock, Terminal, Shield, MonitorDot, AlertCircle, User, Network } from "lucide-react";
+import { 
+  ChevronRight, 
+  Clock, 
+  Terminal, 
+  Shield, 
+  MonitorDot, 
+  AlertCircle, 
+  User, 
+  Network,
+  Hash,
+  Tag,
+  AlertTriangle,
+  FileText,
+  Activity
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -49,7 +63,6 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
     return <p className="text-blue-300/70 text-sm">No detailed logs available</p>;
   }
 
-  // Sort logs by system_time in descending order (most recent first)
   const sortedLogs = [...logs].sort((a, b) => 
     new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
   );
@@ -64,17 +77,15 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
               key={log.id || index}
               className="relative pl-4"
             >
-              {/* Timeline dot and line */}
               <div className="absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2 border-green-400 bg-background" />
               {index !== sortedLogs.length - 1 && (
                 <div className="absolute left-0 top-8 -ml-[1px] h-full w-[2px] bg-gradient-to-b from-green-400/50 to-transparent" />
               )}
 
-              {/* Card content */}
               <div className="ml-4">
                 <div className="p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300">
-                  {/* Header with timestamp and event ID */}
-                  <div className="flex items-center justify-between mb-3">
+                  {/* Header Section */}
+                  <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-blue-400" />
                       <span className="text-sm text-blue-300">
@@ -82,15 +93,27 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-blue-400" />
+                      <Hash className="h-4 w-4 text-blue-400" />
                       <span className="text-sm font-mono text-blue-300">
                         Event ID: {log.event_id}
                       </span>
                     </div>
                   </div>
 
-                  {/* Main info grid */}
-                  <div className="grid grid-cols-2 gap-4 mb-3">
+                  {/* Title and Description */}
+                  <div className="mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Activity className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm font-medium text-blue-100">{log.title}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm text-blue-300">{log.description}</span>
+                    </div>
+                  </div>
+
+                  {/* Main Info Grid */}
+                  <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="flex items-center gap-2">
                       <MonitorDot className="h-4 w-4 text-blue-400" />
                       <span className="text-sm text-blue-300">Computer: </span>
@@ -111,27 +134,37 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                       <span className="text-sm text-blue-300">IP Address: </span>
                       <span className="text-sm text-blue-100">{log.ip_address}</span>
                     </div>
-                  </div>
-
-                  {/* Description */}
-                  <div className="mb-3">
-                    <span className="text-sm text-blue-300">Description:</span>
-                    <p className="text-sm text-blue-100 mt-1">{log.description}</p>
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm text-blue-300">Rule Level: </span>
+                      <span className="text-sm text-blue-100">{log.rule_level}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm text-blue-300">Task: </span>
+                      <span className="text-sm text-blue-100">{log.task}</span>
+                    </div>
                   </div>
 
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {log.tags.split(",").map((tag, tagIndex) => (
-                      <span
-                        key={tagIndex}
-                        className="px-2 py-1 bg-blue-500/10 text-blue-300 text-xs rounded-full"
-                      >
-                        {tag.trim()}
-                      </span>
-                    ))}
+                  <div className="mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Tag className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm text-blue-300">Tags:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {log.tags.split(",").map((tag, tagIndex) => (
+                        <span
+                          key={tagIndex}
+                          className="px-2 py-1 bg-blue-500/10 text-blue-300 text-xs rounded-full"
+                        >
+                          {tag.trim()}
+                        </span>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Raw data section */}
+                  {/* Raw Data Section */}
                   <div>
                     <button
                       onClick={() => toggleExpand(log.id)}
@@ -150,7 +183,9 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                     {expandedLogs.includes(log.id) && (
                       <div className="mt-2 overflow-x-auto">
                         <pre className="p-4 bg-black/60 rounded-lg border border-blue-500/10 text-xs text-blue-100 font-mono whitespace-pre-wrap">
-                          {typeof log.raw === 'string' ? log.raw : JSON.stringify(log.raw, null, 2)}
+                          {typeof log.raw === 'string' 
+                            ? JSON.stringify(JSON.parse(log.raw), null, 2)
+                            : JSON.stringify(log.raw, null, 2)}
                         </pre>
                       </div>
                     )}
