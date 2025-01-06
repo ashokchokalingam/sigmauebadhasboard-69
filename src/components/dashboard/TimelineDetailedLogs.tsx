@@ -1,7 +1,7 @@
 import { Alert } from "./types";
 import { ScrollArea } from "../ui/scroll-area";
 import { format, parseISO } from "date-fns";
-import { ChevronRight, Clock, AlertCircle } from "lucide-react";
+import { ChevronRight, Clock, AlertCircle, Terminal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -58,62 +58,91 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
     <div className="mt-4 border-t border-blue-500/10 pt-4">
       <h4 className="text-blue-100 font-medium mb-3">Detailed Timeline ({totalRecords} events)</h4>
       <ScrollArea className="h-[500px] w-full rounded-md border border-blue-500/10">
-        <div className="divide-y divide-blue-500/10">
+        <div className="space-y-4 p-4">
           {sortedLogs.map((log, index) => (
             <div 
               key={log.id || index}
-              className="hover:bg-blue-500/5 transition-colors"
+              className="relative pl-4"
             >
-              {/* Single row view */}
-              <div 
-                className="flex items-center px-4 py-2 cursor-pointer"
-                onClick={() => toggleExpand(log.id)}
-              >
-                <ChevronRight 
-                  className={cn(
-                    "h-4 w-4 text-blue-400 transition-transform duration-200 mr-2",
-                    expandedLogs.includes(log.id) && "transform rotate-90"
-                  )}
-                />
-                
-                {/* Timestamp */}
-                <div className="flex items-center gap-2 w-48 min-w-48 text-sm text-blue-300">
-                  <Clock className="h-4 w-4" />
-                  {formatDate(log.system_time)}
-                </div>
+              {/* Timeline dot and line */}
+              <div className="absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2 border-green-400 bg-background" />
+              {index !== sortedLogs.length - 1 && (
+                <div className="absolute left-0 top-8 -ml-[1px] h-full w-[2px] bg-gradient-to-b from-green-400/50 to-transparent" />
+              )}
 
-                {/* Event ID */}
-                <div className="w-24 min-w-24 text-sm font-mono text-blue-200">
-                  {log.event_id}
-                </div>
-
-                {/* Provider */}
-                <div className="w-64 min-w-64 text-sm font-mono text-blue-200 truncate">
-                  {log.provider_name}
-                </div>
-
-                {/* Message Preview */}
-                <div className="flex-1 text-sm text-blue-300/90 truncate">
-                  {log.message || 'No message available'}
-                </div>
-              </div>
-
-              {/* Expanded details */}
-              <div 
-                className={cn(
-                  "overflow-hidden transition-all duration-200 bg-blue-950/20",
-                  expandedLogs.includes(log.id) ? "max-h-[500px] py-4" : "max-h-0"
-                )}
-              >
-                <div className="px-4 space-y-2">
-                  {Object.entries(log).map(([key, value]) => (
-                    <div key={key} className="grid grid-cols-[200px,1fr] gap-4">
-                      <span className="text-blue-300/70 text-sm font-medium">{key}:</span>
-                      <span className="text-blue-100 break-all font-mono text-sm">
-                        {formatValue(value)}
+              {/* Card content */}
+              <div className="ml-4">
+                <div className="p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300">
+                  {/* Header with timestamp and event ID */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm text-blue-300">
+                        {formatDate(log.system_time)}
                       </span>
                     </div>
-                  ))}
+                    <span className="text-sm font-mono text-blue-400">
+                      Event ID: {log.event_id}
+                    </span>
+                  </div>
+
+                  {/* Provider and computer info */}
+                  <div className="grid grid-cols-2 gap-4 mb-2">
+                    <div>
+                      <span className="text-sm text-blue-300/70">Provider:</span>
+                      <span className="ml-2 text-sm text-blue-100">{log.provider_name}</span>
+                    </div>
+                    <div>
+                      <span className="text-sm text-blue-300/70">Computer:</span>
+                      <span className="ml-2 text-sm text-blue-100">{log.computer_name}</span>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div className="mb-2">
+                    <span className="text-sm text-blue-300/70">Description:</span>
+                    <p className="text-sm text-blue-100 mt-1">{log.description}</p>
+                  </div>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {log.tags.split(",").map((tag, tagIndex) => (
+                      <span
+                        key={tagIndex}
+                        className="px-2 py-0.5 bg-blue-500/10 text-blue-300 text-xs rounded-full"
+                      >
+                        {tag.trim()}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Raw data section */}
+                  <div className="mt-2">
+                    <button
+                      onClick={() => toggleExpand(log.id)}
+                      className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+                    >
+                      <ChevronRight 
+                        className={cn(
+                          "h-4 w-4 transition-transform duration-200",
+                          expandedLogs.includes(log.id) && "transform rotate-90"
+                        )}
+                      />
+                      <Terminal className="h-4 w-4" />
+                      <span className="text-sm">Raw Data</span>
+                    </button>
+
+                    <div 
+                      className={cn(
+                        "overflow-hidden transition-all duration-200",
+                        expandedLogs.includes(log.id) ? "max-h-[500px] mt-2" : "max-h-0"
+                      )}
+                    >
+                      <pre className="p-4 bg-black/60 rounded-lg border border-blue-500/10 text-xs text-blue-100 font-mono overflow-x-auto">
+                        {formatValue(log.raw)}
+                      </pre>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
