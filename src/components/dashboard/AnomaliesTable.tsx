@@ -47,6 +47,11 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
 
   const filteredAlerts = filterAlerts();
 
+  const handlePanelClick = (e: React.MouseEvent) => {
+    // Prevent click events from bubbling up when clicking the panel or handle
+    e.stopPropagation();
+  };
+
   return (
     <div className="space-y-6">
       <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
@@ -67,10 +72,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
             <ResizablePanelGroup 
               direction="horizontal" 
               className="min-h-[800px] rounded-lg border border-blue-500/10"
-              onLayout={(sizes) => {
-                // Prevent panel from closing when resizing
-                console.log("Layout changed:", sizes);
-              }}
+              onClick={handlePanelClick}
             >
               <ResizablePanel defaultSize={75} minSize={30}>
                 <div className="h-full overflow-hidden border-r border-blue-500/10">
@@ -109,10 +111,14 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                   e.stopPropagation();
                   e.preventDefault();
                 }}
+                onDoubleClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                }}
               />
               
               <ResizablePanel defaultSize={25} minSize={20}>
-                <div className="h-full">
+                <div className="h-full" onClick={handlePanelClick}>
                   <AlertDetailsView
                     alert={selectedAlert}
                     onClose={() => setSelectedAlert(null)}
