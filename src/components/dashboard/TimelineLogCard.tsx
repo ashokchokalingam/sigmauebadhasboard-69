@@ -15,21 +15,39 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
     if (!dateString) return 'N/A';
     
     try {
-      // First, try to parse the GMT format
+      // Try different parsing approaches
+      let date: Date | null = null;
+      
+      // 1. Try as standard date
+      date = new Date(dateString);
+      if (isValid(date)) {
+        return format(date, 'h:mm a');
+      }
+      
+      // 2. Try GMT format
       if (dateString.includes('GMT')) {
-        const date = parse(dateString, 'EEE, dd MMM yyyy HH:mm:ss GMT', new Date());
+        date = parse(dateString, 'EEE, dd MMM yyyy HH:mm:ss GMT', new Date());
         if (isValid(date)) {
           return format(date, 'h:mm a');
         }
       }
       
-      // If that fails, try parsing ISO format
-      const date = parseISO(dateString);
-      if (!isValid(date)) {
-        console.warn('Invalid date:', dateString);
-        return 'Invalid Date';
+      // 3. Try ISO format
+      date = parseISO(dateString);
+      if (isValid(date)) {
+        return format(date, 'h:mm a');
       }
-      return format(date, 'h:mm a');
+      
+      // 4. Try UTC format
+      if (dateString.includes('UTC') || dateString.includes('Z')) {
+        date = new Date(dateString.replace('UTC', 'Z'));
+        if (isValid(date)) {
+          return format(date, 'h:mm a');
+        }
+      }
+
+      console.warn('Could not parse date:', dateString);
+      return 'Invalid Date';
     } catch (error) {
       console.error("Date formatting error:", error, "for date:", dateString);
       return 'Invalid Date';
