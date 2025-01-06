@@ -1,7 +1,7 @@
 import { Alert } from "./types";
 import { ScrollArea } from "../ui/scroll-area";
 import { format, parseISO } from "date-fns";
-import { ChevronRight, Clock, AlertCircle, Terminal } from "lucide-react";
+import { ChevronRight, Clock, Terminal, Shield, MonitorDot, AlertCircle, User, Network } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -74,42 +74,57 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
               <div className="ml-4">
                 <div className="p-4 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300">
                   {/* Header with timestamp and event ID */}
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-blue-400" />
                       <span className="text-sm text-blue-300">
                         {formatDate(log.system_time)}
                       </span>
                     </div>
-                    <span className="text-sm font-mono text-blue-400">
-                      Event ID: {log.event_id}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <Shield className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm font-mono text-blue-300">
+                        Event ID: {log.event_id}
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Provider and computer info */}
-                  <div className="grid grid-cols-2 gap-4 mb-2">
-                    <div>
-                      <span className="text-sm text-blue-300/70">Provider:</span>
-                      <span className="ml-2 text-sm text-blue-100">{log.provider_name}</span>
+                  {/* Main info grid */}
+                  <div className="grid grid-cols-2 gap-4 mb-3">
+                    <div className="flex items-center gap-2">
+                      <MonitorDot className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm text-blue-300">Computer: </span>
+                      <span className="text-sm text-blue-100">{log.computer_name}</span>
                     </div>
-                    <div>
-                      <span className="text-sm text-blue-300/70">Computer:</span>
-                      <span className="ml-2 text-sm text-blue-100">{log.computer_name}</span>
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm text-blue-300">Provider: </span>
+                      <span className="text-sm text-blue-100">{log.provider_name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm text-blue-300">Target User: </span>
+                      <span className="text-sm text-blue-100">{log.target_user_name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Network className="h-4 w-4 text-blue-400" />
+                      <span className="text-sm text-blue-300">IP Address: </span>
+                      <span className="text-sm text-blue-100">{log.ip_address}</span>
                     </div>
                   </div>
 
                   {/* Description */}
-                  <div className="mb-2">
-                    <span className="text-sm text-blue-300/70">Description:</span>
+                  <div className="mb-3">
+                    <span className="text-sm text-blue-300">Description:</span>
                     <p className="text-sm text-blue-100 mt-1">{log.description}</p>
                   </div>
 
                   {/* Tags */}
-                  <div className="flex flex-wrap gap-1 mb-2">
+                  <div className="flex flex-wrap gap-2 mb-3">
                     {log.tags.split(",").map((tag, tagIndex) => (
                       <span
                         key={tagIndex}
-                        className="px-2 py-0.5 bg-blue-500/10 text-blue-300 text-xs rounded-full"
+                        className="px-2 py-1 bg-blue-500/10 text-blue-300 text-xs rounded-full"
                       >
                         {tag.trim()}
                       </span>
@@ -117,7 +132,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                   </div>
 
                   {/* Raw data section */}
-                  <div className="mt-2">
+                  <div>
                     <button
                       onClick={() => toggleExpand(log.id)}
                       className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
@@ -132,16 +147,13 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                       <span className="text-sm">Raw Data</span>
                     </button>
 
-                    <div 
-                      className={cn(
-                        "overflow-hidden transition-all duration-200",
-                        expandedLogs.includes(log.id) ? "max-h-[500px] mt-2" : "max-h-0"
-                      )}
-                    >
-                      <pre className="p-4 bg-black/60 rounded-lg border border-blue-500/10 text-xs text-blue-100 font-mono overflow-x-auto">
-                        {formatValue(log.raw)}
-                      </pre>
-                    </div>
+                    {expandedLogs.includes(log.id) && (
+                      <div className="mt-2 overflow-x-auto">
+                        <pre className="p-4 bg-black/60 rounded-lg border border-blue-500/10 text-xs text-blue-100 font-mono whitespace-pre-wrap">
+                          {typeof log.raw === 'string' ? log.raw : JSON.stringify(log.raw, null, 2)}
+                        </pre>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
