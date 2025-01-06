@@ -35,23 +35,34 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       const isClickInsideDetails = detailsRef.current?.contains(target);
       const isClickInsideTable = tableRef.current?.contains(target);
       
-      // Check if click is on a dropdown, menu, or scrollbar
+      // Check if click is on a dropdown or menu
       const isDropdownClick = target.closest('[role="dialog"]') || 
                             target.closest('[role="menu"]') ||
                             target.closest('[role="listbox"]');
 
-      // Check if the click target is a scrollbar or scroll container
+      // Enhanced scrollbar detection
       const isScrollbarClick = (
-        target.classList.contains('ps__thumb-y') ||
-        target.classList.contains('ps__rail-y') ||
+        // Standard scrollbar classes
+        target.classList.contains('scrollbar') ||
+        target.classList.contains('scrollbar-thumb') ||
+        target.classList.contains('scrollbar-track') ||
+        target.classList.contains('scrollbar-corner') ||
+        // Specific scrollbar elements
+        target.closest('.scrollbar-thumb') ||
+        target.closest('.scrollbar-track') ||
         target.closest('.ps__rail-y') ||
+        target.closest('.ps__thumb-y') ||
+        // Scroll containers
         target.closest('.scroll-area') ||
         target.closest('[data-radix-scroll-area-viewport]') ||
-        target.closest('.scrollbar-thumb') ||
-        target.closest('.scrollbar-track')
+        // Check if the click was on an element with overflow
+        getComputedStyle(target).overflow === 'auto' ||
+        getComputedStyle(target).overflow === 'scroll' ||
+        getComputedStyle(target).overflowY === 'auto' ||
+        getComputedStyle(target).overflowY === 'scroll'
       );
-      
-      // Only close if click is outside both panels and not on a dropdown or scrollbar
+
+      // Only close if click is outside both panels and not on any scrolling-related element
       if (!isClickInsideDetails && !isClickInsideTable && !isDropdownClick && !isScrollbarClick) {
         setSelectedLog(null);
       }
