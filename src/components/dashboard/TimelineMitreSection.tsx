@@ -20,14 +20,14 @@ const TimelineMitreSection = ({ alert }: TimelineMitreSectionProps) => {
         <div>
           <p className="text-sm font-medium text-gray-400 mb-2">Tactics Identified</p>
           <div className="flex flex-wrap gap-2">
-            {tactics?.split(',').map((tactic, index) => (
+            {tactics ? tactics.split(',').map((tactic, index) => (
               <span 
                 key={index}
                 className="px-3 py-1 bg-purple-500/10 text-purple-300 text-sm rounded-full border border-purple-500/20"
               >
                 {tactic.trim()}
               </span>
-            )) || (
+            )) : (
               <span className="text-gray-500 text-sm">No tactics specified</span>
             )}
           </div>

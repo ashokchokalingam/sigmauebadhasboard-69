@@ -14,6 +14,10 @@ export const getSeverityColor = (severity: string): string => {
   }
 };
 
+export const sanitizeEntityName = (name?: string): string => {
+  return name?.trim() || '';
+};
+
 export const extractTacticsAndTechniques = (tags: string) => {
   const tagArray = tags.split(',').map(tag => tag.trim());
   
@@ -22,7 +26,8 @@ export const extractTacticsAndTechniques = (tags: string) => {
     .map(tag => tag.replace('attack.', ''))
     .map(tactic => tactic.split('_').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' '));
+    ).join(' '))
+    .join(', ');
 
   const techniques = tagArray
     .filter(tag => tag.toLowerCase().includes('t1'))
