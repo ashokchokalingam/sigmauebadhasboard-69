@@ -18,12 +18,12 @@ const TimelineMitreSection = ({ alert }: TimelineMitreSectionProps) => {
       
       <div className="grid grid-cols-2 gap-6">
         <div>
-          <p className="text-sm font-medium text-gray-400 mb-2">MITRE ATT&CK Tactics</p>
+          <p className="text-sm font-medium text-gray-400 mb-2">Tactics Identified</p>
           <div className="flex flex-wrap gap-2">
             {tactics?.split(',').map((tactic, index) => (
               <span 
                 key={index}
-                className="px-3 py-1 bg-[#9b87f5]/10 text-[#9b87f5] text-sm rounded-full border border-[#9b87f5]/20"
+                className="px-3 py-1 bg-purple-500/10 text-purple-300 text-sm rounded-full border border-purple-500/20"
               >
                 {tactic.trim()}
               </span>
@@ -34,12 +34,12 @@ const TimelineMitreSection = ({ alert }: TimelineMitreSectionProps) => {
         </div>
         
         <div>
-          <p className="text-sm font-medium text-gray-400 mb-2">MITRE ATT&CK Techniques</p>
+          <p className="text-sm font-medium text-gray-400 mb-2">Techniques Observed</p>
           <div className="flex flex-wrap gap-2">
             {techniques.map((technique, index) => (
               <span 
                 key={index}
-                className="px-3 py-1 bg-[#F97316]/10 text-[#F97316] text-sm rounded-full border border-[#F97316]/20"
+                className="px-3 py-1 bg-blue-500/10 text-blue-300 text-sm rounded-full border border-blue-500/20"
               >
                 {technique}
               </span>
