@@ -31,13 +31,21 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        detailsRef.current && 
-        !detailsRef.current.contains(event.target as Node) &&
-        tableRef.current &&
-        !tableRef.current.contains(event.target as Node)
-      ) {
-        setSelectedLog(null);
+      // Check if the click is outside both the details pane and the table
+      const isClickOutsideDetails = detailsRef.current && !detailsRef.current.contains(event.target as Node);
+      const isClickOutsideTable = tableRef.current && !tableRef.current.contains(event.target as Node);
+      
+      // Only close if the click is outside both elements and not on any dropdown or modal
+      if (isClickOutsideDetails && isClickOutsideTable) {
+        const target = event.target as HTMLElement;
+        // Check if the click is not on a dropdown or its children
+        const isDropdownClick = target.closest('[role="dialog"]') || 
+                              target.closest('[role="menu"]') ||
+                              target.closest('[role="listbox"]');
+        
+        if (!isDropdownClick) {
+          setSelectedLog(null);
+        }
       }
     };
 
