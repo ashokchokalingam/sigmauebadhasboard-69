@@ -121,13 +121,13 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "rule_level":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
+          <TableCell className="text-blue-100 whitespace-nowrap capitalize">
             {alert.rule_level || 'N/A'}
           </TableCell>
         );
       case "task":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
+          <TableCell className="text-blue-100 whitespace-nowrap capitalize">
             {alert.task || 'N/A'}
           </TableCell>
         );
@@ -149,6 +149,16 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
                   {tag.trim()}
                 </span>
               ))}
+            </div>
+          </TableCell>
+        );
+      case "raw":
+        return (
+          <TableCell>
+            <div className="max-w-md overflow-hidden">
+              <pre className="text-xs text-blue-300/70 whitespace-pre-wrap break-all">
+                {typeof alert.raw === 'string' ? alert.raw : JSON.stringify(alert.raw, null, 2)}
+              </pre>
             </div>
           </TableCell>
         );
