@@ -24,7 +24,8 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
   const tactics = tags.filter(tag => tag.startsWith("attack.") && !tag.includes("t1"));
   const techniques = tags.filter(tag => tag.includes("t1"));
 
-  const handleRowClick = () => {
+  const handleRowClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     console.log("Row clicked, log:", log);
     onToggleExpand(log);
   };

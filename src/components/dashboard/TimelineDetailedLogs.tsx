@@ -14,15 +14,17 @@ interface TimelineDetailedLogsProps {
 const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetailedLogsProps) => {
   const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    console.log("Current logs:", logs);
-    console.log("Selected log:", selectedLog);
-  }, [logs, selectedLog]);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
+      // Only close if clicking outside both the details panel and the table
+      if (
+        detailsRef.current && 
+        !detailsRef.current.contains(event.target as Node) &&
+        tableRef.current &&
+        !tableRef.current.contains(event.target as Node)
+      ) {
         setSelectedLog(null);
       }
     };
@@ -35,7 +37,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
 
   const handleLogClick = (log: Alert) => {
     console.log("Log clicked:", log);
-    setSelectedLog(selectedLog?.id === log.id ? null : log);
+    setSelectedLog(log);
   };
 
   if (isLoading) {
@@ -56,7 +58,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
 
   return (
     <div className="flex gap-6 mt-8">
-      <div className="flex-1 overflow-hidden">
+      <div ref={tableRef} className="flex-1 overflow-hidden">
         <div className="w-full h-full border border-purple-400/20 rounded-lg bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
           {totalRecords !== undefined && (
             <div className="p-4 text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
@@ -92,14 +94,21 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       </div>
       
       {selectedLog && (
-        <div ref={detailsRef} className="w-[600px] border-l border-purple-400/20 pl-6 overflow-y-auto max-h-screen">
+        <div 
+          ref={detailsRef} 
+          className="w-[600px] border-l border-purple-400/20 pl-6 overflow-y-auto max-h-screen"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="space-y-6 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] rounded-lg p-6 shadow-xl border border-purple-400/20">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold text-purple-100 bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-blue-200">
                 {selectedLog.title}
               </h2>
               <button 
-                onClick={() => setSelectedLog(null)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedLog(null);
+                }}
                 className="text-purple-300 hover:text-purple-100 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-purple-400/10"
               >
                 ×
