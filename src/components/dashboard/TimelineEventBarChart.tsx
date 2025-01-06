@@ -13,11 +13,15 @@ const TimelineEventBarChart = ({ logs }: TimelineEventBarChartProps) => {
     
     logs.forEach(log => {
       try {
-        const parsedDate = parseISO(log.system_time);
+        // Ensure the date string is properly formatted
+        const dateStr = log.system_time.replace(' GMT', '').trim();
+        const parsedDate = parseISO(dateStr);
+        
         if (!isValid(parsedDate)) {
-          console.warn('Invalid date found:', log.system_time);
+          console.warn('Invalid date format:', log.system_time);
           return;
         }
+        
         const date = format(parsedDate, 'MM/dd HH:mm');
         timeMap.set(date, (timeMap.get(date) || 0) + 1);
       } catch (error) {
