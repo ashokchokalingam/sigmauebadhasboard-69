@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Alert } from "./types";
 import TimelineLogCard from "./TimelineLogCard";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table";
-import AlertDetailsView from "./AlertDetailsView";
+import TimelineMetadataGrid from "./TimelineMetadataGrid";
+import TimelineMitreSection from "./TimelineMitreSection";
 
 interface TimelineDetailedLogsProps {
   logs: Alert[];
@@ -14,7 +15,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
 
   const handleLogClick = (log: Alert) => {
-    setSelectedLog(log);  // Remove the toggle behavior
+    setSelectedLog(selectedLog?.id === log.id ? null : log);
   };
 
   if (isLoading) {
@@ -62,8 +63,8 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       </div>
       
       {selectedLog && (
-        <div className="w-[600px] border-l border-[#7B68EE]/20 pl-4">
-          <div className="space-y-4">
+        <div className="w-[600px] border-l border-[#7B68EE]/20 pl-4 overflow-y-auto max-h-screen">
+          <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-200">{selectedLog.title}</h2>
               <button 
@@ -76,41 +77,26 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
             
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-medium text-gray-400 mb-2">Event Details</h3>
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-300">{selectedLog.description}</div>
-                  <div className="text-xs text-gray-400">
-                    First seen: {selectedLog.first_time_seen}
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    Last seen: {selectedLog.last_time_seen}
-                  </div>
-                </div>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">Description</h3>
+                <p className="text-sm text-gray-300">{selectedLog.description}</p>
               </div>
 
-              <div>
-                <h3 className="text-sm font-medium text-gray-400 mb-2">User Information</h3>
-                <div className="space-y-2">
-                  <div className="text-sm text-gray-300">User ID: {selectedLog.user_id}</div>
-                  {selectedLog.target_user_name && (
-                    <div className="text-sm text-gray-300">
-                      Target User: {selectedLog.target_user_name}
-                    </div>
-                  )}
-                </div>
-              </div>
+              <TimelineMetadataGrid alert={selectedLog} />
+              
+              <TimelineMitreSection alert={selectedLog} />
 
               <div>
-                <h3 className="text-sm font-medium text-gray-400 mb-2">System Information</h3>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">Timestamps</h3>
                 <div className="space-y-2">
                   <div className="text-sm text-gray-300">
-                    Computer: {selectedLog.computer_name}
+                    <span className="text-gray-400">First seen:</span> {selectedLog.first_time_seen}
                   </div>
-                  {selectedLog.event_id && (
-                    <div className="text-sm text-gray-300">
-                      Event ID: {selectedLog.event_id}
-                    </div>
-                  )}
+                  <div className="text-sm text-gray-300">
+                    <span className="text-gray-400">Last seen:</span> {selectedLog.last_time_seen}
+                  </div>
+                  <div className="text-sm text-gray-300">
+                    <span className="text-gray-400">System time:</span> {selectedLog.system_time}
+                  </div>
                 </div>
               </div>
 

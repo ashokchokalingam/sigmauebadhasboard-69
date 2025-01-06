@@ -34,7 +34,6 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
         "hover:bg-[#1E1E2F] cursor-pointer transition-colors",
         isExpanded && "bg-[#1E1E2F]"
       )}
-      onClick={() => onToggleExpand(log)}
     >
       <TableCell className="font-mono text-sm text-gray-300">
         {formatDate(log.system_time)}
@@ -95,12 +94,20 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
       </TableCell>
 
       <TableCell>
-        <ChevronRight 
-          className={cn(
-            "h-4 w-4 text-gray-400 transition-transform duration-200",
-            isExpanded && "transform rotate-90"
-          )} 
-        />
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleExpand(log);
+          }}
+          className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
+        >
+          <ChevronRight 
+            className={cn(
+              "h-4 w-4 text-gray-400 transition-transform duration-200",
+              isExpanded && "transform rotate-90"
+            )} 
+          />
+        </button>
       </TableCell>
     </TableRow>
   );
