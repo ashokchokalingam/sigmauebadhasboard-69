@@ -70,7 +70,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   }
 
   return (
-    <div className={`flex flex-col ${inSidebar ? 'h-full' : 'min-h-screen bg-gradient-to-br from-[#1A1F2C] to-[#121212]'}`}>
+    <div className={`flex flex-col ${inSidebar ? 'h-full' : 'min-h-screen w-full bg-gradient-to-br from-[#1A1F2C] to-[#121212]'}`}>
       <div className="flex items-center justify-between p-8 border-b border-blue-500/10 bg-black/40">
         <div className="flex items-center gap-4">
           <Shield className="h-8 w-8 text-blue-400" />
@@ -91,7 +91,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
 
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
-          <div className="p-8 space-y-6">
+          <div className="p-8 space-y-6 max-w-[90%] mx-auto">
             {isLoading && allEvents.length === 0 ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
