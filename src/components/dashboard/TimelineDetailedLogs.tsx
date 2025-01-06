@@ -40,7 +40,8 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
               <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
                 <TableRow className="hover:bg-transparent border-b border-purple-400/20">
                   <TableHead className="w-[200px] text-purple-100 font-semibold">Time</TableHead>
-                  <TableHead className="w-[250px] text-purple-100 font-semibold">Users</TableHead>
+                  <TableHead className="w-[250px] text-purple-100 font-semibold">User Origin</TableHead>
+                  <TableHead className="w-[200px] text-purple-100 font-semibold">User Impacted</TableHead>
                   <TableHead className="w-[200px] text-purple-100 font-semibold">Computer</TableHead>
                   <TableHead className="min-w-[300px] text-purple-100 font-semibold">Event</TableHead>
                   <TableHead className="min-w-[250px] text-purple-100 font-semibold">Tactics & Techniques</TableHead>
@@ -86,6 +87,25 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                 <p className="text-sm text-purple-100/90 leading-relaxed">{selectedLog.description}</p>
               </div>
 
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+                  <h3 className="text-sm font-medium text-purple-200 mb-2">User Origin</h3>
+                  <p className="text-sm text-purple-100/90 font-mono">{selectedLog.user_id || 'N/A'}</p>
+                </div>
+                <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+                  <h3 className="text-sm font-medium text-purple-200 mb-2">User Impacted</h3>
+                  <p className="text-sm text-purple-100/90 font-mono">{selectedLog.target_user_name || 'N/A'}</p>
+                </div>
+                <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+                  <h3 className="text-sm font-medium text-purple-200 mb-2">Domain</h3>
+                  <p className="text-sm text-purple-100/90 font-mono">{selectedLog.target_domain_name || 'N/A'}</p>
+                </div>
+                <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+                  <h3 className="text-sm font-medium text-purple-200 mb-2">Severity</h3>
+                  <p className="text-sm text-purple-100/90 font-mono capitalize">{selectedLog.rule_level || 'N/A'}</p>
+                </div>
+              </div>
+
               <TimelineMetadataGrid alert={selectedLog} />
               
               <TimelineMitreSection alert={selectedLog} />
@@ -99,7 +119,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
 
               <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
                 <h3 className="text-sm font-medium text-purple-200 mb-2">Raw Data</h3>
-                <pre className="text-xs text-purple-100/90 bg-[#1A1F2C] p-4 rounded-md overflow-x-auto font-mono">
+                <pre className="text-sm text-purple-100/90 bg-[#1A1F2C] p-4 rounded-md overflow-x-auto font-mono">
                   {typeof selectedLog.raw === 'string' 
                     ? JSON.stringify(JSON.parse(selectedLog.raw), null, 2)
                     : JSON.stringify(selectedLog.raw, null, 2)}

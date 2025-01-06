@@ -4,7 +4,8 @@ import {
   ChevronRight,
   User,
   Monitor,
-  Target
+  Target,
+  Globe
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TableCell, TableRow } from "../ui/table";
@@ -40,17 +41,16 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardPro
       </TableCell>
 
       <TableCell>
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <User className="h-3.5 w-3.5 text-blue-400" />
-            <span className="text-sm text-gray-200">{log.user_id || 'N/A'}</span>
-          </div>
-          {log.target_user_name && (
-            <div className="flex items-center gap-2">
-              <Target className="h-3.5 w-3.5 text-blue-400" />
-              <span className="text-sm text-gray-200">{log.target_user_name}</span>
-            </div>
-          )}
+        <div className="flex items-center gap-2">
+          <User className="h-3.5 w-3.5 text-blue-400" />
+          <span className="text-sm text-gray-200">{log.user_id || 'N/A'}</span>
+        </div>
+      </TableCell>
+
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <Target className="h-3.5 w-3.5 text-blue-400" />
+          <span className="text-sm text-gray-200">{log.target_user_name || 'N/A'}</span>
         </div>
       </TableCell>
 
