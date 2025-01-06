@@ -13,10 +13,15 @@ interface TimelineLogCardProps {
 const TimelineLogCard = ({ log, isExpanded, onToggleExpand, visibleColumns }: TimelineLogCardProps) => {
   const formattedTime = format(new Date(log.system_time), "MMM d, yyyy hh:mm:ss aa");
 
+  const handleRowClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleExpand(log);
+  };
+
   return (
     <TableRow 
       className={`hover:bg-purple-400/5 cursor-pointer ${isExpanded ? 'bg-purple-400/10' : ''}`}
-      onClick={() => onToggleExpand(log)}
+      onClick={handleRowClick}
     >
       <TableCell className="w-[180px] font-mono text-purple-200/90 text-sm whitespace-nowrap">
         {formattedTime}
@@ -51,7 +56,9 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand, visibleColumns }: Ti
         </div>
       </TableCell>
       <TableCell className="w-[50px]">
-        <ChevronRight className={`h-4 w-4 text-purple-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+        <ChevronRight 
+          className={`h-4 w-4 text-purple-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+        />
       </TableCell>
     </TableRow>
   );
