@@ -28,21 +28,16 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Check if the click is outside both the details pane and the table
       const isClickOutsideDetails = detailsRef.current && !detailsRef.current.contains(event.target as Node);
       const isClickOutsideTable = tableRef.current && !tableRef.current.contains(event.target as Node);
       
-      // Only close if the click is outside both elements and not on any dropdown or modal
-      if (isClickOutsideDetails && isClickOutsideTable) {
-        const target = event.target as HTMLElement;
-        // Check if the click is not on a dropdown or its children
-        const isDropdownClick = target.closest('[role="dialog"]') || 
+      const target = event.target as HTMLElement;
+      const isDropdownClick = target.closest('[role="dialog"]') || 
                               target.closest('[role="menu"]') ||
                               target.closest('[role="listbox"]');
         
-        if (!isDropdownClick) {
-          setSelectedLog(null);
-        }
+      if (isClickOutsideDetails && isClickOutsideTable && !isDropdownClick) {
+        setSelectedLog(null);
       }
     };
 
@@ -74,6 +69,17 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   };
 
   const renderDetailSection = (alert: Alert) => {
+    const tactics = alert.tags?.split(',')
+      .filter(tag => tag.includes('attack.') && !tag.toLowerCase().includes('t1'))
+      .map(tag => tag.replace('attack.', ''))
+      .map(tactic => tactic.split('_').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join(' '));
+
+    const techniques = alert.tags?.split(',')
+      .filter(tag => tag.toLowerCase().includes('t1'))
+      .map(tag => tag.trim().toUpperCase());
+
     return (
       <div className="p-6 space-y-6 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
         <div className="flex justify-between items-center sticky top-0 z-30 bg-[#1E1E2F] py-4">
@@ -105,7 +111,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
             </div>
             <div>
               <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
-                <User className="h-4 w-4" /> User ID
+                <User className="h-4 w-4" /> User Origin
               </h4>
               <p className="text-sm text-blue-100 font-mono">{alert.user_id || 'N/A'}</p>
             </div>
@@ -154,24 +160,46 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
               <p className="text-sm text-blue-100 font-mono">{alert.ip_address || 'N/A'}</p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-blue-400">DBSCAN Cluster</h4>
+              <h4 className="text-sm font-medium text-blue-400">ML Cluster</h4>
               <p className="text-sm text-blue-100 font-mono">{alert.dbscan_cluster || 'N/A'}</p>
             </div>
           </div>
 
-          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-            <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
-              <Tag className="h-4 w-4" /> Tags
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {alert.tags?.split(',').map((tag, index) => (
-                <span 
-                  key={index}
-                  className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
-                >
-                  {tag.trim()}
-                </span>
-              ))}
+          <div className="space-y-4">
+            <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+              <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
+                <Tag className="h-4 w-4" /> MITRE Tactics
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {tactics ? tactics.map((tactic, index) => (
+                  <span 
+                    key={index}
+                    className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
+                  >
+                    {tactic.trim()}
+                  </span>
+                )) : (
+                  <span className="text-purple-300/50">No tactics identified</span>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+              <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
+                <Tag className="h-4 w-4" /> MITRE Techniques
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {techniques ? techniques.map((technique, index) => (
+                  <span 
+                    key={index}
+                    className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
+                  >
+                    {technique.trim()}
+                  </span>
+                )) : (
+                  <span className="text-purple-300/50">No techniques identified</span>
+                )}
+              </div>
             </div>
           </div>
 
