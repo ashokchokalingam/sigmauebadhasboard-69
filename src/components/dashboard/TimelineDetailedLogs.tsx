@@ -31,15 +31,15 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
           Total Records: {totalRecords}
         </div>
       )}
-      <div className="overflow-x-auto">
-        <Table>
+      <div className="overflow-x-auto w-full">
+        <Table className="w-full">
           <TableHeader className="bg-black/90 backdrop-blur-sm sticky top-0 z-10">
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="text-blue-300">Time</TableHead>
-              <TableHead className="text-blue-300">Users</TableHead>
-              <TableHead className="text-blue-300">Computer</TableHead>
-              <TableHead className="text-blue-300">Event</TableHead>
-              <TableHead className="text-blue-300">Tactics & Techniques</TableHead>
+            <TableRow className="hover:bg-transparent border-b border-blue-500/10">
+              <TableHead className="w-[200px] text-blue-300 font-semibold">Time</TableHead>
+              <TableHead className="w-[250px] text-blue-300 font-semibold">Users</TableHead>
+              <TableHead className="w-[200px] text-blue-300 font-semibold">Computer</TableHead>
+              <TableHead className="min-w-[300px] text-blue-300 font-semibold">Event</TableHead>
+              <TableHead className="min-w-[250px] text-blue-300 font-semibold">Tactics & Techniques</TableHead>
               <TableHead className="w-[50px]"></TableHead>
             </TableRow>
           </TableHeader>
