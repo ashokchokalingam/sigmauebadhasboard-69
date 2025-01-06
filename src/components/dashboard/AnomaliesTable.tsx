@@ -41,6 +41,11 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     });
   };
 
+  const handleTimelineView = (type: "user" | "computer", id: string) => {
+    console.log("Timeline view requested for:", type, id);
+    // Add your timeline view logic here
+  };
+
   const filteredAlerts = filterAlerts();
 
   return (
@@ -77,6 +82,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                             alerts={filteredAlerts}
                             selectedAlert={selectedAlert}
                             onAlertSelect={handleAlertSelect}
+                            onTimelineView={handleTimelineView}
                             visibleColumns={visibleColumns}
                           />
                         </Table>
@@ -113,6 +119,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                         alerts={filteredAlerts}
                         selectedAlert={selectedAlert}
                         onAlertSelect={handleAlertSelect}
+                        onTimelineView={handleTimelineView}
                         visibleColumns={visibleColumns}
                       />
                     </Table>

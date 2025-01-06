@@ -19,6 +19,5 @@ export const allColumns = [
   { key: "ruleid", label: "Rule ID" },
   { key: "rule_level", label: "Level" },
   { key: "task", label: "Task" },
-  { key: "target_domain_name", label: "Target Domain" },
-  { key: "raw", label: "Raw Log" }
+  { key: "target_domain_name", label: "Target Domain" }
 ];

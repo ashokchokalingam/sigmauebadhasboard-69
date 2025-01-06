@@ -6,6 +6,7 @@ interface AnomaliesTableContentProps {
   alerts: Alert[];
   selectedAlert: Alert | null;
   onAlertSelect: (alert: Alert) => void;
+  onTimelineView: (type: "user" | "computer", id: string) => void;
   visibleColumns: string[];
 }
 
@@ -13,6 +14,7 @@ const AnomaliesTableContent = ({
   alerts,
   selectedAlert,
   onAlertSelect,
+  onTimelineView,
   visibleColumns
 }: AnomaliesTableContentProps) => {
   return (
@@ -23,7 +25,7 @@ const AnomaliesTableContent = ({
           alert={alert}
           isSelected={selectedAlert?.id === alert.id}
           onToggle={() => onAlertSelect(alert)}
-          onTimelineView={() => {}}
+          onTimelineView={onTimelineView}
           visibleColumns={visibleColumns}
         />
       ))}
