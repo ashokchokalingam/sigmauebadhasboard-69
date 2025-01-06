@@ -1,3 +1,4 @@
+import React from 'react';
 import { Alert } from "./types";
 import { X } from "lucide-react";
 import TimelineRawLog from "./TimelineRawLog";
