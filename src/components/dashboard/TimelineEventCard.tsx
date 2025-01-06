@@ -64,8 +64,8 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
   });
 
   const handleCardClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsExpanded(!isExpanded);
+    e.stopPropagation(); // Prevent event from bubbling up
+    setIsExpanded((prev) => !prev);
   };
 
   return (
