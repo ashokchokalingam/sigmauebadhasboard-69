@@ -31,7 +31,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
       <div className="flex-1 overflow-hidden">
         <div className="w-full h-full border border-[#7B68EE]/20 rounded-md bg-[#1E1E2F]">
           {totalRecords !== undefined && (
-            <div className="p-4 text-sm text-gray-400 border-b border-[#7B68EE]/20 mt-8">
+            <div className="p-4 text-sm text-gray-400 border-b border-[#7B68EE]/20 mt-12">
               Total Records: {totalRecords}
             </div>
           )}
