@@ -82,8 +82,16 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
 
   return (
     <div className="mt-4">
-      <ResizablePanelGroup direction="horizontal" className="min-h-[800px] rounded-lg border border-purple-400/20">
-        <ResizablePanel defaultSize={60} minSize={30}>
+      <ResizablePanelGroup 
+        direction="horizontal" 
+        className="min-h-[800px] rounded-lg border border-purple-400/20"
+      >
+        <ResizablePanel 
+          id="timeline-logs" 
+          order={1} 
+          defaultSize={60} 
+          minSize={30}
+        >
           <ScrollArea className="h-[800px]">
             <div ref={tableRef} className="h-full">
               <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
@@ -130,7 +138,12 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
         {selectedLog && (
           <>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={40} minSize={30}>
+            <ResizablePanel 
+              id="timeline-details" 
+              order={2} 
+              defaultSize={40} 
+              minSize={30}
+            >
               <ScrollArea className="h-[800px]">
                 <div 
                   ref={detailsRef}
