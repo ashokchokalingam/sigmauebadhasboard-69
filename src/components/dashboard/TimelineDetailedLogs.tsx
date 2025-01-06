@@ -2,13 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { Alert } from "./types";
 import TimelineLogCard from "./TimelineLogCard";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table";
-import TimelineMetadataGrid from "./TimelineMetadataGrid";
-import TimelineMitreSection from "./TimelineMitreSection";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
 import { ScrollArea } from "../ui/scroll-area";
 import ColumnSelector from "./ColumnSelector";
-import { Button } from "../ui/button";
-import { Filter } from "lucide-react";
+import { Shield, Monitor, User, Hash, Database, Tag, Terminal, Info } from "lucide-react";
 
 interface TimelineDetailedLogsProps {
   logs: Alert[];
@@ -64,6 +61,135 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
     setVisibleColumns(columns);
   };
 
+  const formatTime = (timeString: string) => {
+    return new Date(timeString).toLocaleString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
+  };
+
+  const renderDetailSection = (alert: Alert) => {
+    return (
+      <div className="p-6 space-y-6 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
+        <div className="flex justify-between items-center sticky top-0 z-30 bg-[#1E1E2F] py-4">
+          <h2 className="text-xl font-semibold text-purple-100">
+            {alert.title || 'N/A'}
+          </h2>
+          <button 
+            onClick={() => setSelectedLog(null)}
+            className="text-purple-300 hover:text-purple-100 transition-colors"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+            <h3 className="text-sm font-medium text-purple-200 mb-2">Description</h3>
+            <p className="text-sm text-purple-100/90 leading-relaxed">
+              {alert.description || 'No description available'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
+                <Monitor className="h-4 w-4" /> Computer
+              </h4>
+              <p className="text-sm text-blue-100 font-mono">{alert.computer_name || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
+                <User className="h-4 w-4" /> User ID
+              </h4>
+              <p className="text-sm text-blue-100 font-mono">{alert.user_id || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
+                <Hash className="h-4 w-4" /> Event ID
+              </h4>
+              <p className="text-sm text-blue-100 font-mono">{alert.event_id || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
+                <Terminal className="h-4 w-4" /> Provider
+              </h4>
+              <p className="text-sm text-blue-100 font-mono">{alert.provider_name || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
+                <Shield className="h-4 w-4" /> Rule ID
+              </h4>
+              <p className="text-sm text-blue-100 font-mono">{alert.ruleid || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2">
+                <Info className="h-4 w-4" /> Rule Level
+              </h4>
+              <p className="text-sm text-blue-100 font-mono capitalize">{alert.rule_level || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400">Task</h4>
+              <p className="text-sm text-blue-100 font-mono capitalize">{alert.task || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400">Target Domain</h4>
+              <p className="text-sm text-blue-100 font-mono">{alert.target_domain_name || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400">Target User</h4>
+              <p className="text-sm text-blue-100 font-mono">{alert.target_user_name || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400">System Time</h4>
+              <p className="text-sm text-blue-100 font-mono">{formatTime(alert.system_time)}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400">IP Address</h4>
+              <p className="text-sm text-blue-100 font-mono">{alert.ip_address || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400">DBSCAN Cluster</h4>
+              <p className="text-sm text-blue-100 font-mono">{alert.dbscan_cluster || 'N/A'}</p>
+            </div>
+          </div>
+
+          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+            <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
+              <Tag className="h-4 w-4" /> Tags
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {alert.tags?.split(',').map((tag, index) => (
+                <span 
+                  key={index}
+                  className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
+                >
+                  {tag.trim()}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+            <h3 className="text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
+              <Database className="h-4 w-4" /> Raw Data
+            </h3>
+            <pre className="text-xs text-purple-100/90 bg-[#1A1F2C] p-4 rounded-md overflow-x-auto font-mono whitespace-pre-wrap">
+              {typeof alert.raw === 'string' 
+                ? JSON.stringify(JSON.parse(alert.raw), null, 2)
+                : JSON.stringify(alert.raw, null, 2)}
+            </pre>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="w-full p-8 flex items-center justify-center">
@@ -87,9 +213,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
         className="min-h-[800px] rounded-lg border border-purple-400/20"
       >
         <ResizablePanel 
-          id="timeline-logs" 
-          order={1} 
-          defaultSize={60} 
+          defaultSize={60}
           minSize={30}
         >
           <ScrollArea className="h-[800px]">
@@ -104,32 +228,29 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                     onColumnToggle={handleColumnToggle}
                   />
                 </div>
-                <div className="relative">
-                  <Table>
-                    <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
-                      <TableRow className="hover:bg-transparent border-b border-purple-400/20">
-                        <TableHead className="w-[160px] text-purple-100 font-semibold">Time</TableHead>
-                        <TableHead className="w-[120px] text-purple-100 font-semibold">User Origin</TableHead>
-                        <TableHead className="w-[120px] text-purple-100 font-semibold">User Impacted</TableHead>
-                        <TableHead className="w-[140px] text-purple-100 font-semibold">Computer</TableHead>
-                        <TableHead className="min-w-[200px] text-purple-100 font-semibold">Event</TableHead>
-                        <TableHead className="w-[200px] text-purple-100 font-semibold">Tactics & Techniques</TableHead>
-                        <TableHead className="w-[50px]"></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {logs.map((log) => (
-                        <TimelineLogCard
-                          key={log.id}
-                          log={log}
-                          isExpanded={selectedLog?.id === log.id}
-                          onToggleExpand={handleLogClick}
-                          visibleColumns={visibleColumns}
-                        />
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                <Table>
+                  <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
+                    <TableRow className="hover:bg-transparent border-b border-purple-400/20">
+                      <TableHead className="text-purple-100 font-semibold">Time</TableHead>
+                      <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
+                      <TableHead className="text-purple-100 font-semibold">User Impacted</TableHead>
+                      <TableHead className="text-purple-100 font-semibold">Computer</TableHead>
+                      <TableHead className="text-purple-100 font-semibold">Event</TableHead>
+                      <TableHead className="text-purple-100 font-semibold">Tags</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {logs.map((log) => (
+                      <TimelineLogCard
+                        key={log.id}
+                        log={log}
+                        isExpanded={selectedLog?.id === log.id}
+                        onToggleExpand={handleLogClick}
+                        visibleColumns={visibleColumns}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </div>
           </ScrollArea>
@@ -139,9 +260,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
           <>
             <ResizableHandle withHandle />
             <ResizablePanel 
-              id="timeline-details" 
-              order={2} 
-              defaultSize={40} 
+              defaultSize={40}
               minSize={30}
             >
               <ScrollArea className="h-[800px]">
@@ -150,42 +269,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                   className="h-full"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <div className="p-6 space-y-6 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
-                    <div className="flex justify-between items-center sticky top-0 z-30 bg-[#1E1E2F] py-4">
-                      <h2 className="text-xl font-semibold text-purple-100 bg-clip-text text-transparent bg-gradient-to-r from-purple-200 to-blue-200">
-                        {selectedLog.title}
-                      </h2>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedLog(null);
-                        }}
-                        className="text-purple-300 hover:text-purple-100 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-purple-400/10"
-                      >
-                        ×
-                      </button>
-                    </div>
-                    
-                    <div className="space-y-6">
-                      <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-                        <h3 className="text-sm font-medium text-purple-200 mb-2">Description</h3>
-                        <p className="text-sm text-purple-100/90 leading-relaxed">{selectedLog.description}</p>
-                      </div>
-
-                      <TimelineMetadataGrid alert={selectedLog} />
-                      
-                      <TimelineMitreSection alert={selectedLog} />
-
-                      <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-                        <h3 className="text-sm font-medium text-purple-200 mb-2">Raw Data</h3>
-                        <pre className="text-sm text-purple-100/90 bg-[#1A1F2C] p-4 rounded-md overflow-x-auto font-mono">
-                          {typeof selectedLog.raw === 'string' 
-                            ? JSON.stringify(JSON.parse(selectedLog.raw), null, 2)
-                            : JSON.stringify(selectedLog.raw, null, 2)}
-                        </pre>
-                      </div>
-                    </div>
-                  </div>
+                  {renderDetailSection(selectedLog)}
                 </div>
               </ScrollArea>
             </ResizablePanel>
