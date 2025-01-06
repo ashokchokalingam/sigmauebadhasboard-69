@@ -71,7 +71,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "system_time":
         return (
-          <TableCell className="font-mono text-blue-300 text-sm whitespace-nowrap">
+          <TableCell className="min-w-[180px] font-mono text-blue-300 text-sm whitespace-nowrap">
             {browserTime}
           </TableCell>
         );
