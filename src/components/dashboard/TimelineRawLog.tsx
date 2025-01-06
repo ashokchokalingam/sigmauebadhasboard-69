@@ -31,15 +31,16 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
 
   let formattedJson;
   try {
+    // Improved JSON parsing and formatting
     const parseAndFormat = (data: any) => {
       if (typeof data === 'string') {
         try {
-          return JSON.stringify(JSON.parse(data), null, 2);
+          return JSON.stringify(JSON.parse(data), null, 4); // Using 4 spaces for indentation
         } catch {
           return data;
         }
       }
-      return JSON.stringify(data, null, 2);
+      return JSON.stringify(data, null, 4);
     };
     
     formattedJson = parseAndFormat(alert.raw);
@@ -63,7 +64,7 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
       
       <div className={cn(
         "overflow-hidden transition-all duration-200",
-        isExpanded ? "max-h-[800px]" : "max-h-0"
+        isExpanded ? "max-h-[500px]" : "max-h-0"
       )}>
         <div className="bg-[#1A1F2C]/80 backdrop-blur-sm rounded-lg border border-purple-500/20 transition-all duration-200 hover:border-purple-500/30 m-4">
           <style>
@@ -84,53 +85,42 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
                 background: rgba(139, 92, 246, 0.4);
               }
               .raw-log-content {
-                color: #E5E7EB;
-                font-size: 1.6rem !important;
-                line-height: 2.4 !important;
+                color: #FFFFFF;
+                font-size: 1rem !important;
+                line-height: 1.8 !important;
                 font-family: 'Monaco', 'Consolas', monospace !important;
-                letter-spacing: 0.03em !important;
               }
               .raw-log-content .token.property {
-                color: #C4B5FD !important;
-                font-size: 1.6rem !important;
-                font-weight: 600 !important;
-                text-shadow: 0 0 12px rgba(196, 181, 253, 0.5);
+                color: #7DD3FC;
+                font-size: 1rem !important;
               }
               .raw-log-content .token.string {
-                color: #86EFAC !important;
-                font-size: 1.6rem !important;
-                text-shadow: 0 0 10px rgba(134, 239, 172, 0.3);
+                color: #BBF7D0;
+                font-size: 1rem !important;
               }
               .raw-log-content .token.number {
-                color: #FDBA74 !important;
-                font-size: 1.6rem !important;
-                font-weight: 500 !important;
-                text-shadow: 0 0 10px rgba(253, 186, 116, 0.4);
+                color: #FDA4AF;
+                font-size: 1rem !important;
               }
               .raw-log-content .token.boolean {
-                color: #F0ABFC !important;
-                font-size: 1.6rem !important;
-                font-weight: 500 !important;
-                text-shadow: 0 0 10px rgba(240, 171, 252, 0.4);
+                color: #93C5FD;
+                font-size: 1rem !important;
               }
               .raw-log-content .token.null {
-                color: #FDA4AF !important;
-                font-size: 1.6rem !important;
-                text-shadow: 0 0 10px rgba(253, 164, 175, 0.4);
+                color: #F9A8D4;
+                font-size: 1rem !important;
               }
               .raw-log-content .token.punctuation {
-                color: #D1D5DB !important;
-                font-size: 1.6rem !important;
-                opacity: 0.9;
+                color: #E2E8F0;
+                font-size: 1rem !important;
               }
-              .raw-log-content .highlight-critical {
-                color: #FF4500 !important;
-                font-weight: 600 !important;
-                text-shadow: 0 0 12px rgba(255, 69, 0, 0.5);
+              .raw-log-content .token.timestamp {
+                color: #67E8F9;
+                font-size: 1rem !important;
               }
             `}
           </style>
-          <pre className="p-12 max-h-[800px] overflow-auto custom-scrollbar">
+          <pre className="p-6 max-h-[400px] overflow-auto custom-scrollbar">
             <code ref={codeRef} className="language-json whitespace-pre-wrap break-words raw-log-content">
               {formattedJson}
             </code>

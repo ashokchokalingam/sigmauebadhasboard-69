@@ -62,7 +62,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
     <div className="mt-4">
       <ResizablePanelGroup 
         direction="horizontal" 
-        className="min-h-[800px] rounded-lg border border-purple-400/20 bg-[#1A1F2C]/80 backdrop-blur-sm"
+        className="min-h-[800px] rounded-lg border border-purple-400/20"
       >
         <ResizablePanel 
           defaultSize={60}
@@ -72,15 +72,12 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
             <div ref={tableRef} className="h-full">
               <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
                 <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-purple-100">Total Records:</span>
-                    <span className="font-mono bg-purple-400/10 px-2 py-1 rounded text-xs">
-                      {totalRecords?.toLocaleString()}
-                    </span>
+                  <div>
+                    <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
                   </div>
                 </div>
                 <Table>
-                  <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-[57px] z-10">
+                  <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
                     <TableRow className="hover:bg-transparent border-b border-purple-400/20">
                       <TableHead className="text-purple-100 font-semibold">Time</TableHead>
                       <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
@@ -88,7 +85,6 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                       <TableHead className="text-purple-100 font-semibold">Computer</TableHead>
                       <TableHead className="text-purple-100 font-semibold">Event</TableHead>
                       <TableHead className="text-purple-100 font-semibold">MITRE Tactics</TableHead>
-                      <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -110,7 +106,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
 
         {selectedLog && (
           <>
-            <ResizableHandle withHandle className="bg-purple-400/20 hover:bg-purple-400/30" />
+            <ResizableHandle withHandle />
             <ResizablePanel 
               defaultSize={40}
               minSize={30}
