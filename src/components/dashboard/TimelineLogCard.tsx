@@ -2,6 +2,7 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { ChevronRight } from "lucide-react";
 import { Alert } from "./types";
 import { format } from "date-fns";
+import { extractTacticsAndTechniques } from "./utils";
 
 interface TimelineLogCardProps {
   log: Alert;
@@ -12,6 +13,7 @@ interface TimelineLogCardProps {
 
 const TimelineLogCard = ({ log, isExpanded, onToggleExpand, visibleColumns }: TimelineLogCardProps) => {
   const formattedTime = format(new Date(log.system_time), "MMM d, yyyy hh:mm:ss aa");
+  const { tactics, techniques } = extractTacticsAndTechniques(log.tags);
 
   const handleRowClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -45,12 +47,24 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand, visibleColumns }: Ti
       </TableCell>
       <TableCell className="w-[200px]">
         <div className="flex flex-wrap gap-1">
-          {log.tags.split(',').map((tag, index) => (
+          {tactics?.split(',').map((tactic, index) => (
             <span
               key={index}
               className="px-2 py-0.5 text-xs rounded-full bg-purple-400/10 text-purple-200/90"
             >
-              {tag.trim()}
+              {tactic.trim()}
+            </span>
+          ))}
+        </div>
+      </TableCell>
+      <TableCell className="w-[200px]">
+        <div className="flex flex-wrap gap-1">
+          {techniques.map((technique, index) => (
+            <span
+              key={index}
+              className="px-2 py-0.5 text-xs rounded-full bg-blue-500/10 text-blue-300"
+            >
+              {technique}
             </span>
           ))}
         </div>

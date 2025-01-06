@@ -24,28 +24,24 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
     "target_user_name",
     "computer_name",
     "title",
-    "tags"
+    "tactics",
+    "techniques"
   ]);
   const detailsRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Check if the click is outside both the details pane and the table
       const isClickOutsideDetails = detailsRef.current && !detailsRef.current.contains(event.target as Node);
       const isClickOutsideTable = tableRef.current && !tableRef.current.contains(event.target as Node);
       
-      // Only close if the click is outside both elements and not on any dropdown or modal
-      if (isClickOutsideDetails && isClickOutsideTable) {
-        const target = event.target as HTMLElement;
-        // Check if the click is not on a dropdown or its children
-        const isDropdownClick = target.closest('[role="dialog"]') || 
+      const target = event.target as HTMLElement;
+      const isDropdownClick = target.closest('[role="dialog"]') || 
                               target.closest('[role="menu"]') ||
                               target.closest('[role="listbox"]');
         
-        if (!isDropdownClick) {
-          setSelectedLog(null);
-        }
+      if (isClickOutsideDetails && isClickOutsideTable && !isDropdownClick) {
+        setSelectedLog(null);
       }
     };
 
@@ -113,7 +109,8 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                         <TableHead className="w-[120px] text-purple-100 font-semibold">User Impacted</TableHead>
                         <TableHead className="w-[140px] text-purple-100 font-semibold">Computer</TableHead>
                         <TableHead className="min-w-[200px] text-purple-100 font-semibold">Event</TableHead>
-                        <TableHead className="w-[200px] text-purple-100 font-semibold">Tactics & Techniques</TableHead>
+                        <TableHead className="w-[200px] text-purple-100 font-semibold">Tactics</TableHead>
+                        <TableHead className="w-[200px] text-purple-100 font-semibold">Techniques</TableHead>
                         <TableHead className="w-[50px]"></TableHead>
                       </TableRow>
                     </TableHeader>
