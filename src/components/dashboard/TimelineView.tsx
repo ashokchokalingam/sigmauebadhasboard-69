@@ -6,7 +6,15 @@ import InfiniteScrollLoader from "./InfiniteScrollLoader";
 import { useInView } from "react-intersection-observer";
 import { ScrollArea } from "../ui/scroll-area";
 import { Card } from "../ui/card";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  Tooltip, 
+  ResponsiveContainer,
+  Cell
+} from 'recharts';
 
 const EVENTS_PER_PAGE = 500;
 
@@ -115,7 +123,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-6 w-full">
-            {/* Summary Chart */}
             <Card className="p-6 bg-black/40 border-blue-500/10">
               <div className="flex items-center gap-2 mb-4">
                 <Activity className="h-5 w-5 text-blue-400" />
@@ -146,10 +153,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
                       }}
                       formatter={(value: number) => [value.toLocaleString(), 'Events']}
                     />
-                    <Bar 
-                      dataKey="count"
-                      radius={[4, 4, 0, 0]}
-                    >
+                    <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                       {severityData.map((entry, index) => (
                         <Cell 
                           key={`cell-${index}`}
