@@ -47,8 +47,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
 
   const filteredAlerts = filterAlerts();
 
-  const handlePanelClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Prevent click events from bubbling up when clicking the panel or handle
+  const handlePanelClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation();
   };
 
@@ -103,18 +102,6 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
               <ResizableHandle 
                 withHandle 
                 className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
-                onDoubleClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                }}
               />
               
               <ResizablePanel defaultSize={25} minSize={20}>
