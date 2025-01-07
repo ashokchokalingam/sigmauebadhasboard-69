@@ -1,10 +1,10 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { X, Shield } from "lucide-react";
 import { Alert } from "./types";
+import TimelineEventCard from "./TimelineEventCard";
+import InfiniteScrollLoader from "./InfiniteScrollLoader";
 import { useInView } from "react-intersection-observer";
 import { ScrollArea } from "../ui/scroll-area";
-import SeverityDistributionChart from "./TimelineComponents/SeverityDistributionChart";
-import TimelineEvents from "./TimelineComponents/TimelineEvents";
 
 const EVENTS_PER_PAGE = 500;
 
@@ -27,6 +27,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   } = useInfiniteQuery({
     queryKey: ["timeline", entityType, entityId],
     queryFn: async ({ pageParam = 1 }) => {
+      console.log("Fetching timeline data:", { entityType, entityId, pageParam });
       const endpoint = entityType === "user" ? "user_impacted_timeline" : "computer_impacted_timeline";
       const queryParam = entityType === "user" ? "user_impacted" : "computer_name";
       
@@ -39,6 +40,8 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       }
       
       const data = await response.json();
+      console.log("Timeline data received:", data);
+      
       return {
         user_impacted_timeline: data.user_impacted_timeline || data.computer_impacted_timeline || [],
         pagination: {
@@ -61,19 +64,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   const allEvents = data?.pages.flatMap(
     (page) => page.user_impacted_timeline
   ) || [];
-
-  const severityData = allEvents.reduce((acc: any[], event) => {
-    const existingEntry = acc.find(item => item.severity === event.rule_level);
-    if (existingEntry) {
-      existingEntry.count += event.total_events;
-    } else {
-      acc.push({
-        severity: event.rule_level || 'unknown',
-        count: event.total_events || 0,
-      });
-    }
-    return acc;
-  }, []).sort((a, b) => b.count - a.count);
 
   if (inView && !isFetchingNextPage && hasNextPage) {
     fetchNextPage();
@@ -102,18 +92,29 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-6 w-full">
-            <SeverityDistributionChart severityData={severityData} />
-            
             {isLoading && allEvents.length === 0 ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
               </div>
+            ) : allEvents.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-400">No timeline events found</p>
+              </div>
             ) : (
-              <TimelineEvents 
-                events={allEvents}
-                hasNextPage={!!hasNextPage}
-                loaderRef={ref}
-              />
+              <div className="relative space-y-6 w-full">
+                {allEvents.map((event, index) => (
+                  <TimelineEventCard
+                    key={`${event.id}-${index}`}
+                    event={event}
+                    isLast={index === allEvents.length - 1}
+                  />
+                ))}
+                
+                <InfiniteScrollLoader
+                  ref={ref}
+                  hasMore={!!hasNextPage}
+                />
+              </div>
             )}
           </div>
         </ScrollArea>
