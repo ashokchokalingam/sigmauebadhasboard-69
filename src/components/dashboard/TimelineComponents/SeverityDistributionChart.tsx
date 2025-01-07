@@ -9,10 +9,16 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts';
+import TimelineTooltip from "../TimelineTooltip";
 
 interface SeverityData {
   severity: string;
   count: number;
+  title?: string;
+  description?: string;
+  first_time_seen?: string;
+  last_time_seen?: string;
+  tags?: string;
 }
 
 interface SeverityDistributionChartProps {
@@ -22,10 +28,11 @@ interface SeverityDistributionChartProps {
 const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartProps) => {
   const getSeverityColor = (severity: string) => {
     switch (severity.toLowerCase()) {
-      case 'critical': return '#DC2626';
-      case 'high': return '#F97316';
-      case 'medium': return '#FB923C';
-      case 'low': return '#22C55E';
+      case 'critical': return '#FF1A1A';
+      case 'high': return '#FF6B00';
+      case 'medium': return '#FFB020';
+      case 'low': return '#10B981';
+      case 'informational': return '#3B82F6';
       default: return '#64748B';
     }
   };
@@ -36,7 +43,7 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
         <Activity className="h-5 w-5 text-blue-400" />
         <h3 className="text-lg font-semibold text-blue-300">Event Severity Distribution</h3>
       </div>
-      <div className="h-[200px]">
+      <div className="h-[300px]"> {/* Increased height for better visibility */}
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 
             data={severityData}
@@ -47,23 +54,26 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
               dataKey="severity"
               stroke="#94A3B8"
               tick={{ fill: '#E2E8F0', fontSize: 12 }}
+              tickLine={{ stroke: '#E2E8F0' }}
             />
             <YAxis
               stroke="#94A3B8"
               tick={{ fill: '#E2E8F0', fontSize: 12 }}
+              tickLine={{ stroke: '#E2E8F0' }}
             />
             <Tooltip
-              contentStyle={{
-                backgroundColor: 'rgba(15,23,42,0.9)',
-                border: '1px solid rgba(59, 130, 246, 0.2)',
-                borderRadius: '8px',
-                padding: '12px',
-                color: '#E2E8F0'
-              }}
-              formatter={(value: number) => [`${value.toLocaleString()} Events`, '']}
-              labelStyle={{ color: '#E2E8F0' }}
+              content={<TimelineTooltip />}
             />
-            <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+            <Bar 
+              dataKey="count" 
+              radius={[4, 4, 0, 0]}
+              label={{
+                position: 'top',
+                fill: '#E2E8F0',
+                fontSize: 12,
+                formatter: (value: number) => value.toLocaleString()
+              }}
+            >
               {severityData.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`}
