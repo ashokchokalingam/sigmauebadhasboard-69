@@ -58,7 +58,11 @@ const TimelineEventCard = ({ event, isLast = false }: TimelineEventCardProps) =>
 
         {isExpanded && (
           <div className="border-t border-sidebar-border">
-            <TimelineDetailedLogs event={event} />
+            <TimelineDetailedLogs 
+              logs={[event]}
+              isLoading={false}
+              totalRecords={1}
+            />
           </div>
         )}
       </div>
