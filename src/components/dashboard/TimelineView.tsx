@@ -5,7 +5,7 @@ import TimelineEventCard from "./TimelineEventCard";
 import InfiniteScrollLoader from "./InfiniteScrollLoader";
 import { useInView } from "react-intersection-observer";
 import { ScrollArea } from "../ui/scroll-area";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { Card } from "../ui/card";
 
 const EVENTS_PER_PAGE = 500;
@@ -72,7 +72,8 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     title: event.title,
     firstSeen: new Date(event.first_time_seen).getTime(),
     lastSeen: new Date(event.last_time_seen).getTime(),
-    totalEvents: event.total_events
+    totalEvents: event.total_events,
+    displayTitle: event.title.length > 30 ? event.title.substring(0, 30) + '...' : event.title
   }));
 
   if (inView && !isFetchingNextPage && hasNextPage) {
@@ -102,13 +103,23 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-6 w-full">
-            {/* Summary Chart */}
+            {/* Enhanced Summary Chart */}
             <Card className="p-6 bg-black/40 border-blue-500/10">
-              <div className="h-[300px] w-full">
+              <h3 className="text-lg font-semibold text-blue-300 mb-4">Event Distribution Overview</h3>
+              <div className="h-[400px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                  <BarChart 
+                    data={chartData} 
+                    margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
+                    barSize={40}
+                  >
+                    <CartesianGrid 
+                      strokeDasharray="3 3" 
+                      vertical={false} 
+                      stroke="rgba(255,255,255,0.1)"
+                    />
                     <XAxis 
-                      dataKey="title" 
+                      dataKey="displayTitle" 
                       angle={-45}
                       textAnchor="end"
                       height={100}
@@ -119,27 +130,43 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
                     <YAxis 
                       stroke="#475569"
                       tick={{ fill: '#64748B', fontSize: 11 }}
+                      tickFormatter={(value) => value.toLocaleString()}
                     />
                     <Tooltip 
                       contentStyle={{
-                        backgroundColor: 'rgba(0,0,0,0.8)',
-                        border: '1px solid rgba(59, 130, 246, 0.1)',
+                        backgroundColor: 'rgba(15,23,42,0.9)',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
                         borderRadius: '8px',
-                        padding: '12px'
+                        padding: '12px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                      }}
+                      formatter={(value: number, name: string) => [
+                        value.toLocaleString(),
+                        name === 'totalEvents' ? 'Total Events' : name
+                      ]}
+                      labelFormatter={(label) => `Event: ${label}`}
+                    />
+                    <Legend 
+                      wrapperStyle={{ 
+                        paddingTop: '20px',
+                        color: '#64748B'
                       }}
                     />
-                    <Legend />
                     <Bar 
                       dataKey="totalEvents" 
                       name="Total Events"
-                      fill="url(#totalEventsGradient)"
+                      radius={[4, 4, 0, 0]}
                     >
                       <defs>
                         <linearGradient id="totalEventsGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.8}/>
-                          <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                          <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.9}/>
+                          <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.4}/>
                         </linearGradient>
                       </defs>
+                      <Bar
+                        dataKey="totalEvents"
+                        fill="url(#totalEventsGradient)"
+                      />
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
