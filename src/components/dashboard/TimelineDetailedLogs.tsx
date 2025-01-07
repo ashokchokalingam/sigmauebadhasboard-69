@@ -106,14 +106,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
 
         {selectedLog && (
           <>
-            <ResizableHandle 
-              withHandle 
-              className="bg-purple-400/20 hover:bg-purple-400/30 transition-colors"
-              onPointerDown={(e) => {
-                // Prevent the click event from bubbling up
-                e.stopPropagation();
-              }}
-            />
+            <ResizableHandle withHandle className="bg-purple-400/20 hover:bg-purple-400/30 transition-colors" />
             <ResizablePanel 
               defaultSize={40}
               minSize={30}
