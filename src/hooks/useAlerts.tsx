@@ -10,7 +10,7 @@ interface ApiResponse {
     total_pages: number;
     total_records: number;
   };
-  total_count: number; // This should match the COUNT(*) from sigma_alerts
+  total_count: number;
 }
 
 interface FetchAlertsResponse {
@@ -19,12 +19,6 @@ interface FetchAlertsResponse {
   hasMore: boolean;
   currentPage: number;
 }
-
-const isWithinLastSevenDays = (date: string) => {
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  return new Date(date) >= sevenDaysAgo;
-};
 
 export const useAlerts = (
   page: number = 1,
@@ -49,25 +43,21 @@ export const useAlerts = (
       const data: ApiResponse = await response.json();
       console.log('Received data:', data);
       
-      // Get all alerts within the last 7 days
-      const filteredAlerts = data.alerts.filter(alert => isWithinLastSevenDays(alert.system_time));
-      
-      // Use the total_count from the API response
       const totalRecords = data.total_count || 0;
       console.log('Total records from sigma_alerts:', totalRecords);
       
       // Update UI with current data
-      onProgressUpdate(filteredAlerts, totalRecords);
+      onProgressUpdate(data.alerts, totalRecords);
       
       return {
-        alerts: filteredAlerts,
+        alerts: data.alerts,
         totalRecords: totalRecords,
         hasMore: page < Math.ceil(totalRecords / INITIAL_LOAD_SIZE),
         currentPage: page
       };
     },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    gcTime: 30 * 60 * 1000,   // Garbage collect after 30 minutes
     meta: {
       onError: (error: Error) => {
         console.error("Failed to fetch alerts:", error);

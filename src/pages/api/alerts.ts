@@ -32,7 +32,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         per_page,
         total_pages: Math.ceil(total / per_page),
         total_records: total
-      }
+      },
+      total_count: total
     });
   } catch (error) {
     console.error('Database error:', error);

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Alert } from "@/components/dashboard/types";
-import { AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 const INITIAL_BATCH_SIZE = 100;
@@ -16,7 +15,7 @@ const Index = () => {
   const { toast } = useToast();
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
 
-  // First query: Get stats and initial 100 alerts
+  // First query: Get initial alerts
   const { isLoading: isLoadingInitial } = useQuery({
     queryKey: ['initial-alerts'],
     queryFn: async () => {
@@ -27,10 +26,11 @@ const Index = () => {
       setAllAlerts(data.alerts);
       setCurrentTotalRecords(data.total_count);
       return data;
-    }
+    },
+    refetchInterval: 5 * 60 * 1000 // Refetch every 5 minutes
   });
 
-  // Second query: Get remaining alerts after initial load
+  // Second query: Get remaining alerts
   const { isLoading: isLoadingRemaining } = useQuery({
     queryKey: ['remaining-alerts', currentPage],
     queryFn: async () => {
@@ -44,7 +44,8 @@ const Index = () => {
       setAllAlerts(prev => [...prev, ...data.alerts]);
       return data;
     },
-    enabled: currentAlerts.length > 0 && currentAlerts.length < TOTAL_BATCH_SIZE
+    enabled: currentAlerts.length > 0 && currentAlerts.length < TOTAL_BATCH_SIZE,
+    refetchInterval: 5 * 60 * 1000 // Refetch every 5 minutes
   });
 
   const handleLoadMore = () => {
