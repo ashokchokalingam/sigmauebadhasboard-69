@@ -20,6 +20,7 @@ interface SeverityData {
   first_time_seen?: string;
   last_time_seen?: string;
   tags?: string;
+  total_events?: number;
 }
 
 interface SeverityDistributionChartProps {
@@ -42,8 +43,8 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
   const transformedData = severityData.map(data => ({
     ...data,
     displayName: `${data.title || 'Unknown Event'} (${data.severity})`,
-    formattedFirstSeen: data.first_time_seen ? format(new Date(data.first_time_seen), 'MMM dd, HH:mm') : 'N/A',
-    formattedLastSeen: data.last_time_seen ? format(new Date(data.last_time_seen), 'MMM dd, HH:mm') : 'N/A',
+    formattedFirstSeen: data.first_time_seen ? format(new Date(data.first_time_seen), 'MMM dd, yyyy HH:mm') : 'N/A',
+    formattedLastSeen: data.last_time_seen ? format(new Date(data.last_time_seen), 'MMM dd, yyyy HH:mm') : 'N/A',
   }));
 
   const CustomTooltip = ({ active, payload }: any) => {
@@ -59,7 +60,7 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
         <div className="space-y-3">
           <div>
             <p className="text-white font-medium">
-              {data.count?.toLocaleString()} events
+              {data.total_events?.toLocaleString() || data.count?.toLocaleString()} events
             </p>
             <p className="text-blue-200/90 text-sm mt-1">
               {data.description}
@@ -124,27 +125,29 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
             <YAxis
               type="category"
               dataKey="displayName"
-              width={300}
+              width={400}
               stroke="#94A3B8"
               tick={{ fill: '#E2E8F0', fontSize: 12 }}
               tickLine={{ stroke: '#E2E8F0' }}
             />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip 
+              content={<CustomTooltip />}
+              cursor={{ 
+                fill: 'rgba(59, 130, 246, 0.1)',
+                stroke: 'rgba(59, 130, 246, 0.2)',
+                strokeWidth: 1
+              }}
+            />
             <Bar 
               dataKey="count" 
               radius={[0, 4, 4, 0]}
               barSize={30}
-              label={{
-                position: 'right',
-                fill: '#E2E8F0',
-                fontSize: 12,
-                formatter: (value: number) => value.toLocaleString()
-              }}
             >
               {transformedData.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`}
                   fill={getSeverityColor(entry.severity)}
+                  fillOpacity={0.9}
                 />
               ))}
             </Bar>
