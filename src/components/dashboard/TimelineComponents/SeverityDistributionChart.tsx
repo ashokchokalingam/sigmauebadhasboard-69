@@ -1,26 +1,17 @@
-import { Activity } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { 
-  ComposedChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  ResponsiveContainer,
-  Cell,
-  CartesianGrid,
-} from 'recharts';
+import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { format } from 'date-fns';
 
 interface SeverityData {
-  title: string;
-  description: string;
-  first_time_seen: string;
-  last_time_seen: string;
-  rule_level: string;
-  tags: string;
-  total_events: number;
-  user_impacted: string;
+  user_impacted_timeline?: {
+    description: string;
+    first_time_seen: string;
+    last_time_seen: string;
+    rule_level: string;
+    tags: string;
+    title: string;
+    total_events: number;
+    user_impacted: string;
+  }[];
 }
 
 interface SeverityDistributionChartProps {
@@ -34,28 +25,27 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
       case 'medium': return '#FFB020';
       case 'low': return '#10B981';
       case 'informational': return '#3B82F6';
-      default: return '#64748B';
+      default: return '#94A3B8';
     }
   };
 
-  // Transform data to include formatted display information
-  const transformedData = severityData.map(data => ({
-    ...data,
-    displayName: `${data.title || 'Unknown Event'} (${data.rule_level})`,
-    formattedFirstSeen: format(new Date(data.first_time_seen), 'MMM dd, yyyy HH:mm'),
-    formattedLastSeen: format(new Date(data.last_time_seen), 'MMM dd, yyyy HH:mm'),
-  }));
+  // Transform the nested data structure
+  const transformedData = severityData.flatMap(data => 
+    data.user_impacted_timeline?.map(item => ({
+      ...item,
+      displayName: `${item.title || 'Unknown Event'} (${item.rule_level})`,
+      formattedFirstSeen: format(new Date(item.first_time_seen), 'MMM dd, yyyy HH:mm'),
+      formattedLastSeen: format(new Date(item.last_time_seen), 'MMM dd, yyyy HH:mm'),
+    })) || []
+  );
 
   const CustomTooltip = ({ active, payload }: any) => {
-    if (!active || !payload || !payload.length) return null;
-    
+    if (!active || !payload || !payload[0]) return null;
+
     const data = payload[0].payload;
-    
+
     return (
-      <div className="bg-black/95 border border-blue-500/20 rounded-lg p-4 shadow-xl min-w-[320px]">
-        <h4 className="text-blue-300 font-medium mb-2 text-base">
-          {data.title || 'Unknown Event'}
-        </h4>
+      <div className="bg-black/90 p-4 rounded-lg shadow-xl border border-blue-500/20 backdrop-blur-sm">
         <div className="space-y-3">
           <div>
             <p className="text-white font-medium">
@@ -65,30 +55,24 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
               {data.description}
             </p>
           </div>
-          
-          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-blue-500/20">
-            <div>
-              <p className="text-gray-400 text-xs">First seen:</p>
-              <p className="text-white text-sm">
-                {data.formattedFirstSeen}
-              </p>
-            </div>
-            <div>
-              <p className="text-gray-400 text-xs">Last seen:</p>
-              <p className="text-white text-sm">
-                {data.formattedLastSeen}
-              </p>
-            </div>
+
+          <div className="space-y-1">
+            <p className="text-blue-200/70 text-xs">
+              First seen: {data.formattedFirstSeen}
+            </p>
+            <p className="text-blue-200/70 text-xs">
+              Last seen: {data.formattedLastSeen}
+            </p>
           </div>
 
           {data.tags && (
-            <div className="pt-2 border-t border-blue-500/20">
-              <p className="text-gray-400 text-xs mb-1">Tags:</p>
+            <div>
+              <p className="text-blue-200/70 text-xs font-medium mb-1">Tags:</p>
               <div className="flex flex-wrap gap-1">
                 {data.tags.split(',').map((tag: string, index: number) => (
-                  <span 
+                  <span
                     key={index}
-                    className="px-1.5 py-0.5 bg-blue-500/10 text-blue-300 text-xs rounded"
+                    className="px-2 py-0.5 bg-blue-500/10 rounded text-xs text-blue-200/90"
                   >
                     {tag.trim()}
                   </span>
@@ -102,40 +86,35 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
   };
 
   return (
-    <Card className="p-6 bg-black/40 border-blue-500/10">
-      <div className="flex items-center gap-2 mb-4">
-        <Activity className="h-5 w-5 text-blue-400" />
-        <h3 className="text-lg font-semibold text-blue-300">Event Severity Distribution</h3>
-      </div>
-      <div className="h-[400px]">
+    <div className="w-full">
+      <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart 
+          <BarChart
             data={transformedData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
             layout="vertical"
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" horizontal={false} />
-            <XAxis 
+            <XAxis
               type="number"
-              stroke="#94A3B8"
-              tick={{ fill: '#E2E8F0', fontSize: 12 }}
-              tickLine={{ stroke: '#E2E8F0' }}
+              stroke="#475569"
+              fontSize={12}
             />
             <YAxis
               type="category"
               dataKey="displayName"
-              width={400}
-              stroke="#94A3B8"
-              tick={{ fill: '#E2E8F0', fontSize: 12 }}
-              tickLine={{ stroke: '#E2E8F0' }}
-            />
-            <Tooltip 
-              content={<CustomTooltip />}
-              cursor={{ 
-                fill: 'rgba(59, 130, 246, 0.1)',
-                stroke: 'rgba(59, 130, 246, 0.2)',
-                strokeWidth: 1
+              width={200}
+              stroke="#475569"
+              fontSize={12}
+              tickFormatter={(value) => {
+                if (value.length > 30) {
+                  return value.substring(0, 30) + '...';
+                }
+                return value;
               }}
+            />
+            <Tooltip
+              content={<CustomTooltip />}
+              cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
             />
             <Bar 
               dataKey="total_events" 
@@ -150,7 +129,7 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
                 />
               ))}
             </Bar>
-          </ComposedChart>
+          </BarChart>
         </ResponsiveContainer>
       </div>
 
@@ -164,11 +143,15 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
           <span className="text-sm text-blue-300/70">Medium</span>
         </div>
         <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded bg-[#10B981]" />
+          <span className="text-sm text-blue-300/70">Low</span>
+        </div>
+        <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded bg-[#3B82F6]" />
           <span className="text-sm text-blue-300/70">Informational</span>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 
