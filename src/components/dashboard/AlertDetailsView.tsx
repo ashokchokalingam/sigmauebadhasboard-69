@@ -22,6 +22,20 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     year: 'numeric',
   });
 
+  // Handle ESC key
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
   return (
     <div className="h-full bg-[#1E1E2F] border-l border-[#7B68EE]/20">
       <AlertHeader onClose={onClose} />
