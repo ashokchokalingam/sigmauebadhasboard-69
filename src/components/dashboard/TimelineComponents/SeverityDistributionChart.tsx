@@ -13,14 +13,14 @@ import {
 import { format } from 'date-fns';
 
 interface SeverityData {
-  severity: string;
-  count: number;
-  title?: string;
-  description?: string;
-  first_time_seen?: string;
-  last_time_seen?: string;
-  tags?: string;
-  total_events?: number;
+  title: string;
+  description: string;
+  first_time_seen: string;
+  last_time_seen: string;
+  rule_level: string;
+  tags: string;
+  total_events: number;
+  user_impacted: string;
 }
 
 interface SeverityDistributionChartProps {
@@ -30,8 +30,7 @@ interface SeverityDistributionChartProps {
 const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartProps) => {
   const getSeverityColor = (severity: string) => {
     switch (severity.toLowerCase()) {
-      case 'critical': return '#FF1A1A';
-      case 'high': return '#FF6B00';
+      case 'high': return '#F97316';
       case 'medium': return '#FFB020';
       case 'low': return '#10B981';
       case 'informational': return '#3B82F6';
@@ -42,9 +41,9 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
   // Transform data to include formatted display information
   const transformedData = severityData.map(data => ({
     ...data,
-    displayName: `${data.title || 'Unknown Event'} (${data.severity})`,
-    formattedFirstSeen: data.first_time_seen ? format(new Date(data.first_time_seen), 'MMM dd, yyyy HH:mm') : 'N/A',
-    formattedLastSeen: data.last_time_seen ? format(new Date(data.last_time_seen), 'MMM dd, yyyy HH:mm') : 'N/A',
+    displayName: `${data.title || 'Unknown Event'} (${data.rule_level})`,
+    formattedFirstSeen: format(new Date(data.first_time_seen), 'MMM dd, yyyy HH:mm'),
+    formattedLastSeen: format(new Date(data.last_time_seen), 'MMM dd, yyyy HH:mm'),
   }));
 
   const CustomTooltip = ({ active, payload }: any) => {
@@ -60,7 +59,7 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
         <div className="space-y-3">
           <div>
             <p className="text-white font-medium">
-              {data.total_events?.toLocaleString() || data.count?.toLocaleString()} events
+              {data.total_events?.toLocaleString()} events
             </p>
             <p className="text-blue-200/90 text-sm mt-1">
               {data.description}
@@ -139,14 +138,14 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
               }}
             />
             <Bar 
-              dataKey="count" 
+              dataKey="total_events" 
               radius={[0, 4, 4, 0]}
               barSize={30}
             >
               {transformedData.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`}
-                  fill={getSeverityColor(entry.severity)}
+                  fill={getSeverityColor(entry.rule_level)}
                   fillOpacity={0.9}
                 />
               ))}
@@ -157,7 +156,7 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
 
       <div className="flex items-center justify-center gap-6 mt-4">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded bg-[#FF6B00]" />
+          <div className="w-3 h-3 rounded bg-[#F97316]" />
           <span className="text-sm text-blue-300/70">High</span>
         </div>
         <div className="flex items-center gap-2">
