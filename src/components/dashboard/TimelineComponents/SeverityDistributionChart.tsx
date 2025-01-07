@@ -11,7 +11,6 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { format } from 'date-fns';
-import TimelineTooltip from "../TimelineTooltip";
 
 interface SeverityData {
   severity: string;
@@ -39,13 +38,68 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
     }
   };
 
-  // Transform data to include time information
+  // Transform data to include formatted display information
   const transformedData = severityData.map(data => ({
     ...data,
-    formattedFirstSeen: data.first_time_seen ? format(new Date(data.first_time_seen), 'MMM dd, HH:mm') : '',
-    formattedLastSeen: data.last_time_seen ? format(new Date(data.last_time_seen), 'MMM dd, HH:mm') : '',
-    displayName: `${data.severity} - ${data.title || ''}`
+    displayName: `${data.title || 'Unknown Event'} (${data.severity})`,
+    formattedFirstSeen: data.first_time_seen ? format(new Date(data.first_time_seen), 'MMM dd, HH:mm') : 'N/A',
+    formattedLastSeen: data.last_time_seen ? format(new Date(data.last_time_seen), 'MMM dd, HH:mm') : 'N/A',
   }));
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (!active || !payload || !payload.length) return null;
+    
+    const data = payload[0].payload;
+    
+    return (
+      <div className="bg-black/95 border border-blue-500/20 rounded-lg p-4 shadow-xl min-w-[320px]">
+        <h4 className="text-blue-300 font-medium mb-2 text-base">
+          {data.title || 'Unknown Event'}
+        </h4>
+        <div className="space-y-3">
+          <div>
+            <p className="text-white font-medium">
+              {data.count?.toLocaleString()} events
+            </p>
+            <p className="text-blue-200/90 text-sm mt-1">
+              {data.description}
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-blue-500/20">
+            <div>
+              <p className="text-gray-400 text-xs">First seen:</p>
+              <p className="text-white text-sm">
+                {data.formattedFirstSeen}
+              </p>
+            </div>
+            <div>
+              <p className="text-gray-400 text-xs">Last seen:</p>
+              <p className="text-white text-sm">
+                {data.formattedLastSeen}
+              </p>
+            </div>
+          </div>
+
+          {data.tags && (
+            <div className="pt-2 border-t border-blue-500/20">
+              <p className="text-gray-400 text-xs mb-1">Tags:</p>
+              <div className="flex flex-wrap gap-1">
+                {data.tags.split(',').map((tag: string, index: number) => (
+                  <span 
+                    key={index}
+                    className="px-1.5 py-0.5 bg-blue-500/10 text-blue-300 text-xs rounded"
+                  >
+                    {tag.trim()}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <Card className="p-6 bg-black/40 border-blue-500/10">
@@ -53,7 +107,7 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
         <Activity className="h-5 w-5 text-blue-400" />
         <h3 className="text-lg font-semibold text-blue-300">Event Severity Distribution</h3>
       </div>
-      <div className="h-[400px]"> {/* Increased height for better visibility */}
+      <div className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart 
             data={transformedData}
@@ -70,15 +124,12 @@ const SeverityDistributionChart = ({ severityData }: SeverityDistributionChartPr
             <YAxis
               type="category"
               dataKey="displayName"
-              width={200}
+              width={300}
               stroke="#94A3B8"
               tick={{ fill: '#E2E8F0', fontSize: 12 }}
               tickLine={{ stroke: '#E2E8F0' }}
             />
-            <Tooltip
-              content={<TimelineTooltip />}
-              cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}
-            />
+            <Tooltip content={<CustomTooltip />} />
             <Bar 
               dataKey="count" 
               radius={[0, 4, 4, 0]}
