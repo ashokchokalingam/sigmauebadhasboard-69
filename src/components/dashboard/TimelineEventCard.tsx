@@ -3,7 +3,7 @@ import { Alert } from './types';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import TimelineDetailedLogs from './TimelineDetailedLogs';
 import EventTimeBarChart from './EventTimeBarChart';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -12,6 +12,13 @@ interface TimelineEventCardProps {
 
 const TimelineEventCard = ({ event, isLast = false }: TimelineEventCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const formatTimeString = (timeStr: string | undefined) => {
+    if (!timeStr) return 'N/A';
+    const date = new Date(timeStr);
+    if (!isValid(date)) return 'Invalid Date';
+    return format(date, 'MMM d, yyyy HH:mm:ss');
+  };
 
   return (
     <div className="relative">
@@ -46,12 +53,12 @@ const TimelineEventCard = ({ event, isLast = false }: TimelineEventCardProps) =>
           </div>
 
           <div className="mt-4 flex items-center gap-4 text-xs text-sidebar-foreground/60">
-            <span>Event Time: {format(new Date(event.system_time), 'MMM d, yyyy HH:mm:ss')}</span>
+            <span>Event Time: {formatTimeString(event.system_time)}</span>
             {event.first_time_seen && (
-              <span>First Seen: {format(new Date(event.first_time_seen), 'MMM d, yyyy HH:mm:ss')}</span>
+              <span>First Seen: {formatTimeString(event.first_time_seen)}</span>
             )}
             {event.last_time_seen && (
-              <span>Last Seen: {format(new Date(event.last_time_seen), 'MMM d, yyyy HH:mm:ss')}</span>
+              <span>Last Seen: {formatTimeString(event.last_time_seen)}</span>
             )}
           </div>
         </div>
