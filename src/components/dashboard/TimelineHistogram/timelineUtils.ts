@@ -1,3 +1,5 @@
+export type TimeInterval = '5m' | '15m' | '1h' | '6h' | '1d';
+
 export interface TimelineDataPoint {
   timestamp: string;
   count: number;
