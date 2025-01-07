@@ -1,18 +1,14 @@
 import React from 'react';
-import { Alert } from '../types';
+import { Alert } from './types';
 import { Table } from '../ui/table';
 
 interface AnomaliesTableProps {
-  anomalies: Alert[];
-  onRowClick: (anomaly: Alert) => void;
+  alerts: Alert[];
+  hasMore: boolean;
+  onLoadMore: () => void;
 }
 
-const AnomaliesTable: React.FC<AnomaliesTableProps> = ({ anomalies, onRowClick }) => {
-  const handleRowClick = (e: React.MouseEvent<HTMLDivElement>, anomaly: Alert) => {
-    e.preventDefault();
-    onRowClick(anomaly);
-  };
-
+const AnomaliesTable: React.FC<AnomaliesTableProps> = ({ alerts, hasMore, onLoadMore }) => {
   return (
     <Table>
       <thead>
@@ -24,15 +20,29 @@ const AnomaliesTable: React.FC<AnomaliesTableProps> = ({ anomalies, onRowClick }
         </tr>
       </thead>
       <tbody>
-        {anomalies.map((anomaly) => (
-          <tr key={anomaly.id} onClick={(e) => handleRowClick(e, anomaly)}>
-            <td>{anomaly.title}</td>
-            <td>{anomaly.description}</td>
-            <td>{anomaly.rule_level}</td>
-            <td>{new Date(anomaly.system_time).toLocaleString()}</td>
+        {alerts.map((alert) => (
+          <tr key={alert.id}>
+            <td>{alert.title}</td>
+            <td>{alert.description}</td>
+            <td>{alert.rule_level}</td>
+            <td>{new Date(alert.system_time).toLocaleString()}</td>
           </tr>
         ))}
       </tbody>
+      {hasMore && (
+        <tfoot>
+          <tr>
+            <td colSpan={4}>
+              <button 
+                onClick={onLoadMore}
+                className="w-full py-2 text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                Load More
+              </button>
+            </td>
+          </tr>
+        </tfoot>
+      )}
     </Table>
   );
 };
