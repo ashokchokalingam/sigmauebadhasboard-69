@@ -31,16 +31,15 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
 
   let formattedJson;
   try {
-    // Improved JSON parsing and formatting
     const parseAndFormat = (data: any) => {
       if (typeof data === 'string') {
         try {
-          return JSON.stringify(JSON.parse(data), null, 4); // Using 4 spaces for indentation
+          return JSON.stringify(JSON.parse(data), null, 2);
         } catch {
           return data;
         }
       }
-      return JSON.stringify(data, null, 4);
+      return JSON.stringify(data, null, 2);
     };
     
     formattedJson = parseAndFormat(alert.raw);
@@ -66,7 +65,7 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
         "overflow-hidden transition-all duration-200",
         isExpanded ? "max-h-[500px]" : "max-h-0"
       )}>
-        <div className="bg-[#1A1F2C]/80 backdrop-blur-sm rounded-lg border border-purple-500/20 transition-all duration-200 hover:border-purple-500/30 m-4">
+        <div className="bg-[#1A1F2C] rounded-lg border border-purple-500/20 transition-all duration-200 hover:border-purple-500/30 m-4">
           <style>
             {`
               .custom-scrollbar::-webkit-scrollbar {
@@ -85,43 +84,33 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
                 background: rgba(139, 92, 246, 0.4);
               }
               .raw-log-content {
-                color: #FFFFFF;
-                font-size: 1rem !important;
-                line-height: 1.8 !important;
+                color: #E2E8F0;
+                font-size: 0.875rem !important;
+                line-height: 1.5 !important;
                 font-family: 'Monaco', 'Consolas', monospace !important;
               }
               .raw-log-content .token.property {
-                color: #7DD3FC;
-                font-size: 1rem !important;
+                color: #67E8F9;
               }
               .raw-log-content .token.string {
-                color: #BBF7D0;
-                font-size: 1rem !important;
+                color: #86EFAC;
               }
               .raw-log-content .token.number {
                 color: #FDA4AF;
-                font-size: 1rem !important;
               }
               .raw-log-content .token.boolean {
                 color: #93C5FD;
-                font-size: 1rem !important;
               }
               .raw-log-content .token.null {
                 color: #F9A8D4;
-                font-size: 1rem !important;
               }
               .raw-log-content .token.punctuation {
                 color: #E2E8F0;
-                font-size: 1rem !important;
-              }
-              .raw-log-content .token.timestamp {
-                color: #67E8F9;
-                font-size: 1rem !important;
               }
             `}
           </style>
           <pre className="p-6 max-h-[400px] overflow-auto custom-scrollbar">
-            <code ref={codeRef} className="language-json whitespace-pre-wrap break-words raw-log-content">
+            <code ref={codeRef} className="language-json raw-log-content">
               {formattedJson}
             </code>
           </pre>
