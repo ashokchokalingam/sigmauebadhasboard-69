@@ -5,6 +5,8 @@ import TimelineEventCard from "./TimelineEventCard";
 import InfiniteScrollLoader from "./InfiniteScrollLoader";
 import { useInView } from "react-intersection-observer";
 import { ScrollArea } from "../ui/scroll-area";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Card } from "../ui/card";
 
 const EVENTS_PER_PAGE = 500;
 
@@ -65,6 +67,14 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     (page) => page.user_impacted_timeline
   ) || [];
 
+  // Prepare data for the summary chart
+  const chartData = allEvents.map(event => ({
+    title: event.title,
+    firstSeen: new Date(event.first_time_seen).getTime(),
+    lastSeen: new Date(event.last_time_seen).getTime(),
+    totalEvents: event.total_events
+  }));
+
   if (inView && !isFetchingNextPage && hasNextPage) {
     fetchNextPage();
   }
@@ -92,6 +102,51 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-6 w-full">
+            {/* Summary Chart */}
+            <Card className="p-6 bg-black/40 border-blue-500/10">
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                    <XAxis 
+                      dataKey="title" 
+                      angle={-45}
+                      textAnchor="end"
+                      height={100}
+                      interval={0}
+                      stroke="#475569"
+                      tick={{ fill: '#64748B', fontSize: 11 }}
+                    />
+                    <YAxis 
+                      stroke="#475569"
+                      tick={{ fill: '#64748B', fontSize: 11 }}
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        border: '1px solid rgba(59, 130, 246, 0.1)',
+                        borderRadius: '8px',
+                        padding: '12px'
+                      }}
+                    />
+                    <Legend />
+                    <Bar 
+                      dataKey="totalEvents" 
+                      name="Total Events"
+                      fill="url(#totalEventsGradient)"
+                    >
+                      <defs>
+                        <linearGradient id="totalEventsGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.8}/>
+                          <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                        </linearGradient>
+                      </defs>
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+
+            {/* Timeline Events */}
             {isLoading && allEvents.length === 0 ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
