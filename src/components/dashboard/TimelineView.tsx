@@ -1,10 +1,12 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { X, Shield } from "lucide-react";
+import { X, Shield, Activity } from "lucide-react";
 import { Alert } from "./types";
 import TimelineEventCard from "./TimelineEventCard";
 import InfiniteScrollLoader from "./InfiniteScrollLoader";
 import { useInView } from "react-intersection-observer";
 import { ScrollArea } from "../ui/scroll-area";
+import { Card } from "../ui/card";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const EVENTS_PER_PAGE = 500;
 
@@ -27,7 +29,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   } = useInfiniteQuery({
     queryKey: ["timeline", entityType, entityId],
     queryFn: async ({ pageParam = 1 }) => {
-      console.log("Fetching timeline data:", { entityType, entityId, pageParam });
       const endpoint = entityType === "user" ? "user_impacted_timeline" : "computer_impacted_timeline";
       const queryParam = entityType === "user" ? "user_impacted" : "computer_name";
       
@@ -40,8 +41,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       }
       
       const data = await response.json();
-      console.log("Timeline data received:", data);
-      
       return {
         user_impacted_timeline: data.user_impacted_timeline || data.computer_impacted_timeline || [],
         pagination: {
@@ -65,9 +64,33 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     (page) => page.user_impacted_timeline
   ) || [];
 
+  // Prepare data for the summary chart - group by severity
+  const severityData = allEvents.reduce((acc: any[], event) => {
+    const existingEntry = acc.find(item => item.severity === event.rule_level);
+    if (existingEntry) {
+      existingEntry.count += event.total_events;
+    } else {
+      acc.push({
+        severity: event.rule_level || 'unknown',
+        count: event.total_events || 0,
+      });
+    }
+    return acc;
+  }, []).sort((a, b) => b.count - a.count);
+
   if (inView && !isFetchingNextPage && hasNextPage) {
     fetchNextPage();
   }
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity.toLowerCase()) {
+      case 'critical': return '#DC2626';
+      case 'high': return '#F97316';
+      case 'medium': return '#FB923C';
+      case 'low': return '#22C55E';
+      default: return '#64748B';
+    }
+  };
 
   return (
     <div className={`flex flex-col ${inSidebar ? 'h-full' : 'min-h-screen w-full bg-gradient-to-br from-[#1A1F2C] to-[#121212]'}`}>
@@ -92,6 +115,53 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-6 w-full">
+            {/* Summary Chart */}
+            <Card className="p-6 bg-black/40 border-blue-500/10">
+              <div className="flex items-center gap-2 mb-4">
+                <Activity className="h-5 w-5 text-blue-400" />
+                <h3 className="text-lg font-semibold text-blue-300">Event Severity Distribution</h3>
+              </div>
+              <div className="h-[200px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart 
+                    data={severityData}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                    barSize={40}
+                  >
+                    <XAxis 
+                      dataKey="severity"
+                      stroke="#475569"
+                      tick={{ fill: '#64748B', fontSize: 12 }}
+                    />
+                    <YAxis
+                      stroke="#475569"
+                      tick={{ fill: '#64748B', fontSize: 12 }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(15,23,42,0.9)',
+                        border: '1px solid rgba(59, 130, 246, 0.2)',
+                        borderRadius: '8px',
+                        padding: '12px'
+                      }}
+                      formatter={(value: number) => [value.toLocaleString(), 'Events']}
+                    />
+                    <Bar 
+                      dataKey="count"
+                      radius={[4, 4, 0, 0]}
+                    >
+                      {severityData.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`}
+                          fill={getSeverityColor(entry.severity)}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+
             {/* Timeline Events */}
             {isLoading && allEvents.length === 0 ? (
               <div className="flex items-center justify-center py-12">
