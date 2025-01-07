@@ -3,10 +3,6 @@ import { format } from 'date-fns';
 const TimelineTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload || !payload.length) return null;
 
-  const formatDate = (dateStr: string) => {
-    return format(new Date(dateStr), 'MMM dd, yyyy HH:mm');
-  };
-
   const data = payload[0]?.payload;
 
   return (
@@ -29,13 +25,13 @@ const TimelineTooltip = ({ active, payload, label }: any) => {
             <div>
               <p className="text-gray-400 text-xs">First seen:</p>
               <p className="text-white">
-                {data?.first_time_seen ? formatDate(data.first_time_seen) : 'N/A'}
+                {data?.formattedFirstSeen || 'N/A'}
               </p>
             </div>
             <div>
               <p className="text-gray-400 text-xs">Last seen:</p>
               <p className="text-white">
-                {data?.last_time_seen ? formatDate(data.last_time_seen) : 'N/A'}
+                {data?.formattedLastSeen || 'N/A'}
               </p>
             </div>
           </div>
