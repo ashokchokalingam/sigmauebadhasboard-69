@@ -7,6 +7,7 @@ import { useAlertsFilter } from "./hooks/useAlertsFilter";
 import AnomaliesTableHeaderSection from "./AnomaliesTableHeaderSection";
 import AnomaliesSplitView from "./AnomaliesSplitView";
 import AnomaliesMainView from "./AnomaliesMainView";
+import { defaultColumns } from "./TableConfig";
 import { useState } from "react";
 
 interface AnomaliesTableProps {
