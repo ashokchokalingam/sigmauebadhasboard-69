@@ -5,8 +5,6 @@ import TimelineEventCard from "./TimelineEventCard";
 import InfiniteScrollLoader from "./InfiniteScrollLoader";
 import { useInView } from "react-intersection-observer";
 import { ScrollArea } from "../ui/scroll-area";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useMemo } from "react";
 
 const EVENTS_PER_PAGE = 500;
 
@@ -67,33 +65,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     (page) => page.user_impacted_timeline
   ) || [];
 
-  const chartData = useMemo(() => {
-    if (!allEvents.length) return [];
-    
-    const timeGroups: { [key: string]: { time: string; count: number; timestamp: number } } = {};
-    
-    allEvents.forEach((event) => {
-      const date = new Date(event.system_time);
-      const timeKey = date.toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: false 
-      });
-      const timestamp = date.getTime();
-      
-      if (!timeGroups[timeKey]) {
-        timeGroups[timeKey] = {
-          time: timeKey,
-          timestamp,
-          count: 0
-        };
-      }
-      timeGroups[timeKey].count++;
-    });
-
-    return Object.values(timeGroups).sort((a, b) => a.timestamp - b.timestamp);
-  }, [allEvents]);
-
   if (inView && !isFetchingNextPage && hasNextPage) {
     fetchNextPage();
   }
@@ -116,61 +87,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         >
           <X className="h-6 w-6 text-gray-400" />
         </button>
-      </div>
-
-      <div className="p-6 bg-black/40">
-        <div className="h-[200px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart 
-              data={chartData} 
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-              barSize={8}
-            >
-              <defs>
-                <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#9b87f5" stopOpacity={1} />
-                  <stop offset="100%" stopColor="#9b87f5" stopOpacity={0.6} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                vertical={false}
-                stroke="rgba(255,255,255,0.05)"
-              />
-              <XAxis
-                dataKey="time"
-                stroke="#8E9196"
-                tick={{ fill: '#C8C8C9', fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                interval="preserveStartEnd"
-                minTickGap={50}
-              />
-              <YAxis
-                stroke="#8E9196"
-                tick={{ fill: '#C8C8C9', fontSize: 11 }}
-                tickLine={false}
-                axisLine={false}
-                width={30}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(26, 31, 44, 0.95)',
-                  border: '1px solid rgba(155, 135, 245, 0.2)',
-                  borderRadius: '6px',
-                  padding: '8px 12px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-                }}
-                cursor={{ fill: 'rgba(155, 135, 245, 0.1)' }}
-              />
-              <Bar
-                dataKey="count"
-                fill="url(#barGradient)"
-                radius={[2, 2, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
       </div>
 
       <div className="flex-1 overflow-hidden">
