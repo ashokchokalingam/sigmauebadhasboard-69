@@ -6,7 +6,7 @@ import InfiniteScrollLoader from "./InfiniteScrollLoader";
 import { useInView } from "react-intersection-observer";
 import { ScrollArea } from "../ui/scroll-area";
 import { Card } from "../ui/card";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const EVENTS_PER_PAGE = 500;
 
