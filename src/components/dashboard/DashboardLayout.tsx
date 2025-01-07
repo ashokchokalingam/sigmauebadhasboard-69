@@ -10,7 +10,6 @@ import { calculateStats } from "./alertUtils";
 import RiskyUsersWidget from "../RiskyUsersWidget";
 import OutliersWidget from "../OutliersWidget";
 import HighRiskAssetsWidget from "../HighRiskAssetsWidget";
-import TimelineHistogram from "./TimelineHistogram/TimelineHistogram";
 
 interface DashboardLayoutProps {
   alerts: Alert[];
@@ -72,10 +71,6 @@ const DashboardLayout = ({
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
           <OutliersWidget />
         </div>
-      </div>
-
-      <div className="mb-8">
-        <TimelineHistogram alerts={allAlerts} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
