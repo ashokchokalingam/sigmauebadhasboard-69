@@ -14,6 +14,9 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
   const safeEventCount = typeof eventCount === 'number' ? eventCount : 0;
   const safeUniqueTitles = typeof uniqueTitles === 'number' ? uniqueTitles : 0;
   
+  // Clean up the ID by removing extra spaces and normalizing slashes
+  const cleanId = id?.trim().replace(/\s+/g, '').replace(/\\+/g, '\\') ?? 'Unknown';
+  
   return (
     <div 
       onClick={onClick}
@@ -34,8 +37,8 @@ const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCar
         </div>
         
         <div className="flex flex-col">
-          <span className="font-mono text-sm text-blue-200/90 font-medium group-hover:text-blue-100">
-            {id || 'Unknown'}
+          <span className="font-mono text-sm text-blue-200/90 font-medium group-hover:text-blue-100 truncate max-w-[300px]">
+            {cleanId}
           </span>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-xs text-blue-300/60">
