@@ -94,10 +94,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
                 </div>
               </ResizablePanel>
               
-              <ResizableHandle 
-                withHandle 
-                className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
-              />
+              <ResizableHandle withHandle className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors" />
               
               <ResizablePanel defaultSize={25} minSize={20}>
                 <div className="h-full">
