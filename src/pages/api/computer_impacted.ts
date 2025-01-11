@@ -11,16 +11,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     let query = `
       SELECT 
-        *
+        computer_name,
+        COUNT(DISTINCT title) as unique_titles
       FROM sigma_alerts
-      WHERE computer_name = ?
-      ORDER BY system_time DESC
-      LIMIT ? OFFSET ?
+      WHERE computer_name LIKE ?
+      GROUP BY computer_name
+      ORDER BY unique_titles DESC
     `;
 
-    const limit = parseInt(per_page as string);
-    const offset = (parseInt(page as string) - 1) * limit;
-    const queryParams = [computer_name, limit, offset];
+    const queryParams = [`%${computer_name}%`];
 
     console.log('Executing query:', query, 'with params:', queryParams);
 
@@ -30,8 +29,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       computer_impacted_logs: rows,
       pagination: {
         current_page: parseInt(page as string),
-        per_page: limit,
-        has_more: Array.isArray(rows) && rows.length === limit
+        per_page: parseInt(per_page as string),
+        has_more: Array.isArray(rows) && rows.length === parseInt(per_page as string)
       }
     });
   } catch (error) {
