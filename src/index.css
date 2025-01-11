@@ -78,6 +78,16 @@
   .stats-breakdown-value {
     @apply text-blue-100/90 font-mono;
   }
+
+  .timeline-event {
+    @apply relative px-4 py-2 rounded-lg cursor-pointer;
+    transition: all 0.3s ease-out;
+  }
+
+  .timeline-event:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
 }
 
 @keyframes shine {
