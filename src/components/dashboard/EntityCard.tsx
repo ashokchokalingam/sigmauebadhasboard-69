@@ -9,8 +9,9 @@ interface EntityCardProps {
   onClick: () => void;
 }
 
-const EntityCard = ({ id, uniqueTitles = 0, onClick }: EntityCardProps) => {
+const EntityCard = ({ id, eventCount = 0, uniqueTitles = 0, onClick }: EntityCardProps) => {
   const isComputer = id?.endsWith('$') ?? false;
+  const safeEventCount = typeof eventCount === 'number' ? eventCount : 0;
   const safeUniqueTitles = typeof uniqueTitles === 'number' ? uniqueTitles : 0;
   
   return (
@@ -39,6 +40,10 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick }: EntityCardProps) => {
           <div className="flex items-center gap-2 mt-1">
             <span className="text-xs text-blue-300/60">
               {safeUniqueTitles} unique anomalies
+            </span>
+            <span className="text-xs text-blue-400/30">•</span>
+            <span className="text-xs text-blue-300/40">
+              {safeEventCount.toLocaleString()} total events
             </span>
           </div>
         </div>

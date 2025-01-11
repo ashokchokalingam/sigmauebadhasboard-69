@@ -2,6 +2,7 @@ import { Download } from "lucide-react";
 import { Alert } from "./types";
 import StatsSection from "./StatsSection";
 import RiskyEntities from "./RiskyEntities";
+import TimelineView from "./TimelineView";
 import AnomaliesTable from "./AnomaliesTable";
 import { calculateStats } from "./alertUtils";
 import RiskyUsersWidget from "../RiskyUsersWidget";
@@ -30,6 +31,17 @@ const DashboardLayout = ({
   hasMore
 }: DashboardLayoutProps) => {
   const stats = calculateStats(allAlerts, totalRecords);
+
+  if (selectedEntity) {
+    return (
+      <TimelineView
+        entityType={selectedEntity.type}
+        entityId={selectedEntity.id}
+        onClose={() => onEntitySelect(null)}
+        inSidebar={false}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
