@@ -6,11 +6,12 @@ import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineDetailedLogs from "./TimelineDetailedLogs";
-import { User } from "lucide-react";
+import { User, Monitor } from "lucide-react";
 
 interface TimelineEventCardProps {
   event: Alert;
   isLast?: boolean;
+  entityType: "user" | "computer";
 }
 
 interface DetailedLogResponse {
@@ -20,26 +21,35 @@ interface DetailedLogResponse {
     total_pages: number;
     total_records: number;
   };
-  user_impacted_logs: Alert[];
+  user_impacted_logs?: Alert[];
+  computer_impacted_logs?: Alert[];
 }
 
-const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
+const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { data: detailedLogs, isLoading } = useQuery({
-    queryKey: ['detailed-logs', event.user_impacted, event.title, isExpanded],
+    queryKey: ['detailed-logs', entityType, event.computer_name || event.user_impacted, event.title, isExpanded],
     queryFn: async () => {
       if (!isExpanded) return null;
       
-      if (!event.user_impacted) {
-        console.error('No user_impacted provided for detailed logs query');
+      const identifier = entityType === "computer" ? event.computer_name : event.user_impacted;
+      
+      if (!identifier) {
+        console.error('No identifier provided for detailed logs query');
         return null;
       }
 
       try {
-        const baseUrl = '/api/user_impacted_logs';
+        const baseUrl = entityType === "computer" ? '/api/computer_impacted_logs' : '/api/user_impacted_logs';
         const params = new URLSearchParams();
-        params.append('user_impacted', event.user_impacted);
+        
+        if (entityType === "computer") {
+          params.append('computer_name', identifier);
+        } else {
+          params.append('user_impacted', identifier);
+        }
+        
         params.append('title', event.title);
         params.append('page', '1');
         params.append('per_page', '500');
@@ -59,7 +69,7 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
         return null;
       }
     },
-    enabled: isExpanded && !!event.user_impacted
+    enabled: isExpanded && !!(event.computer_name || event.user_impacted)
   });
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -90,10 +100,21 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
           />
 
           <div className="flex items-center gap-2 mt-2 mb-3">
-            <User className="h-4 w-4 text-blue-400" />
-            <span className="text-sm text-blue-300">
-              User Impacted: <span className="font-mono text-blue-400">{event.user_impacted}</span>
-            </span>
+            {entityType === "computer" ? (
+              <>
+                <Monitor className="h-4 w-4 text-blue-400" />
+                <span className="text-sm text-blue-300">
+                  Computer: <span className="font-mono text-blue-400">{event.computer_name}</span>
+                </span>
+              </>
+            ) : (
+              <>
+                <User className="h-4 w-4 text-blue-400" />
+                <span className="text-sm text-blue-300">
+                  User Impacted: <span className="font-mono text-blue-400">{event.user_impacted}</span>
+                </span>
+              </>
+            )}
           </div>
 
           <TimelineEventTimestamps
@@ -105,9 +126,10 @@ const TimelineEventCard = ({ event, isLast }: TimelineEventCardProps) => {
 
           {isExpanded && (
             <TimelineDetailedLogs
-              logs={detailedLogs?.user_impacted_logs || []}
+              logs={entityType === "computer" ? detailedLogs?.computer_impacted_logs || [] : detailedLogs?.user_impacted_logs || []}
               isLoading={isLoading}
               totalRecords={detailedLogs?.pagination?.total_records || 0}
+              entityType={entityType}
             />
           )}
         </div>

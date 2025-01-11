@@ -10,9 +10,10 @@ interface TimelineDetailedLogsProps {
   logs: Alert[];
   isLoading?: boolean;
   totalRecords?: number;
+  entityType?: "user" | "computer";
 }
 
-const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetailedLogsProps) => {
+const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "user" }: TimelineDetailedLogsProps) => {
   const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
   const [visibleColumns] = useState<string[]>([
     "system_time",
@@ -28,18 +29,6 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
   const handleLogClick = (log: Alert) => {
     console.log("Log clicked:", log);
     setSelectedLog(log);
-  };
-
-  const formatTime = (timeString: string) => {
-    return new Date(timeString).toLocaleString(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
-    });
   };
 
   if (isLoading) {
@@ -80,7 +69,11 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                   <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
                     <TableRow className="hover:bg-transparent border-b border-purple-400/20">
                       <TableHead className="text-purple-100 font-semibold">Time</TableHead>
-                      <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
+                      {entityType === "user" ? (
+                        <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
+                      ) : (
+                        <TableHead className="text-purple-100 font-semibold">Computer Name</TableHead>
+                      )}
                       <TableHead className="text-purple-100 font-semibold">User Impacted</TableHead>
                       <TableHead className="text-purple-100 font-semibold">Computer</TableHead>
                       <TableHead className="text-purple-100 font-semibold">Event</TableHead>
@@ -110,7 +103,6 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
               withHandle 
               className="bg-purple-400/20 hover:bg-purple-400/30 transition-colors"
               onPointerDown={(e) => {
-                // Prevent the click event from bubbling up
                 e.stopPropagation();
               }}
             />
@@ -125,7 +117,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
                 <DetailsPanel 
                   alert={selectedLog}
                   onClose={() => setSelectedLog(null)}
-                  formatTime={formatTime}
+                  formatTime={(timeString) => new Date(timeString).toLocaleString()}
                 />
               </div>
             </ResizablePanel>

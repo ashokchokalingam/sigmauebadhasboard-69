@@ -129,6 +129,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
                     key={`${event.id}-${index}`}
                     event={event}
                     isLast={index === allEvents.length - 1}
+                    entityType={entityType}
                   />
                 ))}
                 
