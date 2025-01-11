@@ -15,8 +15,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       SELECT 
         computer_name,
         title,
-        tags,
         description,
+        tags,
+        rule_level,
         MIN(system_time) AS first_time_seen,
         MAX(system_time) AS last_time_seen,
         COUNT(*) AS total_events
@@ -25,15 +26,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         system_time >= NOW() - INTERVAL ${timeInterval}
         AND computer_name = ?
       GROUP BY
-        computer_name, title, tags, description
+        computer_name, title, description, tags, rule_level
       ORDER BY
         last_time_seen DESC
     `;
 
+    console.log('Executing query:', query, 'with computer_name:', computer_name);
+
     const [rows] = await db.query(query, [computer_name]);
+    
+    console.log('Query results:', rows);
 
     res.status(200).json({
-      event_summary: rows,
+      computer_impacted_timeline: rows,
       pagination: {
         current_page: 1,
         per_page: 1000,

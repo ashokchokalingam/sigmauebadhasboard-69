@@ -55,12 +55,12 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       console.log("Timeline data received:", data);
       
       return {
-        computer_impacted_logs: data.computer_impacted_logs || [],
+        computer_impacted_timeline: data.computer_impacted_timeline || [],
         user_impacted_timeline: data.user_impacted_timeline || [],
         pagination: {
           current_page: pageParam,
           per_page: EVENTS_PER_PAGE,
-          has_more: (data.computer_impacted_logs?.length === EVENTS_PER_PAGE || 
+          has_more: (data.computer_impacted_timeline?.length === EVENTS_PER_PAGE || 
                     data.user_impacted_timeline?.length === EVENTS_PER_PAGE)
         }
       };
@@ -76,7 +76,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   });
 
   const allEvents = data?.pages.flatMap(
-    (page) => entityType === "computer" ? page.computer_impacted_logs : page.user_impacted_timeline
+    (page) => entityType === "computer" ? page.computer_impacted_timeline : page.user_impacted_timeline
   ) || [];
 
   if (inView && !isFetchingNextPage && hasNextPage) {
