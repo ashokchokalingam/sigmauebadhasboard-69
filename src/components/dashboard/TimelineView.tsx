@@ -35,7 +35,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       let queryParams = new URLSearchParams();
       
       if (entityType === "computer") {
-        endpoint = "computer_impacted_logs";
+        endpoint = "computer_impacted";
         queryParams.append("computer_name", entityId);
       } else {
         endpoint = "user_impacted_timeline";
