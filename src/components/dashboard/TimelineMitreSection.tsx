@@ -1,13 +1,26 @@
 import { Shield } from "lucide-react";
 import { Alert } from "./types";
-import { extractTacticsAndTechniques } from "./utils";
 
 interface TimelineMitreSectionProps {
   alert: Alert;
 }
 
 const TimelineMitreSection = ({ alert }: TimelineMitreSectionProps) => {
-  const { tactics, techniques } = extractTacticsAndTechniques(alert.tags);
+  const tags = alert.tags || ''; // Provide default empty string if tags is undefined
+  
+  const tactics = tags
+    .split(',')
+    .filter(tag => tag.includes('attack.') && !tag.toLowerCase().includes('t1'))
+    .map(tag => tag.replace('attack.', ''))
+    .map(tactic => tactic.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' '))
+    .join(', ');
+
+  const techniques = tags
+    .split(',')
+    .filter(tag => tag.toLowerCase().includes('t1'))
+    .map(tag => tag.trim());
   
   return (
     <div className="space-y-3">
