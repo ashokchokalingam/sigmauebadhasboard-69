@@ -6,7 +6,7 @@ import { ScrollArea } from "../ui/scroll-area";
 interface TimelineEventSummaryProps {
   summary: EventSummary[];
   isLoading: boolean;
-  entityType: "user" | "computer";
+  entityType: "user" | "computer" | "origin";
 }
 
 const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventSummaryProps) => {
@@ -19,6 +19,8 @@ const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventS
       </div>
     );
   }
+
+  const adjustedEntityType = entityType === "origin" ? "user" : entityType;
 
   return (
     <div className="space-y-4">
@@ -34,7 +36,7 @@ const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventS
               key={index} 
               event={event} 
               isLast={index === summary.length - 1}
-              entityType={entityType}
+              entityType={adjustedEntityType}
             />
           ))}
           
