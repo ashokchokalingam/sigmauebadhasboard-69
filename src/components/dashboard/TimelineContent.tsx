@@ -9,7 +9,7 @@ interface TimelineContentProps {
   selectedEventType: string | null;
   onEventTypeSelect: (type: string | null) => void;
   onToggleRaw: (alertId: string, event: React.MouseEvent) => void;
-  entityType: "user" | "computer";
+  entityType: "user" | "computer" | "origin";
   entityId: string;
   timeframe: string;
 }
@@ -22,7 +22,7 @@ const TimelineContent = ({
   onEventTypeSelect,
 }: TimelineContentProps) => {
   const { data: summaryData, isLoading: isLoadingSummary } = useEventSummary(
-    entityType === "user" ? "target" : entityType,
+    entityType,
     entityId,
     timeframe
   );
@@ -46,7 +46,7 @@ const TimelineContent = ({
       <div>
         <div className="bg-black/40 border border-blue-500/10 rounded-xl p-4">
           <TimelineEventTypes 
-            alerts={[]}  // We'll update this later when needed
+            alerts={[]}
             onEventTypeSelect={onEventTypeSelect}
             selectedEventType={selectedEventType}
           />
