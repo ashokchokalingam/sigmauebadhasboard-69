@@ -19,7 +19,7 @@ export const useEventSummary = (
           break;
         case 'origin':
           endpoint = '/api/user_origin_timeline';
-          queryParam = `user_origin=${entityId}`;
+          queryParam = `user_id=${entityId}`;
           break;
         case 'computer':
           endpoint = '/api/computer_impacted_timeline';
@@ -27,15 +27,18 @@ export const useEventSummary = (
           break;
       }
 
+      console.log(`Fetching timeline data from: ${endpoint}?${queryParam}`);
+      
       const response = await fetch(`${endpoint}?${queryParam}`);
       if (!response.ok) {
         throw new Error('Failed to fetch event summary');
       }
 
-      const data: TimelineResponse = await response.json();
+      const data = await response.json();
+      console.log('Timeline data received:', data);
       
       return {
-        event_summary: data.user_impacted_timeline || [],
+        event_summary: data.user_origin_timeline || data.user_impacted_timeline || data.computer_impacted_timeline || [],
       };
     },
     enabled: Boolean(entityType && entityId),

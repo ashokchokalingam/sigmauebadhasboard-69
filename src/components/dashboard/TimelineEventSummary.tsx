@@ -6,9 +6,10 @@ import { ScrollArea } from "../ui/scroll-area";
 interface TimelineEventSummaryProps {
   summary: EventSummary[];
   isLoading: boolean;
+  entityType: "user" | "computer";
 }
 
-const TimelineEventSummary = ({ summary, isLoading }: TimelineEventSummaryProps) => {
+const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventSummaryProps) => {
   if (isLoading) {
     return (
       <div className="space-y-4 animate-pulse">
@@ -33,6 +34,7 @@ const TimelineEventSummary = ({ summary, isLoading }: TimelineEventSummaryProps)
               key={index} 
               event={event} 
               isLast={index === summary.length - 1}
+              entityType={entityType}
             />
           ))}
           
