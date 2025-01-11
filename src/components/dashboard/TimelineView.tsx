@@ -1,12 +1,9 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { X, Shield } from "lucide-react";
 import { Alert } from "./types";
-import TimelineEventCard from "./TimelineEventCard";
-import InfiniteScrollLoader from "./InfiniteScrollLoader";
-import { useInView } from "react-intersection-observer";
+import TimelineDetailedLogs from "./TimelineDetailedLogs";
+import TimelineHeatmap from "./TimelineHeatmap";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { ScrollArea } from "../ui/scroll-area";
-
-const EVENTS_PER_PAGE = 500;
 
 interface TimelineViewProps {
   entityType: "user" | "computer";
@@ -16,8 +13,6 @@ interface TimelineViewProps {
 }
 
 const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: TimelineViewProps) => {
-  const { ref, inView } = useInView();
-
   const {
     data,
     fetchNextPage,
@@ -32,7 +27,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       const queryParam = entityType === "user" ? "user_impacted" : "computer_name";
       
       const response = await fetch(
-        `/api/${endpoint}?${queryParam}=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`
+        `/api/${endpoint}?${queryParam}=${entityId}&page=${pageParam}&per_page=500`
       );
       
       if (!response.ok) {
@@ -43,11 +38,11 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       console.log("Timeline data received:", data);
       
       return {
-        user_impacted_timeline: data.user_impacted_timeline || data.computer_impacted_timeline || [],
+        alerts: data.alerts || [],
         pagination: {
           current_page: pageParam,
-          per_page: EVENTS_PER_PAGE,
-          has_more: (data.user_impacted_timeline || data.computer_impacted_timeline || []).length === EVENTS_PER_PAGE
+          per_page: 500,
+          has_more: (data.alerts || []).length === 500
         }
       };
     },
@@ -61,13 +56,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     enabled: !!entityId,
   });
 
-  const allEvents = data?.pages.flatMap(
-    (page) => page.user_impacted_timeline
-  ) || [];
-
-  if (inView && !isFetchingNextPage && hasNextPage) {
-    fetchNextPage();
-  }
+  const allAlerts = data?.pages.flatMap((page) => page.alerts) || [];
 
   return (
     <div className={`flex flex-col ${inSidebar ? 'h-full' : 'min-h-screen w-full bg-gradient-to-br from-[#1A1F2C] to-[#121212]'}`}>
@@ -92,29 +81,22 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-6 w-full">
-            {isLoading && allEvents.length === 0 ? (
+            <TimelineHeatmap alerts={allAlerts} />
+            
+            {isLoading && allAlerts.length === 0 ? (
               <div className="flex items-center justify-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
               </div>
-            ) : allEvents.length === 0 ? (
+            ) : allAlerts.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-400">No timeline events found</p>
               </div>
             ) : (
-              <div className="relative space-y-6 w-full">
-                {allEvents.map((event, index) => (
-                  <TimelineEventCard
-                    key={`${event.id}-${index}`}
-                    event={event}
-                    isLast={index === allEvents.length - 1}
-                  />
-                ))}
-                
-                <InfiniteScrollLoader
-                  ref={ref}
-                  hasMore={!!hasNextPage}
-                />
-              </div>
+              <TimelineDetailedLogs
+                logs={allAlerts}
+                isLoading={isFetchingNextPage}
+                totalRecords={allAlerts.length}
+              />
             )}
           </div>
         </ScrollArea>
