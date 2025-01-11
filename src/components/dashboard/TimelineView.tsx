@@ -91,9 +91,8 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         </button>
       </div>
 
-      <div className="p-6 space-y-6">
+      <div className="p-6">
         <TimelineSummaryStats alerts={allEvents} />
-        <TimelineMitreSummary alerts={allEvents} />
       </div>
 
       <div className="flex-1 overflow-hidden">
@@ -126,6 +125,8 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
           </div>
         </ScrollArea>
       </div>
+      
+      <TimelineMitreSummary />
     </div>
   );
 };
