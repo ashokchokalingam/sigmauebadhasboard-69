@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { X, Shield, ExternalLink } from "lucide-react";
+import { X, Shield } from "lucide-react";
 import { Alert } from "./types";
 import TimelineEventCard from "./TimelineEventCard";
 import InfiniteScrollLoader from "./InfiniteScrollLoader";
@@ -83,27 +83,12 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
             <p className="text-lg text-blue-300/80 mt-2">Security Timeline Analysis</p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
-          <a
-            href="https://attack.mitre.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-6 py-3 text-lg font-semibold rounded-full 
-              bg-gradient-to-r from-purple-500/80 to-blue-500/80 text-white shadow-lg 
-              hover:from-purple-600/90 hover:to-blue-600/90 
-              transition-all duration-300 hover:scale-105 hover:shadow-xl
-              border border-white/20 backdrop-blur-sm group"
-          >
-            <span>MITRE ATT&CK</span>
-            <ExternalLink className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </a>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-          >
-            <X className="h-6 w-6 text-gray-400" />
-          </button>
-        </div>
+        <button
+          onClick={onClose}
+          className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+        >
+          <X className="h-6 w-6 text-gray-400" />
+        </button>
       </div>
 
       <div className="p-6">
