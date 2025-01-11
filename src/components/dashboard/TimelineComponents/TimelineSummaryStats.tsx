@@ -1,4 +1,4 @@
-import { Activity } from "lucide-react";
+import { Activity, Shield, AlertTriangle, CheckCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Alert } from "../types";
 
@@ -20,38 +20,44 @@ const TimelineSummaryStats = ({ alerts }: TimelineSummaryStatsProps) => {
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <Card className="p-4 bg-black/40 border-blue-500/10">
-        <div className="flex items-center justify-between">
-          <span className="text-blue-300">Total Events</span>
-          <Activity className="h-4 w-4 text-blue-400" />
+      <Card className="p-6 bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 hover:border-blue-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-blue-300 font-semibold">Total Events</span>
+          <Activity className="h-5 w-5 text-blue-400 animate-pulse" />
         </div>
-        <p className="text-2xl font-bold text-blue-100 mt-2">{summary.totalEvents}</p>
+        <p className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+          {summary.totalEvents}
+        </p>
       </Card>
       
-      <Card className="p-4 bg-black/40 border-blue-500/10">
-        <div className="flex items-center justify-between">
-          <span className="text-red-300">Critical/High</span>
-          <Activity className="h-4 w-4 text-red-400" />
+      <Card className="p-6 bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20 hover:border-red-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/10">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-red-300 font-semibold">Critical/High</span>
+          <AlertTriangle className="h-5 w-5 text-red-400 animate-pulse" />
         </div>
-        <p className="text-2xl font-bold text-red-100 mt-2">
+        <p className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-orange-400">
           {summary.severity.critical + summary.severity.high}
         </p>
       </Card>
       
-      <Card className="p-4 bg-black/40 border-blue-500/10">
-        <div className="flex items-center justify-between">
-          <span className="text-yellow-300">Medium</span>
-          <Activity className="h-4 w-4 text-yellow-400" />
+      <Card className="p-6 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 hover:border-yellow-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/10">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-yellow-300 font-semibold">Medium</span>
+          <Shield className="h-5 w-5 text-yellow-400 animate-pulse" />
         </div>
-        <p className="text-2xl font-bold text-yellow-100 mt-2">{summary.severity.medium}</p>
+        <p className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-orange-400">
+          {summary.severity.medium}
+        </p>
       </Card>
       
-      <Card className="p-4 bg-black/40 border-blue-500/10">
-        <div className="flex items-center justify-between">
-          <span className="text-green-300">Low</span>
-          <Activity className="h-4 w-4 text-green-400" />
+      <Card className="p-6 bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 hover:border-green-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-green-300 font-semibold">Low</span>
+          <CheckCircle className="h-5 w-5 text-green-400 animate-pulse" />
         </div>
-        <p className="text-2xl font-bold text-green-100 mt-2">{summary.severity.low}</p>
+        <p className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-emerald-400">
+          {summary.severity.low}
+        </p>
       </Card>
     </div>
   );
