@@ -24,6 +24,7 @@ interface TimePoint {
   Medium: number;
   Low: number;
   total: number;
+  rawDate: Date;
 }
 
 const TimelineHeatmap = ({ alerts }: TimelineHeatmapProps) => {
@@ -43,21 +44,22 @@ const TimelineHeatmap = ({ alerts }: TimelineHeatmapProps) => {
           High: 0,
           Medium: 0,
           Low: 0,
-          total: 0
+          total: 0,
+          rawDate: date
         };
       }
       
       // Default to Low if rule_level is undefined
       const severity = alert.rule_level || 'Low';
       if (severity in timePoints[timeKey]) {
-        timePoints[timeKey][severity as keyof Omit<TimePoint, 'timestamp' | 'total'>]++;
+        timePoints[timeKey][severity as keyof Omit<TimePoint, 'timestamp' | 'total' | 'rawDate'>]++;
         timePoints[timeKey].total++;
       }
     });
 
     // Sort by timestamp and ensure we have at least some data points
     const sortedData = Object.values(timePoints).sort((a, b) => 
-      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      a.rawDate.getTime() - b.rawDate.getTime()
     );
 
     // If no data points exist, create some empty ones for visual consistency
@@ -74,7 +76,8 @@ const TimelineHeatmap = ({ alerts }: TimelineHeatmapProps) => {
           High: 0,
           Medium: 0,
           Low: 0,
-          total: 0
+          total: 0,
+          rawDate: date
         });
       }
     }
@@ -87,33 +90,42 @@ const TimelineHeatmap = ({ alerts }: TimelineHeatmapProps) => {
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
+      const totalEvents = payload.reduce((sum: number, entry: any) => sum + entry.value, 0);
+      const date = new Date(payload[0]?.payload.rawDate);
+      
       return (
-        <div className="bg-[#1a1f2c] border border-blue-500/20 rounded-lg p-3 shadow-xl">
-          <p className="text-blue-100 font-medium mb-2">{label}</p>
-          {payload.map((entry: any, index: number) => (
+        <div className="bg-[#1a1f2c] border border-blue-500/20 rounded-lg p-4 shadow-xl min-w-[200px]">
+          <p className="text-blue-100 font-medium mb-2">
+            {format(date, 'MMM dd, HH:mm')}
+          </p>
+          
+          {payload.map((entry: any) => (
             entry.value > 0 && (
-              <div key={index} className="flex items-center justify-between gap-4">
+              <div key={entry.name} className="flex items-center justify-between gap-4 py-1">
                 <div className="flex items-center gap-2">
                   <div 
                     className="w-3 h-3 rounded-full" 
                     style={{ backgroundColor: entry.fill }}
                   />
-                  <span className="text-blue-200">{entry.name}:</span>
+                  <span className="text-blue-200">{entry.name}</span>
                 </div>
                 <span className="text-blue-100 font-mono">
-                  {entry.value} events
+                  {entry.value}
                 </span>
               </div>
             )
           ))}
-          <div className="mt-2 pt-2 border-t border-blue-500/20">
-            <div className="flex justify-between">
-              <span className="text-blue-200">Total:</span>
-              <span className="text-blue-100 font-mono">
-                {payload.reduce((acc: number, entry: any) => acc + entry.value, 0)} events
-              </span>
+          
+          {totalEvents > 0 && (
+            <div className="mt-2 pt-2 border-t border-blue-500/20">
+              <div className="flex justify-between">
+                <span className="text-blue-200">Total:</span>
+                <span className="text-blue-100 font-mono">
+                  {totalEvents} {totalEvents === 1 ? 'event' : 'events'}
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       );
     }
