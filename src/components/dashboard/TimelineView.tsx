@@ -5,6 +5,8 @@ import TimelineEventCard from "./TimelineEventCard";
 import InfiniteScrollLoader from "./InfiniteScrollLoader";
 import { useInView } from "react-intersection-observer";
 import { ScrollArea } from "../ui/scroll-area";
+import TimelineSummaryStats from "./TimelineComponents/TimelineSummaryStats";
+import TimelineMitreSummary from "./TimelineComponents/TimelineMitreSummary";
 
 const EVENTS_PER_PAGE = 500;
 
@@ -87,6 +89,11 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         >
           <X className="h-6 w-6 text-gray-400" />
         </button>
+      </div>
+
+      <div className="p-6 space-y-6">
+        <TimelineSummaryStats alerts={allEvents} />
+        <TimelineMitreSummary alerts={allEvents} />
       </div>
 
       <div className="flex-1 overflow-hidden">
