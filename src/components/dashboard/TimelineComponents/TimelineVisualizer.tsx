@@ -46,8 +46,8 @@ const TimelineVisualizer = ({ events }: TimelineVisualizerProps) => {
     'Other'
   ];
 
-  const getEventColor = (severity: string) => {
-    switch (severity.toLowerCase()) {
+  const getEventColor = (ruleLevel: string | undefined) => {
+    switch (ruleLevel?.toLowerCase()) {
       case 'critical':
         return 'bg-red-500';
       case 'high':
@@ -81,13 +81,13 @@ const TimelineVisualizer = ({ events }: TimelineVisualizerProps) => {
                   <div
                     key={`${event.id}-${index}`}
                     className={`absolute top-1/2 -translate-y-1/2 h-6 px-3 rounded flex items-center justify-center 
-                      ${getEventColor(event.severity)} text-white text-xs cursor-pointer transform hover:scale-105 
+                      ${getEventColor(event.rule_level)} text-white text-xs cursor-pointer transform hover:scale-105 
                       transition-all duration-300 whitespace-nowrap overflow-hidden`}
                     style={{
-                      left: `${(new Date(event.timestamp).getHours() - 12) * 100}px`,
+                      left: `${(new Date(event.system_time).getHours() - 12) * 100}px`,
                       minWidth: '150px'
                     }}
-                    onClick={() => window.open(event.url, '_blank')}
+                    onClick={() => window.open(`https://attack.mitre.org/`, '_blank')}
                   >
                     {event.title}
                   </div>
