@@ -30,12 +30,24 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     queryKey: ["timeline", entityType, entityId],
     queryFn: async ({ pageParam = 1 }) => {
       console.log("Fetching timeline data:", { entityType, entityId, pageParam });
-      const endpoint = entityType === "user" ? "user_impacted_timeline" : "computer_impacted_timeline";
-      const queryParam = entityType === "user" ? "user_impacted" : "computer_name";
       
-      const response = await fetch(
-        `/api/${endpoint}?${queryParam}=${entityId}&page=${pageParam}&per_page=${EVENTS_PER_PAGE}`
-      );
+      let endpoint;
+      let queryParams = new URLSearchParams();
+      
+      if (entityType === "computer") {
+        endpoint = "computer_impacted_logs";
+        queryParams.append("computer_name", entityId);
+      } else {
+        endpoint = "user_impacted_timeline";
+        queryParams.append("user_impacted", entityId);
+      }
+      
+      queryParams.append("page", pageParam.toString());
+      queryParams.append("per_page", EVENTS_PER_PAGE.toString());
+      
+      console.log(`Fetching from /api/${endpoint}?${queryParams.toString()}`);
+      
+      const response = await fetch(`/api/${endpoint}?${queryParams.toString()}`);
       
       if (!response.ok) {
         throw new Error(`Failed to fetch timeline data: ${response.statusText}`);
@@ -45,11 +57,13 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       console.log("Timeline data received:", data);
       
       return {
-        user_impacted_timeline: data.user_impacted_timeline || data.computer_impacted_timeline || [],
+        computer_impacted_logs: data.computer_impacted_logs || [],
+        user_impacted_timeline: data.user_impacted_timeline || [],
         pagination: {
           current_page: pageParam,
           per_page: EVENTS_PER_PAGE,
-          has_more: (data.user_impacted_timeline || data.computer_impacted_timeline || []).length === EVENTS_PER_PAGE
+          has_more: (data.computer_impacted_logs?.length === EVENTS_PER_PAGE || 
+                    data.user_impacted_timeline?.length === EVENTS_PER_PAGE)
         }
       };
     },
@@ -64,7 +78,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   });
 
   const allEvents = data?.pages.flatMap(
-    (page) => page.user_impacted_timeline
+    (page) => entityType === "computer" ? page.computer_impacted_logs : page.user_impacted_timeline
   ) || [];
 
   if (inView && !isFetchingNextPage && hasNextPage) {
