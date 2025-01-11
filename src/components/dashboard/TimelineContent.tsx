@@ -1,7 +1,7 @@
-import { Alert } from "../types";
-import TimelineEventTypes from "../TimelineEventTypes";
-import TimelineEventSummary from "../TimelineEventSummary";
-import { useEventSummary } from "../hooks/useEventSummary";
+import { Alert } from "./types";
+import TimelineEventTypes from "./TimelineEventTypes";
+import TimelineEventSummary from "./TimelineEventSummary";
+import { useEventSummary } from "./hooks/useEventSummary";
 
 interface TimelineContentProps {
   alerts: Alert[];
