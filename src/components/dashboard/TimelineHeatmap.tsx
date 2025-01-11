@@ -28,6 +28,7 @@ interface TimePoint {
 
 const TimelineHeatmap = ({ alerts }: TimelineHeatmapProps) => {
   const processData = useCallback((alerts: Alert[]): TimePoint[] => {
+    console.log('Processing alerts for heatmap:', alerts.length);
     const timePoints: { [key: string]: TimePoint } = {};
     
     alerts.forEach(alert => {
@@ -46,14 +47,40 @@ const TimelineHeatmap = ({ alerts }: TimelineHeatmapProps) => {
         };
       }
       
+      // Default to Low if rule_level is undefined
       const severity = alert.rule_level || 'Low';
-      timePoints[timeKey][severity as keyof Omit<TimePoint, 'timestamp' | 'total'>]++;
-      timePoints[timeKey].total++;
+      if (severity in timePoints[timeKey]) {
+        timePoints[timeKey][severity as keyof Omit<TimePoint, 'timestamp' | 'total'>]++;
+        timePoints[timeKey].total++;
+      }
     });
 
-    return Object.values(timePoints).sort((a, b) => 
+    // Sort by timestamp and ensure we have at least some data points
+    const sortedData = Object.values(timePoints).sort((a, b) => 
       new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
     );
+
+    // If no data points exist, create some empty ones for visual consistency
+    if (sortedData.length === 0) {
+      const now = new Date();
+      for (let i = 0; i < 24; i++) {
+        const hour = now.getHours() - i;
+        const date = new Date(now);
+        date.setHours(hour);
+        
+        sortedData.unshift({
+          timestamp: `${format(date, 'MMM dd')} ${hour}:00`,
+          Critical: 0,
+          High: 0,
+          Medium: 0,
+          Low: 0,
+          total: 0
+        });
+      }
+    }
+
+    console.log('Processed timeline data:', sortedData);
+    return sortedData;
   }, []);
 
   const data = useMemo(() => processData(alerts), [alerts, processData]);
@@ -64,18 +91,20 @@ const TimelineHeatmap = ({ alerts }: TimelineHeatmapProps) => {
         <div className="bg-[#1a1f2c] border border-blue-500/20 rounded-lg p-3 shadow-xl">
           <p className="text-blue-100 font-medium mb-2">{label}</p>
           {payload.map((entry: any, index: number) => (
-            <div key={index} className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <div 
-                  className="w-3 h-3 rounded-full" 
-                  style={{ backgroundColor: entry.fill }}
-                />
-                <span className="text-blue-200">{entry.name}:</span>
+            entry.value > 0 && (
+              <div key={index} className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: entry.fill }}
+                  />
+                  <span className="text-blue-200">{entry.name}:</span>
+                </div>
+                <span className="text-blue-100 font-mono">
+                  {entry.value} events
+                </span>
               </div>
-              <span className="text-blue-100 font-mono">
-                {entry.value} events
-              </span>
-            </div>
+            )
           ))}
           <div className="mt-2 pt-2 border-t border-blue-500/20">
             <div className="flex justify-between">
