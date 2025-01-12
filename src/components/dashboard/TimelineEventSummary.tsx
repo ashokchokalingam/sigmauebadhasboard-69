@@ -6,7 +6,7 @@ import { ScrollArea } from "../ui/scroll-area";
 interface TimelineEventSummaryProps {
   summary: EventSummary[];
   isLoading: boolean;
-  entityType: "user" | "computer" | "origin";
+  entityType: "userorigin" | "userimpacted" | "computersimpacted";
 }
 
 const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventSummaryProps) => {

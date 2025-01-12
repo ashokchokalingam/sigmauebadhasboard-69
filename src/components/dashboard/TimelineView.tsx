@@ -11,7 +11,7 @@ import TimelineVisualizer from "./TimelineComponents/TimelineVisualizer";
 const EVENTS_PER_PAGE = 500;
 
 interface TimelineViewProps {
-  entityType: "user" | "computer" | "origin";
+  entityType: "userorigin" | "userimpacted" | "computersimpacted";
   entityId: string;
   onClose: () => void;
   inSidebar?: boolean;
@@ -32,16 +32,16 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       console.log("Fetching timeline data:", { entityType, entityId, pageParam });
       
       // Determine the correct endpoint based on entityType
-      let endpoint = entityType === "computer" ? "computer_impacted_timeline" : 
-                    entityType === "origin" ? "user_origin_timeline" :
+      let endpoint = entityType === "computersimpacted" ? "computer_impacted_timeline" : 
+                    entityType === "userorigin" ? "user_origin_timeline" :
                     "user_impacted_timeline";
       
       let queryParams = new URLSearchParams();
       
       // Set the correct query parameter based on entityType
-      if (entityType === "computer") {
+      if (entityType === "computersimpacted") {
         queryParams.append("computer_name", entityId);
-      } else if (entityType === "origin") {
+      } else if (entityType === "userorigin") {
         queryParams.append("user_origin", entityId);
       } else {
         queryParams.append("user_impacted", entityId);
@@ -85,8 +85,8 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   });
 
   const allEvents = data?.pages.flatMap(
-    (page) => entityType === "computer" ? page.computer_impacted_timeline : 
-              entityType === "origin" ? page.user_origin_timeline :
+    (page) => entityType === "computersimpacted" ? page.computer_impacted_timeline : 
+              entityType === "userorigin" ? page.user_origin_timeline :
               page.user_impacted_timeline
   ) || [];
 

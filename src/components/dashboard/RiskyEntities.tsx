@@ -58,10 +58,9 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
   }
 
   if (selectedUser) {
-    // This is where the fix is needed - properly determine entityType
-    const entityType = type === "users-origin" ? "origin" :
-                      type === "users-impacted" ? "user" :
-                      "computer";
+    const entityType = type === "users-origin" ? "userorigin" :
+                      type === "users-impacted" ? "userimpacted" :
+                      "computersimpacted";
                       
     return (
       <TimelineView
