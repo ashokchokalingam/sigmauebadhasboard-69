@@ -1,4 +1,5 @@
 import { ColumnSelector } from "./ColumnSelector";
+import { Watch } from "lucide-react";
 
 interface AnomaliesTableHeaderSectionProps {
   visibleColumns: string[];
@@ -15,6 +16,10 @@ const AnomaliesTableHeaderSection = ({
 }: AnomaliesTableHeaderSectionProps) => {
   return (
     <div className="flex items-center justify-between p-4 border-b border-blue-500/10">
+      <div className="flex items-center gap-2">
+        <Watch className="w-5 h-5 text-blue-400" />
+        <h2 className="text-lg font-semibold text-blue-400">Chrono Analyzer</h2>
+      </div>
       <div className="flex items-center space-x-4">
         <ColumnSelector
           visibleColumns={visibleColumns}
