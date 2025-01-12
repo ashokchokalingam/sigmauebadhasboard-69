@@ -8,14 +8,13 @@ const INITIAL_BATCH_SIZE = 100;
 const TOTAL_BATCH_SIZE = 1000;
 
 const Index = () => {
-  const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "computer"; id: string } | null>(null);
+  const [selectedEntity, setSelectedEntity] = useState<{ type: "userorigin" | "userimpacted" | "computersimpacted"; id: string } | null>(null);
   const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
   const [currentTotalRecords, setCurrentTotalRecords] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const { toast } = useToast();
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
 
-  // First query: Get initial alerts
   const { isLoading: isLoadingInitial } = useQuery({
     queryKey: ['initial-alerts'],
     queryFn: async () => {
@@ -52,6 +51,10 @@ const Index = () => {
     setCurrentPage(prev => prev + 1);
   };
 
+  const handleEntitySelect = (entity: { type: "userorigin" | "userimpacted" | "computersimpacted"; id: string } | null) => {
+    setSelectedEntity(entity);
+  };
+
   if (isLoadingInitial && currentAlerts.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#1a1f2c]">
@@ -67,7 +70,7 @@ const Index = () => {
         allAlerts={allAlerts}
         totalRecords={currentTotalRecords}
         isLoading={isLoadingInitial || isLoadingRemaining}
-        onEntitySelect={setSelectedEntity}
+        onEntitySelect={handleEntitySelect}
         selectedEntity={selectedEntity}
         onLoadMore={handleLoadMore}
         hasMore={currentAlerts.length < TOTAL_BATCH_SIZE}
