@@ -19,10 +19,9 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     id: string;
   } | null>(null);
   const [visibleColumns, setVisibleColumns] = useState<string[]>([
-    "timestamp",
-    "userorigin",
-    "userimpacted",
-    "computersimpacted",
+    "system_time",
+    "users",
+    "computer_name",
     "title",
     "description",
   ]);
@@ -35,10 +34,9 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
 
   const handleSelectAll = () => {
     setVisibleColumns([
-      "timestamp",
-      "userorigin",
-      "userimpacted",
-      "computersimpacted",
+      "system_time",
+      "users",
+      "computer_name",
       "title",
       "description",
     ]);
@@ -71,7 +69,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-[#0A0A0F]">
       <AnomaliesTableHeaderSection
         visibleColumns={visibleColumns}
         onColumnToggle={handleColumnToggle}

@@ -30,8 +30,8 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     switch (key) {
       case "users":
         return (
-          <TableCell>
-            <div className="space-y-2">
+          <TableCell className="px-4 py-2">
+            <div className="space-y-1">
               <div>
                 <span className="text-xs text-blue-400">User Origin</span>
                 <p 
@@ -55,7 +55,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "title":
         return (
-          <TableCell>
+          <TableCell className="px-4 py-2">
             <div className="flex flex-col gap-1">
               <span className="text-blue-100 font-medium line-clamp-2">{alert.title || 'N/A'}</span>
             </div>
@@ -63,7 +63,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "description":
         return (
-          <TableCell>
+          <TableCell className="px-4 py-2">
             <span className="text-blue-300/70 text-sm line-clamp-2">
               {alert.description || 'N/A'}
             </span>
@@ -71,14 +71,14 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "system_time":
         return (
-          <TableCell className="min-w-[180px] font-mono text-blue-300 text-sm whitespace-nowrap">
+          <TableCell className="px-4 py-2 min-w-[180px] font-mono text-blue-300 text-sm whitespace-nowrap">
             {browserTime}
           </TableCell>
         );
       case "computer_name":
         return (
           <TableCell 
-            className="text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
+            className="px-4 py-2 text-blue-100 whitespace-nowrap cursor-pointer hover:text-blue-400 transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               onTimelineView("computer", alert.computer_name || '');
@@ -87,84 +87,9 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
             {alert.computer_name || 'N/A'}
           </TableCell>
         );
-      case "event_id":
-        return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
-            {alert.event_id || 'N/A'}
-          </TableCell>
-        );
-      case "provider_name":
-        return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
-            {alert.provider_name || 'N/A'}
-          </TableCell>
-        );
-      case "dbscan_cluster":
-        return (
-          <TableCell>
-            <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
-              {alert.dbscan_cluster || 'N/A'}
-            </span>
-          </TableCell>
-        );
-      case "ip_address":
-        return (
-          <TableCell className="text-blue-100 font-mono whitespace-nowrap">
-            {alert.ip_address || 'N/A'}
-          </TableCell>
-        );
-      case "ruleid":
-        return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
-            {alert.ruleid || 'N/A'}
-          </TableCell>
-        );
-      case "rule_level":
-        return (
-          <TableCell className="text-blue-100 whitespace-nowrap capitalize">
-            {alert.rule_level || 'N/A'}
-          </TableCell>
-        );
-      case "task":
-        return (
-          <TableCell className="text-blue-100 whitespace-nowrap capitalize">
-            {alert.task || 'N/A'}
-          </TableCell>
-        );
-      case "target_domain_name":
-        return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
-            {alert.target_domain_name || 'N/A'}
-          </TableCell>
-        );
-      case "tags":
-        return (
-          <TableCell>
-            <div className="flex flex-wrap gap-1">
-              {alert.tags.split(',').map((tag, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20"
-                >
-                  {tag.trim()}
-                </span>
-              ))}
-            </div>
-          </TableCell>
-        );
-      case "raw":
-        return (
-          <TableCell>
-            <div className="max-w-md overflow-hidden">
-              <pre className="text-xs text-blue-300/70 whitespace-pre-wrap break-all">
-                {typeof alert.raw === 'string' ? alert.raw : JSON.stringify(alert.raw, null, 2)}
-              </pre>
-            </div>
-          </TableCell>
-        );
       default:
         return (
-          <TableCell className="text-blue-100">
+          <TableCell className="px-4 py-2 text-blue-100">
             N/A
           </TableCell>
         );
@@ -173,11 +98,11 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
   
   return (
     <TableRow 
-      className={`hover:bg-blue-950/30 cursor-pointer ${isSelected ? 'bg-blue-950/20' : ''}`}
+      className={`hover:bg-blue-950/30 cursor-pointer border-b border-blue-500/10 ${isSelected ? 'bg-blue-950/20' : ''}`}
       onClick={onToggle}
     >
       {visibleColumns.map(columnKey => renderCell(columnKey))}
-      <TableCell>
+      <TableCell className="px-4 py-2">
         <button 
           className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
           onClick={(e) => {
