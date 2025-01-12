@@ -10,6 +10,8 @@ interface TimelineViewProps {
 }
 
 const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: TimelineViewProps) => {
+  const adjustedEntityType = entityType === "origin" ? "user" : entityType;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -28,7 +30,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         selectedEventType={null}
         onEventTypeSelect={() => {}}
         onToggleRaw={() => {}}
-        entityType={entityType}
+        entityType={adjustedEntityType}
         entityId={entityId}
         timeframe="24h"
       />
