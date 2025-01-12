@@ -14,8 +14,8 @@ interface DashboardLayoutProps {
   allAlerts: Alert[];
   totalRecords: number;
   isLoading: boolean;
-  onEntitySelect: (entity: { type: "user" | "computer"; id: string } | null) => void;
-  selectedEntity: { type: "user" | "computer"; id: string } | null;
+  onEntitySelect: (entity: { type: "userorigin" | "userimpacted" | "computersimpacted"; id: string } | null) => void;
+  selectedEntity: { type: "userorigin" | "userimpacted" | "computersimpacted"; id: string } | null;
   onLoadMore: () => void;
   hasMore: boolean;
 }
@@ -76,21 +76,21 @@ const DashboardLayout = ({
           <RiskyEntities 
             alerts={allAlerts} 
             type="users-origin"
-            onEntitySelect={(id) => onEntitySelect({ type: "user", id })}
+            onEntitySelect={(id) => onEntitySelect({ type: "userorigin", id })}
           />
         </div>
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
           <RiskyEntities 
             alerts={allAlerts} 
             type="users-impacted"
-            onEntitySelect={(id) => onEntitySelect({ type: "user", id })}
+            onEntitySelect={(id) => onEntitySelect({ type: "userimpacted", id })}
           />
         </div>
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
           <RiskyEntities 
             alerts={allAlerts} 
             type="computers"
-            onEntitySelect={(id) => onEntitySelect({ type: "computer", id })}
+            onEntitySelect={(id) => onEntitySelect({ type: "computersimpacted", id })}
           />
         </div>
       </div>

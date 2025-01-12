@@ -11,7 +11,7 @@ import { User, Monitor } from "lucide-react";
 interface TimelineEventCardProps {
   event: Alert;
   isLast?: boolean;
-  entityType: "user" | "computer" | "origin";
+  entityType: "userorigin" | "userimpacted" | "computersimpacted";
 }
 
 interface DetailedLogResponse {
@@ -34,8 +34,8 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
     queryFn: async () => {
       if (!isExpanded) return null;
       
-      const identifier = entityType === "computer" ? event.computer_name : 
-                        entityType === "origin" ? event.user_origin :
+      const identifier = entityType === "computersimpacted" ? event.computer_name : 
+                        entityType === "userorigin" ? event.user_origin :
                         event.user_impacted;
       
       if (!identifier) {
@@ -44,14 +44,14 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
       }
 
       try {
-        const baseUrl = entityType === "computer" ? '/api/computer_impacted_logs' :
-                       entityType === "origin" ? '/api/user_origin_logs' :
+        const baseUrl = entityType === "computersimpacted" ? '/api/computer_impacted_logs' :
+                       entityType === "userorigin" ? '/api/user_origin_logs' :
                        '/api/user_impacted_logs';
         const params = new URLSearchParams();
         
-        if (entityType === "computer") {
+        if (entityType === "computersimpacted") {
           params.append('computer_name', identifier);
-        } else if (entityType === "origin") {
+        } else if (entityType === "userorigin") {
           params.append('user_origin', identifier);
         } else {
           params.append('user_impacted', identifier);
@@ -107,14 +107,14 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
           />
 
           <div className="flex items-center gap-2 mt-2 mb-3">
-            {entityType === "computer" ? (
+            {entityType === "computersimpacted" ? (
               <>
                 <Monitor className="h-4 w-4 text-blue-400" />
                 <span className="text-sm text-blue-300">
                   Computer: <span className="font-mono text-blue-400">{event.computer_name}</span>
                 </span>
               </>
-            ) : entityType === "origin" ? (
+            ) : entityType === "userorigin" ? (
               <>
                 <User className="h-4 w-4 text-blue-400" />
                 <span className="text-sm text-blue-300">
@@ -140,12 +140,12 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
 
           {isExpanded && (
             <TimelineDetailedLogs
-              logs={entityType === "computer" ? detailedLogs?.computer_impacted_logs || [] :
-                   entityType === "origin" ? detailedLogs?.user_origin_logs || [] :
+              logs={entityType === "computersimpacted" ? detailedLogs?.computer_impacted_logs || [] :
+                   entityType === "userorigin" ? detailedLogs?.user_origin_logs || [] :
                    detailedLogs?.user_impacted_logs || []}
               isLoading={isLoading}
               totalRecords={detailedLogs?.pagination?.total_records || 0}
-              entityType={entityType === "origin" ? "user" : entityType}
+              entityType={entityType === "userorigin" ? "user" : entityType}
             />
           )}
         </div>

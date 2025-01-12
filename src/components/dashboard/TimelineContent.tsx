@@ -9,7 +9,7 @@ interface TimelineContentProps {
   selectedEventType: string | null;
   onEventTypeSelect: (type: string | null) => void;
   onToggleRaw: (alertId: string, event: React.MouseEvent) => void;
-  entityType: "user" | "computer" | "origin";
+  entityType: "userorigin" | "userimpacted" | "computersimpacted";
   entityId: string;
   timeframe: string;
 }
