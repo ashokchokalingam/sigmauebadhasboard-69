@@ -21,8 +21,13 @@ const TimelineContent = ({
   selectedEventType,
   onEventTypeSelect,
 }: TimelineContentProps) => {
+  const mappedEntityType = 
+    entityType === "userorigin" ? "origin" :
+    entityType === "userimpacted" ? "user" :
+    "computer";
+
   const { data: summaryData, isLoading: isLoadingSummary } = useEventSummary(
-    entityType,
+    mappedEntityType,
     entityId,
     timeframe
   );
