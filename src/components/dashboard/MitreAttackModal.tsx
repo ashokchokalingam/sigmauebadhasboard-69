@@ -1,7 +1,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Alert } from "./types";
-import { ZoomIn, ZoomOut, ExternalLink } from "lucide-react";
+import { ZoomIn, ZoomOut } from "lucide-react";
 
 interface MitreAttackModalProps {
   open: boolean;
@@ -62,11 +62,6 @@ const MitreAttackModal = ({ open, onOpenChange, events }: MitreAttackModalProps)
     }
   };
 
-  const openNavigator = () => {
-    const navigatorUrl = `/navigator?events=${encodeURIComponent(JSON.stringify(events))}`;
-    window.open(navigatorUrl, '_blank');
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[100vw] w-screen h-screen p-0 bg-gradient-to-br from-gray-900 to-gray-950 border-none">
@@ -75,29 +70,19 @@ const MitreAttackModal = ({ open, onOpenChange, events }: MitreAttackModalProps)
             <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
               MITRE ATT&CK Timeline
             </h2>
-            <div className="flex items-center gap-4">
+            <div className="flex gap-2">
               <button
-                onClick={openNavigator}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 text-purple-300 rounded-lg
-                  hover:bg-purple-500/30 transition-colors duration-300 border border-purple-500/30"
+                onClick={() => setZoomLevel(prev => Math.max(0.5, prev - 0.1))}
+                className="p-2 hover:bg-white/5 rounded-lg transition-colors"
               >
-                Open Navigator
-                <ExternalLink className="h-4 w-4" />
+                <ZoomOut className="w-5 h-5 text-gray-400" />
               </button>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setZoomLevel(prev => Math.max(0.5, prev - 0.1))}
-                  className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-                >
-                  <ZoomOut className="w-5 h-5 text-gray-400" />
-                </button>
-                <button
-                  onClick={() => setZoomLevel(prev => Math.min(2, prev + 0.1))}
-                  className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-                >
-                  <ZoomIn className="w-5 h-5 text-gray-400" />
-                </button>
-              </div>
+              <button
+                onClick={() => setZoomLevel(prev => Math.min(2, prev + 0.1))}
+                className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+              >
+                <ZoomIn className="w-5 h-5 text-gray-400" />
+              </button>
             </div>
           </div>
 
