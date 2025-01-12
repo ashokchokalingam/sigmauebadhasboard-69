@@ -11,6 +11,7 @@ interface TimelineEventCardProps {
   isLast?: boolean;
   onToggleRaw?: (id: string, event: React.MouseEvent) => void;
   showRaw?: boolean;
+  entityType: "user" | "computer";
 }
 
 const TimelineEventCard = ({
@@ -18,6 +19,7 @@ const TimelineEventCard = ({
   isLast = false,
   onToggleRaw,
   showRaw = false,
+  entityType,
 }: TimelineEventCardProps) => {
   const formatDate = (dateString: string) => {
     try {
