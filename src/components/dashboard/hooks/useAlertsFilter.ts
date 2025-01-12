@@ -19,7 +19,7 @@ export const useAlertsFilter = (alerts: Alert[], visibleColumns: string[]) => {
   useEffect(() => {
     const filtered = filterAlerts();
     setFilteredAlerts(filtered);
-  }, [filters, alerts]);
+  }, [filters, alerts, visibleColumns]);
 
   const filterAlerts = () => {
     return alerts.filter(alert => {

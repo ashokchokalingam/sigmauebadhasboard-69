@@ -27,7 +27,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     "description",
   ]);
 
-  const { filters, filteredAlerts, onFilterChange } = useAlertsFilter(alerts);
+  const { filters, filteredAlerts, onFilterChange } = useAlertsFilter(alerts, visibleColumns);
 
   const handleColumnToggle = (columns: string[]) => {
     setVisibleColumns(columns);
