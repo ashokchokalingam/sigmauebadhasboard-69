@@ -37,6 +37,15 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
     });
   };
 
+  const handleSelectAll = () => {
+    const allColumnKeys = defaultColumns.map(col => col.key);
+    setVisibleColumns(allColumnKeys);
+  };
+
+  const handleDeselectAll = () => {
+    setVisibleColumns(['system_time']);
+  };
+
   const handleTimelineView = (type: "user" | "computer", id: string) => {
     console.log("Timeline view requested for:", type, id);
   };
@@ -49,6 +58,8 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
         <AnomaliesTableHeaderSection
           visibleColumns={visibleColumns}
           onColumnToggle={handleColumnToggle}
+          onSelectAll={handleSelectAll}
+          onDeselectAll={handleDeselectAll}
         />
         <CardContent>
           {selectedAlert ? (
