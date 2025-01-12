@@ -29,47 +29,55 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { data: detailedLogs, isLoading } = useQuery({
-    queryKey: ['detailed-logs', entityType, event.computer_name || event.user_impacted, event.title, isExpanded],
+    queryKey: ['detailed-logs', entityType, event.computer_name || event.user_impacted || event.user_id, event.title, isExpanded],
     queryFn: async () => {
       if (!isExpanded) return null;
       
-      const identifier = entityType === "computer" ? event.computer_name : event.user_impacted;
-      
+      let identifier;
+      let baseUrl;
+      const params = new URLSearchParams();
+
+      switch (entityType) {
+        case "computer":
+          identifier = event.computer_name;
+          baseUrl = '/api/computer_impacted_logs';
+          params.append('computer_name', identifier || '');
+          break;
+        case "user":
+          identifier = event.user_impacted;
+          baseUrl = '/api/user_impacted_logs';
+          params.append('user_impacted', identifier || '');
+          break;
+        case "origin":
+          identifier = event.user_id;
+          baseUrl = '/api/user_origin_timeline';
+          params.append('user_origin', identifier || '');
+          break;
+        default:
+          throw new Error('Invalid entity type');
+      }
+
       if (!identifier) {
         console.error('No identifier provided for detailed logs query');
         return null;
       }
 
-      try {
-        const baseUrl = entityType === "computer" ? '/api/computer_impacted_logs' : '/api/user_impacted_logs';
-        const params = new URLSearchParams();
-        
-        if (entityType === "computer") {
-          params.append('computer_name', identifier);
-        } else {
-          params.append('user_impacted', identifier);
-        }
-        
-        params.append('title', event.title);
-        params.append('page', '1');
-        params.append('per_page', '500');
+      params.append('title', event.title);
+      params.append('page', '1');
+      params.append('per_page', '500');
 
-        console.log('Fetching logs with params:', baseUrl + '?' + params.toString());
+      console.log('Fetching logs with params:', baseUrl + '?' + params.toString());
 
-        const response = await fetch(`${baseUrl}?${params.toString()}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch logs');
-        }
-        
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error('Error fetching detailed logs:', error);
-        return null;
+      const response = await fetch(`${baseUrl}?${params.toString()}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch logs');
       }
+      
+      const data = await response.json();
+      return data;
     },
-    enabled: isExpanded && !!(event.computer_name || event.user_impacted)
+    enabled: isExpanded && !!(event.computer_name || event.user_impacted || event.user_id)
   });
 
   const handleCardClick = (e: React.MouseEvent) => {
