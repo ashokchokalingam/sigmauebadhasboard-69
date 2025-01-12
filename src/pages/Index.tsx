@@ -15,33 +15,60 @@ const Index = () => {
   const { toast } = useToast();
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
 
+  // Initial alerts query
   const { isLoading: isLoadingInitial } = useQuery({
     queryKey: ['initial-alerts'],
     queryFn: async () => {
-      const response = await fetch(`/api/alerts?page=1&per_page=${INITIAL_BATCH_SIZE}`);
-      if (!response.ok) throw new Error('Failed to fetch initial alerts');
-      const data = await response.json();
-      setCurrentAlerts(data.alerts);
-      setAllAlerts(data.alerts);
-      setCurrentTotalRecords(data.total_count);
-      return data;
+      try {
+        const response = await fetch(`/api/alerts?page=1&per_page=${INITIAL_BATCH_SIZE}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch initial alerts');
+        }
+        const data = await response.json();
+        console.log('Initial alerts data:', data);
+        setCurrentAlerts(data.alerts);
+        setAllAlerts(data.alerts);
+        setCurrentTotalRecords(data.total_count);
+        return data;
+      } catch (error) {
+        console.error('Error fetching initial alerts:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load dashboard data. Please try again.",
+          variant: "destructive",
+        });
+        return null;
+      }
     },
     refetchInterval: 5 * 60 * 1000 // Refetch every 5 minutes
   });
 
-  // Second query: Get remaining alerts
+  // Remaining alerts query
   const { isLoading: isLoadingRemaining } = useQuery({
     queryKey: ['remaining-alerts', currentPage],
     queryFn: async () => {
       if (currentAlerts.length >= TOTAL_BATCH_SIZE) return null;
       
-      const response = await fetch(`/api/alerts?page=2&per_page=${TOTAL_BATCH_SIZE - INITIAL_BATCH_SIZE}`);
-      if (!response.ok) throw new Error('Failed to fetch remaining alerts');
-      const data = await response.json();
-      
-      setCurrentAlerts(prev => [...prev, ...data.alerts]);
-      setAllAlerts(prev => [...prev, ...data.alerts]);
-      return data;
+      try {
+        const response = await fetch(`/api/alerts?page=2&per_page=${TOTAL_BATCH_SIZE - INITIAL_BATCH_SIZE}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch remaining alerts');
+        }
+        const data = await response.json();
+        console.log('Remaining alerts data:', data);
+        
+        setCurrentAlerts(prev => [...prev, ...data.alerts]);
+        setAllAlerts(prev => [...prev, ...data.alerts]);
+        return data;
+      } catch (error) {
+        console.error('Error fetching remaining alerts:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load additional data. Please try again.",
+          variant: "destructive",
+        });
+        return null;
+      }
     },
     enabled: currentAlerts.length > 0 && currentAlerts.length < TOTAL_BATCH_SIZE,
     refetchInterval: 5 * 60 * 1000 // Refetch every 5 minutes
