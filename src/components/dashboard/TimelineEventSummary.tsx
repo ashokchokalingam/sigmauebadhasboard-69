@@ -20,8 +20,6 @@ const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventS
     );
   }
 
-  const adjustedEntityType = entityType === "origin" ? "user" : entityType;
-
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-lg font-semibold text-blue-100 mb-6">
@@ -36,7 +34,7 @@ const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventS
               key={index} 
               event={event} 
               isLast={index === summary.length - 1}
-              entityType={adjustedEntityType}
+              entityType={entityType}
             />
           ))}
           
