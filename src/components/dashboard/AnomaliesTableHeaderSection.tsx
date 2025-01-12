@@ -4,7 +4,7 @@ import ColumnSelector from "./ColumnSelector";
 
 interface AnomaliesTableHeaderSectionProps {
   visibleColumns: string[];
-  onColumnToggle: (column: string) => void;
+  onColumnToggle: (columns: string[]) => void;
   onSelectAll: () => void;
   onDeselectAll: () => void;
 }
