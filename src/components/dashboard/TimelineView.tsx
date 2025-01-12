@@ -68,13 +68,13 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       return {
         computer_impacted_timeline: data.computer_impacted_timeline || [],
         user_impacted_timeline: data.user_impacted_timeline || [],
-        user_origin_timeline: data.user_origin_timeline || [],
+        user_origin_timeline: data.event_summary || [], // Updated to match the API response
         pagination: {
           current_page: pageParam,
           per_page: EVENTS_PER_PAGE,
           has_more: (data.computer_impacted_timeline?.length === EVENTS_PER_PAGE || 
                     data.user_impacted_timeline?.length === EVENTS_PER_PAGE ||
-                    data.user_origin_timeline?.length === EVENTS_PER_PAGE)
+                    data.event_summary?.length === EVENTS_PER_PAGE)
         }
       };
     },
