@@ -16,6 +16,7 @@ interface RiskyEntitiesProps {
 
 const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [selectedOriginUser, setSelectedOriginUser] = useState<string | null>(null);
 
   const {
     originUsers,
@@ -38,6 +39,8 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
   const handleEntityClick = (entityId: string) => {
     if (type === "users-impacted") {
       setSelectedUser(entityId);
+    } else if (type === "users-origin") {
+      setSelectedOriginUser(entityId);
     }
     onEntitySelect(entityId);
   };
@@ -63,6 +66,17 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
         entityType="user"
         entityId={selectedUser}
         onClose={() => setSelectedUser(null)}
+        inSidebar={true}
+      />
+    );
+  }
+
+  if (selectedOriginUser && type === "users-origin") {
+    return (
+      <TimelineView
+        entityType="origin"
+        entityId={selectedOriginUser}
+        onClose={() => setSelectedOriginUser(null)}
         inSidebar={true}
       />
     );
