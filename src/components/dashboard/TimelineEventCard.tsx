@@ -84,6 +84,11 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
     setIsExpanded((prev) => !prev);
   };
 
+  const mappedEntityType = 
+    entityType === "userorigin" ? "user" :
+    entityType === "userimpacted" ? "user" :
+    "computer";
+
   return (
     <div className="group relative pl-4 w-full">
       <div className="absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2 border-green-400 bg-background" />
@@ -145,7 +150,7 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
                    detailedLogs?.user_impacted_logs || []}
               isLoading={isLoading}
               totalRecords={detailedLogs?.pagination?.total_records || 0}
-              entityType={entityType}
+              entityType={mappedEntityType}
             />
           )}
         </div>
