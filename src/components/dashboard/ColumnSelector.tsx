@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Filter } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 import { allColumns } from "./TableConfig";
-import ColumnList from "./ColumnList";
 import ColumnSelectorActions from "./ColumnSelectorActions";
 
 export interface ColumnSelectorProps {
@@ -39,14 +39,9 @@ export const ColumnSelector = ({
     onDeselectAll();
   };
 
-  const handleColumnToggle = (columnKey: string, checked: boolean, e?: React.MouseEvent) => {
-    e?.preventDefault();
-    e?.stopPropagation();
-    
+  const handleColumnToggle = (columnKey: string) => {
     let newColumns: string[];
-    if (checked) {
-      newColumns = [...pendingColumns, columnKey];
-    } else {
+    if (pendingColumns.includes(columnKey)) {
       if (pendingColumns.length === 1 && pendingColumns[0] === columnKey) {
         toast({
           title: "Cannot hide all columns",
@@ -56,6 +51,8 @@ export const ColumnSelector = ({
         return;
       }
       newColumns = pendingColumns.filter(key => key !== columnKey);
+    } else {
+      newColumns = [...pendingColumns, columnKey];
     }
     setPendingColumns(newColumns);
     onColumnToggle(newColumns);
@@ -74,21 +71,34 @@ export const ColumnSelector = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-[200px] p-0 bg-slate-900 border border-blue-500/20" 
+        className="w-[300px] p-4 bg-slate-900 border border-blue-500/20" 
         align="start"
         side="bottom"
       >
-        <div className="border-b border-blue-500/10 p-2">
+        <div className="border-b border-blue-500/10 pb-2 mb-2">
           <ColumnSelectorActions
             onSelectAll={handleSelectAll}
             onClearAll={handleClearAll}
           />
         </div>
-        <ColumnList
-          columns={allColumns}
-          visibleColumns={pendingColumns}
-          onColumnToggle={handleColumnToggle}
-        />
+        <div className="space-y-2 max-h-[300px] overflow-y-auto">
+          {allColumns.map((column) => (
+            <div key={column.key} className="flex items-center space-x-2">
+              <Checkbox
+                id={column.key}
+                checked={pendingColumns.includes(column.key)}
+                onCheckedChange={() => handleColumnToggle(column.key)}
+                className="border-blue-500/20"
+              />
+              <label
+                htmlFor={column.key}
+                className="text-sm text-blue-300 cursor-pointer"
+              >
+                {column.label}
+              </label>
+            </div>
+          ))}
+        </div>
       </PopoverContent>
     </Popover>
   );
