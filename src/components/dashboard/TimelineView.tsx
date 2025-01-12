@@ -147,6 +147,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
                 <InfiniteScrollLoader
                   ref={ref}
                   hasMore={!!hasNextPage}
+                  onLoadMore={() => fetchNextPage()}
                 />
               </div>
             )}

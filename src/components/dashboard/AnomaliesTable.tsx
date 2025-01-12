@@ -58,6 +58,14 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
         entityType={timelineView.type}
         entityId={timelineView.id}
         onClose={() => setTimelineView(null)}
+        visibleColumns={visibleColumns}
+        alerts={alerts}
+        onFilterChange={onFilterChange}
+        filters={filters}
+        selectedAlert={selectedAlert}
+        onAlertSelect={setSelectedAlert}
+        onTimelineView={handleTimelineView}
+        filteredAlerts={filteredAlerts}
       />
     );
   }
