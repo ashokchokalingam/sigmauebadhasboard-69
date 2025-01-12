@@ -11,7 +11,7 @@ import { User, Monitor } from "lucide-react";
 interface TimelineEventCardProps {
   event: Alert;
   isLast?: boolean;
-  entityType: "user" | "computer";
+  entityType: "user" | "computer" | "origin";
 }
 
 interface DetailedLogResponse {
@@ -23,17 +23,20 @@ interface DetailedLogResponse {
   };
   user_impacted_logs?: Alert[];
   computer_impacted_logs?: Alert[];
+  user_origin_logs?: Alert[];
 }
 
 const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { data: detailedLogs, isLoading } = useQuery({
-    queryKey: ['detailed-logs', entityType, event.computer_name || event.user_impacted, event.title, isExpanded],
+    queryKey: ['detailed-logs', entityType, event.computer_name || event.user_impacted || event.user_origin, event.title, isExpanded],
     queryFn: async () => {
       if (!isExpanded) return null;
       
-      const identifier = entityType === "computer" ? event.computer_name : event.user_impacted;
+      const identifier = entityType === "computer" ? event.computer_name : 
+                        entityType === "origin" ? event.user_origin :
+                        event.user_impacted;
       
       if (!identifier) {
         console.error('No identifier provided for detailed logs query');
@@ -41,11 +44,15 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
       }
 
       try {
-        const baseUrl = entityType === "computer" ? '/api/computer_impacted_logs' : '/api/user_impacted_logs';
+        const baseUrl = entityType === "computer" ? '/api/computer_impacted_logs' :
+                       entityType === "origin" ? '/api/user_origin_logs' :
+                       '/api/user_impacted_logs';
         const params = new URLSearchParams();
         
         if (entityType === "computer") {
           params.append('computer_name', identifier);
+        } else if (entityType === "origin") {
+          params.append('user_origin', identifier);
         } else {
           params.append('user_impacted', identifier);
         }
@@ -69,7 +76,7 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
         return null;
       }
     },
-    enabled: isExpanded && !!(event.computer_name || event.user_impacted)
+    enabled: isExpanded && !!(event.computer_name || event.user_impacted || event.user_origin)
   });
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -107,6 +114,13 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
                   Computer: <span className="font-mono text-blue-400">{event.computer_name}</span>
                 </span>
               </>
+            ) : entityType === "origin" ? (
+              <>
+                <User className="h-4 w-4 text-blue-400" />
+                <span className="text-sm text-blue-300">
+                  User Origin: <span className="font-mono text-blue-400">{event.user_origin}</span>
+                </span>
+              </>
             ) : (
               <>
                 <User className="h-4 w-4 text-blue-400" />
@@ -126,10 +140,12 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
 
           {isExpanded && (
             <TimelineDetailedLogs
-              logs={entityType === "computer" ? detailedLogs?.computer_impacted_logs || [] : detailedLogs?.user_impacted_logs || []}
+              logs={entityType === "computer" ? detailedLogs?.computer_impacted_logs || [] :
+                   entityType === "origin" ? detailedLogs?.user_origin_logs || [] :
+                   detailedLogs?.user_impacted_logs || []}
               isLoading={isLoading}
               totalRecords={detailedLogs?.pagination?.total_records || 0}
-              entityType={entityType}
+              entityType={entityType === "origin" ? "user" : entityType}
             />
           )}
         </div>

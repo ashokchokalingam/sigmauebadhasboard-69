@@ -11,7 +11,7 @@ import TimelineVisualizer from "./TimelineComponents/TimelineVisualizer";
 const EVENTS_PER_PAGE = 500;
 
 interface TimelineViewProps {
-  entityType: "user" | "computer";
+  entityType: "user" | "computer" | "origin";
   entityId: string;
   onClose: () => void;
   inSidebar?: boolean;
@@ -31,11 +31,15 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     queryFn: async ({ pageParam = 1 }) => {
       console.log("Fetching timeline data:", { entityType, entityId, pageParam });
       
-      let endpoint = entityType === "computer" ? "computer_impacted_timeline" : "user_impacted_timeline";
+      let endpoint = entityType === "computer" ? "computer_impacted_timeline" : 
+                    entityType === "origin" ? "user_origin_timeline" :
+                    "user_impacted_timeline";
       let queryParams = new URLSearchParams();
       
       if (entityType === "computer") {
         queryParams.append("computer_name", entityId);
+      } else if (entityType === "origin") {
+        queryParams.append("user_origin", entityId);
       } else {
         queryParams.append("user_impacted", entityId);
       }
@@ -57,11 +61,13 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       return {
         computer_impacted_timeline: data.computer_impacted_timeline || [],
         user_impacted_timeline: data.user_impacted_timeline || [],
+        user_origin_timeline: data.user_origin_timeline || [],
         pagination: {
           current_page: pageParam,
           per_page: EVENTS_PER_PAGE,
           has_more: (data.computer_impacted_timeline?.length === EVENTS_PER_PAGE || 
-                    data.user_impacted_timeline?.length === EVENTS_PER_PAGE)
+                    data.user_impacted_timeline?.length === EVENTS_PER_PAGE ||
+                    data.user_origin_timeline?.length === EVENTS_PER_PAGE)
         }
       };
     },
@@ -76,7 +82,9 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   });
 
   const allEvents = data?.pages.flatMap(
-    (page) => entityType === "computer" ? page.computer_impacted_timeline : page.user_impacted_timeline
+    (page) => entityType === "computer" ? page.computer_impacted_timeline : 
+              entityType === "origin" ? page.user_origin_timeline :
+              page.user_impacted_timeline
   ) || [];
 
   if (inView && !isFetchingNextPage && hasNextPage) {
