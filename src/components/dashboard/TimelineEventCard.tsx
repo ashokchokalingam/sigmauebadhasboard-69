@@ -1,139 +1,104 @@
-import { useQuery } from "@tanstack/react-query";
-import { Alert } from "./types";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import TimelineMitreSection from "./TimelineMitreSection";
-import TimelineEventHeader from "./TimelineEventHeader";
-import TimelineEventTimestamps from "./TimelineEventTimestamps";
-import TimelineDetailedLogs from "./TimelineDetailedLogs";
-import { User, Monitor } from "lucide-react";
+import { format } from "date-fns";
+import { Shield, AlertTriangle } from "lucide-react";
+import { Card } from "../ui/card";
 
 interface TimelineEventCardProps {
-  event: Alert;
-  isLast?: boolean;
-  entityType: "user" | "computer";
-}
-
-interface DetailedLogResponse {
-  pagination: {
-    current_page: number;
-    per_page: number;
-    total_pages: number;
-    total_records: number;
+  event: {
+    title: string;
+    tags?: string;
+    description?: string;
+    rule_level?: string;
+    first_time_seen?: string;
+    last_time_seen?: string;
+    total_events?: number;
   };
-  user_impacted_logs?: Alert[];
-  computer_impacted_logs?: Alert[];
+  isLast: boolean;
+  entityType: "user" | "computer" | "origin";
 }
 
 const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "N/A";
+    try {
+      return format(new Date(dateString), "MMM d, yyyy HH:mm:ss");
+    } catch (e) {
+      return dateString;
+    }
+  };
 
-  const { data: detailedLogs, isLoading } = useQuery({
-    queryKey: ['detailed-logs', entityType, event.computer_name || event.user_impacted, event.title, isExpanded],
-    queryFn: async () => {
-      if (!isExpanded) return null;
-      
-      const identifier = entityType === "computer" ? event.computer_name : event.user_impacted;
-      
-      if (!identifier) {
-        console.error('No identifier provided for detailed logs query');
-        return null;
-      }
-
-      try {
-        const baseUrl = entityType === "computer" ? '/api/computer_impacted_logs' : '/api/user_impacted_logs';
-        const params = new URLSearchParams();
-        
-        if (entityType === "computer") {
-          params.append('computer_name', identifier);
-        } else {
-          params.append('user_impacted', identifier);
-        }
-        
-        params.append('title', event.title);
-        params.append('page', '1');
-        params.append('per_page', '500');
-
-        console.log('Fetching logs with params:', baseUrl + '?' + params.toString());
-
-        const response = await fetch(`${baseUrl}?${params.toString()}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch logs');
-        }
-        
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error('Error fetching detailed logs:', error);
-        return null;
-      }
-    },
-    enabled: isExpanded && !!(event.computer_name || event.user_impacted)
-  });
-
-  const handleCardClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsExpanded((prev) => !prev);
+  const getSeverityColor = (level?: string) => {
+    switch (level?.toLowerCase()) {
+      case 'critical': return 'text-red-500';
+      case 'high': return 'text-orange-500';
+      case 'medium': return 'text-yellow-500';
+      case 'low': return 'text-blue-500';
+      default: return 'text-gray-500';
+    }
   };
 
   return (
-    <div className="group relative pl-4 w-full">
-      <div className="absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2 border-green-400 bg-background" />
+    <div className="relative">
       {!isLast && (
-        <div className="absolute left-0 top-8 -ml-[1px] h-full w-[2px] bg-gradient-to-b from-green-400/50 to-transparent" />
+        <div className="absolute left-5 top-12 bottom-0 w-0.5 bg-blue-500/20" />
       )}
+      
+      <Card className="relative z-10 bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
+        <div className="p-6">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-blue-400" />
+              </div>
+            </div>
+            
+            <div className="flex-1 space-y-4">
+              <div>
+                <h3 className="text-lg font-semibold text-blue-100">{event.title}</h3>
+                {event.description && (
+                  <p className="mt-2 text-blue-300/80">{event.description}</p>
+                )}
+              </div>
 
-      <div className="relative ml-4 mb-6 w-full">
-        <div 
-          onClick={handleCardClick}
-          className={cn(
-            "p-6 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer w-full",
-            isExpanded && "border-blue-500/30"
-          )}
-        >
-          <TimelineEventHeader
-            ruleLevel={event.rule_level}
-            totalRecords={event.total_events || 0}
-            title={event.title}
-            description={event.description}
-          />
+              {event.tags && (
+                <div className="flex flex-wrap gap-2">
+                  {event.tags.split(',').map((tag, index) => (
+                    <span
+                      key={index}
+                      className="px-2 py-1 text-xs rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20"
+                    >
+                      {tag.trim()}
+                    </span>
+                  ))}
+                </div>
+              )}
 
-          <div className="flex items-center gap-2 mt-2 mb-3">
-            {entityType === "computer" ? (
-              <>
-                <Monitor className="h-4 w-4 text-blue-400" />
-                <span className="text-sm text-blue-300">
-                  Computer: <span className="font-mono text-blue-400">{event.computer_name}</span>
-                </span>
-              </>
-            ) : (
-              <>
-                <User className="h-4 w-4 text-blue-400" />
-                <span className="text-sm text-blue-300">
-                  User Impacted: <span className="font-mono text-blue-400">{event.user_impacted}</span>
-                </span>
-              </>
-            )}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-sm text-blue-400/60">First Seen</p>
+                  <p className="text-sm text-blue-200">{formatDate(event.first_time_seen)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-blue-400/60">Last Seen</p>
+                  <p className="text-sm text-blue-200">{formatDate(event.last_time_seen)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-blue-400/60">Total Events</p>
+                  <p className="text-sm text-blue-200">{event.total_events || 0}</p>
+                </div>
+              </div>
+
+              {event.rule_level && (
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className={`h-4 w-4 ${getSeverityColor(event.rule_level)}`} />
+                  <span className={`text-sm font-medium ${getSeverityColor(event.rule_level)}`}>
+                    {event.rule_level}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-
-          <TimelineEventTimestamps
-            firstTimeSeen={event.first_time_seen || ''}
-            lastTimeSeen={event.last_time_seen || ''}
-          />
-
-          <TimelineMitreSection alert={event} />
-
-          {isExpanded && (
-            <TimelineDetailedLogs
-              logs={entityType === "computer" ? detailedLogs?.computer_impacted_logs || [] : detailedLogs?.user_impacted_logs || []}
-              isLoading={isLoading}
-              totalRecords={detailedLogs?.pagination?.total_records || 0}
-              entityType={entityType}
-            />
-          )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

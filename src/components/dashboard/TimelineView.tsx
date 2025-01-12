@@ -8,10 +8,8 @@ import { ScrollArea } from "../ui/scroll-area";
 import TimelineSummaryStats from "./TimelineComponents/TimelineSummaryStats";
 import TimelineVisualizer from "./TimelineComponents/TimelineVisualizer";
 
-const EVENTS_PER_PAGE = 500;
-
 interface TimelineViewProps {
-  entityType: "user" | "computer";
+  entityType: "user" | "computer" | "origin";
   entityId: string;
   onClose: () => void;
   inSidebar?: boolean;
@@ -31,17 +29,21 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     queryFn: async ({ pageParam = 1 }) => {
       console.log("Fetching timeline data:", { entityType, entityId, pageParam });
       
-      let endpoint = entityType === "computer" ? "computer_impacted_timeline" : "user_impacted_timeline";
+      let endpoint = "";
       let queryParams = new URLSearchParams();
       
-      if (entityType === "computer") {
+      if (entityType === "origin") {
+        endpoint = "user_origin_timeline";
+        queryParams.append("user_origin", entityId);
+      } else if (entityType === "computer") {
+        endpoint = "computer_impacted_timeline";
         queryParams.append("computer_name", entityId);
       } else {
+        endpoint = "user_impacted_timeline";
         queryParams.append("user_impacted", entityId);
       }
       
       queryParams.append("page", pageParam.toString());
-      queryParams.append("per_page", EVENTS_PER_PAGE.toString());
       
       console.log(`Fetching from /api/${endpoint}?${queryParams.toString()}`);
       
@@ -55,13 +57,10 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       console.log("Timeline data received:", data);
       
       return {
-        computer_impacted_timeline: data.computer_impacted_timeline || [],
-        user_impacted_timeline: data.user_impacted_timeline || [],
+        events: data.user_origin_timeline || data.computer_impacted_timeline || data.user_impacted_timeline || [],
         pagination: {
           current_page: pageParam,
-          per_page: EVENTS_PER_PAGE,
-          has_more: (data.computer_impacted_timeline?.length === EVENTS_PER_PAGE || 
-                    data.user_impacted_timeline?.length === EVENTS_PER_PAGE)
+          has_more: data.events?.length === 50 // Assuming 50 is the page size
         }
       };
     },
@@ -75,9 +74,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     enabled: !!entityId,
   });
 
-  const allEvents = data?.pages.flatMap(
-    (page) => entityType === "computer" ? page.computer_impacted_timeline : page.user_impacted_timeline
-  ) || [];
+  const allEvents = data?.pages.flatMap((page) => page.events) || [];
 
   if (inView && !isFetchingNextPage && hasNextPage) {
     fetchNextPage();
@@ -101,14 +98,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         >
           <X className="h-6 w-6 text-gray-400" />
         </button>
-      </div>
-
-      <div className="p-6">
-        <TimelineSummaryStats alerts={allEvents} />
-      </div>
-
-      <div className="px-6 pb-6">
-        <TimelineVisualizer events={allEvents} />
       </div>
 
       <div className="flex-1 overflow-hidden">
