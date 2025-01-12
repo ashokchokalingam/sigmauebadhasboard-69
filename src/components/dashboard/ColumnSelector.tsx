@@ -16,16 +16,9 @@ import ColumnList from "./ColumnList";
 interface ColumnSelectorProps {
   visibleColumns: string[];
   onColumnToggle: (columns: string[]) => void;
-  onSelectAll: () => void;
-  onDeselectAll: () => void;
 }
 
-const ColumnSelector = ({ 
-  visibleColumns, 
-  onColumnToggle,
-  onSelectAll,
-  onDeselectAll 
-}: ColumnSelectorProps) => {
+const ColumnSelector = ({ visibleColumns, onColumnToggle }: ColumnSelectorProps) => {
   const { toast } = useToast();
   const [pendingColumns, setPendingColumns] = useState<string[]>(visibleColumns);
   const [isOpen, setIsOpen] = useState(false);
@@ -35,14 +28,12 @@ const ColumnSelector = ({
     e.stopPropagation();
     const allColumnKeys = allColumns.map(col => col.key);
     setPendingColumns(allColumnKeys);
-    onSelectAll();
   };
 
   const handleClearAll = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setPendingColumns(['system_time']);
-    onDeselectAll();
   };
 
   const handleColumnToggle = (columnKey: string, checked: boolean, e?: React.MouseEvent) => {

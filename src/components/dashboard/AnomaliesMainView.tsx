@@ -25,7 +25,7 @@ const AnomaliesMainView = ({
   filteredAlerts
 }: AnomaliesMainViewProps) => {
   return (
-    <div className="overflow-hidden border border-blue-500/10 rounded-md bg-[#0A0A0F]">
+    <div className="overflow-hidden border border-blue-500/10 rounded-md">
       <div className="relative">
         <div className="overflow-x-auto">
           <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
