@@ -30,7 +30,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     e.stopPropagation();
     setIsLoading(true);
     try {
-      await onToggle();
+      onToggle();
     } finally {
       setIsLoading(false);
     }
@@ -111,13 +111,16 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
   return (
     <TableRow 
       className={`hover:bg-blue-950/30 cursor-pointer border-b border-blue-500/10 ${isSelected ? 'bg-blue-950/20' : ''}`}
-      onClick={handleToggle}
+      onClick={onToggle}
     >
       {visibleColumns.map(columnKey => renderCell(columnKey))}
       <TableCell className="px-4 py-2">
         <button 
           className="p-2 hover:bg-blue-500/10 rounded-full transition-colors disabled:opacity-50"
-          onClick={handleToggle}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleToggle(e);
+          }}
           disabled={isLoading}
         >
           {isLoading ? (
