@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { EventSummary, TimelineResponse } from "../types";
 
 export const useEventSummary = (
   entityType: "user" | "computer" | "origin",
   entityId: string,
-  timeframe: string = "24h"
+  timeframe: string
 ) => {
   return useQuery({
     queryKey: ['event-summary', entityType, entityId, timeframe],
@@ -15,7 +14,7 @@ export const useEventSummary = (
       switch (entityType) {
         case 'origin':
           endpoint = '/api/user_origin_timeline';
-          queryParam = `user_origin=${entityId}`;
+          queryParam = `user_id=${entityId}`;
           break;
         case 'user':
           endpoint = '/api/user_impacted_timeline';
@@ -38,7 +37,7 @@ export const useEventSummary = (
       console.log('Timeline data received:', data);
       
       return {
-        event_summary: data.user_origin_timeline || data.user_impacted_timeline || data.computer_impacted_timeline || [],
+        event_summary: data.event_summary || data.user_origin_timeline || data.user_impacted_timeline || data.computer_impacted_timeline || [],
       };
     },
     enabled: Boolean(entityType && entityId),

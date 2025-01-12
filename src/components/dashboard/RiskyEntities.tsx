@@ -60,7 +60,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
   if (selectedUser) {
     return (
       <TimelineView
-        entityType={type === "users-origin" ? "user" : "user"}
+        entityType={type === "users-origin" ? "origin" : "user"}
         entityId={selectedUser}
         onClose={() => setSelectedUser(null)}
         inSidebar={true}
