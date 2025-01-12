@@ -1,12 +1,20 @@
-import { db } from '@/lib/db';
+import { db, testConnection } from '@/lib/db';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const page = parseInt(req.query.page as string) || 1;
-  const per_page = parseInt(req.query.per_page as string) || 100;
-  const offset = (page - 1) * per_page;
-
   try {
+    // Test database connection first
+    const isConnected = await testConnection();
+    if (!isConnected) {
+      throw new Error('Database connection failed');
+    }
+
+    const page = parseInt(req.query.page as string) || 1;
+    const per_page = parseInt(req.query.per_page as string) || 100;
+    const offset = (page - 1) * per_page;
+
+    console.log('Executing query with params:', { page, per_page, offset });
+
     const query = `
       SELECT *
       FROM sigma_alerts
@@ -25,6 +33,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const [countResult] = await db.query(countQuery);
     const total = (countResult as any)[0].total;
 
+    console.log('Query results:', {
+      rowCount: Array.isArray(rows) ? rows.length : 0,
+      total
+    });
+
     res.status(200).json({
       alerts: rows,
       pagination: {
@@ -36,7 +49,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       total_count: total
     });
   } catch (error) {
-    console.error('Database error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('API error:', error);
+    res.status(500).json({ 
+      error: 'Internal Server Error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 }
