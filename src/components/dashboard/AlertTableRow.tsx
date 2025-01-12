@@ -26,7 +26,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     year: 'numeric',
   });
 
-  const handleToggle = async (e: React.MouseEvent) => {
+  const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsLoading(true);
     try {
@@ -117,10 +117,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
       <TableCell className="px-4 py-2">
         <button 
           className="p-2 hover:bg-blue-500/10 rounded-full transition-colors disabled:opacity-50"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleToggle(e);
-          }}
+          onClick={onToggle}
           disabled={isLoading}
         >
           {isLoading ? (
