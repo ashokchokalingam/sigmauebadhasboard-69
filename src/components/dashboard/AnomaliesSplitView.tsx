@@ -6,27 +6,31 @@ import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import AnomaliesTableContent from "./AnomaliesTableContent";
 
 interface AnomaliesSplitViewProps {
-  selectedAlert: Alert;
-  alerts: Alert[];
-  onFilterChange: (column: string, value: string) => void;
-  filters: Record<string, string>;
+  selectedAlert?: Alert;
+  alerts?: Alert[];
+  onFilterChange?: (column: string, value: string) => void;
+  filters?: Record<string, string>;
   visibleColumns: string[];
-  onAlertSelect: (alert: Alert) => void;
-  onTimelineView: (type: "user" | "computer", id: string) => void;
-  filteredAlerts: Alert[];
+  onAlertSelect?: (alert: Alert) => void;
+  onTimelineView?: (type: "user" | "computer", id: string) => void;
+  filteredAlerts?: Alert[];
   onClose: () => void;
+  entityType: "user" | "computer";
+  entityId: string;
 }
 
 const AnomaliesSplitView = ({
   selectedAlert,
-  alerts,
-  onFilterChange,
-  filters,
+  alerts = [],
+  onFilterChange = () => {},
+  filters = {},
   visibleColumns,
-  onAlertSelect,
-  onTimelineView,
-  filteredAlerts,
-  onClose
+  onAlertSelect = () => {},
+  onTimelineView = () => {},
+  filteredAlerts = [],
+  onClose,
+  entityType,
+  entityId
 }: AnomaliesSplitViewProps) => {
   return (
     <ResizablePanelGroup 
@@ -66,10 +70,12 @@ const AnomaliesSplitView = ({
       
       <ResizablePanel defaultSize={25} minSize={20}>
         <div className="h-full">
-          <AlertDetailsView
-            alert={selectedAlert}
-            onClose={onClose}
-          />
+          {selectedAlert && (
+            <AlertDetailsView
+              alert={selectedAlert}
+              onClose={onClose}
+            />
+          )}
         </div>
       </ResizablePanel>
     </ResizablePanelGroup>
