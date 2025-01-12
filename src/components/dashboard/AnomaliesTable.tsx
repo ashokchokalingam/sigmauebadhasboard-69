@@ -9,9 +9,11 @@ import { useAlertsFilter } from "./hooks/useAlertsFilter";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
+  onLoadMore: () => void;
+  hasMore: boolean;
 }
 
-const AnomaliesTable = ({ alerts }: AnomaliesTableProps) => {
+const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
     defaultColumns.map((col) => col.key)
