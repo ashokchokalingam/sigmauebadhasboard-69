@@ -1,7 +1,8 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Loader } from "lucide-react";
 import { Alert } from "./types";
 import { extractTacticsAndTechniques } from "./utils";
+import { useState } from "react";
 
 interface AlertTableRowProps {
   alert: Alert;
@@ -12,6 +13,7 @@ interface AlertTableRowProps {
 }
 
 const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleColumns }: AlertTableRowProps) => {
+  const [isLoading, setIsLoading] = useState(false);
   const { tactics } = extractTacticsAndTechniques(alert.tags);
   
   const browserTime = new Date(alert.system_time).toLocaleString(undefined, {
@@ -23,6 +25,16 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     day: 'numeric',
     year: 'numeric',
   });
+
+  const handleToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsLoading(true);
+    try {
+      await onToggle();
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const renderCell = (key: string) => {
     if (!visibleColumns.includes(key)) return null;
@@ -99,18 +111,20 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
   return (
     <TableRow 
       className={`hover:bg-blue-950/30 cursor-pointer border-b border-blue-500/10 ${isSelected ? 'bg-blue-950/20' : ''}`}
-      onClick={onToggle}
+      onClick={handleToggle}
     >
       {visibleColumns.map(columnKey => renderCell(columnKey))}
       <TableCell className="px-4 py-2">
         <button 
-          className="p-2 hover:bg-blue-500/10 rounded-full transition-colors"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggle();
-          }}
+          className="p-2 hover:bg-blue-500/10 rounded-full transition-colors disabled:opacity-50"
+          onClick={handleToggle}
+          disabled={isLoading}
         >
-          <ChevronRight className={`h-4 w-4 text-blue-400 transition-transform ${isSelected ? 'rotate-90' : ''}`} />
+          {isLoading ? (
+            <Loader className="h-4 w-4 text-blue-400 animate-spin" />
+          ) : (
+            <ChevronRight className={`h-4 w-4 text-blue-400 transition-transform ${isSelected ? 'rotate-90' : ''}`} />
+          )}
         </button>
       </TableCell>
     </TableRow>
