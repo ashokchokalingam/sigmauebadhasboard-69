@@ -66,7 +66,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
           .map(column => (
             <TableHead 
               key={column.key} 
-              className="text-[#8B5CF6] bg-[#E5DEFF] backdrop-blur-sm border-b border-[#8B5CF6]/30 whitespace-nowrap sticky top-0 font-semibold"
+              className="text-[#6B21A8] bg-[#E5DEFF] backdrop-blur-sm border-b border-[#8B5CF6]/30 whitespace-nowrap sticky top-0 font-bold text-base"
             >
               <ColumnFilter
                 title={column.label}
@@ -76,7 +76,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
               />
             </TableHead>
           ))}
-        <TableHead className="text-[#8B5CF6] w-[50px] bg-[#E5DEFF] backdrop-blur-sm border-b border-[#8B5CF6]/30 sticky top-0"></TableHead>
+        <TableHead className="text-[#6B21A8] w-[50px] bg-[#E5DEFF] backdrop-blur-sm border-b border-[#8B5CF6]/30 sticky top-0"></TableHead>
       </TableRow>
     </TableHeader>
   );
