@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Settings2 } from "lucide-react";
+import { Filter } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { allColumns } from "./TableConfig";
 import ColumnList from "./ColumnList";
@@ -69,12 +69,12 @@ export const ColumnSelector = ({
           size="sm"
           className="flex items-center gap-2 text-blue-400 border-blue-500/20 hover:bg-blue-500/10"
         >
-          <Settings2 className="h-4 w-4" />
-          <span>Columns</span>
+          <Filter className="h-4 w-4" />
+          <span>Filter</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-[200px] p-0" 
+        className="w-[200px] p-0 bg-slate-900 border border-blue-500/20" 
         align="start"
         side="bottom"
       >

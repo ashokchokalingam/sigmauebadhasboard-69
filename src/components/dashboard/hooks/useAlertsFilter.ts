@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Alert } from "../types";
 
 export const useAlertsFilter = (alerts: Alert[]) => {
   const [filters, setFilters] = useState<Record<string, string>>({});
-  
+
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -20,36 +20,27 @@ export const useAlertsFilter = (alerts: Alert[]) => {
     }
   };
 
-  const filteredAlerts = alerts
-    .filter(alert => {
-      const alertDate = new Date(alert.system_time);
-      return alertDate >= sevenDaysAgo;
-    })
-    .sort((a, b) => 
-      new Date(b.system_time).getTime() - new Date(a.system_time).getTime()
-    )
-    .filter(alert => {
-      return Object.entries(filters).every(([key, value]) => {
-        if (!value) return true;
+  const filteredAlerts = useMemo(() => {
+    return alerts.filter(alert => {
+      return Object.entries(filters).every(([column, filterValue]) => {
+        if (!filterValue) return true;
 
-        if (key === 'system_time') {
-          const timeString = new Date(alert[key]).toLocaleTimeString();
-          return timeString.toLowerCase().includes(value.toLowerCase());
+        const alertValue = alert[column as keyof Alert];
+        if (column === 'users') {
+          return (
+            alert.user_id?.toLowerCase().includes(filterValue.toLowerCase()) ||
+            alert.target_user_name?.toLowerCase().includes(filterValue.toLowerCase())
+          );
         }
 
-        if (key === 'users') {
-          const userOrigin = String(alert.user_id || '').toLowerCase();
-          const userImpacted = String(alert.target_user_name || '').toLowerCase();
-          const searchValue = value.toLowerCase();
-          return userOrigin.includes(searchValue) || userImpacted.includes(searchValue);
+        if (typeof alertValue === 'string') {
+          return alertValue.toLowerCase().includes(filterValue.toLowerCase());
         }
 
-        const alertValue = alert[key as keyof Alert];
-        if (!alertValue) return false;
-        
-        return String(alertValue).toLowerCase().includes(value.toLowerCase());
+        return String(alertValue).toLowerCase().includes(filterValue.toLowerCase());
       });
     });
+  }, [alerts, filters]);
 
   return {
     filters,
