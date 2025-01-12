@@ -5,7 +5,7 @@ import AnomaliesMainView from "./AnomaliesMainView";
 import AnomaliesSplitView from "./AnomaliesSplitView";
 import AnomaliesTableHeaderSection from "./AnomaliesTableHeaderSection";
 import { defaultColumns } from "./TableConfig";
-import useAlertsFilter from "./hooks/useAlertsFilter";
+import { useAlertsFilter } from "./hooks/useAlertsFilter";
 
 interface AnomaliesTableProps {
   alerts: Alert[];

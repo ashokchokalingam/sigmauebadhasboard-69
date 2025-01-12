@@ -1,19 +1,20 @@
 import { DropdownMenuCheckboxItem } from "../ui/dropdown-menu";
-import { allColumns } from "./TableConfig";
+import { Column } from "./types";
 
 interface ColumnListProps {
-  pendingColumns: string[];
+  columns: Column[];
+  visibleColumns: string[];
   onColumnToggle: (columnKey: string, checked: boolean, e?: React.MouseEvent) => void;
 }
 
-const ColumnList = ({ pendingColumns, onColumnToggle }: ColumnListProps) => {
+const ColumnList = ({ columns, visibleColumns, onColumnToggle }: ColumnListProps) => {
   return (
     <div className="max-h-[300px] overflow-y-auto">
-      {allColumns.map((column) => (
+      {columns.map((column) => (
         <DropdownMenuCheckboxItem
           key={column.key}
           className="text-blue-300 hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer"
-          checked={pendingColumns.includes(column.key)}
+          checked={visibleColumns.includes(column.key)}
           onCheckedChange={(checked) => onColumnToggle(column.key, checked)}
           onSelect={(e) => e.preventDefault()}
         >

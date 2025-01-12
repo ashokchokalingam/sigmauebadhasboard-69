@@ -60,3 +60,8 @@ export interface Stats {
     current: number;
   };
 }
+
+export interface Column {
+  key: string;
+  label: string;
+}
