@@ -26,7 +26,11 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     year: 'numeric',
   });
 
-  const handleToggle = (e: React.MouseEvent) => {
+  const handleClick = () => {
+    onToggle();
+  };
+
+  const handleChevronClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsLoading(true);
     try {
@@ -111,13 +115,13 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
   return (
     <TableRow 
       className={`hover:bg-blue-950/30 cursor-pointer border-b border-blue-500/10 ${isSelected ? 'bg-blue-950/20' : ''}`}
-      onClick={onToggle}
+      onClick={handleClick}
     >
       {visibleColumns.map(columnKey => renderCell(columnKey))}
       <TableCell className="px-4 py-2">
         <button 
           className="p-2 hover:bg-blue-500/10 rounded-full transition-colors disabled:opacity-50"
-          onClick={onToggle}
+          onClick={handleChevronClick}
           disabled={isLoading}
         >
           {isLoading ? (
