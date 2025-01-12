@@ -11,7 +11,7 @@ import { User, Monitor } from "lucide-react";
 interface TimelineEventCardProps {
   event: Alert;
   isLast?: boolean;
-  entityType: "user" | "computer";
+  entityType: "user" | "computer" | "origin";
 }
 
 interface DetailedLogResponse {
@@ -111,7 +111,7 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
               <>
                 <User className="h-4 w-4 text-blue-400" />
                 <span className="text-sm text-blue-300">
-                  User Impacted: <span className="font-mono text-blue-400">{event.user_impacted}</span>
+                  {entityType === "origin" ? "User Origin" : "User Impacted"}: <span className="font-mono text-blue-400">{event.user_impacted}</span>
                 </span>
               </>
             )}
