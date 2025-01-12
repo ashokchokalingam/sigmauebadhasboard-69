@@ -145,7 +145,7 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
                    detailedLogs?.user_impacted_logs || []}
               isLoading={isLoading}
               totalRecords={detailedLogs?.pagination?.total_records || 0}
-              entityType={entityType === "userorigin" ? "user" : entityType}
+              entityType={entityType}
             />
           )}
         </div>
