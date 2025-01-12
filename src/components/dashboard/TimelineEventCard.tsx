@@ -23,6 +23,7 @@ interface DetailedLogResponse {
   };
   user_impacted_logs?: Alert[];
   computer_impacted_logs?: Alert[];
+  user_origin_logs?: Alert[];
 }
 
 const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps) => {
@@ -50,7 +51,7 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
           break;
         case "origin":
           identifier = event.user_id;
-          baseUrl = '/api/user_origin_timeline';
+          baseUrl = '/api/user_origin_logs';
           params.append('user_origin', identifier || '');
           break;
         default:
@@ -83,6 +84,21 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
   const handleCardClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded((prev) => !prev);
+  };
+
+  const getDetailedLogs = () => {
+    if (!detailedLogs) return [];
+    
+    switch (entityType) {
+      case "computer":
+        return detailedLogs.computer_impacted_logs || [];
+      case "user":
+        return detailedLogs.user_impacted_logs || [];
+      case "origin":
+        return detailedLogs.user_origin_logs || [];
+      default:
+        return [];
+    }
   };
 
   return (
@@ -119,7 +135,7 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
               <>
                 <User className="h-4 w-4 text-blue-400" />
                 <span className="text-sm text-blue-300">
-                  {entityType === "origin" ? "User Origin" : "User Impacted"}: <span className="font-mono text-blue-400">{event.user_impacted}</span>
+                  {entityType === "origin" ? "User Origin" : "User Impacted"}: <span className="font-mono text-blue-400">{entityType === "origin" ? event.user_id : event.user_impacted}</span>
                 </span>
               </>
             )}
@@ -134,7 +150,7 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
 
           {isExpanded && (
             <TimelineDetailedLogs
-              logs={entityType === "computer" ? detailedLogs?.computer_impacted_logs || [] : detailedLogs?.user_impacted_logs || []}
+              logs={getDetailedLogs()}
               isLoading={isLoading}
               totalRecords={detailedLogs?.pagination?.total_records || 0}
               entityType={entityType}
