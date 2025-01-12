@@ -36,7 +36,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
   const { searchQuery, setSearchQuery, filteredEntities } = useEntitySearch(entities);
 
   const handleEntityClick = (entityId: string) => {
-    if (type === "users-origin") {
+    if (type === "users-impacted") {
       setSelectedUser(entityId);
     }
     onEntitySelect(entityId);
@@ -57,10 +57,10 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
     );
   }
 
-  if (selectedUser && type === "users-origin") {
+  if (selectedUser && type === "users-impacted") {
     return (
       <TimelineView
-        entityType="origin"
+        entityType="user"
         entityId={selectedUser}
         onClose={() => setSelectedUser(null)}
         inSidebar={true}
