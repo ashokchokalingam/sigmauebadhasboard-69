@@ -31,11 +31,14 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     queryFn: async ({ pageParam = 1 }) => {
       console.log("Fetching timeline data:", { entityType, entityId, pageParam });
       
+      // Determine the correct endpoint based on entityType
       let endpoint = entityType === "computer" ? "computer_impacted_timeline" : 
                     entityType === "origin" ? "user_origin_timeline" :
                     "user_impacted_timeline";
+      
       let queryParams = new URLSearchParams();
       
+      // Set the correct query parameter based on entityType
       if (entityType === "computer") {
         queryParams.append("computer_name", entityId);
       } else if (entityType === "origin") {
