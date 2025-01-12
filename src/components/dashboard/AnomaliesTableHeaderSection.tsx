@@ -21,7 +21,7 @@ const AnomaliesTableHeaderSection = ({
         <CardTitle className="flex items-center gap-2">
           <AlertTriangle className="h-5 w-5 text-purple-400" />
           <span className="text-purple-100 bg-gradient-to-r from-purple-500/20 via-purple-400/10 to-blue-500/20 px-4 py-1.5 rounded-md text-xl font-semibold tracking-wide shadow-lg">
-            ATT&CK User Behavior Analytics
+            ChronoScope
           </span>
         </CardTitle>
         <ColumnSelector

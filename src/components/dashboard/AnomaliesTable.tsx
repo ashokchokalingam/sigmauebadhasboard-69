@@ -1,14 +1,10 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Alert } from "./types";
-import { Button } from "../ui/button";
-import { ALERTS_PER_PAGE } from "@/constants/pagination";
-import { useToast } from "../ui/use-toast";
-import { useAlertsFilter } from "./hooks/useAlertsFilter";
-import AnomaliesTableHeaderSection from "./AnomaliesTableHeaderSection";
-import AnomaliesSplitView from "./AnomaliesSplitView";
-import AnomaliesMainView from "./AnomaliesMainView";
-import { defaultColumns } from "./TableConfig";
 import { useState } from "react";
+import { Alert } from "./types";
+import AnomaliesMainView from "./AnomaliesMainView";
+import AnomaliesSplitView from "./AnomaliesSplitView";
+import AnomaliesTableHeaderSection from "./AnomaliesTableHeaderSection";
+import { useAlertsFilter } from "./hooks/useAlertsFilter";
+import InfiniteScrollLoader from "./InfiniteScrollLoader";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
@@ -18,76 +14,73 @@ interface AnomaliesTableProps {
 
 const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(
-    defaultColumns.map(col => col.key)
-  );
-  const { toast } = useToast();
-  const { filters, handleFilterChange, filterAlerts } = useAlertsFilter(alerts, visibleColumns);
+  const [timelineView, setTimelineView] = useState<{
+    type: "user" | "computer";
+    id: string;
+  } | null>(null);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>([
+    "timestamp",
+    "userorigin",
+    "userimpacted",
+    "computersimpacted",
+    "title",
+    "description",
+  ]);
 
-  const handleAlertSelect = (alert: Alert) => {
-    setSelectedAlert(selectedAlert?.id === alert.id ? null : alert);
-  };
+  const { filters, filteredAlerts, onFilterChange } = useAlertsFilter(alerts);
 
   const handleColumnToggle = (columns: string[]) => {
     setVisibleColumns(columns);
-    
-    toast({
-      title: "Column Changes Applied",
-      description: "The selected columns and their filters have been updated",
-    });
+  };
+
+  const handleSelectAll = () => {
+    setVisibleColumns([
+      "timestamp",
+      "userorigin",
+      "userimpacted",
+      "computersimpacted",
+      "title",
+      "description",
+    ]);
+  };
+
+  const handleDeselectAll = () => {
+    setVisibleColumns([]);
   };
 
   const handleTimelineView = (type: "user" | "computer", id: string) => {
-    console.log("Timeline view requested for:", type, id);
+    setTimelineView({ type, id });
   };
 
-  const filteredAlerts = filterAlerts();
+  if (timelineView) {
+    return (
+      <AnomaliesSplitView
+        entityType={timelineView.type}
+        entityId={timelineView.id}
+        onClose={() => setTimelineView(null)}
+      />
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
-        <AnomaliesTableHeaderSection
-          visibleColumns={visibleColumns}
-          onColumnToggle={handleColumnToggle}
-        />
-        <CardContent>
-          {selectedAlert ? (
-            <AnomaliesSplitView
-              selectedAlert={selectedAlert}
-              alerts={alerts}
-              onFilterChange={handleFilterChange}
-              filters={filters}
-              visibleColumns={visibleColumns}
-              onAlertSelect={handleAlertSelect}
-              onTimelineView={handleTimelineView}
-              filteredAlerts={filteredAlerts}
-              onClose={() => setSelectedAlert(null)}
-            />
-          ) : (
-            <AnomaliesMainView
-              alerts={alerts}
-              onFilterChange={handleFilterChange}
-              filters={filters}
-              visibleColumns={visibleColumns}
-              selectedAlert={selectedAlert}
-              onAlertSelect={handleAlertSelect}
-              onTimelineView={handleTimelineView}
-              filteredAlerts={filteredAlerts}
-            />
-          )}
-
-          {hasMore && filteredAlerts.length >= ALERTS_PER_PAGE && (
-            <div className="flex justify-center mt-6">
-              <Button
-                onClick={onLoadMore}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Load More Events
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+    <div className="flex flex-col">
+      <AnomaliesTableHeaderSection
+        visibleColumns={visibleColumns}
+        onColumnToggle={handleColumnToggle}
+        onSelectAll={handleSelectAll}
+        onDeselectAll={handleDeselectAll}
+      />
+      <AnomaliesMainView
+        alerts={alerts}
+        onFilterChange={onFilterChange}
+        filters={filters}
+        visibleColumns={visibleColumns}
+        selectedAlert={selectedAlert}
+        onAlertSelect={setSelectedAlert}
+        onTimelineView={handleTimelineView}
+        filteredAlerts={filteredAlerts}
+      />
+      <InfiniteScrollLoader onLoadMore={onLoadMore} hasMore={hasMore} />
     </div>
   );
 };
