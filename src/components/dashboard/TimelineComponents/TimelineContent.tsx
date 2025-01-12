@@ -38,7 +38,6 @@ const TimelineContent = ({
           <TimelineEventSummary 
             summary={filteredSummary}
             isLoading={isLoadingSummary}
-            entityType={entityType}
           />
         </div>
       </div>

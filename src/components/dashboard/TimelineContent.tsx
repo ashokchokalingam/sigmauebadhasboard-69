@@ -1,7 +1,7 @@
-import { Alert } from "./types";
-import TimelineEventTypes from "./TimelineEventTypes";
-import TimelineEventSummary from "./TimelineEventSummary";
-import { useEventSummary } from "./hooks/useEventSummary";
+import { Alert } from "../types";
+import TimelineEventTypes from "../TimelineEventTypes";
+import TimelineEventSummary from "../TimelineEventSummary";
+import { useEventSummary } from "../hooks/useEventSummary";
 
 interface TimelineContentProps {
   alerts: Alert[];
@@ -9,7 +9,7 @@ interface TimelineContentProps {
   selectedEventType: string | null;
   onEventTypeSelect: (type: string | null) => void;
   onToggleRaw: (alertId: string, event: React.MouseEvent) => void;
-  entityType: "user" | "computer" | "origin";
+  entityType: "user" | "computer";
   entityId: string;
   timeframe: string;
 }
@@ -22,7 +22,7 @@ const TimelineContent = ({
   onEventTypeSelect,
 }: TimelineContentProps) => {
   const { data: summaryData, isLoading: isLoadingSummary } = useEventSummary(
-    entityType,
+    entityType === "user" ? "target" : entityType,
     entityId,
     timeframe
   );
@@ -46,7 +46,7 @@ const TimelineContent = ({
       <div>
         <div className="bg-black/40 border border-blue-500/10 rounded-xl p-4">
           <TimelineEventTypes 
-            alerts={[]}
+            alerts={[]}  // We'll update this later when needed
             onEventTypeSelect={onEventTypeSelect}
             selectedEventType={selectedEventType}
           />
