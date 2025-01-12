@@ -51,46 +51,47 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
     <div className="w-full">
       <button 
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center gap-2 p-4 text-purple-400 hover:text-purple-300 transition-colors"
+        className="w-full flex items-center gap-2 p-4 text-purple-400 hover:text-purple-300 transition-colors bg-black/20 rounded-t-lg"
       >
         <ChevronRight className={cn(
-          "h-4 w-4 transition-transform duration-200",
+          "h-5 w-5 transition-transform duration-200",
           isExpanded && "transform rotate-90"
         )} />
-        <span className="font-mono text-base">{">"}_</span>
-        Raw Log
+        <Terminal className="h-5 w-5" />
+        <span className="font-mono text-base font-medium">Raw Log Data</span>
       </button>
       
       <div className={cn(
-        "overflow-hidden transition-all duration-200",
-        isExpanded ? "max-h-[500px]" : "max-h-0"
+        "overflow-hidden transition-all duration-300",
+        isExpanded ? "max-h-[800px]" : "max-h-0"
       )}>
-        <div className="bg-[#1A1F2C] rounded-lg border border-purple-500/20 transition-all duration-200 hover:border-purple-500/30 m-4">
+        <div className="bg-[#1A1F2C] rounded-b-lg border border-purple-500/20 transition-all duration-200 hover:border-purple-500/30 mx-4 mb-4">
           <style>
             {`
               .custom-scrollbar::-webkit-scrollbar {
-                width: 8px;
-                height: 8px;
+                width: 10px;
+                height: 10px;
               }
               .custom-scrollbar::-webkit-scrollbar-track {
                 background: rgba(139, 92, 246, 0.1);
-                border-radius: 4px;
+                border-radius: 6px;
               }
               .custom-scrollbar::-webkit-scrollbar-thumb {
                 background: rgba(139, 92, 246, 0.3);
-                border-radius: 4px;
+                border-radius: 6px;
+                border: 2px solid rgba(139, 92, 246, 0.1);
               }
               .custom-scrollbar::-webkit-scrollbar-thumb:hover {
                 background: rgba(139, 92, 246, 0.4);
               }
               .raw-log-content {
                 color: #E2E8F0;
-                font-size: 0.875rem !important;
-                line-height: 1.5 !important;
-                font-family: 'Monaco', 'Consolas', monospace !important;
+                font-size: 1rem !important;
+                line-height: 1.6 !important;
+                font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace !important;
               }
               .raw-log-content .token.property {
-                color: #67E8F9;
+                color: #93C5FD;
               }
               .raw-log-content .token.string {
                 color: #86EFAC;
@@ -105,15 +106,17 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
                 color: #F9A8D4;
               }
               .raw-log-content .token.punctuation {
-                color: #E2E8F0;
+                color: #94A3B8;
               }
             `}
           </style>
-          <pre className="p-6 max-h-[400px] overflow-auto custom-scrollbar">
-            <code ref={codeRef} className="language-json raw-log-content">
-              {formattedJson}
-            </code>
-          </pre>
+          <div className="bg-gradient-to-r from-purple-500/5 to-blue-500/5 backdrop-blur-sm">
+            <pre className="p-8 max-h-[600px] overflow-auto custom-scrollbar">
+              <code ref={codeRef} className="language-json raw-log-content">
+                {formattedJson}
+              </code>
+            </pre>
+          </div>
         </div>
       </div>
     </div>
