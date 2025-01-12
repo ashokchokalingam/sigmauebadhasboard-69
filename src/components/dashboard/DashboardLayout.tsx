@@ -14,8 +14,8 @@ interface DashboardLayoutProps {
   allAlerts: Alert[];
   totalRecords: number;
   isLoading: boolean;
-  onEntitySelect: (entity: { type: "user" | "computer" | "origin"; id: string } | null) => void;
-  selectedEntity: { type: "user" | "computer" | "origin"; id: string } | null;
+  onEntitySelect: (entity: { type: "user" | "computer"; id: string } | null) => void;
+  selectedEntity: { type: "user" | "computer"; id: string } | null;
   onLoadMore: () => void;
   hasMore: boolean;
 }
@@ -76,7 +76,7 @@ const DashboardLayout = ({
           <RiskyEntities 
             alerts={allAlerts} 
             type="users-origin"
-            onEntitySelect={(id) => onEntitySelect({ type: "origin", id })}
+            onEntitySelect={(id) => onEntitySelect({ type: "user", id })}
           />
         </div>
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">

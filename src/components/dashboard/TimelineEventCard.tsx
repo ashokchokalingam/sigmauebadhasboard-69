@@ -11,7 +11,7 @@ import { User, Monitor } from "lucide-react";
 interface TimelineEventCardProps {
   event: Alert;
   isLast?: boolean;
-  entityType: "user" | "computer" | "origin";
+  entityType: "user" | "computer";
 }
 
 interface DetailedLogResponse {
@@ -29,55 +29,47 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { data: detailedLogs, isLoading } = useQuery({
-    queryKey: ['detailed-logs', entityType, event.computer_name || event.user_impacted || event.user_id, event.title, isExpanded],
+    queryKey: ['detailed-logs', entityType, event.computer_name || event.user_impacted, event.title, isExpanded],
     queryFn: async () => {
       if (!isExpanded) return null;
       
-      let identifier;
-      let baseUrl;
-      const params = new URLSearchParams();
-
-      switch (entityType) {
-        case "computer":
-          identifier = event.computer_name;
-          baseUrl = '/api/computer_impacted_logs';
-          params.append('computer_name', identifier || '');
-          break;
-        case "user":
-          identifier = event.user_impacted;
-          baseUrl = '/api/user_impacted_logs';
-          params.append('user_impacted', identifier || '');
-          break;
-        case "origin":
-          identifier = event.user_id;
-          baseUrl = '/api/user_origin_timeline';
-          params.append('user_origin', identifier || '');
-          break;
-        default:
-          throw new Error('Invalid entity type');
-      }
-
+      const identifier = entityType === "computer" ? event.computer_name : event.user_impacted;
+      
       if (!identifier) {
         console.error('No identifier provided for detailed logs query');
         return null;
       }
 
-      params.append('title', event.title);
-      params.append('page', '1');
-      params.append('per_page', '500');
+      try {
+        const baseUrl = entityType === "computer" ? '/api/computer_impacted_logs' : '/api/user_impacted_logs';
+        const params = new URLSearchParams();
+        
+        if (entityType === "computer") {
+          params.append('computer_name', identifier);
+        } else {
+          params.append('user_impacted', identifier);
+        }
+        
+        params.append('title', event.title);
+        params.append('page', '1');
+        params.append('per_page', '500');
 
-      console.log('Fetching logs with params:', baseUrl + '?' + params.toString());
+        console.log('Fetching logs with params:', baseUrl + '?' + params.toString());
 
-      const response = await fetch(`${baseUrl}?${params.toString()}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch logs');
+        const response = await fetch(`${baseUrl}?${params.toString()}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch logs');
+        }
+        
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error('Error fetching detailed logs:', error);
+        return null;
       }
-      
-      const data = await response.json();
-      return data;
     },
-    enabled: isExpanded && !!(event.computer_name || event.user_impacted || event.user_id)
+    enabled: isExpanded && !!(event.computer_name || event.user_impacted)
   });
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -119,7 +111,7 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
               <>
                 <User className="h-4 w-4 text-blue-400" />
                 <span className="text-sm text-blue-300">
-                  {entityType === "origin" ? "User Origin" : "User Impacted"}: <span className="font-mono text-blue-400">{event.user_impacted}</span>
+                  User Impacted: <span className="font-mono text-blue-400">{event.user_impacted}</span>
                 </span>
               </>
             )}

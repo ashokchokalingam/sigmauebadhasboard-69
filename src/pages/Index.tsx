@@ -8,11 +8,7 @@ const INITIAL_BATCH_SIZE = 100;
 const TOTAL_BATCH_SIZE = 1000;
 
 const Index = () => {
-  const [selectedEntity, setSelectedEntity] = useState<{ 
-    type: "user" | "computer" | "origin"; 
-    id: string; 
-  } | null>(null);
-  
+  const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "computer"; id: string } | null>(null);
   const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
   const [currentTotalRecords, setCurrentTotalRecords] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
