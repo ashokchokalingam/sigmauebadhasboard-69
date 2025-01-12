@@ -8,10 +8,16 @@ export const useAlertsFilter = (alerts: Alert[]) => {
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
   const handleFilterChange = (column: string, value: string) => {
-    setFilters(prev => ({
-      ...prev,
-      [column]: value
-    }));
+    if (!value) {
+      const newFilters = { ...filters };
+      delete newFilters[column];
+      setFilters(newFilters);
+    } else {
+      setFilters(prev => ({
+        ...prev,
+        [column]: value
+      }));
+    }
   };
 
   const filteredAlerts = alerts

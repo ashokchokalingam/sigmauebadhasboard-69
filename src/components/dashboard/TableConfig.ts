@@ -1,9 +1,9 @@
 export const defaultColumns = [
   { key: "system_time", label: "Time" },
   { key: "users", label: "Users" },
-  { key: "computer_name", label: "Computer" },
   { key: "title", label: "Title" },
-  { key: "description", label: "Description" }
+  { key: "description", label: "Description" },
+  { key: "computer_name", label: "Computer" }
 ];
 
 export const allColumns = [
