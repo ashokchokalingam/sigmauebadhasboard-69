@@ -101,10 +101,10 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground min-h-screen;
+    @apply bg-background text-foreground min-h-screen w-full m-0 p-0;
   }
   #root {
-    @apply min-h-screen bg-background;
+    @apply min-h-screen w-full bg-background m-0 p-0;
   }
 }
 

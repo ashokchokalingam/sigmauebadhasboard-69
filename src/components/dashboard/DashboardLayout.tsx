@@ -44,9 +44,9 @@ const DashboardLayout = ({
   }
 
   return (
-    <div className="min-h-screen bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-6">
-      <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-8 bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10">
-        <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">
+    <div className="min-h-screen w-full bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-4 md:p-6">
+      <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-6 bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10">
+        <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">
           ATT&CK User Behavior Analytics
         </h1>
         <button className="flex items-center gap-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 transition-all duration-300 rounded-lg px-4 py-2 border border-blue-500/10">
@@ -55,38 +55,38 @@ const DashboardLayout = ({
         </button>
       </div>
 
-      <div className="bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10 mb-8">
+      <div className="w-full bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10 mb-6">
         <StatsSection stats={stats} totalAlerts={totalRecords} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4 md:p-6">
           <RiskyUsersWidget />
         </div>
-        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4 md:p-6">
           <HighRiskAssetsWidget />
         </div>
-        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4 md:p-6">
           <OutliersWidget />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4 md:p-6">
           <RiskyEntities 
             alerts={allAlerts} 
             type="users-origin"
             onEntitySelect={(id) => onEntitySelect({ type: "userorigin", id })}
           />
         </div>
-        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4 md:p-6">
           <RiskyEntities 
             alerts={allAlerts} 
             type="users-impacted"
             onEntitySelect={(id) => onEntitySelect({ type: "userimpacted", id })}
           />
         </div>
-        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-6">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4 md:p-6">
           <RiskyEntities 
             alerts={allAlerts} 
             type="computers"
