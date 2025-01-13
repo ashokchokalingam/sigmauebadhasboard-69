@@ -1,28 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+ 
 @layer base {
   :root {
-    --background: 232 24% 14%;
-    --foreground: 240 4.8% 95.9%;
-    --card: 232 24% 14%;
-    --card-foreground: 240 4.8% 95.9%;
-    --popover: 232 24% 14%;
-    --popover-foreground: 240 4.8% 95.9%;
-    --primary: 262 60% 75%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 262 32% 54%;
-    --secondary-foreground: 240 4.8% 95.9%;
-    --muted: 262 32% 54%;
+    --background: 220 20% 12%;
+    --foreground: 210 40% 98%;
+    
+    --card: 220 20% 12%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 220 20% 12%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 210 100% 50%;
+    --primary-foreground: 210 40% 98%;
+ 
+    --secondary: 210 40% 20%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 210 40% 20%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 262 32% 54%;
-    --accent-foreground: 240 4.8% 95.9%;
+ 
+    --accent: 210 40% 20%;
+    --accent-foreground: 210 40% 98%;
+ 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 240 4.8% 95.9%;
-    --border: 262 32% 54%;
-    --input: 262 32% 54%;
-    --ring: 262 60% 75%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 210 40% 20%;
+    --input: 210 40% 20%;
+    --ring: 210 100% 50%;
+ 
     --radius: 0.5rem;
   }
 }
@@ -32,9 +41,9 @@
     @apply relative overflow-hidden bg-black/40 border-blue-500/10;
     background: linear-gradient(
       135deg,
-      rgba(99, 102, 241, 0.05) 0%,
-      rgba(168, 85, 247, 0.05) 50%,
-      rgba(59, 130, 246, 0.05) 100%
+      rgba(0, 120, 255, 0.05) 0%,
+      rgba(0, 120, 255, 0.1) 50%,
+      rgba(0, 120, 255, 0.05) 100%
     );
     transition: all 0.3s ease-in-out;
   }
@@ -46,7 +55,7 @@
 
   .stats-value {
     @apply text-4xl font-bold;
-    background: linear-gradient(to right, #60A5FA, #8B5CF6, #60A5FA);
+    background: linear-gradient(to right, #0078FF, #00A3FF, #0078FF);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -60,7 +69,7 @@
 
   .stats-icon {
     @apply opacity-80;
-    filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.3));
+    filter: drop-shadow(0 0 8px rgba(0, 120, 255, 0.3));
   }
 
   .stats-breakdown {
