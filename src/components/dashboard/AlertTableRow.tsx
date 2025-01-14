@@ -24,6 +24,14 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     year: 'numeric',
   });
 
+  const getRiskColor = (risk: number | null) => {
+    if (risk === null) return "text-gray-400";
+    if (risk >= 80) return "text-red-400";
+    if (risk >= 60) return "text-orange-400";
+    if (risk >= 40) return "text-yellow-400";
+    return "text-green-400";
+  };
+
   const renderCell = (key: string) => {
     if (!visibleColumns.includes(key)) return null;
 
@@ -103,7 +111,7 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         return (
           <TableCell>
             <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
-              {alert.ml_cluster || 'N/A'}
+              {alert.ml_cluster === null ? 'N/A' : `Cluster ${alert.ml_cluster}`}
             </span>
           </TableCell>
         );
@@ -139,14 +147,32 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "tactics":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
-            {alert.tactics || 'N/A'}
+          <TableCell>
+            <div className="flex flex-wrap gap-1">
+              {alert.tactics?.split(',').map((tactic, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-purple-500/10 text-purple-400 text-xs rounded-full border border-purple-500/20"
+                >
+                  {tactic.trim()}
+                </span>
+              ))}
+            </div>
           </TableCell>
         );
       case "techniques":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
-            {alert.techniques || 'N/A'}
+          <TableCell>
+            <div className="flex flex-wrap gap-1">
+              {alert.techniques?.split(',').map((technique, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 bg-indigo-500/10 text-indigo-400 text-xs rounded-full border border-indigo-500/20"
+                >
+                  {technique.trim()}
+                </span>
+              ))}
+            </div>
           </TableCell>
         );
       case "ml_description":
@@ -159,8 +185,10 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         );
       case "risk":
         return (
-          <TableCell className="text-blue-100 whitespace-nowrap">
-            {alert.risk || 'N/A'}
+          <TableCell>
+            <span className={`font-medium ${getRiskColor(alert.risk)}`}>
+              {alert.risk === null ? 'N/A' : `${alert.risk}%`}
+            </span>
           </TableCell>
         );
       case "tags":

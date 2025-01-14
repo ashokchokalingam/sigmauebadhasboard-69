@@ -3,7 +3,9 @@ export const defaultColumns = [
   { key: "users", label: "Users" },
   { key: "title", label: "Title" },
   { key: "description", label: "Description" },
-  { key: "computer_name", label: "Computer" }
+  { key: "computer_name", label: "Computer" },
+  { key: "ml_cluster", label: "ML Cluster" },
+  { key: "risk", label: "Risk" }
 ];
 
 export const allColumns = [
@@ -23,7 +25,7 @@ export const allColumns = [
   { key: "tactics", label: "Tactics" },
   { key: "techniques", label: "Techniques" },
   { key: "ml_description", label: "ML Description" },
-  { key: "risk", label: "Risk" },
+  { key: "risk", label: "Risk Score" },
   { key: "tags", label: "Tags" },
   { key: "raw", label: "Raw Data" }
 ];
