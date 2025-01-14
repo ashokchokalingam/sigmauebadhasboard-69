@@ -10,17 +10,20 @@ export interface Alert {
   computer_name?: string;
   event_id?: string;
   provider_name?: string;
-  dbscan_cluster?: number;
+  ml_cluster?: number;
   ip_address?: string;
   ruleid?: string;
   rule_level?: string;
   task?: string;
   target_domain_name?: string;
-  tags: string;
   raw?: string | object;
   total_events?: number;
-  user_impacted: string; // Changed from optional to required
+  user_impacted: string;
   user_origin?: string;
+  tactics?: string;
+  techniques?: string;
+  ml_description?: string;
+  risk?: number;
 }
 
 export interface EventSummary extends Alert {

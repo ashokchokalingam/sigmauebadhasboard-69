@@ -1,5 +1,4 @@
 import { Alert, Stats } from "./types";
-import { extractTacticsAndTechniques } from "./utils";
 
 export const calculateStats = (alerts: Alert[], totalRecords: number): Stats => {
   const stats: Stats = {
@@ -31,7 +30,7 @@ export const calculateStats = (alerts: Alert[], totalRecords: number): Stats => 
 
   // Calculate severity counts
   alerts.forEach(alert => {
-    if (alert.rule_level === "critical" || (typeof alert.dbscan_cluster === 'number' && alert.dbscan_cluster === -1)) {
+    if (alert.rule_level === "critical" || (typeof alert.ml_cluster === 'number' && alert.ml_cluster === -1)) {
       stats.severity.critical++;
     } else if (alert.rule_level === "high") {
       stats.severity.high++;
@@ -59,7 +58,7 @@ export const calculateStats = (alerts: Alert[], totalRecords: number): Stats => 
 
   // Calculate anomalies
   stats.anomalies.current = alerts.filter(alert => 
-    typeof alert.dbscan_cluster === 'number' && alert.dbscan_cluster === -1
+    typeof alert.ml_cluster === 'number' && alert.ml_cluster === -1
   ).length;
 
   return stats;

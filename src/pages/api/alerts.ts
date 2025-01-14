@@ -3,7 +3,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    // Test database connection first
     const isConnected = await testConnection();
     if (!isConnected) {
       throw new Error('Database connection failed');
@@ -16,7 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log('Executing query with params:', { page, per_page, offset });
 
     const query = `
-      SELECT *
+      SELECT 
+        id, title, description, system_time, computer_name, 
+        user_id, event_id, provider_name, ml_cluster, ip_address,
+        task, rule_level, target_user_name, target_domain_name,
+        ruleid, raw, tactics, techniques, ml_description, risk
       FROM sigma_alerts
       WHERE system_time >= NOW() - INTERVAL 24 HOUR
       ORDER BY system_time DESC
