@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import AlertHeader from "./AlertDetailsSections/AlertHeader";
 import AlertTacticsSection from "./AlertDetailsSections/AlertTacticsSection";
 import AlertMetadata from "./AlertDetailsSections/AlertMetadata";
-import { Shield, AlertTriangle, Activity, User, Monitor } from "lucide-react";
+import { Shield, AlertTriangle, Activity, User, Monitor, Brain } from "lucide-react";
 
 interface AlertDetailsViewProps {
   alert: Alert;
@@ -71,15 +71,23 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
                 </div>
                 <div>
                   <h4 className="text-sm font-medium text-[#A9A9A9]">ML Cluster</h4>
-                  <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20">
-                    {alert.ml_cluster === null ? 'N/A' : `Cluster ${alert.ml_cluster}`}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <Brain className="h-4 w-4 text-blue-400" />
+                    <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20">
+                      {alert.ml_cluster === null ? 'N/A' : `Cluster ${alert.ml_cluster}`}
+                    </span>
+                  </div>
                 </div>
               </div>
               {alert.ml_description && (
-                <div>
-                  <h4 className="text-sm font-medium text-[#A9A9A9]">ML Description</h4>
-                  <p className="text-sm text-[#E0E0E0]">{alert.ml_description}</p>
+                <div className="bg-blue-500/5 border border-blue-500/10 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2 mb-2">
+                    <Brain className="h-4 w-4" />
+                    ML Analysis
+                  </h4>
+                  <p className="text-sm text-[#E0E0E0] leading-relaxed">
+                    {alert.ml_description}
+                  </p>
                 </div>
               )}
             </div>
