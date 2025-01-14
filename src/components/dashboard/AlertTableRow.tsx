@@ -99,11 +99,11 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
             {alert.provider_name || 'N/A'}
           </TableCell>
         );
-      case "dbscan_cluster":
+      case "ml_cluster":
         return (
           <TableCell>
             <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded-full border border-blue-500/20">
-              {alert.dbscan_cluster || 'N/A'}
+              {alert.ml_cluster || 'N/A'}
             </span>
           </TableCell>
         );
@@ -135,6 +135,32 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
         return (
           <TableCell className="text-blue-100 whitespace-nowrap">
             {alert.target_domain_name || 'N/A'}
+          </TableCell>
+        );
+      case "tactics":
+        return (
+          <TableCell className="text-blue-100 whitespace-nowrap">
+            {alert.tactics || 'N/A'}
+          </TableCell>
+        );
+      case "techniques":
+        return (
+          <TableCell className="text-blue-100 whitespace-nowrap">
+            {alert.techniques || 'N/A'}
+          </TableCell>
+        );
+      case "ml_description":
+        return (
+          <TableCell>
+            <span className="text-blue-300/70 text-sm line-clamp-2">
+              {alert.ml_description || 'N/A'}
+            </span>
+          </TableCell>
+        );
+      case "risk":
+        return (
+          <TableCell className="text-blue-100 whitespace-nowrap">
+            {alert.risk || 'N/A'}
           </TableCell>
         );
       case "tags":

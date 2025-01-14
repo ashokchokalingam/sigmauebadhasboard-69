@@ -74,17 +74,51 @@ const TableRow = ({ alert, visibleColumns, onToggleRaw }: TableRowProps) => {
             <span className="text-blue-100">{alert.computer_name}</span>
           </TableCell>
         );
-      case "rule_level":  // Changed from "severity" to "rule_level"
+      case "rule_level":
         return (
           <TableCell>
             <span className="text-blue-100">{alert.rule_level}</span>
+          </TableCell>
+        );
+      case "ml_cluster":
+        return (
+          <TableCell>
+            <span className="text-blue-100">
+              {alert.ml_cluster === -1 ? "Noise" : `Cluster ${alert.ml_cluster}`}
+            </span>
+          </TableCell>
+        );
+      case "tactics":
+        return (
+          <TableCell>
+            <span className="text-blue-100">{alert.tactics}</span>
+          </TableCell>
+        );
+      case "techniques":
+        return (
+          <TableCell>
+            <span className="text-blue-100">{alert.techniques}</span>
+          </TableCell>
+        );
+      case "ml_description":
+        return (
+          <TableCell>
+            <span className="text-blue-300/70 text-sm line-clamp-1">
+              {alert.ml_description}
+            </span>
+          </TableCell>
+        );
+      case "risk":
+        return (
+          <TableCell>
+            <span className="text-blue-100">{alert.risk}</span>
           </TableCell>
         );
       case "tags":
         return (
           <TableCell>
             <div className="flex flex-wrap gap-1">
-              {alert.tags.split(",").map((tag, index) => (
+              {alert.tags.split(',').map((tag, index) => (
                 <span
                   key={index}
                   className="px-2 py-0.5 bg-blue-500/10 text-blue-300 text-xs rounded-full"
@@ -93,14 +127,6 @@ const TableRow = ({ alert, visibleColumns, onToggleRaw }: TableRowProps) => {
                 </span>
               ))}
             </div>
-          </TableCell>
-        );
-      case "dbscan_cluster":
-        return (
-          <TableCell>
-            <span className="text-blue-100">
-              {alert.dbscan_cluster === -1 ? "Noise" : `Cluster ${alert.dbscan_cluster}`}
-            </span>
           </TableCell>
         );
       case "raw":
