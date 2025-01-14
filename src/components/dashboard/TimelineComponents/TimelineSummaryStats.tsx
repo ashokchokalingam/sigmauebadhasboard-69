@@ -9,7 +9,7 @@ interface TimelineSummaryStatsProps {
 const TimelineSummaryStats = ({ alerts }: TimelineSummaryStatsProps) => {
   const summary = {
     totalEvents: alerts.length,
-    anomalies: alerts.filter(a => typeof a.dbscan_cluster === 'number' && a.dbscan_cluster === -1).length,
+    anomalies: alerts.filter(a => typeof a.ml_cluster === 'number' && a.ml_cluster === -1).length,
     severity: {
       critical: alerts.filter(a => a.rule_level?.toLowerCase() === 'critical').length,
       high: alerts.filter(a => a.rule_level?.toLowerCase() === 'high').length,

@@ -72,7 +72,7 @@ const MetadataGrid = ({ alert, formatTime }: MetadataGridProps) => {
       </div>
       <div>
         <h4 className="text-sm font-medium text-blue-400">ML Cluster</h4>
-        <p className="text-sm text-blue-100 font-mono">{alert.dbscan_cluster || 'N/A'}</p>
+        <p className="text-sm text-blue-100 font-mono">{alert.ml_cluster || 'N/A'}</p>
       </div>
     </div>
   );

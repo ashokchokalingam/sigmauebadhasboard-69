@@ -10,7 +10,7 @@ export interface Alert {
   computer_name?: string;
   event_id?: string;
   provider_name?: string;
-  ml_cluster?: number;
+  ml_cluster?: number;  // Changed from dbscan_cluster
   ip_address?: string;
   ruleid?: string;
   rule_level?: string;
@@ -24,6 +24,7 @@ export interface Alert {
   techniques?: string;
   ml_description?: string;
   risk?: number;
+  tags: string;  // Added back as it's still referenced in components
 }
 
 export interface EventSummary extends Alert {

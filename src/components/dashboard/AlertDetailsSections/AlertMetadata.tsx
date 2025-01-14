@@ -40,7 +40,7 @@ const AlertMetadata = ({ alert, browserTime }: AlertMetadataProps) => {
         </div>
         <div>
           <h4 className="text-sm font-medium text-[#A9A9A9]">ML Cluster</h4>
-          <p className="text-sm text-[#E0E0E0] font-mono">{alert.dbscan_cluster || 'N/A'}</p>
+          <p className="text-sm text-[#E0E0E0] font-mono">{alert.ml_cluster || 'N/A'}</p>
         </div>
         <div>
           <h4 className="text-sm font-medium text-[#A9A9A9]">System Time</h4>
