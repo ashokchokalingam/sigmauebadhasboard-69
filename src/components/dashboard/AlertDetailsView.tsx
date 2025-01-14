@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import AlertHeader from "./AlertDetailsSections/AlertHeader";
 import AlertTacticsSection from "./AlertDetailsSections/AlertTacticsSection";
 import AlertMetadata from "./AlertDetailsSections/AlertMetadata";
-import { Shield, AlertTriangle } from "lucide-react";
+import { Shield, AlertTriangle, Activity, User, Monitor } from "lucide-react";
 
 interface AlertDetailsViewProps {
   alert: Alert;
@@ -76,6 +76,12 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
                   </span>
                 </div>
               </div>
+              {alert.ml_description && (
+                <div>
+                  <h4 className="text-sm font-medium text-[#A9A9A9]">ML Description</h4>
+                  <p className="text-sm text-[#E0E0E0]">{alert.ml_description}</p>
+                </div>
+              )}
             </div>
           </Card>
 

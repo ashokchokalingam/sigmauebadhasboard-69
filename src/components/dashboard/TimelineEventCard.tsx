@@ -6,7 +6,7 @@ import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineDetailedLogs from "./TimelineDetailedLogs";
-import { User, Monitor } from "lucide-react";
+import { User, Monitor, Shield, AlertTriangle } from "lucide-react";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -14,20 +14,16 @@ interface TimelineEventCardProps {
   entityType: "userorigin" | "userimpacted" | "computersimpacted";
 }
 
-interface DetailedLogResponse {
-  pagination: {
-    current_page: number;
-    per_page: number;
-    total_pages: number;
-    total_records: number;
-  };
-  user_impacted_logs?: Alert[];
-  computer_impacted_logs?: Alert[];
-  user_origin_logs?: Alert[];
-}
-
 const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const getRiskColor = (risk: number | null) => {
+    if (risk === null) return "text-gray-400";
+    if (risk >= 80) return "text-red-400";
+    if (risk >= 60) return "text-orange-400";
+    if (risk >= 40) return "text-yellow-400";
+    return "text-green-400";
+  };
 
   const { data: detailedLogs, isLoading } = useQuery({
     queryKey: ['detailed-logs', entityType, event.computer_name || event.user_impacted || event.user_origin, event.title, isExpanded],
@@ -110,6 +106,28 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
             title={event.title}
             description={event.description}
           />
+
+          <div className="grid grid-cols-2 gap-4 mt-4 mb-3">
+            <div>
+              <h4 className="text-sm font-medium text-blue-400">Risk Score</h4>
+              <p className={`text-lg font-medium ${getRiskColor(event.risk)}`}>
+                {event.risk === null ? 'N/A' : `${event.risk}%`}
+              </p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-blue-400">ML Cluster</h4>
+              <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20">
+                {event.ml_cluster === null ? 'N/A' : `Cluster ${event.ml_cluster}`}
+              </span>
+            </div>
+          </div>
+
+          {event.ml_description && (
+            <div className="mt-3 mb-4">
+              <h4 className="text-sm font-medium text-blue-400">ML Description</h4>
+              <p className="text-sm text-blue-300/70 mt-1">{event.ml_description}</p>
+            </div>
+          )}
 
           <div className="flex items-center gap-2 mt-2 mb-3">
             {entityType === "computersimpacted" ? (
