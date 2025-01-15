@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertOctagon, TrendingUp, Shield, Monitor, Users } from "lucide-react";
+import { AlertOctagon, TrendingUp, Monitor, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from "recharts";
 import { format } from "date-fns";
 import React, { useState, useCallback } from 'react';
+import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { Slider } from "@/components/ui/slider";
 
@@ -147,7 +148,7 @@ const OutliersWidget = () => {
   const [zoomState, setZoomState] = useState<ZoomState>({});
   const [isGrouped, setIsGrouped] = useState(true);
   const [groupingInterval, setGroupingInterval] = useState<'hour' | 'day'>('day');
-  const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 'auto']);
+  const [yAxisDomain, setYAxisDomain] = useState<[number, number | undefined]>([0, undefined]);
   const [zoomLevel, setZoomLevel] = useState([1]);
 
   const { data: apiResponse, isLoading } = useQuery({
@@ -272,7 +273,7 @@ const OutliersWidget = () => {
 
   const handleZoomOutReset = () => {
     setZoomState({});
-    setYAxisDomain([0, 'auto']);
+    setYAxisDomain([0, undefined]);
     setZoomLevel([1]);
   };
 
@@ -280,7 +281,7 @@ const OutliersWidget = () => {
     return (
       <Card className="bg-black/40 border-purple-900/20">
         <CardContent className="p-6">
-          <div className="h-[400px] flex items-center justify-center">
+          <div className="h-[300px] flex items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
           </div>
         </CardContent>
@@ -295,17 +296,18 @@ const OutliersWidget = () => {
 
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-purple-100">
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between mb-2">
+          <CardTitle className="flex items-center gap-2 text-purple-100">
             <AlertOctagon className="h-5 w-5 text-purple-500" />
             ML Outliers - Executive Summary
-          </div>
+          </CardTitle>
           <div className="flex items-center gap-2">
             <Toggle
               pressed={isGrouped}
               onPressedChange={setIsGrouped}
               aria-label="Toggle data grouping"
+              className="h-8"
             >
               {isGrouped ? 'Grouped' : 'Raw Data'}
             </Toggle>
@@ -314,123 +316,114 @@ const OutliersWidget = () => {
                 pressed={groupingInterval === 'day'}
                 onPressedChange={(pressed) => setGroupingInterval(pressed ? 'day' : 'hour')}
                 aria-label="Toggle grouping interval"
+                className="h-8"
               >
                 {groupingInterval === 'day' ? 'Daily' : 'Hourly'}
               </Toggle>
             )}
-            {Object.keys(zoomState).length > 0 && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleZoomOutReset}
-                className="text-purple-100"
-              >
-                Reset Zoom
-              </Button>
-            )}
           </div>
-        </CardTitle>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-4">
-          <div className="md:col-span-2 flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <AlertOctagon className="h-5 w-5 text-red-400" />
+        </div>
+        <div className="grid grid-cols-4 gap-2">
+          <div className="flex items-center gap-2 bg-purple-900/20 p-2 rounded-lg">
+            <AlertOctagon className="h-4 w-4 text-red-400 shrink-0" />
             <div>
-              <p className="text-sm text-purple-200">Critical Insight</p>
-              <p className="text-lg font-bold text-purple-100">
-                {highSeverityCount} high-severity anomalies need immediate investigation
+              <p className="text-xs text-purple-200">Critical Insight</p>
+              <p className="text-sm font-bold text-purple-100">
+                {highSeverityCount} high-severity alerts
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <TrendingUp className="h-5 w-5 text-yellow-400" />
+          <div className="flex items-center gap-2 bg-purple-900/20 p-2 rounded-lg">
+            <TrendingUp className="h-4 w-4 text-yellow-400 shrink-0" />
             <div>
-              <p className="text-sm text-purple-200">Severity Distribution</p>
-              <p className="text-lg font-bold text-purple-100">
+              <p className="text-xs text-purple-200">Severity Distribution</p>
+              <p className="text-sm font-bold text-purple-100">
                 {mediumPercentage}% medium severity
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <Monitor className="h-5 w-5 text-blue-400" />
+          <div className="flex items-center gap-2 bg-purple-900/20 p-2 rounded-lg">
+            <Monitor className="h-4 w-4 text-blue-400 shrink-0" />
             <div>
-              <p className="text-sm text-purple-200">Impacted Systems</p>
-              <p className="text-lg font-bold text-purple-100">
+              <p className="text-xs text-purple-200">Impacted Systems</p>
+              <p className="text-sm font-bold text-purple-100">
                 {impactedCounts.computers} computers
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <Users className="h-5 w-5 text-green-400" />
+          <div className="flex items-center gap-2 bg-purple-900/20 p-2 rounded-lg">
+            <Users className="h-4 w-4 text-green-400 shrink-0" />
             <div>
-              <p className="text-sm text-purple-200">Impacted Users</p>
-              <p className="text-lg font-bold text-purple-100">
+              <p className="text-xs text-purple-200">Impacted Users</p>
+              <p className="text-sm font-bold text-purple-100">
                 {impactedCounts.users} users
               </p>
             </div>
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart 
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleZoom}
-            >
-              <defs>
-                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#9333EA" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#9333EA" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <XAxis 
-                dataKey="timestamp" 
-                stroke="#94A3B8"
-                fontSize={12}
-                tickLine={false}
-                angle={-45}
-                textAnchor="end"
-                height={70}
-                tick={{ fill: '#E2E8F0' }}
-                tickFormatter={formatAxisTimestamp}
-                domain={zoomState.left && zoomState.right ? [zoomState.left, zoomState.right] : ['auto', 'auto']}
-              />
-              <YAxis 
-                stroke="#6B7280"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                domain={yAxisDomain}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Area
-                type="monotone"
-                dataKey="count"
-                name="Anomaly Count"
-                stroke="#9333EA"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorCount)"
-                dot={<CustomizedDot />}
-              />
-              {zoomState.refAreaLeft && zoomState.refAreaRight && (
-                <ReferenceArea
-                  x1={zoomState.refAreaLeft}
-                  x2={zoomState.refAreaRight}
-                  strokeOpacity={0.3}
-                  fill="#9333EA"
-                  fillOpacity={0.1}
+      <CardContent className="pt-2">
+        <div className="relative">
+          <div className="h-[280px]"> {/* Reduced from 300px to 280px */}
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart 
+                data={chartData}
+                margin={{ top: 10, right: 30, left: 0, bottom: 20 }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleZoom}
+              >
+                <defs>
+                  <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#9333EA" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#9333EA" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <XAxis 
+                  dataKey="timestamp" 
+                  stroke="#94A3B8"
+                  fontSize={10}
+                  tickLine={false}
+                  angle={-45}
+                  textAnchor="end"
+                  height={50}
+                  tick={{ fill: '#E2E8F0' }}
+                  tickFormatter={formatAxisTimestamp}
+                  domain={zoomState.left && zoomState.right ? [zoomState.left, zoomState.right] : ['auto', 'auto']}
                 />
-              )}
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="mt-4 px-4">
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-purple-300">Zoom Level:</span>
-            <div className="flex-1">
+                <YAxis 
+                  stroke="#6B7280"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={false}
+                  domain={yAxisDomain as [number, number]}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="count"
+                  name="Anomaly Count"
+                  stroke="#9333EA"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorCount)"
+                  dot={<CustomizedDot />}
+                />
+                {zoomState.refAreaLeft && zoomState.refAreaRight && (
+                  <ReferenceArea
+                    x1={zoomState.refAreaLeft}
+                    x2={zoomState.refAreaRight}
+                    strokeOpacity={0.3}
+                    fill="#9333EA"
+                    fillOpacity={0.1}
+                  />
+                )}
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="absolute -bottom-6 left-0 right-0 px-8"> {/* Changed from bottom-0 to -bottom-6 */}
+            <div className="flex items-center gap-4 bg-black/40 p-2 rounded-lg">
+              <span className="text-xs text-purple-300 whitespace-nowrap">Zoom Level:</span>
               <Slider
                 value={zoomLevel}
                 onValueChange={handleZoomChange}
@@ -439,6 +432,16 @@ const OutliersWidget = () => {
                 step={0.1}
                 className="w-full"
               />
+              {Object.keys(zoomState).length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleZoomOutReset}
+                  className="text-purple-100 whitespace-nowrap text-xs"
+                >
+                  Reset Zoom
+                </Button>
+              )}
             </div>
           </div>
         </div>
