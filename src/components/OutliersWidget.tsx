@@ -364,7 +364,7 @@ const OutliersWidget = () => {
       </CardHeader>
       <CardContent className="pt-2">
         <div className="relative">
-          <div className="h-[300px]">
+          <div className="h-[280px]"> {/* Reduced from 300px to 280px */}
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart 
                 data={chartData}
@@ -421,7 +421,7 @@ const OutliersWidget = () => {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 px-8 pb-2">
+          <div className="absolute -bottom-6 left-0 right-0 px-8"> {/* Changed from bottom-0 to -bottom-6 */}
             <div className="flex items-center gap-4 bg-black/40 p-2 rounded-lg">
               <span className="text-xs text-purple-300 whitespace-nowrap">Zoom Level:</span>
               <Slider
