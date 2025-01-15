@@ -210,16 +210,14 @@ const OutliersWidget = () => {
         : outlier.last_seen;
       
       if (!groupedData[timeKey]) {
-        const riskValue = outlier.risk !== null && !isNaN(Number(outlier.risk)) 
-          ? Number(outlier.risk) 
-          : 0;
+        const riskValue = outlier.risk !== null ? Number(outlier.risk) : 0;
 
         groupedData[timeKey] = {
           timestamp: outlier.last_seen,
           firstSeen: outlier.first_seen,
           lastSeen: outlier.last_seen,
           count: 0,
-          risk: riskValue,
+          risk: isNaN(riskValue) ? 0 : riskValue,
           severity: outlier.severity,
           title: outlier.title,
           description: outlier.ml_description,
@@ -231,9 +229,11 @@ const OutliersWidget = () => {
 
       groupedData[timeKey].count += outlier.anomaly_count;
       
-      const currentRisk = Number(outlier.risk);
-      if (!isNaN(currentRisk) && currentRisk !== null) {
-        groupedData[timeKey].risk = Math.max(groupedData[timeKey].risk, currentRisk);
+      if (outlier.risk !== null) {
+        const currentRisk = Number(outlier.risk);
+        if (!isNaN(currentRisk)) {
+          groupedData[timeKey].risk = Math.max(groupedData[timeKey].risk, currentRisk);
+        }
       }
     });
 
