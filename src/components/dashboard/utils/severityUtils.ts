@@ -2,15 +2,15 @@ export const getSeverityColor = (severity: string = ''): string => {
   const level = severity.toLowerCase();
   switch (level) {
     case 'critical':
-      return 'text-[#ea384c]'; // Red
+      return 'text-[#FF0000]'; // Bright Red
     case 'high':
-      return 'text-[#F97316]'; // Bright Orange
+      return 'text-[#FFA500]'; // Orange
     case 'medium':
-      return 'text-[#8B5CF6]'; // Vivid Purple
+      return 'text-[#FFFF00]'; // Yellow
     case 'low':
-      return 'text-[#8A898C]'; // Medium Gray
+      return 'text-[#008000]'; // Green
     default:
-      return 'text-blue-400'; // Default color
+      return 'text-[#0000FF]'; // Blue (Informational)
   }
 };
 
@@ -18,14 +18,14 @@ export const getSeverityBgColor = (severity: string = ''): string => {
   const level = severity.toLowerCase();
   switch (level) {
     case 'critical':
-      return 'bg-[#ea384c]/10'; // Red background
+      return 'bg-[#FF0000]/10'; // Red background
     case 'high':
-      return 'bg-[#F97316]/10'; // Orange background
+      return 'bg-[#FFA500]/10'; // Orange background
     case 'medium':
-      return 'bg-[#8B5CF6]/10'; // Purple background
+      return 'bg-[#FFFF00]/10'; // Yellow background
     case 'low':
-      return 'bg-[#8A898C]/10'; // Gray background
+      return 'bg-[#008000]/10'; // Green background
     default:
-      return 'bg-blue-400/10'; // Default background
+      return 'bg-[#0000FF]/10'; // Blue background
   }
 };

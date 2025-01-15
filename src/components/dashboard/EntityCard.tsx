@@ -15,18 +15,18 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
   const safeUniqueTitles = typeof uniqueTitles === 'number' ? uniqueTitles : 0;
   
   const getRiskColor = (score: string | null) => {
-    if (!score) return "text-blue-400/70";
+    if (!score) return "text-[#0000FF]/70"; // Informational
     const numScore = parseInt(score);
-    if (numScore >= 200) return "text-red-400";
-    if (numScore >= 50) return "text-[#F97316]"; // Changed to orange for medium risk
-    return "text-green-400";
+    if (numScore >= 200) return "text-[#FF0000]"; // Critical (Red)
+    if (numScore >= 50) return "text-[#FFA500]"; // High (Orange)
+    return "text-[#008000]"; // Low (Green)
   };
 
   const getRiskLevel = (score: string | null) => {
     if (!score) return "";
     const numScore = parseInt(score);
-    if (numScore >= 200) return "High";
-    if (numScore >= 50) return "Medium";
+    if (numScore >= 200) return "Critical";
+    if (numScore >= 50) return "High";
     return "Low";
   };
 
@@ -46,7 +46,6 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
       )}
     >
       <div className="flex items-center w-full">
-        {/* Left section - Icon and details */}
         <div className="flex items-center gap-4 flex-[0_0_50%]">
           <div className="relative w-10 h-10 rounded-full bg-blue-950/30 flex items-center justify-center">
             {isComputer ? (
@@ -66,7 +65,6 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
           </div>
         </div>
 
-        {/* Right section - Risk score with cardiogram */}
         {riskScore && (
           <div className="flex-1 flex items-center justify-end">
             <div className="flex items-center gap-2">

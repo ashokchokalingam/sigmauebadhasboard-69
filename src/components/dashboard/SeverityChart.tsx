@@ -25,11 +25,11 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
   )?.map(count => ({
     name: count.rule_level,
     value: parseInt(count.event_count),
-    color: count.rule_level === "Critical" ? "#DC2626" : 
-           count.rule_level === "High" ? "#F97316" :
-           count.rule_level === "Medium" ? "#FB923C" :
-           count.rule_level === "Low" ? "#22C55E" :
-           "#64748B" // Default color for Informational
+    color: count.rule_level === "Critical" ? "#FF0000" : // Bright Red
+           count.rule_level === "High" ? "#FFA500" : // Orange
+           count.rule_level === "Medium" ? "#FFFF00" : // Yellow
+           count.rule_level === "Low" ? "#008000" : // Green
+           "#0000FF" // Blue (Informational)
   })) || [];
 
   const CustomTooltip = ({ active, payload }: any) => {

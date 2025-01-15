@@ -17,26 +17,26 @@ const TimelineEventHeader = ({
   const getSeverityIcon = () => {
     switch (ruleLevel?.toLowerCase()) {
       case 'critical':
-        return <AlertTriangle className="h-5 w-5 text-red-400" />;
+        return <AlertTriangle className="h-5 w-5 text-[#FF0000]" />;
       case 'high':
-        return <ShieldAlert className="h-5 w-5 text-orange-400" />;
+        return <ShieldAlert className="h-5 w-5 text-[#FFA500]" />;
       case 'medium':
-        return <Shield className="h-5 w-5 text-yellow-400" />;
+        return <Shield className="h-5 w-5 text-[#FFFF00]" />;
       default:
-        return <ShieldCheck className="h-5 w-5 text-green-400" />;
+        return <ShieldCheck className="h-5 w-5 text-[#008000]" />;
     }
   };
 
   const getSeverityColor = () => {
     switch (ruleLevel?.toLowerCase()) {
       case 'critical':
-        return 'text-red-400 bg-red-400/10';
+        return 'text-[#FF0000] bg-[#FF0000]/10';
       case 'high':
-        return 'text-orange-400 bg-orange-400/10';
+        return 'text-[#FFA500] bg-[#FFA500]/10';
       case 'medium':
-        return 'text-yellow-400 bg-yellow-400/10';
+        return 'text-[#FFFF00] bg-[#FFFF00]/10';
       default:
-        return 'text-green-400 bg-green-400/10';
+        return 'text-[#008000] bg-[#008000]/10';
     }
   };
 
@@ -51,7 +51,7 @@ const TimelineEventHeader = ({
           )}>
             {ruleLevel}
           </span>
-          <span className="text-xs text-blue-400 bg-blue-400/10 px-2.5 py-0.5 rounded-full">
+          <span className="text-xs text-[#0000FF] bg-[#0000FF]/10 px-2.5 py-0.5 rounded-full">
             {totalRecords || 0} events
           </span>
         </div>
