@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertOctagon, TrendingUp, Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { format, parseISO } from "date-fns";
+import { parseISO } from "date-fns";
 
 interface MLOutlier {
   anomaly_count: number;
@@ -46,7 +46,7 @@ const CustomTooltip = ({ active, payload }: any) => {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Time:</span>
-            <span className="text-white">{format(parseISO(data.timestamp), 'PPp')}</span>
+            <span className="text-white">{new Date(data.timestamp).toLocaleString()}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Tactics:</span>
@@ -190,7 +190,14 @@ const OutliersWidget = () => {
                 stroke="#6B7280"
                 fontSize={12}
                 tickLine={false}
-                tickFormatter={(value) => format(parseISO(value), 'MMM dd HH:mm')}
+                tickFormatter={(value) => {
+                  try {
+                    return new Date(value).toLocaleTimeString();
+                  } catch (e) {
+                    console.error('Error formatting date:', e);
+                    return value;
+                  }
+                }}
               />
               <YAxis 
                 stroke="#6B7280"
