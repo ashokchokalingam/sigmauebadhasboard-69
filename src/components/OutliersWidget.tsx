@@ -47,8 +47,12 @@ const CustomTooltip = ({ active, payload }: any) => {
             <span className="text-white font-bold">{data.risk || 'N/A'}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-purple-400">Time:</span>
-            <span className="text-white">{format(new Date(data.timestamp), 'MMM d, yyyy h:mm a')}</span>
+            <span className="text-purple-400">First Seen:</span>
+            <span className="text-white">{format(new Date(data.firstSeen), 'MMM d, yyyy h:mm a')}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">Last Seen:</span>
+            <span className="text-white">{format(new Date(data.lastSeen), 'MMM d, yyyy h:mm a')}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Impacted Computers:</span>
@@ -123,7 +127,9 @@ const OutliersWidget = () => {
   });
 
   const chartData: ChartDataPoint[] = apiResponse?.map((outlier) => ({
-    timestamp: outlier.first_seen,
+    timestamp: outlier.last_seen, // Changed to use last_seen for X-axis
+    firstSeen: outlier.first_seen,
+    lastSeen: outlier.last_seen,
     count: outlier.anomaly_count,
     risk: outlier.risk || 0,
     severity: outlier.severity,
@@ -246,13 +252,13 @@ const OutliersWidget = () => {
               </defs>
               <XAxis 
                 dataKey="timestamp" 
-                stroke="#94A3B8" // Changed from #6B7280 to a lighter slate color
+                stroke="#94A3B8"
                 fontSize={12}
                 tickLine={false}
                 angle={-45}
                 textAnchor="end"
                 height={70}
-                tick={{ fill: '#E2E8F0' }} // Added this line to make the text more visible
+                tick={{ fill: '#E2E8F0' }}
                 tickFormatter={(value) => {
                   try {
                     const date = new Date(value);
