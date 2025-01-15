@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertOctagon, TrendingUp, Shield, Monitor, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { format, parseISO } from "date-fns";
-import React from 'react'; // Added React import
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea, Brush } from "recharts";
+import { format } from "date-fns";
+import React, { useState, useCallback } from 'react';
+import { Button } from "@/components/ui/button";
+import { Toggle } from "@/components/ui/toggle";
 
 interface MLOutlier {
   anomaly_count: number;
@@ -22,8 +24,8 @@ interface MLOutlier {
 
 interface ChartDataPoint {
   timestamp: string;
-  firstSeen: string;  // Added this property
-  lastSeen: string;   // Added this property
+  firstSeen: string;
+  lastSeen: string;
   count: number;
   risk: number;
   severity: string;
@@ -32,6 +34,13 @@ interface ChartDataPoint {
   tactics: string[];
   impactedComputers: string[];
   impactedUsers: string[];
+}
+
+interface ZoomState {
+  left?: string;
+  right?: string;
+  refAreaLeft?: string;
+  refAreaRight?: string;
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -135,6 +144,10 @@ const formatAxisTimestamp = (timestamp: string): string => {
 };
 
 const OutliersWidget = () => {
+  const [zoomState, setZoomState] = useState<ZoomState>({});
+  const [isGrouped, setIsGrouped] = useState(true);
+  const [groupingInterval, setGroupingInterval] = useState<'hour' | 'day'>('day');
+
   const { data: apiResponse, isLoading } = useQuery({
     queryKey: ['outliers'],
     queryFn: async () => {
@@ -151,10 +164,13 @@ const OutliersWidget = () => {
     if (!apiResponse) return [];
 
     const groupedData: { [key: string]: ChartDataPoint } = {};
+    const interval = groupingInterval === 'hour' ? 'HH:00' : 'MMM d';
 
     apiResponse.forEach((outlier) => {
       const date = new Date(outlier.last_seen);
-      const timeKey = `${format(date, 'yyyy-MM-dd')}-${getTimeOfDay(date.getHours())}`;
+      const timeKey = isGrouped 
+        ? `${format(date, interval)}-${getTimeOfDay(date.getHours())}`
+        : outlier.last_seen;
       
       if (!groupedData[timeKey]) {
         groupedData[timeKey] = {
@@ -178,45 +194,43 @@ const OutliersWidget = () => {
 
     return Object.values(groupedData)
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
-  }, [apiResponse]);
+  }, [apiResponse, isGrouped, groupingInterval]);
 
-  const calculateSeverityStats = () => {
-    if (!apiResponse) return { high: 0, medium: 0, low: 0, informational: 0, total: 0 };
-    
-    const stats = apiResponse.reduce((acc, curr) => {
-      acc[curr.severity] = (acc[curr.severity] || 0) + curr.anomaly_count;
-      acc.total += curr.anomaly_count;
-      return acc;
-    }, { high: 0, medium: 0, low: 0, informational: 0, total: 0 });
+  const handleZoom = useCallback(() => {
+    if (zoomState.refAreaLeft === zoomState.refAreaRight || !zoomState.refAreaRight) {
+      setZoomState({});
+      return;
+    }
 
-    return stats;
-  };
+    let left = zoomState.refAreaLeft;
+    let right = zoomState.refAreaRight;
 
-  const calculateImpactedCounts = () => {
-    if (!apiResponse) return { computers: 0, users: 0 };
-    
-    const uniqueComputers = new Set();
-    const uniqueUsers = new Set();
-    
-    apiResponse.forEach(outlier => {
-      if (outlier.impacted_computers) {
-        outlier.impacted_computers.split(',').forEach(computer => uniqueComputers.add(computer.trim()));
-      }
-      if (outlier.origin_users) {
-        outlier.origin_users.split(',').forEach(user => uniqueUsers.add(user.trim()));
-      }
+    if (left && right && new Date(left).getTime() > new Date(right).getTime()) {
+      [left, right] = [right, left];
+    }
+
+    setZoomState({
+      left,
+      right,
+      refAreaLeft: undefined,
+      refAreaRight: undefined,
     });
-    
-    return {
-      computers: uniqueComputers.size,
-      users: uniqueUsers.size
-    };
-  };
+  }, [zoomState]);
 
-  const stats = calculateSeverityStats();
-  const impactedCounts = calculateImpactedCounts();
-  const mediumPercentage = Math.round((stats.medium / stats.total) * 100);
-  const highSeverityCount = stats.high;
+  const handleMouseDown = useCallback((e: any) => {
+    if (!e) return;
+    setZoomState(prev => ({ ...prev, refAreaLeft: e.activeLabel }));
+  }, []);
+
+  const handleMouseMove = useCallback((e: any) => {
+    if (!e) return;
+    if (zoomState.refAreaLeft)
+      setZoomState(prev => ({ ...prev, refAreaRight: e.activeLabel }));
+  }, [zoomState.refAreaLeft]);
+
+  const handleZoomOut = () => {
+    setZoomState({});
+  };
 
   if (isLoading) {
     return (
@@ -230,12 +244,47 @@ const OutliersWidget = () => {
     );
   }
 
+  const stats = calculateSeverityStats();
+  const impactedCounts = calculateImpactedCounts();
+  const mediumPercentage = Math.round((stats.medium / stats.total) * 100);
+  const highSeverityCount = stats.high;
+
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-purple-100">
-          <AlertOctagon className="h-5 w-5 text-purple-500" />
-          ML Outliers - Executive Summary
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-purple-100">
+            <AlertOctagon className="h-5 w-5 text-purple-500" />
+            ML Outliers - Executive Summary
+          </div>
+          <div className="flex items-center gap-2">
+            <Toggle
+              pressed={isGrouped}
+              onPressedChange={setIsGrouped}
+              aria-label="Toggle data grouping"
+            >
+              {isGrouped ? 'Grouped' : 'Raw Data'}
+            </Toggle>
+            {isGrouped && (
+              <Toggle
+                pressed={groupingInterval === 'day'}
+                onPressedChange={(pressed) => setGroupingInterval(pressed ? 'day' : 'hour')}
+                aria-label="Toggle grouping interval"
+              >
+                {groupingInterval === 'day' ? 'Daily' : 'Hourly'}
+              </Toggle>
+            )}
+            {Object.keys(zoomState).length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleZoomOut}
+                className="text-purple-100"
+              >
+                Reset Zoom
+              </Button>
+            )}
+          </div>
         </CardTitle>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-4">
           <div className="md:col-span-2 flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
@@ -282,6 +331,9 @@ const OutliersWidget = () => {
             <AreaChart 
               data={chartData}
               margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleZoom}
             >
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
@@ -299,6 +351,7 @@ const OutliersWidget = () => {
                 height={70}
                 tick={{ fill: '#E2E8F0' }}
                 tickFormatter={formatAxisTimestamp}
+                domain={zoomState.left && zoomState.right ? [zoomState.left, zoomState.right] : ['auto', 'auto']}
               />
               <YAxis 
                 stroke="#6B7280"
@@ -316,6 +369,22 @@ const OutliersWidget = () => {
                 fillOpacity={1}
                 fill="url(#colorCount)"
                 dot={<CustomizedDot />}
+              />
+              {zoomState.refAreaLeft && zoomState.refAreaRight && (
+                <ReferenceArea
+                  x1={zoomState.refAreaLeft}
+                  x2={zoomState.refAreaRight}
+                  strokeOpacity={0.3}
+                  fill="#9333EA"
+                  fillOpacity={0.1}
+                />
+              )}
+              <Brush
+                dataKey="timestamp"
+                height={30}
+                stroke="#9333EA"
+                tickFormatter={formatAxisTimestamp}
+                fill="#1a1f2c"
               />
             </AreaChart>
           </ResponsiveContainer>
