@@ -6,6 +6,7 @@ interface EntityListProps {
     id: string;
     eventCount: number;
     uniqueTitles: number;
+    total_unique_risk_score?: string;
   }>;
   onEntitySelect: (entityId: string) => void;
 }
@@ -20,6 +21,7 @@ const EntityList = ({ entities, onEntitySelect }: EntityListProps) => {
             id={entity.id}
             eventCount={entity.eventCount}
             uniqueTitles={entity.uniqueTitles}
+            riskScore={entity.total_unique_risk_score}
             onClick={() => onEntitySelect(entity.id)}
           />
         ))}

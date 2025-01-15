@@ -7,12 +7,22 @@ interface EntityCardProps {
   eventCount?: number | null;
   uniqueTitles?: number | null;
   onClick: () => void;
+  riskScore?: string | null;
 }
 
-const EntityCard = ({ id, uniqueTitles = 0, onClick }: EntityCardProps) => {
+const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProps) => {
   const isComputer = id?.endsWith('$') ?? false;
   const safeUniqueTitles = typeof uniqueTitles === 'number' ? uniqueTitles : 0;
   
+  const getRiskColor = (score: string | null) => {
+    if (!score) return "text-blue-400/70";
+    const numScore = parseInt(score);
+    if (numScore >= 200) return "text-red-400";
+    if (numScore >= 100) return "text-orange-400";
+    if (numScore >= 50) return "text-yellow-400";
+    return "text-green-400";
+  };
+
   return (
     <div 
       onClick={onClick}
@@ -40,6 +50,14 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick }: EntityCardProps) => {
             <span className="text-xs text-blue-300/60">
               {safeUniqueTitles} unique anomalies
             </span>
+            {riskScore && (
+              <>
+                <span className="text-xs text-blue-300/60">•</span>
+                <span className={`text-xs font-medium ${getRiskColor(riskScore)}`}>
+                  Risk Score: {riskScore}
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>
