@@ -63,14 +63,14 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
                 <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
                   <path
                     d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
-                    className={cn("stroke-current fill-none stroke-[3]", getRiskColor(riskScore))}
+                    className={cn("stroke-current fill-none stroke-[4]", getRiskColor(riskScore))} // Increased stroke width from 3 to 4
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </svg>
               </div>
               <span className={cn(
-                "font-bold text-2xl min-w-[60px] text-right", // Changed from text-lg to text-2xl and increased min-width
+                "font-bold text-3xl min-w-[70px] text-right", // Changed from text-2xl to text-3xl and increased min-width
                 getRiskColor(riskScore)
               )}>
                 {riskScore}
