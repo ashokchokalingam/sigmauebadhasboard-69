@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertOctagon } from "lucide-react";
+import { AlertOctagon, TrendingUp, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
@@ -10,6 +10,9 @@ interface Outlier {
   timestamp: string;
   tactic?: string;
   technique?: string;
+  risk_score?: number;
+  users_impacted?: number;
+  trend_percentage?: number;
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -17,16 +20,26 @@ const CustomTooltip = ({ active, payload }: any) => {
     const data = payload[0].payload;
     return (
       <div className="bg-black/90 p-4 rounded-lg border border-purple-500/20 backdrop-blur-sm">
-        <p className="text-purple-300 font-medium mb-2">{data.type}</p>
+        <p className="text-purple-300 font-medium mb-2">{data.tactic}</p>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-purple-400">Count:</span>
+            <span className="text-purple-400">Anomalies:</span>
             <span className="text-white font-bold">{data.count}</span>
           </div>
-          {data.tactic && (
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">Risk Score:</span>
+            <span className="text-white font-bold">{data.risk_score}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">Users Impacted:</span>
+            <span className="text-white">{data.users_impacted}</span>
+          </div>
+          {data.trend_percentage && (
             <div className="flex items-center gap-2">
-              <span className="text-purple-400">Tactic:</span>
-              <span className="text-white">{data.tactic}</span>
+              <span className="text-purple-400">Trend:</span>
+              <span className={`font-bold ${data.trend_percentage > 0 ? 'text-red-400' : 'text-green-400'}`}>
+                {data.trend_percentage > 0 ? '↑' : '↓'} {Math.abs(data.trend_percentage)}%
+              </span>
             </div>
           )}
           {data.technique && (
@@ -44,6 +57,13 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 const CustomizedDot = (props: any) => {
   const { cx, cy, payload } = props;
+  const severity = payload.severity || "medium";
+  
+  const severityColors = {
+    high: "#EF4444",
+    medium: "#F59E0B",
+    low: "#10B981"
+  };
   
   return (
     <g>
@@ -52,11 +72,11 @@ const CustomizedDot = (props: any) => {
         cx={cx} 
         cy={cy} 
         r={4} 
-        fill="#9333EA" 
+        fill={severityColors[severity]} 
         className="cursor-pointer hover:r-6 transition-all duration-300"
       />
       
-      {/* Count value above point */}
+      {/* Risk Score and Count */}
       <text
         x={cx}
         y={cy - 35}
@@ -65,10 +85,10 @@ const CustomizedDot = (props: any) => {
         fontSize="14"
         className="font-bold"
       >
-        {payload.count}
+        {`Risk: ${payload.risk_score || 0}`}
       </text>
       
-      {/* Type below count */}
+      {/* Count and Type */}
       <text
         x={cx}
         y={cy - 20}
@@ -77,10 +97,10 @@ const CustomizedDot = (props: any) => {
         fontSize="11"
         className="font-medium"
       >
-        {payload.type}
+        {`${payload.count} ${payload.type}`}
       </text>
       
-      {/* Technique below type */}
+      {/* Technique */}
       <text
         x={cx}
         y={cy - 5}
@@ -97,71 +117,54 @@ const CustomizedDot = (props: any) => {
 
 const OutliersWidget = () => {
   const { data: outliers } = useQuery({
-    queryKey: ['outliers'],
+    queryKey: ['ml-outliers'],
     queryFn: async () => {
-      return [
-        { 
-          timestamp: 'Execution', 
-          count: 45, 
-          severity: "high", 
-          type: "PowerShell",
-          tactic: "Execution",
-          technique: "T1059.001"
-        },
-        { 
-          timestamp: 'Lateral Movement', 
-          count: 20, 
-          severity: "high", 
-          type: "WinRM",
-          tactic: "Lateral Movement",
-          technique: "T1021.006"
-        },
-        { 
-          timestamp: 'Defense Evasion', 
-          count: 15, 
-          severity: "medium", 
-          type: "Csc.EXE",
-          tactic: "Defense Evasion",
-          technique: "T1027.004"
-        },
-        { 
-          timestamp: 'Execution', 
-          count: 8, 
-          severity: "medium", 
-          type: "Process Creation",
-          tactic: "Execution",
-          technique: "T1204"
-        },
-        { 
-          timestamp: 'Command and Control', 
-          count: 2, 
-          severity: "low", 
-          type: "Network Connection",
-          tactic: "Command and Control",
-          technique: "T1071"
-        },
-        { 
-          timestamp: 'Discovery', 
-          count: 1, 
-          severity: "low", 
-          type: "System Behavior",
-          tactic: "Discovery",
-          technique: "T1082"
-        }
-      ] as Outlier[];
+      const response = await fetch('/api/ml_outliers_title');
+      if (!response.ok) {
+        throw new Error('Failed to fetch outliers data');
+      }
+      return response.json();
     }
   });
+
+  const totalHighRiskEvents = outliers?.filter((o: Outlier) => o.severity === "high").length || 0;
+  const totalUsersImpacted = outliers?.reduce((acc: number, curr: Outlier) => acc + (curr.users_impacted || 0), 0) || 0;
 
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-purple-100">
           <AlertOctagon className="h-5 w-5 text-purple-500" />
-          ML Outliers
+          ML Outliers - Last 7 Days
         </CardTitle>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
+            <AlertOctagon className="h-5 w-5 text-red-400" />
+            <div>
+              <p className="text-sm text-purple-200">High Risk Events</p>
+              <p className="text-lg font-bold text-purple-100">{totalHighRiskEvents}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
+            <Users className="h-5 w-5 text-purple-400" />
+            <div>
+              <p className="text-sm text-purple-200">Users Impacted</p>
+              <p className="text-lg font-bold text-purple-100">{totalUsersImpacted}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
+            <TrendingUp className="h-5 w-5 text-yellow-400" />
+            <div>
+              <p className="text-sm text-purple-200">Risk Trend</p>
+              <p className="text-lg font-bold text-purple-100">
+                {outliers?.[0]?.trend_percentage > 0 ? '↑' : '↓'} {Math.abs(outliers?.[0]?.trend_percentage || 0)}%
+              </p>
+            </div>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="h-[500px]">
+        <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart 
               data={outliers}
@@ -174,7 +177,7 @@ const OutliersWidget = () => {
                 </linearGradient>
               </defs>
               <XAxis 
-                dataKey="timestamp" 
+                dataKey="tactic" 
                 stroke="#6B7280"
                 fontSize={12}
                 tickLine={false}
@@ -198,6 +201,15 @@ const OutliersWidget = () => {
             </AreaChart>
           </ResponsiveContainer>
         </div>
+        {outliers && outliers.length > 0 && (
+          <div className="mt-4 p-4 bg-purple-900/20 rounded-lg">
+            <p className="text-purple-200 text-sm">
+              Key Insight: The {outliers[0].tactic} tactic shows the highest risk with {outliers[0].count} anomalies. 
+              {outliers[0].type && ` Primary concern: ${outliers[0].type} activity.`}
+              {outliers[0].risk_score && ` Risk score: ${outliers[0].risk_score}`}
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
