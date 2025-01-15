@@ -45,6 +45,71 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
+const CustomizedDot = (props: any) => {
+  const { cx, cy, payload } = props;
+  
+  return (
+    <g>
+      {/* Point circle */}
+      <circle 
+        cx={cx} 
+        cy={cy} 
+        r={4} 
+        fill="#9333EA" 
+        className="cursor-pointer hover:r-6 transition-all duration-300"
+      />
+      
+      {/* Count value above point */}
+      <text
+        x={cx}
+        y={cy - 15}
+        textAnchor="middle"
+        fill="#E9D5FF"
+        fontSize="12"
+        className="font-medium"
+      >
+        {payload.count}
+      </text>
+      
+      {/* Event type on point */}
+      <text
+        x={cx}
+        y={cy + 5}
+        textAnchor="middle"
+        fill="#9333EA"
+        fontSize="10"
+        className="font-medium"
+      >
+        {payload.type?.split(' - ')[0]}
+      </text>
+      
+      {/* Tactic below point */}
+      <text
+        x={cx}
+        y={cy + 20}
+        textAnchor="middle"
+        fill="#9333EA"
+        fontSize="10"
+        className="font-medium"
+      >
+        {payload.tactic}
+      </text>
+      
+      {/* Technique ID below tactic */}
+      <text
+        x={cx}
+        y={cy + 35}
+        textAnchor="middle"
+        fill="#9333EA"
+        fontSize="9"
+        className="font-medium opacity-75"
+      >
+        {payload.technique?.split(' ')[0]}
+      </text>
+    </g>
+  );
+};
+
 const OutliersWidget = () => {
   const { data: outliers } = useQuery({
     queryKey: ['outliers'],
@@ -54,99 +119,53 @@ const OutliersWidget = () => {
           timestamp: 'Event 2', 
           count: 45, 
           severity: "high", 
-          type: "Non Interactive PowerShell Process Spawned",
+          type: "PowerShell",
           tactic: "Execution",
-          technique: "T1059.001 - PowerShell"
+          technique: "T1059.001"
         },
         { 
           timestamp: 'Event 4', 
           count: 20, 
           severity: "high", 
-          type: "Remote PowerShell Session Host Process (WinRM)",
+          type: "WinRM",
           tactic: "Lateral Movement",
-          technique: "T1021.006 - Windows Remote Management"
+          technique: "T1021.006"
         },
         { 
           timestamp: 'Event 6', 
           count: 15, 
           severity: "medium", 
-          type: "Dynamic .NET Compilation Via Csc.EXE - Hunting",
+          type: "Csc.EXE",
           tactic: "Defense Evasion",
-          technique: "T1027.004 - Compile After Delivery"
+          technique: "T1027.004"
         },
         { 
           timestamp: 'Event 8', 
           count: 8, 
           severity: "medium", 
-          type: "Suspicious Process Creation",
+          type: "Process Creation",
           tactic: "Execution",
-          technique: "T1204 - User Execution"
+          technique: "T1204"
         },
         { 
           timestamp: 'Event 10', 
           count: 2, 
           severity: "low", 
-          type: "Unusual Network Connection",
+          type: "Network Connection",
           tactic: "Command and Control",
-          technique: "T1071 - Application Layer Protocol"
+          technique: "T1071"
         },
         { 
           timestamp: 'Event 12', 
           count: 1, 
           severity: "low", 
-          type: "Abnormal System Behavior",
+          type: "System Behavior",
           tactic: "Discovery",
-          technique: "T1082 - System Information Discovery"
+          technique: "T1082"
         }
       ] as Outlier[];
     }
   });
-
-  const CustomizedDot = (props: any) => {
-    const { cx, cy, payload } = props;
-    
-    return (
-      <g>
-        <circle 
-          cx={cx} 
-          cy={cy} 
-          r={4} 
-          fill="#9333EA" 
-          className="cursor-pointer hover:r-6 transition-all duration-300"
-        />
-        <text
-          x={cx}
-          y={cy - 15}
-          textAnchor="middle"
-          fill="#E9D5FF"
-          fontSize="12"
-          className="font-medium"
-        >
-          {payload.count}
-        </text>
-        <text
-          x={cx}
-          y={cy + 20}
-          textAnchor="middle"
-          fill="#9333EA"
-          fontSize="10"
-          className="font-medium"
-        >
-          {payload.tactic}
-        </text>
-        <text
-          x={cx}
-          y={cy + 35}
-          textAnchor="middle"
-          fill="#9333EA"
-          fontSize="9"
-          className="font-medium opacity-75"
-        >
-          {payload.technique?.split(' ')[0]}
-        </text>
-      </g>
-    );
-  };
 
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
