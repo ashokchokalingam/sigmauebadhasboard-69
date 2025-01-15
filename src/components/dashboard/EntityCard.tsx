@@ -1,5 +1,5 @@
 import React from "react";
-import { Computer, User } from "lucide-react";
+import { Computer, User, HeartPulse } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EntityCardProps {
@@ -23,6 +23,15 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
     return "text-green-400";
   };
 
+  const getRiskBgColor = (score: string | null) => {
+    if (!score) return "bg-blue-500/5";
+    const numScore = parseInt(score);
+    if (numScore >= 200) return "bg-red-500/10";
+    if (numScore >= 100) return "bg-orange-500/10";
+    if (numScore >= 50) return "bg-yellow-500/10";
+    return "bg-green-500/10";
+  };
+
   return (
     <div 
       onClick={onClick}
@@ -33,7 +42,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
         "border border-blue-500/5 hover:border-blue-500/10"
       )}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-1">
         <div className="relative w-10 h-10 rounded-full bg-blue-950/30 flex items-center justify-center">
           {isComputer ? (
             <Computer className="w-5 h-5 text-blue-400/70" />
@@ -42,24 +51,35 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
           )}
         </div>
         
-        <div className="flex flex-col">
-          <span className="font-mono text-sm text-blue-200/90 font-medium group-hover:text-blue-100 truncate max-w-[300px]">
+        <div className="flex flex-col flex-1">
+          <span className="font-mono text-base text-blue-200/90 font-medium group-hover:text-blue-100 truncate max-w-[300px]">
             {id || 'Unknown'}
           </span>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs text-blue-300/60">
-              {safeUniqueTitles} unique anomalies
-            </span>
-            {riskScore && (
-              <>
-                <span className="text-xs text-blue-300/60">•</span>
-                <span className={`text-xs font-medium ${getRiskColor(riskScore)}`}>
-                  Risk Score: {riskScore}
-                </span>
-              </>
-            )}
-          </div>
+          <span className="text-sm text-blue-300/60 mt-1">
+            {safeUniqueTitles} unique anomalies
+          </span>
         </div>
+
+        {riskScore && (
+          <div className={cn(
+            "flex items-center gap-2 px-3 py-1.5 rounded-full",
+            "transition-all duration-300",
+            getRiskBgColor(riskScore)
+          )}>
+            <HeartPulse 
+              className={cn(
+                "w-4 h-4 animate-pulse",
+                getRiskColor(riskScore)
+              )} 
+            />
+            <span className={cn(
+              "font-semibold text-base",
+              getRiskColor(riskScore)
+            )}>
+              {riskScore}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
