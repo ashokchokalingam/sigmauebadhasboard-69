@@ -70,7 +70,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
                 </svg>
               </div>
               <span className={cn(
-                "font-bold text-lg min-w-[40px] text-right",
+                "font-bold text-2xl min-w-[60px] text-right", // Changed from text-lg to text-2xl and increased min-width
                 getRiskColor(riskScore)
               )}>
                 {riskScore}
