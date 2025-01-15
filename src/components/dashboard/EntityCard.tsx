@@ -18,7 +18,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
     if (!score) return "text-blue-400/70";
     const numScore = parseInt(score);
     if (numScore >= 200) return "text-red-400";
-    if (numScore >= 50) return "text-[#F97316]"; // Orange for medium risk
+    if (numScore >= 50) return "text-[#F97316]"; // Changed to orange for medium risk
     return "text-green-400";
   };
 
@@ -45,9 +45,9 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
         "border border-blue-500/5 hover:border-blue-500/10"
       )}
     >
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center w-full">
         {/* Left section - Icon and details */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-[0_0_50%]">
           <div className="relative w-10 h-10 rounded-full bg-blue-950/30 flex items-center justify-center">
             {isComputer ? (
               <Computer className="w-5 h-5 text-blue-400/70" />
@@ -66,46 +66,48 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
           </div>
         </div>
 
-        {/* Right section - Risk score with cardiogram - positioned at 75% */}
+        {/* Right section - Risk score with cardiogram */}
         {riskScore && (
-          <div className="flex items-center gap-2 ml-auto" style={{ marginLeft: 'auto', width: '25%' }}>
-            <div className="flex flex-col items-center">
+          <div className="flex-1 flex items-center justify-end">
+            <div className="flex items-center gap-2">
+              <div className="flex flex-col items-center">
+                <span className={cn(
+                  "text-blue-300/90 font-medium text-base",
+                  getRiskColor(riskScore),
+                  isHighRisk(riskScore) && "animate-pulse"
+                )}>
+                  Risk
+                </span>
+                <span className={cn(
+                  "text-xs font-medium -mt-0.5",
+                  getRiskColor(riskScore),
+                  isHighRisk(riskScore) && "animate-pulse"
+                )}>
+                  {getRiskLevel(riskScore)}
+                </span>
+              </div>
+              <div className="relative w-20 h-6 overflow-hidden">
+                <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
+                  <path
+                    d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
+                    className={cn(
+                      "stroke-current fill-none stroke-[4]",
+                      getRiskColor(riskScore),
+                      isHighRisk(riskScore) && "animate-pulse"
+                    )}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
               <span className={cn(
-                "text-blue-300/90 font-medium text-base",
+                "font-bold text-3xl min-w-[70px] text-right",
                 getRiskColor(riskScore),
                 isHighRisk(riskScore) && "animate-pulse"
               )}>
-                Risk
-              </span>
-              <span className={cn(
-                "text-xs font-medium -mt-0.5",
-                getRiskColor(riskScore),
-                isHighRisk(riskScore) && "animate-pulse"
-              )}>
-                {getRiskLevel(riskScore)}
+                {riskScore}
               </span>
             </div>
-            <div className="relative w-20 h-6 overflow-hidden">
-              <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
-                <path
-                  d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
-                  className={cn(
-                    "stroke-current fill-none stroke-[4]",
-                    getRiskColor(riskScore),
-                    isHighRisk(riskScore) && "animate-pulse"
-                  )}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <span className={cn(
-              "font-bold text-3xl min-w-[70px] text-right",
-              getRiskColor(riskScore),
-              isHighRisk(riskScore) && "animate-pulse"
-            )}>
-              {riskScore}
-            </span>
           </div>
         )}
       </div>
