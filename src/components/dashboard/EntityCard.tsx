@@ -23,6 +23,14 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
     return "text-green-400";
   };
 
+  const getRiskLevel = (score: string | null) => {
+    if (!score) return "";
+    const numScore = parseInt(score);
+    if (numScore >= 200) return "High";
+    if (numScore >= 100) return "Medium";
+    return "Low";
+  };
+
   const isHighRisk = (score: string | null) => {
     if (!score) return false;
     return parseInt(score) >= 200;
@@ -63,13 +71,22 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
         {riskScore && (
           <div className="flex-1 flex items-center justify-end">
             <div className="flex items-center gap-2">
-              <span className={cn(
-                "text-blue-300/90 font-medium text-base",
-                getRiskColor(riskScore),
-                isHighRisk(riskScore) && "animate-pulse"
-              )}>
-                Risk
-              </span>
+              <div className="flex flex-col items-center">
+                <span className={cn(
+                  "text-blue-300/90 font-medium text-base",
+                  getRiskColor(riskScore),
+                  isHighRisk(riskScore) && "animate-pulse"
+                )}>
+                  Risk
+                </span>
+                <span className={cn(
+                  "text-xs font-medium -mt-0.5",
+                  getRiskColor(riskScore),
+                  isHighRisk(riskScore) && "animate-pulse"
+                )}>
+                  {getRiskLevel(riskScore)}
+                </span>
+              </div>
               <div className="relative w-20 h-6 overflow-hidden">
                 <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
                   <path
