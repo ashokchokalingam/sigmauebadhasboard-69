@@ -147,7 +147,7 @@ const OutliersWidget = () => {
   const [zoomState, setZoomState] = useState<ZoomState>({});
   const [isGrouped, setIsGrouped] = useState(true);
   const [groupingInterval, setGroupingInterval] = useState<'hour' | 'day'>('day');
-  const [zoomLevel, setZoomLevel] = useState(1);
+  const [domain, setDomain] = useState<[number, number]>([0, 100]); // For Y-axis zoom
 
   const { data: apiResponse, isLoading } = useQuery({
     queryKey: ['outliers'],
@@ -232,11 +232,21 @@ const OutliersWidget = () => {
   }, [apiResponse, isGrouped, groupingInterval]);
 
   const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 0.5, 4));
+    setDomain(([min, max]) => {
+      const range = max - min;
+      const newMin = min + range * 0.25;
+      const newMax = max - range * 0.25;
+      return [newMin, newMax];
+    });
   };
 
   const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 0.5, 0.5));
+    setDomain(([min, max]) => {
+      const range = max - min;
+      const newMin = Math.max(0, min - range * 0.5);
+      const newMax = max + range * 0.5;
+      return [newMin, newMax];
+    });
   };
 
   const handleZoom = useCallback(() => {
@@ -377,7 +387,6 @@ const OutliersWidget = () => {
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleZoom}
-              scale={zoomLevel}
             >
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
@@ -402,6 +411,7 @@ const OutliersWidget = () => {
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
+                domain={domain}
               />
               <Tooltip content={<CustomTooltip />} />
               <Area
