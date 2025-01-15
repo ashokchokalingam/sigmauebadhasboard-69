@@ -160,6 +160,40 @@ const OutliersWidget = () => {
     }
   });
 
+  const calculateSeverityStats = () => {
+    if (!apiResponse) return { total: 0, high: 0, medium: 0, low: 0 };
+    
+    return apiResponse.reduce((acc, outlier) => {
+      acc.total++;
+      switch (outlier.severity) {
+        case 'high':
+          acc.high++;
+          break;
+        case 'medium':
+          acc.medium++;
+          break;
+        case 'low':
+          acc.low++;
+          break;
+      }
+      return acc;
+    }, { total: 0, high: 0, medium: 0, low: 0 });
+  };
+
+  const calculateImpactedCounts = () => {
+    if (!apiResponse) return { computers: 0, users: 0 };
+    
+    return apiResponse.reduce((acc, outlier) => {
+      const computers = outlier.impacted_computers?.split(',').filter(Boolean) || [];
+      const users = outlier.origin_users?.split(',').filter(Boolean) || [];
+      
+      return {
+        computers: acc.computers + computers.length,
+        users: acc.users + users.length
+      };
+    }, { computers: 0, users: 0 });
+  };
+
   const chartData = React.useMemo(() => {
     if (!apiResponse) return [];
 
