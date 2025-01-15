@@ -31,7 +31,7 @@ interface ChartDataPoint {
   first_seen: string;
   last_seen: string;
   impacted_user: string;
-  unique_computers: number;  // Added this missing property
+  unique_computers: number;
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -59,12 +59,12 @@ const CustomTooltip = ({ active, payload }: any) => {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Tactics:</span>
-            <span className="text-white">{data.tactic}</span>
+            <span className="text-white">{data.tactic || 'N/A'}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Risk Level:</span>
             <span className={`font-bold ${getSeverityColor(data.severity)}`}>
-              {data.severity.toUpperCase()}
+              {data.severity?.toUpperCase() || 'N/A'}
             </span>
           </div>
         </div>
@@ -89,7 +89,7 @@ const getSeverityColor = (severity: string): string => {
 
 const CustomizedDot = (props: any) => {
   const { cx, cy, payload } = props;
-  const severity = payload.severity || "medium";
+  const severity = payload?.severity || "medium";
   
   const severityColors = {
     high: "#EF4444",
@@ -121,21 +121,21 @@ const OutliersWidget = () => {
     }
   });
 
-  // Transform API data for the chart
+  // Transform API data for the chart with null checks
   const chartData: ChartDataPoint[] = apiResponse?.map((outlier) => ({
-    count: outlier.event_count,
-    severity: outlier.risk_level,
-    type: outlier.event_title,
-    timestamp: outlier.first_seen,
-    tactic: outlier.tactics.split(',')[0], // Take first tactic if multiple
-    technique: outlier.techniques.split(',')[0], // Take first technique if multiple
-    risk_score: outlier.ml_cluster,
-    users_impacted: outlier.unique_users,
-    trend_percentage: 0, // Calculate if needed
-    first_seen: outlier.first_seen,
-    last_seen: outlier.last_seen,
-    impacted_user: outlier.impacted_user,
-    unique_computers: outlier.unique_computers  // Added this mapping
+    count: outlier.event_count || 0,
+    severity: outlier.risk_level || "medium",
+    type: outlier.event_title || "Unknown Event",
+    timestamp: outlier.first_seen || new Date().toISOString(),
+    tactic: outlier.tactics?.split(',')[0] || "Unknown",
+    technique: outlier.techniques?.split(',')[0] || "Unknown",
+    risk_score: outlier.ml_cluster || 0,
+    users_impacted: outlier.unique_users || 0,
+    trend_percentage: 0,
+    first_seen: outlier.first_seen || new Date().toISOString(),
+    last_seen: outlier.last_seen || new Date().toISOString(),
+    impacted_user: outlier.impacted_user || "Unknown User",
+    unique_computers: outlier.unique_computers || 0
   })) || [];
 
   const totalHighRiskEvents = chartData.filter(o => o.severity === "high").length;
