@@ -8,6 +8,8 @@ interface Outlier {
   severity: "high" | "medium" | "low";
   type: string;
   timestamp: string;
+  tactic?: string;
+  technique?: string;
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -16,12 +18,26 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div className="bg-black/90 p-4 rounded-lg border border-purple-500/20 backdrop-blur-sm">
         <p className="text-purple-300 font-medium mb-2">{data.type}</p>
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400">Count:</span>
-          <span className="text-white font-bold">{data.count}</span>
-        </div>
-        <div className="mt-1 text-sm text-purple-400/80">
-          {data.timestamp}
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">Count:</span>
+            <span className="text-white font-bold">{data.count}</span>
+          </div>
+          {data.tactic && (
+            <div className="flex items-center gap-2">
+              <span className="text-purple-400">Tactic:</span>
+              <span className="text-white">{data.tactic}</span>
+            </div>
+          )}
+          {data.technique && (
+            <div className="flex items-center gap-2">
+              <span className="text-purple-400">Technique:</span>
+              <span className="text-white">{data.technique}</span>
+            </div>
+          )}
+          <div className="mt-1 text-sm text-purple-400/80">
+            {data.timestamp}
+          </div>
         </div>
       </div>
     );
@@ -34,12 +50,54 @@ const OutliersWidget = () => {
     queryKey: ['outliers'],
     queryFn: async () => {
       return [
-        { timestamp: 'Event 2', count: 45, severity: "high", type: "Non Interactive PowerShell Process Spawned" },
-        { timestamp: 'Event 4', count: 20, severity: "high", type: "Remote PowerShell Session Host Process (WinRM)" },
-        { timestamp: 'Event 6', count: 15, severity: "medium", type: "Dynamic .NET Compilation Via Csc.EXE - Hunting" },
-        { timestamp: 'Event 8', count: 8, severity: "medium", type: "Suspicious Process Creation" },
-        { timestamp: 'Event 10', count: 2, severity: "low", type: "Unusual Network Connection" },
-        { timestamp: 'Event 12', count: 1, severity: "low", type: "Abnormal System Behavior" }
+        { 
+          timestamp: 'Event 2', 
+          count: 45, 
+          severity: "high", 
+          type: "Non Interactive PowerShell Process Spawned",
+          tactic: "Execution",
+          technique: "T1059.001 - PowerShell"
+        },
+        { 
+          timestamp: 'Event 4', 
+          count: 20, 
+          severity: "high", 
+          type: "Remote PowerShell Session Host Process (WinRM)",
+          tactic: "Lateral Movement",
+          technique: "T1021.006 - Windows Remote Management"
+        },
+        { 
+          timestamp: 'Event 6', 
+          count: 15, 
+          severity: "medium", 
+          type: "Dynamic .NET Compilation Via Csc.EXE - Hunting",
+          tactic: "Defense Evasion",
+          technique: "T1027.004 - Compile After Delivery"
+        },
+        { 
+          timestamp: 'Event 8', 
+          count: 8, 
+          severity: "medium", 
+          type: "Suspicious Process Creation",
+          tactic: "Execution",
+          technique: "T1204 - User Execution"
+        },
+        { 
+          timestamp: 'Event 10', 
+          count: 2, 
+          severity: "low", 
+          type: "Unusual Network Connection",
+          tactic: "Command and Control",
+          technique: "T1071 - Application Layer Protocol"
+        },
+        { 
+          timestamp: 'Event 12', 
+          count: 1, 
+          severity: "low", 
+          type: "Abnormal System Behavior",
+          tactic: "Discovery",
+          technique: "T1082 - System Information Discovery"
+        }
       ] as Outlier[];
     }
   });
@@ -49,7 +107,13 @@ const OutliersWidget = () => {
     
     return (
       <g>
-        <circle cx={cx} cy={cy} r={4} fill="#9333EA" />
+        <circle 
+          cx={cx} 
+          cy={cy} 
+          r={4} 
+          fill="#9333EA" 
+          className="cursor-pointer hover:r-6 transition-all duration-300"
+        />
         <text
           x={cx}
           y={cy - 15}
@@ -59,6 +123,26 @@ const OutliersWidget = () => {
           className="font-medium"
         >
           {payload.count}
+        </text>
+        <text
+          x={cx}
+          y={cy + 20}
+          textAnchor="middle"
+          fill="#9333EA"
+          fontSize="10"
+          className="font-medium"
+        >
+          {payload.tactic}
+        </text>
+        <text
+          x={cx}
+          y={cy + 35}
+          textAnchor="middle"
+          fill="#9333EA"
+          fontSize="9"
+          className="font-medium opacity-75"
+        >
+          {payload.technique?.split(' ')[0]}
         </text>
       </g>
     );
@@ -73,11 +157,11 @@ const OutliersWidget = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[400px]">
+        <div className="h-[500px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart 
               data={outliers}
-              margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
+              margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
             >
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
@@ -109,23 +193,6 @@ const OutliersWidget = () => {
               />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {outliers?.map((outlier, index) => (
-            <div
-              key={index}
-              className={`
-                px-4 py-3 rounded-lg 
-                ${outlier.severity === 'high' ? 'bg-red-950/50 text-red-400' : 
-                  outlier.severity === 'medium' ? 'bg-orange-950/50 text-orange-400' : 
-                  'bg-green-950/50 text-green-400'}
-                hover:bg-opacity-75 transition-all duration-300
-                border border-purple-500/20
-              `}
-            >
-              <div className="text-sm font-medium truncate">{outlier.type}</div>
-            </div>
-          ))}
         </div>
       </CardContent>
     </Card>
