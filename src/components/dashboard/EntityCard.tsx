@@ -56,10 +56,10 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
 
         {/* Right section - Risk score */}
         {riskScore && (
-          <div className="flex-1 flex items-center justify-end pr-4">
+          <div className="flex-1 flex items-center justify-end">
             <div className="flex items-center gap-2">
               <span className="text-blue-300/90 font-medium text-base">Risk</span>
-              <div className="relative w-24">
+              <div className="relative w-16 mx-2">
                 <div className="absolute inset-0 w-[200%] h-full">
                   <svg className="w-full h-full animate-cardiogram" viewBox="0 0 1200 200" preserveAspectRatio="none">
                     <path
