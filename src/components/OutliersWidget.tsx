@@ -57,7 +57,7 @@ const CustomTooltip = ({ active, payload }: any) => {
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Risk Score:</span>
             <span className="text-white font-bold">
-              {typeof data.risk === 'number' && !isNaN(data.risk) ? Number(data.risk).toFixed(2) : 'N/A'}
+              {typeof data.risk === 'number' ? Number(data.risk).toFixed(2) : 'N/A'}
             </span>
           </div>
           <div className="flex items-center gap-2">
