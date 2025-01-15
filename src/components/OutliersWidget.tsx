@@ -31,6 +31,7 @@ interface ChartDataPoint {
   first_seen: string;
   last_seen: string;
   impacted_user: string;
+  unique_computers: number;  // Added this missing property
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -133,7 +134,8 @@ const OutliersWidget = () => {
     trend_percentage: 0, // Calculate if needed
     first_seen: outlier.first_seen,
     last_seen: outlier.last_seen,
-    impacted_user: outlier.impacted_user
+    impacted_user: outlier.impacted_user,
+    unique_computers: outlier.unique_computers  // Added this mapping
   })) || [];
 
   const totalHighRiskEvents = chartData.filter(o => o.severity === "high").length;
