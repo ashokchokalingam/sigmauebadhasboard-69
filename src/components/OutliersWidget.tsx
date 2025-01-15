@@ -5,7 +5,6 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceA
 import { format } from "date-fns";
 import React, { useState, useCallback } from 'react';
 import { Toggle } from "@/components/ui/toggle";
-import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 
 interface MLOutlier {
@@ -151,7 +150,6 @@ const OutliersWidget = () => {
   const [isGrouped, setIsGrouped] = useState(true);
   const [groupingInterval, setGroupingInterval] = useState<'hour' | 'day'>('day');
   const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 'auto']);
-  const [zoomLevel, setZoomLevel] = useState([1]);
 
   const { data: apiResponse, isLoading } = useQuery({
     queryKey: ['outliers'],
@@ -243,12 +241,6 @@ const OutliersWidget = () => {
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
   }, [apiResponse, isGrouped, groupingInterval]);
 
-  const handleZoomChange = (value: number[]) => {
-    setZoomLevel(value);
-    const baseMax = Math.max(...chartData.map(d => d.count));
-    setYAxisDomain([0, baseMax / value[0]]);
-  };
-
   const handleZoom = useCallback(() => {
     if (zoomState.refAreaLeft === zoomState.refAreaRight || !zoomState.refAreaRight) {
       setZoomState({});
@@ -284,7 +276,6 @@ const OutliersWidget = () => {
   const handleZoomOutReset = () => {
     setZoomState({});
     setYAxisDomain([0, 'auto']);
-    setZoomLevel([1]);
   };
 
   if (isLoading) {
@@ -381,79 +372,62 @@ const OutliersWidget = () => {
         </div>
       </CardHeader>
       <CardContent className="pt-2">
-        <div className="relative">
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart 
-                data={chartData}
-                margin={{ top: 20, right: 30, left: 0, bottom: 30 }}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleZoom}
-              >
-                <defs>
-                  <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#9333EA" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#9333EA" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <XAxis 
-                  dataKey="timestamp" 
-                  stroke="#94A3B8"
-                  fontSize={12}
-                  tickLine={false}
-                  angle={-45}
-                  textAnchor="end"
-                  height={70}
-                  tick={{ fill: '#E2E8F0' }}
-                  tickFormatter={formatAxisTimestamp}
-                  domain={zoomState.left && zoomState.right ? [zoomState.left, zoomState.right] : ['auto', 'auto']}
+        <div className="h-[300px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart 
+              data={chartData}
+              margin={{ top: 20, right: 30, left: 0, bottom: 30 }}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleZoom}
+            >
+              <defs>
+                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#9333EA" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#9333EA" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <XAxis 
+                dataKey="timestamp" 
+                stroke="#94A3B8"
+                fontSize={12}
+                tickLine={false}
+                angle={-45}
+                textAnchor="end"
+                height={70}
+                tick={{ fill: '#E2E8F0' }}
+                tickFormatter={formatAxisTimestamp}
+                domain={zoomState.left && zoomState.right ? [zoomState.left, zoomState.right] : ['auto', 'auto']}
+              />
+              <YAxis 
+                stroke="#6B7280"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                domain={yAxisDomain}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Area
+                type="monotone"
+                dataKey="count"
+                name="Anomaly Count"
+                stroke="#9333EA"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorCount)"
+                dot={<CustomizedDot />}
+              />
+              {zoomState.refAreaLeft && zoomState.refAreaRight && (
+                <ReferenceArea
+                  x1={zoomState.refAreaLeft}
+                  x2={zoomState.refAreaRight}
+                  strokeOpacity={0.3}
+                  fill="#9333EA"
+                  fillOpacity={0.1}
                 />
-                <YAxis 
-                  stroke="#6B7280"
-                  fontSize={12}
-                  tickLine={false}
-                  axisLine={false}
-                  domain={yAxisDomain}
-                />
-                <Tooltip content={<CustomTooltip />} />
-                <Area
-                  type="monotone"
-                  dataKey="count"
-                  name="Anomaly Count"
-                  stroke="#9333EA"
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#colorCount)"
-                  dot={<CustomizedDot />}
-                />
-                {zoomState.refAreaLeft && zoomState.refAreaRight && (
-                  <ReferenceArea
-                    x1={zoomState.refAreaLeft}
-                    x2={zoomState.refAreaRight}
-                    strokeOpacity={0.3}
-                    fill="#9333EA"
-                    fillOpacity={0.1}
-                  />
-                )}
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 px-8 pb-2 pt-4 bg-gradient-to-t from-black/40">
-            <div className="flex items-center gap-4">
-              <span className="text-xs text-purple-300 whitespace-nowrap">Zoom Level:</span>
-              <div className="flex-1">
-                <Slider
-                  value={zoomLevel}
-                  onValueChange={handleZoomChange}
-                  min={0.5}
-                  max={4}
-                  step={0.1}
-                  className="w-full"
-                />
-              </div>
-            </div>
-          </div>
+              )}
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>
