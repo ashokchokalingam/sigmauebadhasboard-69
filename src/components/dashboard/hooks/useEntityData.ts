@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { UserData, ComputerData } from "../types/entity";
 
 export const useEntityData = (type: "users-origin" | "users-impacted" | "computers") => {
   const { data: originUsers, isLoading: isLoadingOrigin } = useQuery({
