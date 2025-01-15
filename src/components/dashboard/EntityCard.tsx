@@ -18,8 +18,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
     if (!score) return "text-blue-400/70";
     const numScore = parseInt(score);
     if (numScore >= 200) return "text-red-400";
-    if (numScore >= 100) return "text-yellow-400";
-    if (numScore >= 50) return "text-yellow-400"; // Changed to make 50-100 yellow (medium)
+    if (numScore >= 50) return "text-[#F97316]"; // Changed to orange for medium risk
     return "text-green-400";
   };
 
@@ -27,7 +26,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
     if (!score) return "";
     const numScore = parseInt(score);
     if (numScore >= 200) return "High";
-    if (numScore >= 50) return "Medium"; // Changed to make 50-100 Medium
+    if (numScore >= 50) return "Medium";
     return "Low";
   };
 
