@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import React, { useState, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
+import { Slider } from "@/components/ui/slider";
 
 interface MLOutlier {
   anomaly_count: number;
@@ -147,7 +148,7 @@ const OutliersWidget = () => {
   const [zoomState, setZoomState] = useState<ZoomState>({});
   const [isGrouped, setIsGrouped] = useState(true);
   const [groupingInterval, setGroupingInterval] = useState<'hour' | 'day'>('day');
-  const [domain, setDomain] = useState<[number, number]>([0, 100]); // For Y-axis zoom
+  const [zoomLevel, setZoomLevel] = useState([1]);
 
   const { data: apiResponse, isLoading } = useQuery({
     queryKey: ['outliers'],
@@ -231,8 +232,12 @@ const OutliersWidget = () => {
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
   }, [apiResponse, isGrouped, groupingInterval]);
 
+  const handleZoomChange = (value: number[]) => {
+    setZoomLevel(value);
+  };
+
   const handleZoomIn = () => {
-    setDomain(([min, max]) => {
+    setZoomState(([min, max]) => {
       const range = max - min;
       const newMin = min + range * 0.25;
       const newMax = max - range * 0.25;
@@ -241,7 +246,7 @@ const OutliersWidget = () => {
   };
 
   const handleZoomOut = () => {
-    setDomain(([min, max]) => {
+    setZoomState(([min, max]) => {
       const range = max - min;
       const newMin = Math.max(0, min - range * 0.5);
       const newMax = max + range * 0.5;
@@ -383,10 +388,11 @@ const OutliersWidget = () => {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart 
               data={chartData}
-              margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
+              margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleZoom}
+              scale={zoomLevel[0]}
             >
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
@@ -436,25 +442,20 @@ const OutliersWidget = () => {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <div className="flex justify-end gap-2 mt-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleZoomOut}
-            className="text-purple-100"
-          >
-            <ZoomOut className="h-4 w-4 mr-1" />
-            Zoom Out
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleZoomIn}
-            className="text-purple-100"
-          >
-            <ZoomIn className="h-4 w-4 mr-1" />
-            Zoom In
-          </Button>
+        <div className="mt-8 px-4">
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-purple-300">Zoom Level:</span>
+            <div className="flex-1">
+              <Slider
+                value={zoomLevel}
+                onValueChange={handleZoomChange}
+                min={0.5}
+                max={4}
+                step={0.1}
+                className="w-full"
+              />
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
