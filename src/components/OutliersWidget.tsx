@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import React, { useState, useCallback } from 'react';
 import { Toggle } from "@/components/ui/toggle";
 import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
 
 interface MLOutlier {
   anomaly_count: number;
@@ -295,7 +296,7 @@ const OutliersWidget = () => {
 
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
-      <CardHeader>
+      <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-purple-100">
             <AlertOctagon className="h-5 w-5 text-purple-500" />
@@ -330,115 +331,117 @@ const OutliersWidget = () => {
             )}
           </div>
         </CardTitle>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-4">
-          <div className="md:col-span-2 flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <AlertOctagon className="h-5 w-5 text-red-400" />
-            <div>
-              <p className="text-sm text-purple-200">Critical Insight</p>
-              <p className="text-lg font-bold text-purple-100">
-                {highSeverityCount} high-severity anomalies need immediate investigation
+        <div className="grid grid-cols-4 gap-2 mt-2">
+          <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
+            <AlertOctagon className="h-5 w-5 text-red-400 shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs text-purple-200">Critical Insight</p>
+              <p className="text-sm font-bold text-purple-100 truncate">
+                {highSeverityCount} high-severity anomalies need investigation
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <TrendingUp className="h-5 w-5 text-yellow-400" />
-            <div>
-              <p className="text-sm text-purple-200">Severity Distribution</p>
-              <p className="text-lg font-bold text-purple-100">
+            <TrendingUp className="h-5 w-5 text-yellow-400 shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs text-purple-200">Severity Distribution</p>
+              <p className="text-sm font-bold text-purple-100 truncate">
                 {mediumPercentage}% medium severity
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <Monitor className="h-5 w-5 text-blue-400" />
-            <div>
-              <p className="text-sm text-purple-200">Impacted Systems</p>
-              <p className="text-lg font-bold text-purple-100">
+            <Monitor className="h-5 w-5 text-blue-400 shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs text-purple-200">Impacted Systems</p>
+              <p className="text-sm font-bold text-purple-100 truncate">
                 {impactedCounts.computers} computers
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <Users className="h-5 w-5 text-green-400" />
-            <div>
-              <p className="text-sm text-purple-200">Impacted Users</p>
-              <p className="text-lg font-bold text-purple-100">
+            <Users className="h-5 w-5 text-green-400 shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs text-purple-200">Impacted Users</p>
+              <p className="text-sm font-bold text-purple-100 truncate">
                 {impactedCounts.users} users
               </p>
             </div>
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart 
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleZoom}
-            >
-              <defs>
-                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#9333EA" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#9333EA" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <XAxis 
-                dataKey="timestamp" 
-                stroke="#94A3B8"
-                fontSize={12}
-                tickLine={false}
-                angle={-45}
-                textAnchor="end"
-                height={70}
-                tick={{ fill: '#E2E8F0' }}
-                tickFormatter={formatAxisTimestamp}
-                domain={zoomState.left && zoomState.right ? [zoomState.left, zoomState.right] : ['auto', 'auto']}
-              />
-              <YAxis 
-                stroke="#6B7280"
-                fontSize={12}
-                tickLine={false}
-                axisLine={false}
-                domain={yAxisDomain}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Area
-                type="monotone"
-                dataKey="count"
-                name="Anomaly Count"
-                stroke="#9333EA"
-                strokeWidth={2}
-                fillOpacity={1}
-                fill="url(#colorCount)"
-                dot={<CustomizedDot />}
-              />
-              {zoomState.refAreaLeft && zoomState.refAreaRight && (
-                <ReferenceArea
-                  x1={zoomState.refAreaLeft}
-                  x2={zoomState.refAreaRight}
-                  strokeOpacity={0.3}
-                  fill="#9333EA"
-                  fillOpacity={0.1}
+      <CardContent className="pt-2">
+        <div className="relative">
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart 
+                data={chartData}
+                margin={{ top: 20, right: 30, left: 0, bottom: 30 }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleZoom}
+              >
+                <defs>
+                  <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#9333EA" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#9333EA" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <XAxis 
+                  dataKey="timestamp" 
+                  stroke="#94A3B8"
+                  fontSize={12}
+                  tickLine={false}
+                  angle={-45}
+                  textAnchor="end"
+                  height={70}
+                  tick={{ fill: '#E2E8F0' }}
+                  tickFormatter={formatAxisTimestamp}
+                  domain={zoomState.left && zoomState.right ? [zoomState.left, zoomState.right] : ['auto', 'auto']}
                 />
-              )}
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="mt-4 px-4">
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-purple-300">Zoom Level:</span>
-            <div className="flex-1">
-              <Slider
-                value={zoomLevel}
-                onValueChange={handleZoomChange}
-                min={0.5}
-                max={4}
-                step={0.1}
-                className="w-full"
-              />
+                <YAxis 
+                  stroke="#6B7280"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  domain={yAxisDomain}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="count"
+                  name="Anomaly Count"
+                  stroke="#9333EA"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorCount)"
+                  dot={<CustomizedDot />}
+                />
+                {zoomState.refAreaLeft && zoomState.refAreaRight && (
+                  <ReferenceArea
+                    x1={zoomState.refAreaLeft}
+                    x2={zoomState.refAreaRight}
+                    strokeOpacity={0.3}
+                    fill="#9333EA"
+                    fillOpacity={0.1}
+                  />
+                )}
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 px-8 pb-2 pt-4 bg-gradient-to-t from-black/40">
+            <div className="flex items-center gap-4">
+              <span className="text-xs text-purple-300 whitespace-nowrap">Zoom Level:</span>
+              <div className="flex-1">
+                <Slider
+                  value={zoomLevel}
+                  onValueChange={handleZoomChange}
+                  min={0.5}
+                  max={4}
+                  step={0.1}
+                  className="w-full"
+                />
+              </div>
             </div>
           </div>
         </div>
