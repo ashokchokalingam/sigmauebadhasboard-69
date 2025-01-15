@@ -11,6 +11,15 @@ interface OutlierChartProps {
 const CustomDot = ({ cx, cy, payload }: any) => {
   const isActive = isWithinLastHour(payload.lastSeen);
   
+  const severityColors = {
+    high: "#EF4444",
+    medium: "#F59E0B",
+    low: "#10B981",
+    informational: "#60A5FA"
+  };
+
+  const dotColor = severityColors[payload.severity.toLowerCase()] || "#60A5FA";
+  
   return (
     <g>
       {isActive && (
@@ -29,7 +38,7 @@ const CustomDot = ({ cx, cy, payload }: any) => {
         cx={cx}
         cy={cy}
         r={4}
-        fill={isActive ? "#FF0000" : "#9333EA"}
+        fill={dotColor}
         className={isActive ? "animate-pulse" : ""}
       />
     </g>
