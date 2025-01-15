@@ -54,20 +54,20 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
           </div>
         </div>
 
-        {/* Right section - Risk score */}
+        {/* Right section - Risk score with cardiogram */}
         {riskScore && (
           <div className="flex-1 flex items-center justify-end">
             <div className="flex items-center gap-2">
               <span className="text-blue-300/90 font-medium text-base">Risk</span>
-              <div className="relative w-20 mx-2">
-                <div className="absolute inset-0 w-[200%] h-full">
-                  <svg className="w-full h-full animate-cardiogram" viewBox="0 0 1200 200" preserveAspectRatio="none">
-                    <path
-                      d="M0,100 L300,100 L320,20 L340,180 L360,100 L600,100 L620,20 L640,180 L660,100 L900,100 L920,20 L940,180 L960,100 L1200,100"
-                      className={cn("stroke-current fill-none stroke-[3]", getRiskColor(riskScore))}
-                    />
-                  </svg>
-                </div>
+              <div className="relative w-20 h-6 overflow-hidden">
+                <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
+                  <path
+                    d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
+                    className={cn("stroke-current fill-none stroke-[3]", getRiskColor(riskScore))}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </div>
               <span className={cn(
                 "font-bold text-lg min-w-[40px] text-right",
