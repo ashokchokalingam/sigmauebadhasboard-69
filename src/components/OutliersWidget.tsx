@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertOctagon, TrendingUp, Shield, Monitor, Users } from "lucide-react";
+import { AlertOctagon, TrendingUp, Shield, Monitor, Users, ZoomIn, ZoomOut } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea, Brush } from "recharts";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from "recharts";
 import { format } from "date-fns";
 import React, { useState, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
@@ -147,6 +147,7 @@ const OutliersWidget = () => {
   const [zoomState, setZoomState] = useState<ZoomState>({});
   const [isGrouped, setIsGrouped] = useState(true);
   const [groupingInterval, setGroupingInterval] = useState<'hour' | 'day'>('day');
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   const { data: apiResponse, isLoading } = useQuery({
     queryKey: ['outliers'],
@@ -230,6 +231,14 @@ const OutliersWidget = () => {
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
   }, [apiResponse, isGrouped, groupingInterval]);
 
+  const handleZoomIn = () => {
+    setZoomLevel(prev => Math.min(prev + 0.5, 4));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel(prev => Math.max(prev - 0.5, 0.5));
+  };
+
   const handleZoom = useCallback(() => {
     if (zoomState.refAreaLeft === zoomState.refAreaRight || !zoomState.refAreaRight) {
       setZoomState({});
@@ -262,7 +271,7 @@ const OutliersWidget = () => {
       setZoomState(prev => ({ ...prev, refAreaRight: e.activeLabel }));
   }, [zoomState.refAreaLeft]);
 
-  const handleZoomOut = () => {
+  const handleZoomOutReset = () => {
     setZoomState({});
   };
 
@@ -312,7 +321,7 @@ const OutliersWidget = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handleZoomOut}
+                onClick={handleZoomOutReset}
                 className="text-purple-100"
               >
                 Reset Zoom
@@ -364,10 +373,11 @@ const OutliersWidget = () => {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart 
               data={chartData}
-              margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+              margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleZoom}
+              scale={zoomLevel}
             >
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
@@ -413,15 +423,28 @@ const OutliersWidget = () => {
                   fillOpacity={0.1}
                 />
               )}
-              <Brush
-                dataKey="timestamp"
-                height={30}
-                stroke="#9333EA"
-                tickFormatter={formatAxisTimestamp}
-                fill="#1a1f2c"
-              />
             </AreaChart>
           </ResponsiveContainer>
+        </div>
+        <div className="flex justify-end gap-2 mt-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleZoomOut}
+            className="text-purple-100"
+          >
+            <ZoomOut className="h-4 w-4 mr-1" />
+            Zoom Out
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleZoomIn}
+            className="text-purple-100"
+          >
+            <ZoomIn className="h-4 w-4 mr-1" />
+            Zoom In
+          </Button>
         </div>
       </CardContent>
     </Card>
