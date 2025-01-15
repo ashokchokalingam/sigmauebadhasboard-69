@@ -3,6 +3,7 @@ import { AlertOctagon, TrendingUp, Shield, Monitor, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { format, parseISO } from "date-fns";
+import React from 'react'; // Added React import
 
 interface MLOutlier {
   anomaly_count: number;
@@ -21,6 +22,8 @@ interface MLOutlier {
 
 interface ChartDataPoint {
   timestamp: string;
+  firstSeen: string;  // Added this property
+  lastSeen: string;   // Added this property
   count: number;
   risk: number;
   severity: string;
