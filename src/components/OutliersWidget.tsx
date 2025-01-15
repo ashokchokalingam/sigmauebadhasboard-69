@@ -46,6 +46,32 @@ const OutliersWidget = () => {
     );
   }
 
+  const getBorderColor = (level: "low" | "medium" | "high") => {
+    switch (level) {
+      case "high":
+        return "border-red-500/30";
+      case "medium":
+        return "border-yellow-500/30";
+      case "low":
+        return "border-green-500/30";
+      default:
+        return "border-blue-500/30";
+    }
+  };
+
+  const getHoverEffect = (level: "low" | "medium" | "high") => {
+    switch (level) {
+      case "high":
+        return "hover:bg-red-950/20";
+      case "medium":
+        return "hover:bg-yellow-950/20";
+      case "low":
+        return "hover:bg-green-950/20";
+      default:
+        return "hover:bg-blue-950/20";
+    }
+  };
+
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
@@ -60,21 +86,44 @@ const OutliersWidget = () => {
             {outliers?.map((outlier, index) => (
               <div
                 key={index}
-                className={`${getSeverityBg(outlier.rule_level)} p-3 rounded-lg border border-${outlier.rule_level === 'high' ? '[#FF0000]' : outlier.rule_level === 'medium' ? '[#FFFF00]' : '[#008000]'}/30`}
+                className={`
+                  ${getSeverityBg(outlier.rule_level)} 
+                  ${getBorderColor(outlier.rule_level)}
+                  ${getHoverEffect(outlier.rule_level)}
+                  p-4 rounded-lg border 
+                  transition-all duration-300 ease-in-out
+                  hover:transform hover:-translate-y-0.5
+                  cursor-pointer
+                  backdrop-blur-sm
+                  shadow-lg
+                `}
               >
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-200 text-sm truncate flex-1" title={outlier.title}>
+                    <span 
+                      className="text-gray-200 text-sm font-medium truncate flex-1" 
+                      title={outlier.title}
+                    >
                       {outlier.title}
                     </span>
-                    <span className={`${getSeverityColor(outlier.rule_level)} font-bold ml-4`}>
-                      {outlier.event_count} events
+                    <span 
+                      className={`
+                        ${getSeverityColor(outlier.rule_level)} 
+                        font-bold ml-4 px-2 py-1 rounded-full 
+                        bg-black/20 text-sm
+                      `}
+                    >
+                      {outlier.event_count}
                     </span>
                   </div>
-                  <div className="flex gap-2 text-xs text-gray-400">
-                    <span>{outlier.tactics}</span>
+                  <div className="flex gap-2 text-xs text-gray-400/80">
+                    <span className="bg-black/30 px-2 py-0.5 rounded">
+                      {outlier.tactics}
+                    </span>
                     <span>•</span>
-                    <span>{outlier.techniques}</span>
+                    <span className="font-mono bg-black/30 px-2 py-0.5 rounded">
+                      {outlier.techniques}
+                    </span>
                   </div>
                 </div>
               </div>
