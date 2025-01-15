@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertOctagon, TrendingUp, Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { parseISO } from "date-fns";
 
 interface MLOutlier {
   anomaly_count: number;
@@ -122,10 +121,21 @@ const OutliersWidget = () => {
     tactics: outlier.tactics?.split(',') || [],
   })) || [];
 
-  const totalHighRiskEvents = chartData.filter(o => o.severity.toLowerCase() === "high").length;
-  const averageRiskScore = Math.round(
-    chartData.reduce((acc, curr) => acc + (curr.risk || 0), 0) / (chartData.length || 1)
-  );
+  const calculateSeverityStats = () => {
+    if (!apiResponse) return { high: 0, medium: 0, low: 0, informational: 0, total: 0 };
+    
+    const stats = apiResponse.reduce((acc, curr) => {
+      acc[curr.severity] = (acc[curr.severity] || 0) + curr.anomaly_count;
+      acc.total += curr.anomaly_count;
+      return acc;
+    }, { high: 0, medium: 0, low: 0, informational: 0, total: 0 });
+
+    return stats;
+  };
+
+  const stats = calculateSeverityStats();
+  const mediumPercentage = Math.round((stats.medium / stats.total) * 100);
+  const highSeverityCount = stats.high;
 
   if (isLoading) {
     return (
@@ -150,15 +160,19 @@ const OutliersWidget = () => {
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
             <AlertOctagon className="h-5 w-5 text-red-400" />
             <div>
-              <p className="text-sm text-purple-200">Critical Events</p>
-              <p className="text-lg font-bold text-purple-100">{totalHighRiskEvents}</p>
+              <p className="text-sm text-purple-200">Critical Insight</p>
+              <p className="text-lg font-bold text-purple-100">
+                {highSeverityCount} high-severity anomalies need immediate investigation
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
             <TrendingUp className="h-5 w-5 text-yellow-400" />
             <div>
-              <p className="text-sm text-purple-200">Average Risk Score</p>
-              <p className="text-lg font-bold text-purple-100">{averageRiskScore}</p>
+              <p className="text-sm text-purple-200">Severity Distribution</p>
+              <p className="text-lg font-bold text-purple-100">
+                {mediumPercentage}% of anomalies are medium severity
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
@@ -166,7 +180,7 @@ const OutliersWidget = () => {
             <div>
               <p className="text-sm text-purple-200">Total Anomalies</p>
               <p className="text-lg font-bold text-purple-100">
-                {chartData.reduce((acc, curr) => acc + curr.count, 0)}
+                {stats.total} detected
               </p>
             </div>
           </div>
