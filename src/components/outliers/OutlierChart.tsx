@@ -22,7 +22,7 @@ const CustomDot = ({ cx, cy, payload }: any) => {
   
   return (
     <g>
-      {isActive && (
+      {isActive && payload.severity.toLowerCase() === 'high' && (
         <circle
           cx={cx}
           cy={cy}
@@ -39,7 +39,7 @@ const CustomDot = ({ cx, cy, payload }: any) => {
         cy={cy}
         r={4}
         fill={dotColor}
-        className={isActive ? "animate-pulse" : ""}
+        className={isActive && payload.severity.toLowerCase() === 'high' ? "animate-pulse" : ""}
       />
     </g>
   );
