@@ -10,11 +10,29 @@ interface Outlier {
   timestamp: string;
 }
 
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-black/90 p-4 rounded-lg border border-purple-500/20 backdrop-blur-sm">
+        <p className="text-purple-300 font-medium mb-2">{data.type}</p>
+        <div className="flex items-center gap-2">
+          <span className="text-purple-400">Count:</span>
+          <span className="text-white font-bold">{data.count}</span>
+        </div>
+        <div className="mt-1 text-sm text-purple-400/80">
+          {data.timestamp}
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 const OutliersWidget = () => {
   const { data: outliers } = useQuery({
     queryKey: ['outliers'],
     queryFn: async () => {
-      // Simulated data - replace with actual API endpoint when available
       return [
         { timestamp: 'Event 2', count: 45, severity: "high", type: "Non Interactive PowerShell Process Spawned" },
         { timestamp: 'Event 4', count: 20, severity: "high", type: "Remote PowerShell Session Host Process (WinRM)" },
@@ -26,20 +44,24 @@ const OutliersWidget = () => {
     }
   });
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case "high": return "text-[#FF0000]";
-      case "medium": return "text-[#FFA500]";
-      default: return "text-[#008000]";
-    }
-  };
-
-  const getSeverityBg = (severity: string) => {
-    switch (severity) {
-      case "high": return "bg-red-950";
-      case "medium": return "bg-orange-950";
-      default: return "bg-green-950";
-    }
+  const CustomizedDot = (props: any) => {
+    const { cx, cy, payload } = props;
+    
+    return (
+      <g>
+        <circle cx={cx} cy={cy} r={4} fill="#9333EA" />
+        <text
+          x={cx}
+          y={cy - 15}
+          textAnchor="middle"
+          fill="#E9D5FF"
+          fontSize="12"
+          className="font-medium"
+        >
+          {payload.count}
+        </text>
+      </g>
+    );
   };
 
   return (
@@ -51,12 +73,15 @@ const OutliersWidget = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px] mb-6">
+        <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={outliers}>
+            <AreaChart 
+              data={outliers}
+              margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
+            >
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#9333EA" stopOpacity={0.8}/>
+                  <stop offset="5%" stopColor="#9333EA" stopOpacity={0.3}/>
                   <stop offset="95%" stopColor="#9333EA" stopOpacity={0}/>
                 </linearGradient>
               </defs>
@@ -64,42 +89,41 @@ const OutliersWidget = () => {
                 dataKey="timestamp" 
                 stroke="#6B7280"
                 fontSize={12}
+                tickLine={false}
               />
               <YAxis 
                 stroke="#6B7280"
                 fontSize={12}
+                tickLine={false}
+                axisLine={false}
               />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1F2937',
-                  border: '1px solid #374151',
-                  borderRadius: '0.5rem'
-                }}
-                labelStyle={{ color: '#E5E7EB' }}
-                itemStyle={{ color: '#9333EA' }}
-              />
+              <Tooltip content={<CustomTooltip />} />
               <Area
                 type="monotone"
                 dataKey="count"
                 stroke="#9333EA"
+                strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#colorCount)"
+                dot={<CustomizedDot />}
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <div className="grid gap-3 mt-4">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {outliers?.map((outlier, index) => (
             <div
               key={index}
-              className={`${getSeverityBg(outlier.severity)} p-4 rounded-lg border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300`}
+              className={`
+                px-4 py-3 rounded-lg 
+                ${outlier.severity === 'high' ? 'bg-red-950/50 text-red-400' : 
+                  outlier.severity === 'medium' ? 'bg-orange-950/50 text-orange-400' : 
+                  'bg-green-950/50 text-green-400'}
+                hover:bg-opacity-75 transition-all duration-300
+                border border-purple-500/20
+              `}
             >
-              <div className="flex items-center justify-between">
-                <span className="text-gray-200 font-medium">{outlier.type}</span>
-                <span className={`${getSeverityColor(outlier.severity)} font-bold`}>
-                  {outlier.count} events
-                </span>
-              </div>
+              <div className="text-sm font-medium truncate">{outlier.type}</div>
             </div>
           ))}
         </div>
