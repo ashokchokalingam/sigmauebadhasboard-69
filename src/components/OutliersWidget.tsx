@@ -57,7 +57,9 @@ const CustomTooltip = ({ active, payload }: any) => {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Risk Score:</span>
-            <span className="text-white font-bold">{typeof data.risk === 'number' ? data.risk : 'N/A'}</span>
+            <span className="text-white font-bold">
+              {typeof data.risk === 'number' && !isNaN(data.risk) ? data.risk : 'N/A'}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">First Seen:</span>
@@ -215,7 +217,7 @@ const OutliersWidget = () => {
           firstSeen: outlier.first_seen,
           lastSeen: outlier.last_seen,
           count: 0,
-          risk: outlier.risk || 0, // Convert null to 0
+          risk: typeof outlier.risk === 'number' && !isNaN(outlier.risk) ? outlier.risk : 0,
           severity: outlier.severity,
           title: outlier.title,
           description: outlier.ml_description,
@@ -226,7 +228,9 @@ const OutliersWidget = () => {
       }
 
       groupedData[timeKey].count += outlier.anomaly_count;
-      groupedData[timeKey].risk = Math.max(groupedData[timeKey].risk, outlier.risk || 0);
+      if (typeof outlier.risk === 'number' && !isNaN(outlier.risk)) {
+        groupedData[timeKey].risk = Math.max(groupedData[timeKey].risk, outlier.risk);
+      }
     });
 
     return Object.values(groupedData)
