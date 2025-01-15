@@ -132,7 +132,8 @@ const OutliersWidget = () => {
     tactics: outlier.tactics?.split(',') || [],
     impactedComputers: outlier.impacted_computers?.split(',') || [],
     impactedUsers: (outlier.origin_users || '').split(',').filter(Boolean),
-  })).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) || [];
+  }))
+  .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) || [];
 
   const calculateSeverityStats = () => {
     if (!apiResponse) return { high: 0, medium: 0, low: 0, informational: 0, total: 0 };
@@ -248,9 +249,13 @@ const OutliersWidget = () => {
                 stroke="#6B7280"
                 fontSize={12}
                 tickLine={false}
+                angle={-45}
+                textAnchor="end"
+                height={70}
                 tickFormatter={(value) => {
                   try {
-                    return format(new Date(value), 'h:mm a');
+                    const date = new Date(value);
+                    return format(date, 'MMM d, h:mm a');
                   } catch (e) {
                     console.error('Error formatting date:', e);
                     return value;
