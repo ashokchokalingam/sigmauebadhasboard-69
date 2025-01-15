@@ -3,16 +3,30 @@ import { AlertOctagon, TrendingUp, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-interface Outlier {
+interface MLOutlier {
+  event_count: number;
+  event_title: string;
+  first_seen: string;
+  impacted_user: string;
+  last_seen: string;
+  ml_cluster: number;
+  risk_level: "high" | "medium" | "low";
+  tactics: string;
+  techniques: string;
+  unique_computers: number;
+  unique_users: number;
+}
+
+interface ChartDataPoint {
   count: number;
   severity: "high" | "medium" | "low";
   type: string;
   timestamp: string;
-  tactic?: string;
-  technique?: string;
-  risk_score?: number;
-  users_impacted?: number;
-  trend_percentage?: number;
+  tactic: string;
+  technique: string;
+  risk_score: number;
+  users_impacted: number;
+  trend_percentage: number;
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -20,34 +34,24 @@ const CustomTooltip = ({ active, payload }: any) => {
     const data = payload[0].payload;
     return (
       <div className="bg-black/90 p-4 rounded-lg border border-purple-500/20 backdrop-blur-sm">
-        <p className="text-purple-300 font-medium mb-2">{data.tactic}</p>
+        <p className="text-purple-300 font-medium mb-2">{data.type}</p>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Anomalies:</span>
             <span className="text-white font-bold">{data.count}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-purple-400">Risk Score:</span>
-            <span className="text-white font-bold">{data.risk_score}</span>
-          </div>
-          <div className="flex items-center gap-2">
             <span className="text-purple-400">Users Impacted:</span>
             <span className="text-white">{data.users_impacted}</span>
           </div>
-          {data.trend_percentage && (
-            <div className="flex items-center gap-2">
-              <span className="text-purple-400">Trend:</span>
-              <span className={`font-bold ${data.trend_percentage > 0 ? 'text-red-400' : 'text-green-400'}`}>
-                {data.trend_percentage > 0 ? '↑' : '↓'} {Math.abs(data.trend_percentage)}%
-              </span>
-            </div>
-          )}
-          {data.technique && (
-            <div className="flex items-center gap-2">
-              <span className="text-purple-400">Technique:</span>
-              <span className="text-white">{data.technique}</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">First Seen:</span>
+            <span className="text-white">{new Date(data.first_seen).toLocaleDateString()}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">Tactics:</span>
+            <span className="text-white">{data.tactic}</span>
+          </div>
         </div>
       </div>
     );
@@ -66,69 +70,45 @@ const CustomizedDot = (props: any) => {
   };
   
   return (
-    <g>
-      {/* Point circle */}
-      <circle 
-        cx={cx} 
-        cy={cy} 
-        r={4} 
-        fill={severityColors[severity]} 
-        className="cursor-pointer hover:r-6 transition-all duration-300"
-      />
-      
-      {/* Risk Score and Count */}
-      <text
-        x={cx}
-        y={cy - 35}
-        textAnchor="middle"
-        fill="#E9D5FF"
-        fontSize="14"
-        className="font-bold"
-      >
-        {`Risk: ${payload.risk_score || 0}`}
-      </text>
-      
-      {/* Count and Type */}
-      <text
-        x={cx}
-        y={cy - 20}
-        textAnchor="middle"
-        fill="#9333EA"
-        fontSize="11"
-        className="font-medium"
-      >
-        {`${payload.count} ${payload.type}`}
-      </text>
-      
-      {/* Technique */}
-      <text
-        x={cx}
-        y={cy - 5}
-        textAnchor="middle"
-        fill="#9333EA"
-        fontSize="10"
-        className="font-medium opacity-75"
-      >
-        {payload.technique}
-      </text>
-    </g>
+    <circle 
+      cx={cx} 
+      cy={cy} 
+      r={4} 
+      fill={severityColors[severity]} 
+      className="cursor-pointer hover:r-6 transition-all duration-300"
+    />
   );
 };
 
 const OutliersWidget = () => {
-  const { data: outliers } = useQuery({
+  const { data: apiResponse } = useQuery({
     queryKey: ['ml-outliers'],
     queryFn: async () => {
       const response = await fetch('/api/ml_outliers_title');
       if (!response.ok) {
         throw new Error('Failed to fetch outliers data');
       }
-      return response.json();
+      const data = await response.json();
+      return data.ml_outliers_title as MLOutlier[];
     }
   });
 
-  const totalHighRiskEvents = outliers?.filter((o: Outlier) => o.severity === "high").length || 0;
-  const totalUsersImpacted = outliers?.reduce((acc: number, curr: Outlier) => acc + (curr.users_impacted || 0), 0) || 0;
+  // Transform API data for the chart
+  const chartData: ChartDataPoint[] = apiResponse?.map((outlier) => ({
+    count: outlier.event_count,
+    severity: outlier.risk_level,
+    type: outlier.event_title,
+    timestamp: outlier.first_seen,
+    tactic: outlier.tactics.split(',')[0], // Take first tactic if multiple
+    technique: outlier.techniques.split(',')[0], // Take first technique if multiple
+    risk_score: outlier.ml_cluster,
+    users_impacted: outlier.unique_users,
+    trend_percentage: 0, // Calculate if needed
+    first_seen: outlier.first_seen,
+  })) || [];
+
+  const totalHighRiskEvents = chartData.filter(o => o.severity === "high").length;
+  const totalUsersImpacted = chartData.reduce((acc, curr) => acc + curr.users_impacted, 0);
 
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
@@ -157,7 +137,7 @@ const OutliersWidget = () => {
             <div>
               <p className="text-sm text-purple-200">Risk Trend</p>
               <p className="text-lg font-bold text-purple-100">
-                {outliers?.[0]?.trend_percentage > 0 ? '↑' : '↓'} {Math.abs(outliers?.[0]?.trend_percentage || 0)}%
+                {chartData[0]?.trend_percentage > 0 ? '↑' : '↓'} {Math.abs(chartData[0]?.trend_percentage || 0)}%
               </p>
             </div>
           </div>
@@ -167,7 +147,7 @@ const OutliersWidget = () => {
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart 
-              data={outliers}
+              data={chartData}
               margin={{ top: 60, right: 30, left: 0, bottom: 20 }}
             >
               <defs>
@@ -201,12 +181,12 @@ const OutliersWidget = () => {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        {outliers && outliers.length > 0 && (
+        {chartData && chartData.length > 0 && (
           <div className="mt-4 p-4 bg-purple-900/20 rounded-lg">
             <p className="text-purple-200 text-sm">
-              Key Insight: The {outliers[0].tactic} tactic shows the highest risk with {outliers[0].count} anomalies. 
-              {outliers[0].type && ` Primary concern: ${outliers[0].type} activity.`}
-              {outliers[0].risk_score && ` Risk score: ${outliers[0].risk_score}`}
+              Key Insight: {chartData[0].type} shows the highest risk with {chartData[0].count} anomalies. 
+              Primary concern: {chartData[0].tactic} activity.
+              Users impacted: {chartData[0].users_impacted}
             </p>
           </div>
         )}
