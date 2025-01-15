@@ -2,47 +2,37 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import { format } from "date-fns";
 import { ChartDataPoint } from "./types";
 import { OutlierTooltip } from "./OutlierTooltip";
+import { isWithinLastHour } from "./utils";
 
 interface OutlierChartProps {
   data: ChartDataPoint[];
 }
 
-const getTimeOfDay = (hour: number): string => {
-  if (hour >= 5 && hour < 12) return "Morning";
-  if (hour >= 12 && hour < 17) return "Afternoon";
-  if (hour >= 17 && hour < 21) return "Evening";
-  return "Night";
-};
-
-const formatAxisTimestamp = (timestamp: string): string => {
-  try {
-    const date = new Date(timestamp);
-    const timeOfDay = getTimeOfDay(date.getHours());
-    return `${format(date, 'MMM d')} - ${timeOfDay}`;
-  } catch (e) {
-    console.error('Error formatting axis date:', e);
-    return timestamp;
-  }
-};
-
-const CustomizedDot = (props: any) => {
-  const { cx, cy, payload } = props;
-  
-  const severityColors = {
-    high: "#EF4444",
-    medium: "#F59E0B",
-    low: "#10B981",
-    informational: "#60A5FA"
-  };
+const CustomDot = ({ cx, cy, payload }: any) => {
+  const isActive = isWithinLastHour(payload.lastSeen);
   
   return (
-    <circle 
-      cx={cx} 
-      cy={cy} 
-      r={4} 
-      fill={severityColors[payload.severity.toLowerCase()] || "#60A5FA"} 
-      className="cursor-pointer hover:r-6 transition-all duration-300"
-    />
+    <g>
+      {isActive && (
+        <circle
+          cx={cx}
+          cy={cy}
+          r={8}
+          fill="none"
+          className="animate-pulse"
+          stroke="#FF0000"
+          strokeWidth={2}
+          strokeOpacity={0.6}
+        />
+      )}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={4}
+        fill={isActive ? "#FF0000" : "#9333EA"}
+        className={isActive ? "animate-pulse" : ""}
+      />
+    </g>
   );
 };
 
@@ -69,7 +59,15 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
             textAnchor="end"
             height={70}
             tick={{ fill: '#E2E8F0' }}
-            tickFormatter={formatAxisTimestamp}
+            tickFormatter={(timestamp) => {
+              try {
+                const date = new Date(timestamp);
+                return `${format(date, 'MMM d')} - ${getTimeOfDay(date.getHours())}`;
+              } catch (e) {
+                console.error('Error formatting date:', e);
+                return timestamp;
+              }
+            }}
           />
           <YAxis 
             stroke="#6B7280"
@@ -86,10 +84,17 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
             strokeWidth={2}
             fillOpacity={1}
             fill="url(#colorCount)"
-            dot={<CustomizedDot />}
+            dot={<CustomDot />}
           />
         </AreaChart>
       </ResponsiveContainer>
     </div>
   );
+};
+
+const getTimeOfDay = (hour: number): string => {
+  if (hour >= 5 && hour < 12) return "Morning";
+  if (hour >= 12 && hour < 17) return "Afternoon";
+  if (hour >= 17 && hour < 21) return "Evening";
+  return "Night";
 };
