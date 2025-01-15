@@ -35,9 +35,6 @@ const CustomTooltip = ({ active, payload }: any) => {
               <span className="text-white">{data.technique}</span>
             </div>
           )}
-          <div className="mt-1 text-sm text-purple-400/80">
-            {data.timestamp}
-          </div>
         </div>
       </div>
     );
@@ -62,49 +59,37 @@ const CustomizedDot = (props: any) => {
       {/* Count value above point */}
       <text
         x={cx}
-        y={cy - 15}
+        y={cy - 35}
         textAnchor="middle"
         fill="#E9D5FF"
-        fontSize="12"
-        className="font-medium"
+        fontSize="14"
+        className="font-bold"
       >
         {payload.count}
       </text>
       
-      {/* Event type on point */}
+      {/* Type below count */}
       <text
         x={cx}
-        y={cy + 5}
+        y={cy - 20}
+        textAnchor="middle"
+        fill="#9333EA"
+        fontSize="11"
+        className="font-medium"
+      >
+        {payload.type}
+      </text>
+      
+      {/* Technique below type */}
+      <text
+        x={cx}
+        y={cy - 5}
         textAnchor="middle"
         fill="#9333EA"
         fontSize="10"
-        className="font-medium"
-      >
-        {payload.type?.split(' - ')[0]}
-      </text>
-      
-      {/* Tactic below point */}
-      <text
-        x={cx}
-        y={cy + 20}
-        textAnchor="middle"
-        fill="#9333EA"
-        fontSize="10"
-        className="font-medium"
-      >
-        {payload.tactic}
-      </text>
-      
-      {/* Technique ID below tactic */}
-      <text
-        x={cx}
-        y={cy + 35}
-        textAnchor="middle"
-        fill="#9333EA"
-        fontSize="9"
         className="font-medium opacity-75"
       >
-        {payload.technique?.split(' ')[0]}
+        {payload.technique}
       </text>
     </g>
   );
@@ -116,7 +101,7 @@ const OutliersWidget = () => {
     queryFn: async () => {
       return [
         { 
-          timestamp: 'Event 2', 
+          timestamp: 'Execution', 
           count: 45, 
           severity: "high", 
           type: "PowerShell",
@@ -124,7 +109,7 @@ const OutliersWidget = () => {
           technique: "T1059.001"
         },
         { 
-          timestamp: 'Event 4', 
+          timestamp: 'Lateral Movement', 
           count: 20, 
           severity: "high", 
           type: "WinRM",
@@ -132,7 +117,7 @@ const OutliersWidget = () => {
           technique: "T1021.006"
         },
         { 
-          timestamp: 'Event 6', 
+          timestamp: 'Defense Evasion', 
           count: 15, 
           severity: "medium", 
           type: "Csc.EXE",
@@ -140,7 +125,7 @@ const OutliersWidget = () => {
           technique: "T1027.004"
         },
         { 
-          timestamp: 'Event 8', 
+          timestamp: 'Execution', 
           count: 8, 
           severity: "medium", 
           type: "Process Creation",
@@ -148,7 +133,7 @@ const OutliersWidget = () => {
           technique: "T1204"
         },
         { 
-          timestamp: 'Event 10', 
+          timestamp: 'Command and Control', 
           count: 2, 
           severity: "low", 
           type: "Network Connection",
@@ -156,7 +141,7 @@ const OutliersWidget = () => {
           technique: "T1071"
         },
         { 
-          timestamp: 'Event 12', 
+          timestamp: 'Discovery', 
           count: 1, 
           severity: "low", 
           type: "System Behavior",
@@ -180,7 +165,7 @@ const OutliersWidget = () => {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart 
               data={outliers}
-              margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
+              margin={{ top: 60, right: 30, left: 0, bottom: 20 }}
             >
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
