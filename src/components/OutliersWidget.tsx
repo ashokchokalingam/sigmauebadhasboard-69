@@ -1,10 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertOctagon, TrendingUp, Shield, Monitor, Users, ZoomIn, ZoomOut } from "lucide-react";
+import { AlertOctagon, TrendingUp, Shield, Monitor, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from "recharts";
 import { format } from "date-fns";
 import React, { useState, useCallback } from 'react';
-import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { Slider } from "@/components/ui/slider";
 
@@ -148,6 +147,7 @@ const OutliersWidget = () => {
   const [zoomState, setZoomState] = useState<ZoomState>({});
   const [isGrouped, setIsGrouped] = useState(true);
   const [groupingInterval, setGroupingInterval] = useState<'hour' | 'day'>('day');
+  const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 'auto']);
   const [zoomLevel, setZoomLevel] = useState([1]);
 
   const { data: apiResponse, isLoading } = useQuery({
@@ -234,24 +234,8 @@ const OutliersWidget = () => {
 
   const handleZoomChange = (value: number[]) => {
     setZoomLevel(value);
-  };
-
-  const handleZoomIn = () => {
-    setZoomState(([min, max]) => {
-      const range = max - min;
-      const newMin = min + range * 0.25;
-      const newMax = max - range * 0.25;
-      return [newMin, newMax];
-    });
-  };
-
-  const handleZoomOut = () => {
-    setZoomState(([min, max]) => {
-      const range = max - min;
-      const newMin = Math.max(0, min - range * 0.5);
-      const newMax = max + range * 0.5;
-      return [newMin, newMax];
-    });
+    const baseMax = Math.max(...chartData.map(d => d.count));
+    setYAxisDomain([0, baseMax / value[0]]);
   };
 
   const handleZoom = useCallback(() => {
@@ -288,6 +272,8 @@ const OutliersWidget = () => {
 
   const handleZoomOutReset = () => {
     setZoomState({});
+    setYAxisDomain([0, 'auto']);
+    setZoomLevel([1]);
   };
 
   if (isLoading) {
@@ -392,7 +378,6 @@ const OutliersWidget = () => {
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleZoom}
-              scale={zoomLevel[0]}
             >
               <defs>
                 <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
@@ -417,7 +402,7 @@ const OutliersWidget = () => {
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                domain={domain}
+                domain={yAxisDomain}
               />
               <Tooltip content={<CustomTooltip />} />
               <Area
@@ -442,7 +427,7 @@ const OutliersWidget = () => {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <div className="mt-8 px-4">
+        <div className="mt-4 px-4">
           <div className="flex items-center gap-4">
             <span className="text-sm text-purple-300">Zoom Level:</span>
             <div className="flex-1">
