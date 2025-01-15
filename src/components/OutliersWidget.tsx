@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertOctagon, TrendingUp, Users } from "lucide-react";
+import { AlertOctagon, TrendingUp, Users, Server, Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
+import { format } from "date-fns";
 
 interface MLOutlier {
   event_count: number;
@@ -27,6 +28,9 @@ interface ChartDataPoint {
   risk_score: number;
   users_impacted: number;
   trend_percentage: number;
+  first_seen: string;
+  last_seen: string;
+  impacted_user: string;
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -46,17 +50,40 @@ const CustomTooltip = ({ active, payload }: any) => {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">First Seen:</span>
-            <span className="text-white">{new Date(data.first_seen).toLocaleDateString()}</span>
+            <span className="text-white">{format(new Date(data.first_seen), 'PPp')}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">Last Seen:</span>
+            <span className="text-white">{format(new Date(data.last_seen), 'PPp')}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Tactics:</span>
             <span className="text-white">{data.tactic}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">Risk Level:</span>
+            <span className={`font-bold ${getSeverityColor(data.severity)}`}>
+              {data.severity.toUpperCase()}
+            </span>
           </div>
         </div>
       </div>
     );
   }
   return null;
+};
+
+const getSeverityColor = (severity: string): string => {
+  switch (severity) {
+    case "high":
+      return "text-red-400";
+    case "medium":
+      return "text-yellow-400";
+    case "low":
+      return "text-green-400";
+    default:
+      return "text-purple-400";
+  }
 };
 
 const CustomizedDot = (props: any) => {
@@ -105,10 +132,13 @@ const OutliersWidget = () => {
     users_impacted: outlier.unique_users,
     trend_percentage: 0, // Calculate if needed
     first_seen: outlier.first_seen,
+    last_seen: outlier.last_seen,
+    impacted_user: outlier.impacted_user
   })) || [];
 
   const totalHighRiskEvents = chartData.filter(o => o.severity === "high").length;
   const totalUsersImpacted = chartData.reduce((acc, curr) => acc + curr.users_impacted, 0);
+  const criticalSystems = [...new Set(chartData.map(d => d.impacted_user))].slice(0, 3);
 
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
@@ -117,7 +147,7 @@ const OutliersWidget = () => {
           <AlertOctagon className="h-5 w-5 text-purple-500" />
           ML Outliers - Last 7 Days
         </CardTitle>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
             <AlertOctagon className="h-5 w-5 text-red-400" />
             <div>
@@ -133,11 +163,18 @@ const OutliersWidget = () => {
             </div>
           </div>
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <TrendingUp className="h-5 w-5 text-yellow-400" />
+            <Server className="h-5 w-5 text-blue-400" />
             <div>
-              <p className="text-sm text-purple-200">Risk Trend</p>
+              <p className="text-sm text-purple-200">Critical Systems</p>
+              <p className="text-lg font-bold text-purple-100">{chartData[0]?.unique_computers || 0}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
+            <Shield className="h-5 w-5 text-green-400" />
+            <div>
+              <p className="text-sm text-purple-200">Risk Score</p>
               <p className="text-lg font-bold text-purple-100">
-                {chartData[0]?.trend_percentage > 0 ? '↑' : '↓'} {Math.abs(chartData[0]?.trend_percentage || 0)}%
+                {Math.abs(chartData[0]?.risk_score || 0)}
               </p>
             </div>
           </div>
@@ -169,9 +206,11 @@ const OutliersWidget = () => {
                 axisLine={false}
               />
               <Tooltip content={<CustomTooltip />} />
+              <Legend />
               <Area
                 type="monotone"
                 dataKey="count"
+                name="Anomaly Count"
                 stroke="#9333EA"
                 strokeWidth={2}
                 fillOpacity={1}
@@ -181,13 +220,36 @@ const OutliersWidget = () => {
             </AreaChart>
           </ResponsiveContainer>
         </div>
+        
+        {/* Critical Systems Section */}
+        <div className="mt-6 space-y-4">
+          <h3 className="text-purple-200 font-medium">Critical Systems Impacted</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {criticalSystems.map((system, index) => (
+              <div key={index} className="bg-purple-900/20 p-3 rounded-lg">
+                <p className="text-purple-100">{system}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Insights Section */}
         {chartData && chartData.length > 0 && (
-          <div className="mt-4 p-4 bg-purple-900/20 rounded-lg">
+          <div className="mt-6 p-4 bg-purple-900/20 rounded-lg space-y-4">
+            <h3 className="text-purple-200 font-medium">Key Insights</h3>
             <p className="text-purple-200 text-sm">
-              Key Insight: {chartData[0].type} shows the highest risk with {chartData[0].count} anomalies. 
+              {chartData[0].type} shows the highest risk with {chartData[0].count} anomalies. 
               Primary concern: {chartData[0].tactic} activity.
-              Users impacted: {chartData[0].users_impacted}
+              Last seen: {format(new Date(chartData[0].last_seen), 'PPp')}
             </p>
+            <div className="mt-2">
+              <h4 className="text-purple-200 font-medium mb-2">Recommended Actions:</h4>
+              <ul className="list-disc list-inside text-purple-200 text-sm space-y-1">
+                <li>Review PowerShell execution policies</li>
+                <li>Monitor {chartData[0].impacted_user} for suspicious activity</li>
+                <li>Implement additional logging for {chartData[0].tactic} events</li>
+              </ul>
+            </div>
           </div>
         )}
       </CardContent>
