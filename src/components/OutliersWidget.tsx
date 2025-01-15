@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertOctagon, TrendingUp, Shield, Monitor, Users } from "lucide-react";
+import { AlertOctagon, TrendingUp, Monitor, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, ReferenceArea } from "recharts";
 import { format } from "date-fns";
 import React, { useState, useCallback } from 'react';
+import { Button } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { Slider } from "@/components/ui/slider";
 
@@ -147,7 +148,7 @@ const OutliersWidget = () => {
   const [zoomState, setZoomState] = useState<ZoomState>({});
   const [isGrouped, setIsGrouped] = useState(true);
   const [groupingInterval, setGroupingInterval] = useState<'hour' | 'day'>('day');
-  const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 'auto']);
+  const [yAxisDomain, setYAxisDomain] = useState<[number, number | undefined]>([0, undefined]);
   const [zoomLevel, setZoomLevel] = useState([1]);
 
   const { data: apiResponse, isLoading } = useQuery({
@@ -272,7 +273,7 @@ const OutliersWidget = () => {
 
   const handleZoomOutReset = () => {
     setZoomState({});
-    setYAxisDomain([0, 'auto']);
+    setYAxisDomain([0, undefined]);
     setZoomLevel([1]);
   };
 
@@ -402,7 +403,7 @@ const OutliersWidget = () => {
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                domain={yAxisDomain}
+                domain={yAxisDomain as [number, number]}
               />
               <Tooltip content={<CustomTooltip />} />
               <Area
