@@ -31,10 +31,10 @@ const AlertDistribution = ({ alerts }: AlertDistributionProps) => {
     return Object.entries(severityCounts).map(([name, value]) => ({
       name,
       value,
-      color: name === "Critical" ? "#ef4444" : 
-             name === "High" ? "#f97316" : 
-             name === "Medium" ? "#3b82f6" : 
-             "#22c55e"
+      color: name === "Critical" ? "#FF0000" : 
+             name === "High" ? "#FFA500" : 
+             name === "Medium" ? "#FFFF00" : 
+             "#008000"
     }));
   };
 

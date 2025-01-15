@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertOctagon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { getSeverityColor, getSeverityBg } from "./dashboard/utils/colorUtils";
 
 interface Outlier {
   count: number;
@@ -21,22 +22,6 @@ const OutliersWidget = () => {
     }
   });
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case "high": return "text-red-500";
-      case "medium": return "text-orange-500";
-      default: return "text-yellow-400";
-    }
-  };
-
-  const getSeverityBg = (severity: string) => {
-    switch (severity) {
-      case "high": return "bg-red-950/20";
-      case "medium": return "bg-orange-950/20";
-      default: return "bg-yellow-950/20";
-    }
-  };
-
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
@@ -50,7 +35,7 @@ const OutliersWidget = () => {
           {outliers?.map((outlier, index) => (
             <div
               key={index}
-              className={`${getSeverityBg(outlier.severity)} p-3 rounded-lg border border-${outlier.severity === 'high' ? 'red' : 'orange'}-900/30`}
+              className={`${getSeverityBg(outlier.severity)} p-3 rounded-lg border border-${outlier.severity === 'high' ? '[#FFA500]' : '[#FFFF00]'}/30`}
             >
               <div className="flex items-center justify-between">
                 <span className="text-gray-200">{outlier.type}</span>

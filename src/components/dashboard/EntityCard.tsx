@@ -1,6 +1,7 @@
 import React from "react";
 import { Computer, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getRiskColor } from "./utils/colorUtils";
 
 interface EntityCardProps {
   id: string | null;
@@ -13,21 +14,13 @@ interface EntityCardProps {
 const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProps) => {
   const isComputer = id?.endsWith('$') ?? false;
   const safeUniqueTitles = typeof uniqueTitles === 'number' ? uniqueTitles : 0;
-  
-  const getRiskColor = (score: string | null) => {
-    if (!score) return "text-[#0000FF]/70"; // Informational
-    const numScore = parseInt(score);
-    if (numScore >= 200) return "text-[#FF0000]"; // Critical (Red)
-    if (numScore >= 50) return "text-[#FFA500]"; // High (Orange)
-    return "text-[#008000]"; // Low (Green)
-  };
 
   const getRiskLevel = (score: string | null) => {
     if (!score) return "";
     const numScore = parseInt(score);
-    if (numScore >= 200) return "Critical";
-    if (numScore >= 50) return "High";
-    return "Low";
+    if (numScore >= 200) return "critical";
+    if (numScore >= 50) return "high";
+    return "low";
   };
 
   const isHighRisk = (score: string | null) => {
@@ -71,14 +64,14 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
               <div className="flex flex-col items-center">
                 <span className={cn(
                   "text-blue-300/90 font-medium text-base",
-                  getRiskColor(riskScore),
+                  getRiskColor(getRiskLevel(riskScore)),
                   isHighRisk(riskScore) && "animate-pulse"
                 )}>
                   Risk
                 </span>
                 <span className={cn(
                   "text-xs font-medium -mt-0.5",
-                  getRiskColor(riskScore),
+                  getRiskColor(getRiskLevel(riskScore)),
                   isHighRisk(riskScore) && "animate-pulse"
                 )}>
                   {getRiskLevel(riskScore)}
@@ -90,7 +83,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
                     d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
                     className={cn(
                       "stroke-current fill-none stroke-[4]",
-                      getRiskColor(riskScore),
+                      getRiskColor(getRiskLevel(riskScore)),
                       isHighRisk(riskScore) && "animate-pulse"
                     )}
                     strokeLinecap="round"
@@ -100,7 +93,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
               </div>
               <span className={cn(
                 "font-bold text-3xl min-w-[70px] text-right",
-                getRiskColor(riskScore),
+                getRiskColor(getRiskLevel(riskScore)),
                 isHighRisk(riskScore) && "animate-pulse"
               )}>
                 {riskScore}
