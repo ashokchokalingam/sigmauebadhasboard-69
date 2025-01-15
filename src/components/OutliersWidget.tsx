@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertOctagon, TrendingUp, Shield } from "lucide-react";
+import { AlertOctagon, TrendingUp, Shield, Monitor, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { format, parseISO } from "date-fns";
 
 interface MLOutlier {
   anomaly_count: number;
@@ -26,6 +27,8 @@ interface ChartDataPoint {
   title: string;
   description: string;
   tactics: string[];
+  impactedComputers: string[];
+  impactedUsers: string[];
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -45,7 +48,15 @@ const CustomTooltip = ({ active, payload }: any) => {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Time:</span>
-            <span className="text-white">{new Date(data.timestamp).toLocaleString()}</span>
+            <span className="text-white">{format(new Date(data.timestamp), 'MMM d, yyyy h:mm a')}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">Impacted Computers:</span>
+            <span className="text-white">{data.impactedComputers.length}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">Impacted Users:</span>
+            <span className="text-white">{data.impactedUsers.length}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Tactics:</span>
@@ -119,7 +130,9 @@ const OutliersWidget = () => {
     title: outlier.title,
     description: outlier.ml_description,
     tactics: outlier.tactics?.split(',') || [],
-  })) || [];
+    impactedComputers: outlier.impacted_computers?.split(',') || [],
+    impactedUsers: (outlier.origin_users || '').split(',').filter(Boolean),
+  })).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) || [];
 
   const calculateSeverityStats = () => {
     if (!apiResponse) return { high: 0, medium: 0, low: 0, informational: 0, total: 0 };
@@ -133,7 +146,29 @@ const OutliersWidget = () => {
     return stats;
   };
 
+  const calculateImpactedCounts = () => {
+    if (!apiResponse) return { computers: 0, users: 0 };
+    
+    const uniqueComputers = new Set();
+    const uniqueUsers = new Set();
+    
+    apiResponse.forEach(outlier => {
+      if (outlier.impacted_computers) {
+        outlier.impacted_computers.split(',').forEach(computer => uniqueComputers.add(computer.trim()));
+      }
+      if (outlier.origin_users) {
+        outlier.origin_users.split(',').forEach(user => uniqueUsers.add(user.trim()));
+      }
+    });
+    
+    return {
+      computers: uniqueComputers.size,
+      users: uniqueUsers.size
+    };
+  };
+
   const stats = calculateSeverityStats();
+  const impactedCounts = calculateImpactedCounts();
   const mediumPercentage = Math.round((stats.medium / stats.total) * 100);
   const highSeverityCount = stats.high;
 
@@ -156,8 +191,8 @@ const OutliersWidget = () => {
           <AlertOctagon className="h-5 w-5 text-purple-500" />
           ML Outliers - Executive Summary
         </CardTitle>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-4">
+          <div className="md:col-span-2 flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
             <AlertOctagon className="h-5 w-5 text-red-400" />
             <div>
               <p className="text-sm text-purple-200">Critical Insight</p>
@@ -171,16 +206,25 @@ const OutliersWidget = () => {
             <div>
               <p className="text-sm text-purple-200">Severity Distribution</p>
               <p className="text-lg font-bold text-purple-100">
-                {mediumPercentage}% of anomalies are medium severity
+                {mediumPercentage}% medium severity
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <Shield className="h-5 w-5 text-purple-400" />
+            <Monitor className="h-5 w-5 text-blue-400" />
             <div>
-              <p className="text-sm text-purple-200">Total Anomalies</p>
+              <p className="text-sm text-purple-200">Impacted Systems</p>
               <p className="text-lg font-bold text-purple-100">
-                {stats.total} detected
+                {impactedCounts.computers} computers
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
+            <Users className="h-5 w-5 text-green-400" />
+            <div>
+              <p className="text-sm text-purple-200">Impacted Users</p>
+              <p className="text-lg font-bold text-purple-100">
+                {impactedCounts.users} users
               </p>
             </div>
           </div>
@@ -206,7 +250,7 @@ const OutliersWidget = () => {
                 tickLine={false}
                 tickFormatter={(value) => {
                   try {
-                    return new Date(value).toLocaleTimeString();
+                    return format(new Date(value), 'h:mm a');
                   } catch (e) {
                     console.error('Error formatting date:', e);
                     return value;
