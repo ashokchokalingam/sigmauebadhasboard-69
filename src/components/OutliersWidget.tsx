@@ -246,12 +246,13 @@ const OutliersWidget = () => {
               </defs>
               <XAxis 
                 dataKey="timestamp" 
-                stroke="#6B7280"
+                stroke="#94A3B8" // Changed from #6B7280 to a lighter slate color
                 fontSize={12}
                 tickLine={false}
                 angle={-45}
                 textAnchor="end"
                 height={70}
+                tick={{ fill: '#E2E8F0' }} // Added this line to make the text more visible
                 tickFormatter={(value) => {
                   try {
                     const date = new Date(value);
