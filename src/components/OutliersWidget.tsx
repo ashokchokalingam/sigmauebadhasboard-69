@@ -1,27 +1,32 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertOctagon, TrendingUp, Users, Shield } from "lucide-react";
+import { AlertOctagon, TrendingUp, Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
-import { format } from "date-fns";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { format, parseISO } from "date-fns";
 
 interface MLOutlier {
-  event_count: number;
-  event_title: string;
+  anomaly_count: number;
   first_seen: string;
+  impacted_computers: string;
   last_seen: string;
-  risk_level: "high" | "medium" | "low";
-  tactics: string;
+  ml_description: string;
+  origin_users: string | null;
+  risk: number | null;
+  severity: "high" | "medium" | "low" | "informational";
+  source_ips: string | null;
+  tactics: string | null;
+  techniques: string | null;
+  title: string;
 }
 
 interface ChartDataPoint {
-  count: number;
-  severity: "high" | "medium" | "low";
-  type: string;
   timestamp: string;
-  tactic: string;
-  risk_score: number;
-  first_seen: string;
-  last_seen: string;
+  count: number;
+  risk: number;
+  severity: string;
+  title: string;
+  description: string;
+  tactics: string[];
 }
 
 const CustomTooltip = ({ active, payload }: any) => {
@@ -29,24 +34,28 @@ const CustomTooltip = ({ active, payload }: any) => {
     const data = payload[0].payload;
     return (
       <div className="bg-black/90 p-4 rounded-lg border border-purple-500/20 backdrop-blur-sm">
-        <p className="text-purple-300 font-medium mb-2">{data.type}</p>
+        <p className="text-purple-300 font-medium mb-2">{data.title}</p>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Anomalies:</span>
             <span className="text-white font-bold">{data.count}</span>
           </div>
           <div className="flex items-center gap-2">
+            <span className="text-purple-400">Risk Score:</span>
+            <span className="text-white font-bold">{data.risk || 'N/A'}</span>
+          </div>
+          <div className="flex items-center gap-2">
             <span className="text-purple-400">Time:</span>
-            <span className="text-white">{format(new Date(data.timestamp), 'PPp')}</span>
+            <span className="text-white">{format(parseISO(data.timestamp), 'PPp')}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-purple-400">Tactic:</span>
-            <span className="text-white">{data.tactic || 'N/A'}</span>
+            <span className="text-purple-400">Tactics:</span>
+            <span className="text-white">{data.tactics.join(', ') || 'N/A'}</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-purple-400">Risk Level:</span>
+            <span className="text-purple-400">Severity:</span>
             <span className={`font-bold ${getSeverityColor(data.severity)}`}>
-              {data.severity?.toUpperCase() || 'N/A'}
+              {data.severity.toUpperCase()}
             </span>
           </div>
         </div>
@@ -57,7 +66,7 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 const getSeverityColor = (severity: string): string => {
-  switch (severity) {
+  switch (severity.toLowerCase()) {
     case "high":
       return "text-red-400";
     case "medium":
@@ -65,18 +74,18 @@ const getSeverityColor = (severity: string): string => {
     case "low":
       return "text-green-400";
     default:
-      return "text-purple-400";
+      return "text-blue-400";
   }
 };
 
 const CustomizedDot = (props: any) => {
   const { cx, cy, payload } = props;
-  const severity = payload?.severity || "medium";
   
   const severityColors = {
     high: "#EF4444",
     medium: "#F59E0B",
-    low: "#10B981"
+    low: "#10B981",
+    informational: "#60A5FA"
   };
   
   return (
@@ -84,14 +93,14 @@ const CustomizedDot = (props: any) => {
       cx={cx} 
       cy={cy} 
       r={4} 
-      fill={severityColors[severity]} 
+      fill={severityColors[payload.severity.toLowerCase()] || "#60A5FA"} 
       className="cursor-pointer hover:r-6 transition-all duration-300"
     />
   );
 };
 
 const OutliersWidget = () => {
-  const { data: apiResponse } = useQuery({
+  const { data: apiResponse, isLoading } = useQuery({
     queryKey: ['outliers'],
     queryFn: async () => {
       const response = await fetch('/api/outliers');
@@ -104,17 +113,31 @@ const OutliersWidget = () => {
   });
 
   const chartData: ChartDataPoint[] = apiResponse?.map((outlier) => ({
-    count: outlier.event_count || 0,
-    severity: outlier.risk_level || "medium",
-    type: outlier.event_title || "Unknown Event",
-    timestamp: outlier.first_seen || new Date().toISOString(),
-    tactic: outlier.tactics?.split(',')[0] || "Unknown",
-    risk_score: 0,
-    first_seen: outlier.first_seen || new Date().toISOString(),
-    last_seen: outlier.last_seen || new Date().toISOString(),
+    timestamp: outlier.first_seen,
+    count: outlier.anomaly_count,
+    risk: outlier.risk || 0,
+    severity: outlier.severity,
+    title: outlier.title,
+    description: outlier.ml_description,
+    tactics: outlier.tactics?.split(',') || [],
   })) || [];
 
-  const totalHighRiskEvents = chartData.filter(o => o.severity === "high").length;
+  const totalHighRiskEvents = chartData.filter(o => o.severity.toLowerCase() === "high").length;
+  const averageRiskScore = Math.round(
+    chartData.reduce((acc, curr) => acc + (curr.risk || 0), 0) / (chartData.length || 1)
+  );
+
+  if (isLoading) {
+    return (
+      <Card className="bg-black/40 border-purple-900/20">
+        <CardContent className="p-6">
+          <div className="h-[400px] flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
@@ -127,24 +150,24 @@ const OutliersWidget = () => {
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
             <AlertOctagon className="h-5 w-5 text-red-400" />
             <div>
-              <p className="text-sm text-purple-200">High Risk Events</p>
+              <p className="text-sm text-purple-200">Critical Events</p>
               <p className="text-lg font-bold text-purple-100">{totalHighRiskEvents}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <TrendingUp className="h-5 w-5 text-purple-400" />
+            <TrendingUp className="h-5 w-5 text-yellow-400" />
             <div>
-              <p className="text-sm text-purple-200">Risk Trend</p>
-              <p className="text-lg font-bold text-purple-100">
-                {chartData.length > 0 ? 'Decreasing' : 'N/A'}
-              </p>
+              <p className="text-sm text-purple-200">Average Risk Score</p>
+              <p className="text-lg font-bold text-purple-100">{averageRiskScore}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 bg-purple-900/20 p-3 rounded-lg">
-            <Shield className="h-5 w-5 text-green-400" />
+            <Shield className="h-5 w-5 text-purple-400" />
             <div>
-              <p className="text-sm text-purple-200">Time Period</p>
-              <p className="text-lg font-bold text-purple-100">Last 7 Days</p>
+              <p className="text-sm text-purple-200">Total Anomalies</p>
+              <p className="text-lg font-bold text-purple-100">
+                {chartData.reduce((acc, curr) => acc + curr.count, 0)}
+              </p>
             </div>
           </div>
         </div>
@@ -167,7 +190,7 @@ const OutliersWidget = () => {
                 stroke="#6B7280"
                 fontSize={12}
                 tickLine={false}
-                tickFormatter={(value) => format(new Date(value), 'MMM dd HH:mm')}
+                tickFormatter={(value) => format(parseISO(value), 'MMM dd HH:mm')}
               />
               <YAxis 
                 stroke="#6B7280"
@@ -176,7 +199,6 @@ const OutliersWidget = () => {
                 axisLine={false}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Legend />
               <Area
                 type="monotone"
                 dataKey="count"
