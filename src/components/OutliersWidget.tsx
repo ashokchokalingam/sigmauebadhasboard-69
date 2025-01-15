@@ -57,7 +57,7 @@ const CustomTooltip = ({ active, payload }: any) => {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">Risk Score:</span>
-            <span className="text-white font-bold">{data.risk || 'N/A'}</span>
+            <span className="text-white font-bold">{typeof data.risk === 'number' ? data.risk : 'N/A'}</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-purple-400">First Seen:</span>
@@ -215,7 +215,7 @@ const OutliersWidget = () => {
           firstSeen: outlier.first_seen,
           lastSeen: outlier.last_seen,
           count: 0,
-          risk: 0,
+          risk: outlier.risk || 0, // Convert null to 0
           severity: outlier.severity,
           title: outlier.title,
           description: outlier.ml_description,
