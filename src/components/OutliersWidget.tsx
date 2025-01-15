@@ -113,6 +113,24 @@ const CustomizedDot = (props: any) => {
   );
 };
 
+const getTimeOfDay = (hour: number): string => {
+  if (hour >= 5 && hour < 12) return "Morning";
+  if (hour >= 12 && hour < 17) return "Afternoon";
+  if (hour >= 17 && hour < 21) return "Evening";
+  return "Night";
+};
+
+const formatAxisTimestamp = (timestamp: string): string => {
+  try {
+    const date = new Date(timestamp);
+    const timeOfDay = getTimeOfDay(date.getHours());
+    return `${format(date, 'MMM d')} - ${timeOfDay}`;
+  } catch (e) {
+    console.error('Error formatting axis date:', e);
+    return timestamp;
+  }
+};
+
 const OutliersWidget = () => {
   const { data: apiResponse, isLoading } = useQuery({
     queryKey: ['outliers'],
@@ -126,20 +144,38 @@ const OutliersWidget = () => {
     }
   });
 
-  const chartData: ChartDataPoint[] = apiResponse?.map((outlier) => ({
-    timestamp: outlier.last_seen, // Changed to use last_seen for X-axis
-    firstSeen: outlier.first_seen,
-    lastSeen: outlier.last_seen,
-    count: outlier.anomaly_count,
-    risk: outlier.risk || 0,
-    severity: outlier.severity,
-    title: outlier.title,
-    description: outlier.ml_description,
-    tactics: outlier.tactics?.split(',') || [],
-    impactedComputers: outlier.impacted_computers?.split(',') || [],
-    impactedUsers: (outlier.origin_users || '').split(',').filter(Boolean),
-  }))
-  .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) || [];
+  const chartData = React.useMemo(() => {
+    if (!apiResponse) return [];
+
+    const groupedData: { [key: string]: ChartDataPoint } = {};
+
+    apiResponse.forEach((outlier) => {
+      const date = new Date(outlier.last_seen);
+      const timeKey = `${format(date, 'yyyy-MM-dd')}-${getTimeOfDay(date.getHours())}`;
+      
+      if (!groupedData[timeKey]) {
+        groupedData[timeKey] = {
+          timestamp: outlier.last_seen,
+          firstSeen: outlier.first_seen,
+          lastSeen: outlier.last_seen,
+          count: 0,
+          risk: 0,
+          severity: outlier.severity,
+          title: outlier.title,
+          description: outlier.ml_description,
+          tactics: outlier.tactics?.split(',') || [],
+          impactedComputers: outlier.impacted_computers?.split(',') || [],
+          impactedUsers: (outlier.origin_users || '').split(',').filter(Boolean),
+        };
+      }
+
+      groupedData[timeKey].count += outlier.anomaly_count;
+      groupedData[timeKey].risk = Math.max(groupedData[timeKey].risk, outlier.risk || 0);
+    });
+
+    return Object.values(groupedData)
+      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+  }, [apiResponse]);
 
   const calculateSeverityStats = () => {
     if (!apiResponse) return { high: 0, medium: 0, low: 0, informational: 0, total: 0 };
@@ -259,15 +295,7 @@ const OutliersWidget = () => {
                 textAnchor="end"
                 height={70}
                 tick={{ fill: '#E2E8F0' }}
-                tickFormatter={(value) => {
-                  try {
-                    const date = new Date(value);
-                    return format(date, 'MMM d, h:mm a');
-                  } catch (e) {
-                    console.error('Error formatting date:', e);
-                    return value;
-                  }
-                }}
+                tickFormatter={formatAxisTimestamp}
               />
               <YAxis 
                 stroke="#6B7280"
