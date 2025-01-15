@@ -1,5 +1,5 @@
 import React from "react";
-import { Computer, User, HeartPulse } from "lucide-react";
+import { Computer, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EntityCardProps {
@@ -42,7 +42,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
         "border border-blue-500/5 hover:border-blue-500/10"
       )}
     >
-      <div className="flex items-center gap-4 flex-1">
+      <div className="flex items-center gap-4 w-full">
         <div className="relative w-10 h-10 rounded-full bg-blue-950/30 flex items-center justify-center">
           {isComputer ? (
             <Computer className="w-5 h-5 text-blue-400/70" />
@@ -51,8 +51,8 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
           )}
         </div>
         
-        <div className="flex flex-col flex-1">
-          <span className="font-mono text-base text-blue-200/90 font-medium group-hover:text-blue-100 truncate max-w-[300px]">
+        <div className="flex flex-col min-w-[120px]">
+          <span className="font-mono text-base text-blue-200/90 font-medium group-hover:text-blue-100 truncate max-w-[200px]">
             {id || 'Unknown'}
           </span>
           <span className="text-sm text-blue-300/60 mt-1">
@@ -61,23 +61,27 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
         </div>
 
         {riskScore && (
-          <div className={cn(
-            "flex items-center gap-2 px-3 py-1.5 rounded-full",
-            "transition-all duration-300",
-            getRiskBgColor(riskScore)
-          )}>
-            <HeartPulse 
-              className={cn(
-                "w-4 h-4 animate-pulse",
-                getRiskColor(riskScore)
-              )} 
-            />
-            <span className={cn(
-              "font-semibold text-base",
-              getRiskColor(riskScore)
+          <div className="flex-1 flex items-center justify-center">
+            <div className={cn(
+              "flex items-center gap-2 px-4 py-2",
+              "relative overflow-hidden"
             )}>
-              {riskScore}
-            </span>
+              <div className="absolute inset-0 w-[200%] h-full">
+                <svg className="w-full h-full animate-cardiogram" viewBox="0 0 1200 200" preserveAspectRatio="none">
+                  <path
+                    d="M0,100 L300,100 L320,20 L340,180 L360,100 L600,100 L620,20 L640,180 L660,100 L900,100 L920,20 L940,180 L960,100 L1200,100"
+                    className={cn("stroke-current fill-none stroke-[3]", getRiskColor(riskScore))}
+                  />
+                </svg>
+              </div>
+              <span className="text-blue-300/90 font-medium text-base mr-2">Risk</span>
+              <span className={cn(
+                "font-bold text-lg",
+                getRiskColor(riskScore)
+              )}>
+                {riskScore}
+              </span>
+            </div>
           </div>
         )}
       </div>
