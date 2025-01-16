@@ -28,21 +28,22 @@ const CustomDot = ({ cx, cy, payload }: any) => {
           <circle
             cx={cx}
             cy={cy}
+            r={12}
+            fill="none"
+            stroke={dotColor}
+            strokeWidth={2}
+            strokeOpacity={0.2}
+            className="animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"
+          />
+          <circle
+            cx={cx}
+            cy={cy}
             r={8}
             fill="none"
             stroke={dotColor}
             strokeWidth={2}
             strokeOpacity={0.4}
-            className="animate-pulse"
-          />
-          <circle
-            cx={cx}
-            cy={cy}
-            r={6}
-            fill="none"
-            stroke={dotColor}
-            strokeWidth={1.5}
-            strokeOpacity={0.3}
+            className="animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"
           />
         </>
       )}
