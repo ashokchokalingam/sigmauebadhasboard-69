@@ -2,8 +2,10 @@ import React from 'react';
 import { Alert } from "./types";
 import TimelineRawLog from "./TimelineRawLog";
 import { Card } from "@/components/ui/card";
-import { X, Monitor, User, Hash, Shield, Clock, Globe, Database } from "lucide-react";
-import { cn } from "@/lib/utils";
+import AlertHeader from "./AlertDetailsSections/AlertHeader";
+import AlertTacticsSection from "./AlertDetailsSections/AlertTacticsSection";
+import AlertMetadata from "./AlertDetailsSections/AlertMetadata";
+import { Shield, AlertTriangle, Activity, User, Monitor, Brain } from "lucide-react";
 
 interface AlertDetailsViewProps {
   alert: Alert;
@@ -21,155 +23,112 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     year: 'numeric',
   });
 
-  const getSeverityColor = (level: string = '') => {
-    const l = level.toLowerCase();
-    if (l.includes('critical')) return 'text-red-400';
-    if (l.includes('high')) return 'text-orange-400';
-    if (l.includes('medium')) return 'text-yellow-400';
-    if (l.includes('low')) return 'text-green-400';
-    return 'text-blue-400';
+  const getRiskColor = (risk: number | null) => {
+    if (risk === null) return "text-gray-400";
+    if (risk >= 80) return "text-red-400";
+    if (risk >= 60) return "text-orange-400";
+    if (risk >= 40) return "text-yellow-400";
+    return "text-green-400";
   };
 
+  // Handle ESC key
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
   return (
-    <div className="h-full bg-[#1E1E2F] border-l border-purple-500/20">
-      {/* Header */}
-      <div className="sticky top-0 z-30 bg-[#1E1E2F]/95 backdrop-blur-sm p-6 border-b border-purple-500/20">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-purple-100">
-            {alert.title || 'N/A'}
-          </h2>
-          <button 
-            onClick={onClose}
-            className="p-2 hover:bg-purple-500/10 rounded-lg transition-colors"
-          >
-            <X className="h-5 w-5 text-purple-300 hover:text-purple-100" />
-          </button>
-        </div>
-      </div>
+    <div className="h-full bg-[#1E1E2F] border-l border-[#7B68EE]/20">
+      <AlertHeader onClose={onClose} />
 
-      <div className="p-6 space-y-6 overflow-y-auto h-[calc(100%-5rem)]">
-        {/* Description */}
-        <div className="bg-purple-500/5 rounded-lg p-4 border border-purple-500/20">
-          <h3 className="text-sm font-medium text-purple-200 mb-2">Description</h3>
-          <p className="text-sm text-purple-100/90 leading-relaxed">
-            {alert.description || 'No description available'}
-          </p>
-        </div>
+      <div className="h-[calc(100%-4rem)] overflow-y-auto">
+        <div className="p-4 space-y-4">
+          <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
+            <h3 className="text-lg font-semibold text-[#E0E0E0] mb-3">Alert Overview</h3>
+            <div className="space-y-3">
+              <div>
+                <h4 className="text-sm font-medium text-[#A9A9A9]">Title</h4>
+                <p className="text-lg text-white">{alert.title || 'N/A'}</p>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-[#A9A9A9]">Description</h4>
+                <p className="text-sm text-[#E0E0E0]">{alert.description || 'N/A'}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h4 className="text-sm font-medium text-[#A9A9A9]">Risk Score</h4>
+                  <p className={`text-lg font-medium ${getRiskColor(alert.risk)}`}>
+                    {alert.risk === null ? 'N/A' : `${alert.risk}%`}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-[#A9A9A9]">ML Cluster</h4>
+                  <div className="flex items-center gap-2">
+                    <Brain className="h-4 w-4 text-blue-400" />
+                    <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20">
+                      {alert.ml_cluster === null ? 'N/A' : `Cluster ${alert.ml_cluster}`}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              {alert.ml_description && (
+                <div className="bg-blue-500/5 border border-blue-500/10 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2 mb-2">
+                    <Brain className="h-4 w-4" />
+                    ML Analysis
+                  </h4>
+                  <p className="text-sm text-[#E0E0E0] leading-relaxed">
+                    {alert.ml_description}
+                  </p>
+                </div>
+              )}
+            </div>
+          </Card>
 
-        {/* Main Info Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Monitor className="h-4 w-4 text-blue-400" />
-              <div>
-                <p className="text-sm font-medium text-blue-400">Computer</p>
-                <p className="text-sm text-blue-100 font-mono">{alert.computer_name || 'N/A'}</p>
+          <div className="grid grid-cols-3 gap-4">
+            <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
+              <h4 className="text-sm font-medium text-[#A9A9A9] mb-2">Rule ID</h4>
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-[#7B68EE]" />
+                <p className="text-sm text-[#E0E0E0] font-mono">
+                  {alert.ruleid || 'N/A'}
+                </p>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-blue-400" />
-              <div>
-                <p className="text-sm font-medium text-blue-400">User Origin</p>
-                <p className="text-sm text-blue-100 font-mono">{alert.user_id || 'N/A'}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Hash className="h-4 w-4 text-blue-400" />
-              <div>
-                <p className="text-sm font-medium text-blue-400">Event ID</p>
-                <p className="text-sm text-blue-100 font-mono">{alert.event_id || 'N/A'}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-blue-400" />
-              <div>
-                <p className="text-sm font-medium text-blue-400">Rule ID</p>
-                <p className="text-sm text-blue-100 font-mono">{alert.ruleid || 'N/A'}</p>
-              </div>
-            </div>
-          </div>
+            </Card>
 
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-blue-400" />
-              <div>
-                <p className="text-sm font-medium text-blue-400">System Time</p>
-                <p className="text-sm text-blue-100 font-mono">{browserTime}</p>
+            <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
+              <h4 className="text-sm font-medium text-[#A9A9A9] mb-2">Severity</h4>
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-[#7B68EE]" />
+                <p className="text-sm text-[#E0E0E0] capitalize">
+                  {alert.rule_level || 'N/A'}
+                </p>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Globe className="h-4 w-4 text-blue-400" />
-              <div>
-                <p className="text-sm font-medium text-blue-400">Target Domain</p>
-                <p className="text-sm text-blue-100 font-mono">{alert.target_domain_name || 'N/A'}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Database className="h-4 w-4 text-blue-400" />
-              <div>
-                <p className="text-sm font-medium text-blue-400">ML Cluster</p>
-                <p className="text-sm text-blue-100 font-mono">{alert.ml_cluster || 'N/A'}</p>
-              </div>
-            </div>
+            </Card>
 
-            <div>
-              <p className="text-sm font-medium text-blue-400">Severity</p>
-              <p className={cn("text-sm font-medium", getSeverityColor(alert.rule_level))}>
-                {alert.rule_level || 'N/A'}
+            <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
+              <h4 className="text-sm font-medium text-[#A9A9A9] mb-2">Task</h4>
+              <p className="text-sm text-[#E0E0E0]">
+                {alert.task || 'N/A'}
               </p>
-            </div>
+            </Card>
           </div>
-        </div>
 
-        {/* MITRE ATT&CK Section */}
-        <div className="bg-purple-500/5 rounded-lg p-4 border border-purple-500/20">
-          <h3 className="text-sm font-medium text-purple-200 mb-4">MITRE ATT&CK</h3>
-          <div className="space-y-4">
-            <div>
-              <h4 className="text-sm font-medium text-purple-300 mb-2">Tactics</h4>
-              <div className="flex flex-wrap gap-2">
-                {alert.tags?.split(',')
-                  .filter(tag => tag.includes('attack.') && !tag.toLowerCase().includes('t1'))
-                  .map((tactic, index) => (
-                    <span 
-                      key={index}
-                      className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
-                    >
-                      {tactic.replace('attack.', '').split('_').map(word => 
-                        word.charAt(0).toUpperCase() + word.slice(1)
-                      ).join(' ')}
-                    </span>
-                  ))}
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="text-sm font-medium text-purple-300 mb-2">Techniques</h4>
-              <div className="flex flex-wrap gap-2">
-                {alert.tags?.split(',')
-                  .filter(tag => tag.toLowerCase().includes('t1'))
-                  .map((technique, index) => (
-                    <span 
-                      key={index}
-                      className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
-                    >
-                      {technique.trim()}
-                    </span>
-                  ))}
-              </div>
-            </div>
-          </div>
-        </div>
+          <AlertTacticsSection tags={alert.tags} />
+          <AlertMetadata alert={alert} browserTime={browserTime} />
 
-        {/* Raw Log Section */}
-        <Card className="bg-[#1A1F2C] border-purple-500/20">
-          <TimelineRawLog alert={alert} />
-        </Card>
+          <Card className="bg-[#2B2B3B] border-[#7B68EE]/20">
+            <TimelineRawLog alert={alert} />
+          </Card>
+        </div>
       </div>
     </div>
   );
