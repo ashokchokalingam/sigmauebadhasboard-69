@@ -59,14 +59,14 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
   };
 
   return (
-    <TableHeader className="sticky top-0 z-50 bg-[#E5DEFF]">
-      <TableRow className="hover:bg-[#D6BCFA] border-b border-[#8B5CF6]/30">
+    <TableHeader className="sticky top-0 z-50 bg-[#2D2D44]">
+      <TableRow className="hover:bg-[#3D3D54] border-b border-[#4D4D64]">
         {allColumns
           .filter(column => visibleColumns.includes(column.key))
           .map(column => (
             <TableHead 
               key={column.key} 
-              className="text-[#6B21A8] bg-[#E5DEFF] backdrop-blur-sm border-b border-[#8B5CF6]/30 whitespace-nowrap sticky top-0 font-bold text-base"
+              className="text-purple-300 bg-[#2D2D44] backdrop-blur-sm border-b border-[#4D4D64] whitespace-nowrap sticky top-0 font-medium text-sm"
             >
               <ColumnFilter
                 title={column.label}
@@ -76,7 +76,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
               />
             </TableHead>
           ))}
-        <TableHead className="text-[#6B21A8] w-[50px] bg-[#E5DEFF] backdrop-blur-sm border-b border-[#8B5CF6]/30 sticky top-0"></TableHead>
+        <TableHead className="text-purple-300 w-[50px] bg-[#2D2D44] backdrop-blur-sm border-b border-[#4D4D64] sticky top-0"></TableHead>
       </TableRow>
     </TableHeader>
   );
