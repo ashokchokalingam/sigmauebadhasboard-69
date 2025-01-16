@@ -19,14 +19,39 @@ const CustomDot = ({ cx, cy, payload }: any) => {
   };
 
   const dotColor = severityColors[payload.severity.toLowerCase()] || "#60A5FA";
+  const shouldGlow = isActive && (payload.severity.toLowerCase() === 'high' || payload.severity.toLowerCase() === 'medium');
   
   return (
     <g>
+      {shouldGlow && (
+        <>
+          <circle
+            cx={cx}
+            cy={cy}
+            r={8}
+            fill="none"
+            stroke={dotColor}
+            strokeWidth={2}
+            strokeOpacity={0.4}
+            className="animate-pulse"
+          />
+          <circle
+            cx={cx}
+            cy={cy}
+            r={6}
+            fill="none"
+            stroke={dotColor}
+            strokeWidth={1.5}
+            strokeOpacity={0.3}
+          />
+        </>
+      )}
       <circle
         cx={cx}
         cy={cy}
         r={4}
         fill={dotColor}
+        className={shouldGlow ? "animate-pulse" : ""}
       />
     </g>
   );
