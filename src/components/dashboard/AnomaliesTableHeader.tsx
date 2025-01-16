@@ -20,53 +20,23 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
   });
 
   const getUniqueValues = (columnKey: string): string[] => {
-    switch (columnKey) {
-      case 'users': {
-        const userSet = new Set<string>();
-        last7DaysAlerts.forEach(alert => {
-          if (alert.user_id) userSet.add(alert.user_id);
-          if (alert.target_user_name) userSet.add(alert.target_user_name);
-        });
-        return Array.from(userSet).filter((value): value is string => 
-          typeof value === 'string' && value.length > 0
-        );
-      }
-
-      case 'system_time': {
-        const timeSet = new Set<string>();
-        last7DaysAlerts.forEach(alert => {
-          if (alert.system_time) {
-            const timeString = new Date(alert.system_time).toLocaleTimeString();
-            timeSet.add(timeString);
-          }
-        });
-        return Array.from(timeSet).filter((value): value is string => 
-          typeof value === 'string' && value.length > 0
-        );
-      }
-
-      default: {
-        const valueSet = new Set<string>();
-        last7DaysAlerts.forEach(alert => {
-          const value = alert[columnKey as keyof Alert];
-          if (value) valueSet.add(String(value));
-        });
-        return Array.from(valueSet).filter((value): value is string => 
-          typeof value === 'string' && value.length > 0
-        );
-      }
-    }
+    const valueSet = new Set<string>();
+    last7DaysAlerts.forEach(alert => {
+      const value = alert[columnKey as keyof Alert];
+      if (value) valueSet.add(String(value));
+    });
+    return Array.from(valueSet).filter(Boolean);
   };
 
   return (
-    <TableHeader className="sticky top-0 z-50 bg-[#2D2D44]">
-      <TableRow className="hover:bg-[#3D3D54] border-b border-[#4D4D64]">
+    <TableHeader className="sticky top-0 z-50 bg-[#1A1A2E]/80 backdrop-blur-sm">
+      <TableRow className="border-b border-purple-500/20">
         {allColumns
           .filter(column => visibleColumns.includes(column.key))
           .map(column => (
             <TableHead 
               key={column.key} 
-              className="text-purple-300 bg-[#2D2D44] backdrop-blur-sm border-b border-[#4D4D64] whitespace-nowrap sticky top-0 font-medium text-sm"
+              className="text-purple-300 bg-[#2D2D44] first:rounded-tl-lg last:rounded-tr-lg h-12 font-medium text-sm"
             >
               <ColumnFilter
                 title={column.label}
@@ -76,7 +46,7 @@ const AnomaliesTableHeader = ({ alerts, onFilterChange, filters, visibleColumns 
               />
             </TableHead>
           ))}
-        <TableHead className="text-purple-300 w-[50px] bg-[#2D2D44] backdrop-blur-sm border-b border-[#4D4D64] sticky top-0"></TableHead>
+        <TableHead className="w-[50px] bg-[#2D2D44] border-b border-purple-500/20" />
       </TableRow>
     </TableHeader>
   );

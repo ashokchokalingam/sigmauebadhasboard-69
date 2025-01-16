@@ -3,7 +3,7 @@ import { Alert } from "./types";
 import TimelineRawLog from "./TimelineRawLog";
 import { Card } from "@/components/ui/card";
 import { X } from "lucide-react";
-import AlertHeader from "./AlertDetailsSections/AlertHeader";
+import AlertIdentification from "./AlertDetailsSections/AlertIdentification";
 import AlertTacticsSection from "./AlertDetailsSections/AlertTacticsSection";
 import AlertMetadata from "./AlertDetailsSections/AlertMetadata";
 
@@ -48,27 +48,11 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
         </button>
       </div>
 
-      <div className="h-[calc(100%-4rem)] overflow-y-auto">
+      <div className="h-[calc(100%-4rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
         <div className="p-4 space-y-4">
-          <Card className="bg-[#2D2D44] border-[#4D4D64]">
-            <div className="p-4">
-              <h3 className="text-lg font-semibold text-purple-300 mb-3">Alert Overview</h3>
-              <div className="space-y-3">
-                <div>
-                  <h4 className="text-sm font-medium text-purple-200">Title</h4>
-                  <p className="text-lg text-white">{alert.title || 'N/A'}</p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-purple-200">Description</h4>
-                  <p className="text-sm text-purple-100">{alert.description || 'N/A'}</p>
-                </div>
-              </div>
-            </div>
-          </Card>
-
+          <AlertIdentification alert={alert} />
           <AlertTacticsSection tags={alert.tags} />
           <AlertMetadata alert={alert} browserTime={browserTime} />
-
           <Card className="bg-[#2D2D44] border-[#4D4D64]">
             <TimelineRawLog alert={alert} />
           </Card>
