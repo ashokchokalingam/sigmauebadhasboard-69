@@ -78,7 +78,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
                       <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
                   </TableHeader>
-                  <TableBody>
+                  <TableBody className="bg-transparent">
                     {logs.map((log) => (
                       <TimelineLogCard
                         key={log.id}
@@ -104,9 +104,8 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
             <ResizablePanel 
               defaultSize={40}
               minSize={30}
-              onClick={(e) => e.stopPropagation()}
             >
-              <div className="h-full">
+              <div className="h-full" onClick={(e) => e.stopPropagation()}>
                 <DetailsPanel 
                   alert={selectedLog}
                   onClose={() => setSelectedLog(null)}

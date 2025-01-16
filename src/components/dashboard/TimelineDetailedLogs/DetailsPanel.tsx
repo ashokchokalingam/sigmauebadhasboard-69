@@ -22,12 +22,8 @@ const DetailsPanel = ({ alert, onClose, formatTime }: DetailsPanelProps) => {
     .filter(tag => tag.toLowerCase().includes('t1'))
     .map(tag => tag.trim().toUpperCase());
 
-  const handlePanelClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
   return (
-    <div className="h-full bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]" onClick={handlePanelClick}>
+    <div className="h-full bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]" onClick={(e) => e.stopPropagation()}>
       <div className="sticky top-0 z-30 bg-[#1E1E2F] p-6 border-b border-purple-400/20">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-purple-100 font-mono">
@@ -46,7 +42,7 @@ const DetailsPanel = ({ alert, onClose, formatTime }: DetailsPanelProps) => {
       </div>
 
       <ScrollArea className="h-[calc(100%-80px)]">
-        <div className="p-6 space-y-6" onClick={handlePanelClick}>
+        <div className="p-6 space-y-6">
           <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
             <h3 className="text-sm font-medium text-purple-200 mb-2 font-mono">Description</h3>
             <p className="text-sm text-purple-100/90 leading-relaxed font-mono">
