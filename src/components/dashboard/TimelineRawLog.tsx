@@ -23,7 +23,7 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
   if (!alert.raw) {
     return (
       <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20 flex items-center gap-2 text-purple-200">
-        <Terminal className="h-4 w-4" />
+        <Terminal className="h-5 w-5" />
         No raw log data available
       </div>
     );
@@ -48,13 +48,13 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
   }
 
   return (
-    <div className="bg-purple-400/5 rounded-lg border border-purple-400/20">
+    <div className="bg-purple-400/5 rounded-lg border border-purple-400/20 transition-all duration-300">
       <button 
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center gap-2 p-4 text-purple-200 hover:text-purple-100 transition-colors"
+        className="w-full flex items-center gap-2 p-4 text-purple-200 hover:bg-purple-400/10 transition-colors rounded-lg"
       >
         <ChevronRight className={cn(
-          "h-5 w-5 transition-transform duration-200",
+          "h-5 w-5 transition-transform duration-300",
           isExpanded && "transform rotate-90"
         )} />
         <Terminal className="h-5 w-5" />
@@ -67,7 +67,7 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
       )}>
         <div className="px-4 pb-4">
           <div className="bg-[#1A1F2C] rounded-lg border border-purple-500/20 overflow-hidden">
-            <pre className="p-4 text-sm overflow-auto max-h-[500px] custom-scrollbar">
+            <pre className="p-4 text-sm overflow-auto max-h-[500px] scrollbar-thin scrollbar-thumb-purple-400/20 scrollbar-track-transparent">
               <code ref={codeRef} className="language-json raw-log-content">
                 {formattedJson}
               </code>
@@ -77,21 +77,6 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
       </div>
 
       <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-          height: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(139, 92, 246, 0.1);
-          border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(139, 92, 246, 0.3);
-          border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(139, 92, 246, 0.4);
-        }
         .raw-log-content {
           font-family: 'JetBrains Mono', monospace !important;
           font-size: 0.875rem !important;

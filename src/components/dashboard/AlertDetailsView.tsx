@@ -4,6 +4,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { X, Shield, AlertTriangle, Activity, User, Monitor, Brain } from "lucide-react";
 import TimelineRawLog from "./TimelineRawLog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface AlertDetailsViewProps {
   alert: Alert;
@@ -41,7 +42,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     .map(tag => tag.trim().toUpperCase());
 
   return (
-    <div className="h-full bg-[#1E1E2F]">
+    <div className="h-full bg-[#1E1E2F] relative">
       <div className="flex justify-between items-center p-4 border-b border-[#7B68EE]/20 bg-[#1E1E2F] backdrop-blur-sm sticky top-0 z-10">
         <h2 className="text-xl font-bold bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] bg-clip-text text-transparent">
           Alert Details
