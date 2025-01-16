@@ -23,6 +23,10 @@ const LogDetails = ({ log }: LogDetailsProps) => {
   return (
     <motion.div
       className="ml-12 mt-2 mb-4"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2 }}
     >
       <div className="grid grid-cols-2 gap-4 p-4 bg-gradient-to-r from-purple-500/5 via-blue-500/5 to-indigo-500/5 rounded-lg border border-purple-500/20">
         <div className="space-y-4">
