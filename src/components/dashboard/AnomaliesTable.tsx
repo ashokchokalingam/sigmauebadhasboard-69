@@ -39,18 +39,15 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
   };
 
   return (
-    <Card className="relative border-[#2D2D44] bg-[#1A1A2E]">
+    <Card className="relative border-blue-500/10">
       <div className="relative">
-        <div className="flex items-center justify-between p-4 border-b border-[#2D2D44]">
-          <h2 className="text-lg font-semibold text-purple-300">Chrono Analyzer</h2>
-          <AnomaliesTableHeaderSection
-            visibleColumns={visibleColumns}
-            onColumnToggle={handleColumnToggle}
-            onSelectAll={handleSelectAll}
-            onDeselectAll={handleDeselectAll}
-          />
-        </div>
-        <CardContent className="p-0">
+        <AnomaliesTableHeaderSection
+          visibleColumns={visibleColumns}
+          onColumnToggle={handleColumnToggle}
+          onSelectAll={handleSelectAll}
+          onDeselectAll={handleDeselectAll}
+        />
+        <CardContent>
           {selectedAlert ? (
             <AnomaliesSplitView
               selectedAlert={selectedAlert}
