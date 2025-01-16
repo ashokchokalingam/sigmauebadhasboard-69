@@ -2,13 +2,17 @@ import { Alert } from "../types";
 import { Card } from "../../ui/card";
 import { ScrollArea } from "../../ui/scroll-area";
 import { motion } from "framer-motion";
-import { Shield, Monitor, User, Hash, Database, Tag, Terminal, Info } from "lucide-react";
+import { Shield, Monitor, User, Hash, Database, Tag, Terminal, Info, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface LogDetailsProps {
   log: Alert;
 }
 
 const LogDetails = ({ log }: LogDetailsProps) => {
+  const [isRawExpanded, setIsRawExpanded] = useState(false);
+
   const renderMetadata = () => (
     <div className="grid grid-cols-3 gap-4 mb-4">
       <div>
@@ -84,12 +88,35 @@ const LogDetails = ({ log }: LogDetailsProps) => {
             )}
 
             <div>
-              <h4 className="text-sm font-medium text-purple-200 mb-2">Raw Log</h4>
-              <pre className="text-xs text-purple-300/70 bg-black/20 p-4 rounded-lg overflow-x-auto font-mono">
-                {typeof log.raw === 'string' 
-                  ? JSON.stringify(JSON.parse(log.raw), null, 2)
-                  : JSON.stringify(log.raw, null, 2)}
-              </pre>
+              <button
+                onClick={() => setIsRawExpanded(!isRawExpanded)}
+                className="flex items-center gap-2 text-sm font-medium text-purple-200 mb-2 hover:text-purple-100 transition-colors"
+              >
+                <motion.div
+                  animate={{ rotate: isRawExpanded ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </motion.div>
+                Raw Log
+              </button>
+              <AnimatePresence>
+                {isRawExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    style={{ overflow: "hidden" }}
+                  >
+                    <pre className="text-xs text-purple-300/70 bg-black/20 p-4 rounded-lg overflow-x-auto font-mono">
+                      {typeof log.raw === 'string' 
+                        ? JSON.stringify(JSON.parse(log.raw), null, 2)
+                        : JSON.stringify(log.raw, null, 2)}
+                    </pre>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </ScrollArea>

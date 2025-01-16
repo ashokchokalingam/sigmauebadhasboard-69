@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Alert } from "../types";
-import { ChevronRight, AlertCircle, Clock } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronRight, Clock, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
 import LogDetails from "./LogDetails";
 
 interface LogItemProps {
@@ -37,12 +37,13 @@ const LogItem = ({ log }: LogItemProps) => {
           isExpanded && "bg-purple-500/10 border-purple-500/20"
         )}
       >
-        <ChevronRight 
-          className={cn(
-            "h-4 w-4 text-purple-300 transition-transform duration-200",
-            isExpanded && "rotate-90"
-          )}
-        />
+        <motion.div
+          initial={false}
+          animate={{ rotate: isExpanded ? 90 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronRight className="h-4 w-4 text-purple-300" />
+        </motion.div>
         
         <div className="flex items-center min-w-[120px] text-purple-300">
           <Clock className="h-4 w-4 mr-2" />
@@ -76,6 +77,7 @@ const LogItem = ({ log }: LogItemProps) => {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
+            style={{ overflow: "hidden" }}
           >
             <LogDetails log={log} />
           </motion.div>
