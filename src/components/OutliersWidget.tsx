@@ -119,12 +119,20 @@ const OutliersWidget = () => {
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-purple-100">
-            <AlertOctagon className="h-5 w-5 text-purple-500" />
-            ML Outliers - Executive Summary
+          <div className="flex items-center gap-3">
+            <AlertOctagon className="h-7 w-7 text-purple-400" />
+            <div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">
+                ML Outliers
+              </h2>
+              <p className="text-sm text-purple-300/80 font-medium">
+                Executive Summary
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Toggle
+              className="data-[state=on]:bg-purple-800 data-[state=on]:text-purple-100"
               pressed={isGrouped}
               onPressedChange={setIsGrouped}
               aria-label="Toggle data grouping"
@@ -133,6 +141,7 @@ const OutliersWidget = () => {
             </Toggle>
             {isGrouped && (
               <Toggle
+                className="data-[state=on]:bg-purple-800 data-[state=on]:text-purple-100"
                 pressed={groupingInterval === 'day'}
                 onPressedChange={(pressed) => setGroupingInterval(pressed ? 'day' : 'hour')}
                 aria-label="Toggle grouping interval"
