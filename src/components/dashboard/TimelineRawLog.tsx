@@ -54,16 +54,16 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
         className="w-full flex items-center gap-2 p-4 text-purple-200 hover:text-purple-100 transition-colors"
       >
         <ChevronRight className={cn(
-          "h-4 w-4 transition-transform duration-200",
+          "h-5 w-5 transition-transform duration-200",
           isExpanded && "transform rotate-90"
         )} />
-        <Terminal className="h-4 w-4" />
+        <Terminal className="h-5 w-5" />
         <span className="text-sm font-medium">Raw Data</span>
       </button>
       
       <div className={cn(
-        "overflow-hidden transition-all duration-200",
-        isExpanded ? "max-h-[600px]" : "max-h-0"
+        "overflow-hidden transition-all duration-300",
+        isExpanded ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
       )}>
         <div className="px-4 pb-4">
           <div className="bg-[#1A1F2C] rounded-lg border border-purple-500/20 overflow-hidden">

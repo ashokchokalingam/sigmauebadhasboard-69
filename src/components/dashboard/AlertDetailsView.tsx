@@ -29,19 +29,6 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     return "text-green-400";
   };
 
-  React.useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [onClose]);
-
   const tactics = alert.tags?.split(',')
     .filter(tag => tag.includes('attack.') && !tag.toLowerCase().includes('t1'))
     .map(tag => tag.replace('attack.', ''))
