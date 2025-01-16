@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Alert } from "./types";
 import { ScrollArea } from "../ui/scroll-area";
 import { format } from "date-fns";
