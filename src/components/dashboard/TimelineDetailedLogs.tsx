@@ -39,10 +39,13 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords }: TimelineDetaile
     return 'text-blue-400';
   };
 
-  const parseRawData = (rawData: string | null): Record<string, any> | null => {
+  const parseRawData = (rawData: string | object | null): Record<string, any> | null => {
     if (!rawData) return null;
     try {
-      return typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
+      if (typeof rawData === 'string') {
+        return JSON.parse(rawData);
+      }
+      return rawData as Record<string, any>;
     } catch (e) {
       console.error('Error parsing raw data:', e);
       return null;
