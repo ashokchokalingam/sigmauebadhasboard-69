@@ -23,11 +23,8 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
     "title",
     "tags"
   ]);
-  const detailsRef = useRef<HTMLDivElement>(null);
-  const tableRef = useRef<HTMLDivElement>(null);
 
   const handleLogClick = (log: Alert) => {
-    console.log("Log clicked:", log);
     setSelectedLog(log);
   };
 
@@ -58,26 +55,27 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
           minSize={30}
         >
           <ScrollArea className="h-[800px]">
-            <div ref={tableRef} className="h-full">
+            <div className="h-full">
               <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
                 <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
-                  <div>
-                    <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
+                  <div className="font-semibold font-mono">
+                    Total Records: {totalRecords?.toLocaleString()}
                   </div>
                 </div>
                 <Table>
-                  <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
+                  <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-[57px] z-10">
                     <TableRow className="hover:bg-transparent border-b border-purple-400/20">
-                      <TableHead className="text-purple-100 font-semibold">Time</TableHead>
+                      <TableHead className="text-purple-100 font-mono font-semibold">Time</TableHead>
                       {entityType === "user" ? (
-                        <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
+                        <TableHead className="text-purple-100 font-mono font-semibold">User Origin</TableHead>
                       ) : (
-                        <TableHead className="text-purple-100 font-semibold">Computer Name</TableHead>
+                        <TableHead className="text-purple-100 font-mono font-semibold">Computer Name</TableHead>
                       )}
-                      <TableHead className="text-purple-100 font-semibold">User Impacted</TableHead>
-                      <TableHead className="text-purple-100 font-semibold">Computer</TableHead>
-                      <TableHead className="text-purple-100 font-semibold">Event</TableHead>
-                      <TableHead className="text-purple-100 font-semibold">MITRE Tactics</TableHead>
+                      <TableHead className="text-purple-100 font-mono font-semibold">User Impacted</TableHead>
+                      <TableHead className="text-purple-100 font-mono font-semibold">Computer</TableHead>
+                      <TableHead className="text-purple-100 font-mono font-semibold">Event</TableHead>
+                      <TableHead className="text-purple-100 font-mono font-semibold">MITRE Tactics</TableHead>
+                      <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -102,18 +100,13 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
             <ResizableHandle 
               withHandle 
               className="bg-purple-400/20 hover:bg-purple-400/30 transition-colors"
-              onPointerDown={(e) => {
-                e.stopPropagation();
-              }}
             />
             <ResizablePanel 
               defaultSize={40}
               minSize={30}
+              onClick={(e) => e.stopPropagation()}
             >
-              <div 
-                ref={detailsRef}
-                className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-purple-400/20 scrollbar-track-transparent"
-              >
+              <div className="h-full">
                 <DetailsPanel 
                   alert={selectedLog}
                   onClose={() => setSelectedLog(null)}
