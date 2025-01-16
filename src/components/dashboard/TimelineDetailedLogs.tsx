@@ -4,6 +4,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Shield, Clock, User, Monitor, AlertTriangle, Server, Network } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import DetailsPanel from "./TimelineDetailedLogs/DetailsPanel";
 
 interface TimelineDetailedLogsProps {
   logs: Alert[];
@@ -40,149 +41,94 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
   };
 
   const getRiskColor = (risk: number | null) => {
-    if (risk === null) return "bg-gray-500/20 text-gray-300";
-    if (risk >= 80) return "bg-red-500/20 text-red-300";
-    if (risk >= 60) return "bg-orange-500/20 text-orange-300";
-    if (risk >= 40) return "bg-yellow-500/20 text-yellow-300";
-    return "bg-green-500/20 text-green-300";
+    if (risk === null) return "text-gray-400 bg-gray-500/10";
+    if (risk >= 80) return "text-red-400 bg-red-500/10";
+    if (risk >= 60) return "text-orange-400 bg-orange-500/10";
+    if (risk >= 40) return "text-yellow-400 bg-yellow-500/10";
+    return "text-green-400 bg-green-500/10";
   };
 
   return (
-    <ScrollArea className="h-[800px]">
-      <div className="space-y-4 p-4">
-        {logs.map((log) => (
-          <div
-            key={log.id}
-            className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 rounded-lg border border-blue-500/20 hover:border-blue-500/40 transition-all duration-300 overflow-hidden"
-          >
-            <div className="p-6 space-y-6">
-              {/* Header Section */}
-              <div className="flex items-start justify-between">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <Shield className="h-5 w-5 text-blue-400" />
-                    <h3 className="text-lg font-semibold text-blue-100 font-mono">
-                      {log.title}
-                    </h3>
-                  </div>
-                  <p className="text-sm text-blue-300/70 max-w-2xl">
-                    {log.description}
-                  </p>
-                </div>
-                <div className={cn(
-                  "px-3 py-1.5 rounded-full text-sm font-medium",
-                  getRiskColor(log.risk)
-                )}>
-                  Risk Score: {log.risk ?? 'N/A'}
-                </div>
+    <div className="flex">
+      <ScrollArea className="h-[800px] flex-1">
+        <div className="space-y-1 p-4">
+          {logs.map((log) => (
+            <div
+              key={log.id}
+              onClick={() => setSelectedLog(log)}
+              className={cn(
+                "group flex items-center gap-4 p-3 rounded-lg cursor-pointer",
+                "hover:bg-blue-500/5 border border-transparent",
+                "hover:border-blue-500/20 transition-all duration-200",
+                selectedLog?.id === log.id ? "bg-blue-500/10 border-blue-500/30" : ""
+              )}
+            >
+              {/* Risk Score */}
+              <div className={cn(
+                "px-3 py-1 rounded-full text-sm font-medium min-w-[80px] text-center",
+                getRiskColor(log.risk)
+              )}>
+                {log.risk === null ? 'N/A' : `${log.risk}%`}
               </div>
 
-              {/* Info Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="bg-blue-950/30 rounded-lg p-4 border border-blue-500/20">
-                  <div className="flex items-center gap-2 text-blue-300 mb-2">
-                    <Clock className="h-4 w-4" />
-                    <span className="text-sm font-medium">Timestamp</span>
-                  </div>
-                  <p className="text-sm text-blue-100 font-mono">
-                    {formatDateTime(log.system_time)}
-                  </p>
-                </div>
-
-                <div className="bg-blue-950/30 rounded-lg p-4 border border-blue-500/20">
-                  <div className="flex items-center gap-2 text-blue-300 mb-2">
-                    <User className="h-4 w-4" />
-                    <span className="text-sm font-medium">User Origin</span>
-                  </div>
-                  <p className="text-sm text-blue-100 font-mono">
-                    {log.user_id || 'N/A'}
-                  </p>
-                </div>
-
-                <div className="bg-blue-950/30 rounded-lg p-4 border border-blue-500/20">
-                  <div className="flex items-center gap-2 text-blue-300 mb-2">
-                    <Monitor className="h-4 w-4" />
-                    <span className="text-sm font-medium">Computer</span>
-                  </div>
-                  <p className="text-sm text-blue-100 font-mono">
-                    {log.computer_name || 'N/A'}
-                  </p>
-                </div>
-
-                <div className="bg-blue-950/30 rounded-lg p-4 border border-blue-500/20">
-                  <div className="flex items-center gap-2 text-blue-300 mb-2">
-                    <AlertTriangle className="h-4 w-4" />
-                    <span className="text-sm font-medium">Event ID</span>
-                  </div>
-                  <p className="text-sm text-blue-100 font-mono">
-                    {log.event_id || 'N/A'}
-                  </p>
-                </div>
-
-                <div className="bg-blue-950/30 rounded-lg p-4 border border-blue-500/20">
-                  <div className="flex items-center gap-2 text-blue-300 mb-2">
-                    <Server className="h-4 w-4" />
-                    <span className="text-sm font-medium">Provider</span>
-                  </div>
-                  <p className="text-sm text-blue-100 font-mono">
-                    {log.provider_name || 'N/A'}
-                  </p>
-                </div>
-
-                <div className="bg-blue-950/30 rounded-lg p-4 border border-blue-500/20">
-                  <div className="flex items-center gap-2 text-blue-300 mb-2">
-                    <Network className="h-4 w-4" />
-                    <span className="text-sm font-medium">IP Address</span>
-                  </div>
-                  <p className="text-sm text-blue-100 font-mono">
-                    {log.ip_address || 'N/A'}
-                  </p>
-                </div>
+              {/* Timestamp */}
+              <div className="flex items-center gap-2 min-w-[200px]">
+                <Clock className="h-4 w-4 text-blue-400" />
+                <span className="text-sm text-blue-200 font-mono">
+                  {formatDateTime(log.system_time)}
+                </span>
               </div>
 
-              {/* MITRE ATT&CK Section */}
-              {log.tags && (
-                <div className="space-y-4">
-                  <div className="bg-purple-950/30 rounded-lg p-4 border border-purple-500/20">
-                    <h4 className="text-sm font-medium text-purple-200 mb-3">MITRE ATT&CK</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {log.tags.split(',').map((tag, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20 font-mono"
-                        >
-                          {tag.trim()}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
+              {/* Title & Description */}
+              <div className="flex-1">
+                <h4 className="text-sm font-medium text-blue-100">{log.title}</h4>
+                <p className="text-xs text-blue-300/70 line-clamp-1">{log.description}</p>
+              </div>
 
-              {/* ML Description */}
-              {log.ml_description && (
-                <div className="bg-indigo-950/30 rounded-lg p-4 border border-indigo-500/20">
-                  <h4 className="text-sm font-medium text-indigo-200 mb-2">ML Analysis</h4>
-                  <p className="text-sm text-indigo-100/90 font-mono">
-                    {log.ml_description}
-                  </p>
-                </div>
-              )}
+              {/* User Info */}
+              <div className="flex items-center gap-2 min-w-[150px]">
+                <User className="h-4 w-4 text-blue-400" />
+                <span className="text-sm text-blue-200 font-mono">{log.user_id || 'N/A'}</span>
+              </div>
 
-              {/* Raw Log Data */}
-              <div className="bg-slate-950/50 rounded-lg p-4 border border-slate-700/30">
-                <h4 className="text-sm font-medium text-slate-300 mb-3">Raw Log Data</h4>
-                <pre className="text-xs text-slate-300/90 bg-black/30 p-4 rounded-md overflow-x-auto font-mono whitespace-pre-wrap">
-                  {typeof log.raw === 'string' 
-                    ? JSON.stringify(JSON.parse(log.raw), null, 2)
-                    : JSON.stringify(log.raw, null, 2)}
-                </pre>
+              {/* Computer Info */}
+              <div className="flex items-center gap-2 min-w-[150px]">
+                <Monitor className="h-4 w-4 text-blue-400" />
+                <span className="text-sm text-blue-200 font-mono">{log.computer_name || 'N/A'}</span>
+              </div>
+
+              {/* MITRE Tags */}
+              <div className="flex gap-1 min-w-[200px] overflow-x-auto">
+                {log.tags.split(',').slice(0, 2).map((tag, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full whitespace-nowrap"
+                  >
+                    {tag.trim()}
+                  </span>
+                ))}
+                {log.tags.split(',').length > 2 && (
+                  <span className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full whitespace-nowrap">
+                    +{log.tags.split(',').length - 2}
+                  </span>
+                )}
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </ScrollArea>
+          ))}
+        </div>
+      </ScrollArea>
+
+      {/* Details Panel */}
+      {selectedLog && (
+        <div className="w-1/3 border-l border-purple-500/20">
+          <DetailsPanel 
+            alert={selectedLog} 
+            onClose={() => setSelectedLog(null)} 
+            formatTime={formatDateTime}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 
