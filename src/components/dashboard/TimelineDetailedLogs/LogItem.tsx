@@ -3,7 +3,7 @@ import { Alert } from "../types";
 import { ChevronRight, AlertCircle, Server, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import LogDetails from "./LogDetails";
 
 interface LogItemProps {
@@ -24,8 +24,8 @@ const LogItem = ({ log }: LogItemProps) => {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
       className="group"
     >
@@ -69,7 +69,18 @@ const LogItem = ({ log }: LogItemProps) => {
         </div>
       </div>
 
-      {isExpanded && <LogDetails log={log} />}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <LogDetails log={log} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
