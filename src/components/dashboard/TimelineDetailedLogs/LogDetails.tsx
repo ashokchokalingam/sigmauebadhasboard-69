@@ -1,7 +1,7 @@
 import { Alert } from "../types";
 import { Card } from "../../ui/card";
 import { ScrollArea } from "../../ui/scroll-area";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Monitor, User, Hash, Database, Tag, Terminal, Info, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,11 @@ interface LogDetailsProps {
 
 const LogDetails = ({ log }: LogDetailsProps) => {
   const [isRawExpanded, setIsRawExpanded] = useState(false);
+
+  const handleRawLogClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsRawExpanded(!isRawExpanded);
+  };
 
   const renderMetadata = () => (
     <div className="grid grid-cols-3 gap-4 mb-4">
@@ -60,6 +65,7 @@ const LogDetails = ({ log }: LogDetailsProps) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="px-4 py-2"
+      onClick={(e) => e.stopPropagation()}
     >
       <Card className="bg-purple-950/20 border-purple-500/20">
         <ScrollArea className="h-full max-h-[600px]">
@@ -89,7 +95,7 @@ const LogDetails = ({ log }: LogDetailsProps) => {
 
             <div>
               <button
-                onClick={() => setIsRawExpanded(!isRawExpanded)}
+                onClick={handleRawLogClick}
                 className="flex items-center gap-2 text-sm font-medium text-purple-200 mb-2 hover:text-purple-100 transition-colors"
               >
                 <motion.div

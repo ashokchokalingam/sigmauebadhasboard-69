@@ -22,6 +22,11 @@ const LogItem = ({ log }: LogItemProps) => {
     return "text-blue-400 bg-blue-950/30";
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -30,7 +35,7 @@ const LogItem = ({ log }: LogItemProps) => {
       className="group"
     >
       <div 
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={handleClick}
         className={cn(
           "flex items-center space-x-4 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer",
           "hover:bg-purple-500/10 border border-transparent hover:border-purple-500/20",
