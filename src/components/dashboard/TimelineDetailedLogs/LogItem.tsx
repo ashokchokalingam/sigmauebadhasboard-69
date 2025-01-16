@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert } from "../types";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, Clock, AlertCircle } from "lucide-react";
+import { ChevronRight, Clock, AlertCircle, Shield } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LogDetails from "./LogDetails";
@@ -58,7 +58,7 @@ const LogItem = ({ log }: LogItemProps) => {
         </div>
 
         <div className="flex items-center space-x-2 min-w-[180px]">
-          <AlertCircle className={cn("h-4 w-4", getSeverityColor(log.rule_level))} />
+          <Shield className={cn("h-4 w-4", getSeverityColor(log.rule_level))} />
           <span className={cn(
             "px-2 py-0.5 rounded-full text-xs font-medium",
             getSeverityColor(log.rule_level)
