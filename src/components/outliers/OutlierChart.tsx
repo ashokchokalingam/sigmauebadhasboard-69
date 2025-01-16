@@ -9,8 +9,6 @@ interface OutlierChartProps {
 }
 
 const CustomDot = ({ cx, cy, payload }: any) => {
-  const isActive = isWithinLastHour(payload.lastSeen);
-  
   const severityColors = {
     high: "#EF4444",
     medium: "#F59E0B",
@@ -24,46 +22,25 @@ const CustomDot = ({ cx, cy, payload }: any) => {
   return (
     <g>
       {shouldGlow && (
-        <>
-          <circle
-            cx={cx}
-            cy={cy}
-            r={16}
-            fill="none"
-            stroke={dotColor}
-            strokeWidth={2}
-            strokeOpacity={0.15}
-            className="animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"
-          />
-          <circle
-            cx={cx}
-            cy={cy}
-            r={12}
-            fill="none"
-            stroke={dotColor}
-            strokeWidth={2}
-            strokeOpacity={0.3}
-            className="animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"
-          />
-          <circle
-            cx={cx}
-            cy={cy}
-            r={8}
-            fill="none"
-            stroke={dotColor}
-            strokeWidth={2}
-            strokeOpacity={0.45}
-            className="animate-[ping_1s_cubic-bezier(0,0,0.2,1)_infinite]"
-          />
-        </>
+        <circle
+          cx={cx}
+          cy={cy}
+          r={6}
+          fill={dotColor}
+          className="animate-pulse"
+          style={{
+            filter: `drop-shadow(0 0 6px ${dotColor})`
+          }}
+        />
       )}
-      <circle
-        cx={cx}
-        cy={cy}
-        r={4}
-        fill={dotColor}
-        className={shouldGlow ? "animate-pulse" : ""}
-      />
+      {!shouldGlow && (
+        <circle
+          cx={cx}
+          cy={cy}
+          r={4}
+          fill={dotColor}
+        />
+      )}
     </g>
   );
 };
