@@ -1,11 +1,9 @@
 import React from 'react';
 import { Alert } from "./types";
-import TimelineRawLog from "./TimelineRawLog";
+import { ScrollArea } from "../ui/scroll-area";
 import { Card } from "@/components/ui/card";
-import AlertHeader from "./AlertDetailsSections/AlertHeader";
-import AlertTacticsSection from "./AlertDetailsSections/AlertTacticsSection";
-import AlertMetadata from "./AlertDetailsSections/AlertMetadata";
-import { Shield, AlertTriangle, Activity, User, Monitor, Brain } from "lucide-react";
+import { X, Shield, AlertTriangle, Activity, User, Monitor, Brain } from "lucide-react";
+import TimelineRawLog from "./TimelineRawLog";
 
 interface AlertDetailsViewProps {
   alert: Alert;
@@ -31,7 +29,6 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     return "text-green-400";
   };
 
-  // Handle ESC key
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -45,91 +42,111 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
     };
   }, [onClose]);
 
+  const tactics = alert.tags?.split(',')
+    .filter(tag => tag.includes('attack.') && !tag.toLowerCase().includes('t1'))
+    .map(tag => tag.replace('attack.', ''))
+    .map(tactic => tactic.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' '));
+
+  const techniques = alert.tags?.split(',')
+    .filter(tag => tag.toLowerCase().includes('t1'))
+    .map(tag => tag.trim().toUpperCase());
+
   return (
-    <div className="h-full bg-[#1E1E2F] border-l border-[#7B68EE]/20">
-      <AlertHeader onClose={onClose} />
+    <div className="h-full bg-[#1E1E2F]">
+      <div className="flex justify-between items-center p-4 border-b border-[#7B68EE]/20 bg-[#1E1E2F] backdrop-blur-sm sticky top-0 z-10">
+        <h2 className="text-xl font-bold bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] bg-clip-text text-transparent">
+          Alert Details
+        </h2>
+        <button 
+          onClick={onClose}
+          className="p-2 hover:bg-[#2B2B3B] rounded-full transition-colors"
+        >
+          <X className="h-5 w-5 text-[#A9A9A9]" />
+        </button>
+      </div>
 
-      <div className="h-[calc(100%-4rem)] overflow-y-auto">
-        <div className="p-4 space-y-4">
-          <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
-            <h3 className="text-lg font-semibold text-[#E0E0E0] mb-3">Alert Overview</h3>
-            <div className="space-y-3">
-              <div>
-                <h4 className="text-sm font-medium text-[#A9A9A9]">Title</h4>
-                <p className="text-lg text-white">{alert.title || 'N/A'}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-[#A9A9A9]">Description</h4>
-                <p className="text-sm text-[#E0E0E0]">{alert.description || 'N/A'}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-sm font-medium text-[#A9A9A9]">Risk Score</h4>
-                  <p className={`text-lg font-medium ${getRiskColor(alert.risk)}`}>
-                    {alert.risk === null ? 'N/A' : `${alert.risk}%`}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-[#A9A9A9]">ML Cluster</h4>
-                  <div className="flex items-center gap-2">
-                    <Brain className="h-4 w-4 text-blue-400" />
-                    <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20">
-                      {alert.ml_cluster === null ? 'N/A' : `Cluster ${alert.ml_cluster}`}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              {alert.ml_description && (
-                <div className="bg-blue-500/5 border border-blue-500/10 rounded-lg p-4">
-                  <h4 className="text-sm font-medium text-blue-400 flex items-center gap-2 mb-2">
-                    <Brain className="h-4 w-4" />
-                    ML Analysis
-                  </h4>
-                  <p className="text-sm text-[#E0E0E0] leading-relaxed">
-                    {alert.ml_description}
-                  </p>
-                </div>
-              )}
+      <ScrollArea className="h-[calc(100%-4rem)]">
+        <div className="p-6 space-y-6">
+          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+            <h3 className="text-sm font-medium text-purple-200 mb-2">Description</h3>
+            <p className="text-sm text-purple-100/90 leading-relaxed">
+              {alert.description || 'No description available'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h4 className="text-sm font-medium text-purple-200 flex items-center gap-2">
+                <Monitor className="h-4 w-4" /> Computer
+              </h4>
+              <p className="text-sm text-purple-100 font-mono">{alert.computer_name || 'N/A'}</p>
             </div>
-          </Card>
-
-          <div className="grid grid-cols-3 gap-4">
-            <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
-              <h4 className="text-sm font-medium text-[#A9A9A9] mb-2">Rule ID</h4>
-              <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-[#7B68EE]" />
-                <p className="text-sm text-[#E0E0E0] font-mono">
-                  {alert.ruleid || 'N/A'}
-                </p>
-              </div>
-            </Card>
-
-            <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
-              <h4 className="text-sm font-medium text-[#A9A9A9] mb-2">Severity</h4>
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-[#7B68EE]" />
-                <p className="text-sm text-[#E0E0E0] capitalize">
+            <div>
+              <h4 className="text-sm font-medium text-purple-200 flex items-center gap-2">
+                <User className="h-4 w-4" /> User Origin
+              </h4>
+              <p className="text-sm text-purple-100 font-mono">{alert.user_id || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-purple-200 flex items-center gap-2">
+                <Shield className="h-4 w-4" /> Rule ID
+              </h4>
+              <p className="text-sm text-purple-100 font-mono">{alert.ruleid || 'N/A'}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-medium text-purple-200 flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4" /> Severity
+              </h4>
+              <div className="inline-flex items-center px-2 py-1 rounded-full bg-purple-500/10">
+                <p className="text-sm font-medium capitalize text-purple-300">
                   {alert.rule_level || 'N/A'}
                 </p>
               </div>
-            </Card>
-
-            <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
-              <h4 className="text-sm font-medium text-[#A9A9A9] mb-2">Task</h4>
-              <p className="text-sm text-[#E0E0E0]">
-                {alert.task || 'N/A'}
-              </p>
-            </Card>
+            </div>
           </div>
 
-          <AlertTacticsSection tags={alert.tags} />
-          <AlertMetadata alert={alert} browserTime={browserTime} />
+          <div className="space-y-4">
+            <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+              <h3 className="text-sm font-medium text-purple-200 mb-2">MITRE Tactics</h3>
+              <div className="flex flex-wrap gap-2">
+                {tactics && tactics.length > 0 ? tactics.map((tactic, index) => (
+                  <span 
+                    key={index}
+                    className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
+                  >
+                    {tactic.trim()}
+                  </span>
+                )) : (
+                  <span className="text-purple-300/50">No tactics identified</span>
+                )}
+              </div>
+            </div>
 
-          <Card className="bg-[#2B2B3B] border-[#7B68EE]/20">
+            <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+              <h3 className="text-sm font-medium text-purple-200 mb-2">MITRE Techniques</h3>
+              <div className="flex flex-wrap gap-2">
+                {techniques && techniques.length > 0 ? techniques.map((technique, index) => (
+                  <span 
+                    key={index}
+                    className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full border border-purple-500/20"
+                  >
+                    {technique.trim()}
+                  </span>
+                )) : (
+                  <span className="text-purple-300/50">No techniques identified</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
+            <h3 className="text-sm font-medium text-purple-200 mb-2">Raw Data</h3>
             <TimelineRawLog alert={alert} />
-          </Card>
+          </div>
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 };
