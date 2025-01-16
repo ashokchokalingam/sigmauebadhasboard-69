@@ -1,11 +1,10 @@
 import { useState, useRef } from "react";
 import { Alert } from "./types";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
 import { ScrollArea } from "../ui/scroll-area";
 import DetailsPanel from "./TimelineDetailedLogs/DetailsPanel";
 import { format } from "date-fns";
-import { ChevronRight, AlertCircle, Info } from "lucide-react";
+import { ChevronRight, AlertCircle, Info, Shield, Globe, Hash, Database } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TimelineDetailedLogsProps {
@@ -17,12 +16,36 @@ interface TimelineDetailedLogsProps {
 
 const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "user" }: TimelineDetailedLogsProps) => {
   const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
+  const [expandedLogs, setExpandedLogs] = useState<Set<string>>(new Set());
   const detailsRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
 
   const handleLogClick = (log: Alert) => {
-    console.log("Log clicked:", log);
     setSelectedLog(log);
+  };
+
+  const toggleExpand = (logId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setExpandedLogs(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(logId)) {
+        newSet.delete(logId);
+      } else {
+        newSet.add(logId);
+      }
+      return newSet;
+    });
+  };
+
+  const getSeverityIcon = (level: string) => {
+    switch (level?.toLowerCase()) {
+      case 'high':
+        return <AlertCircle className="h-4 w-4 text-red-400" />;
+      case 'medium':
+        return <AlertCircle className="h-4 w-4 text-yellow-400" />;
+      default:
+        return <Info className="h-4 w-4 text-blue-400" />;
+    }
   };
 
   if (isLoading) {
@@ -40,17 +63,6 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
       </div>
     );
   }
-
-  const getSeverityIcon = (level: string) => {
-    switch (level?.toLowerCase()) {
-      case 'high':
-        return <AlertCircle className="h-4 w-4 text-red-400" />;
-      case 'medium':
-        return <AlertCircle className="h-4 w-4 text-yellow-400" />;
-      default:
-        return <Info className="h-4 w-4 text-blue-400" />;
-    }
-  };
 
   return (
     <div className="mt-4">
@@ -72,35 +84,77 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
                 </div>
                 <div className="space-y-1 p-2">
                   {logs.map((log, index) => (
-                    <div
-                      key={log.id}
-                      onClick={() => handleLogClick(log)}
-                      className={cn(
-                        "group flex items-start space-x-2 px-3 py-2 cursor-pointer rounded transition-colors",
-                        "hover:bg-purple-400/10",
-                        selectedLog?.id === log.id ? "bg-purple-400/20" : index % 2 === 0 ? "bg-purple-400/5" : "bg-transparent",
-                        "font-mono text-sm"
-                      )}
-                    >
-                      <div className="flex items-center space-x-2 min-w-[140px] text-purple-300/60">
-                        <ChevronRight 
-                          className={cn(
-                            "h-4 w-4 transition-transform",
-                            selectedLog?.id === log.id ? "rotate-90" : ""
-                          )}
-                        />
-                        <span>
-                          {format(new Date(log.system_time), "HH:mm:ss.SSS")}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-2 flex-1">
-                        <span className="flex items-center space-x-2">
-                          {getSeverityIcon(log.rule_level)}
-                          <span className="text-purple-100">
-                            {log.title}
+                    <div key={log.id}>
+                      <div
+                        onClick={() => handleLogClick(log)}
+                        className={cn(
+                          "group flex items-start space-x-2 px-3 py-2 cursor-pointer rounded transition-colors",
+                          "hover:bg-purple-400/10",
+                          selectedLog?.id === log.id ? "bg-purple-400/20" : index % 2 === 0 ? "bg-purple-400/5" : "bg-transparent",
+                          "font-mono text-sm"
+                        )}
+                      >
+                        <button
+                          onClick={(e) => toggleExpand(log.id, e)}
+                          className="flex items-center space-x-2 min-w-[140px] text-purple-300/60"
+                        >
+                          <ChevronRight 
+                            className={cn(
+                              "h-4 w-4 transition-transform",
+                              expandedLogs.has(log.id) ? "rotate-90" : ""
+                            )}
+                          />
+                          <span>
+                            {format(new Date(log.system_time), "HH:mm:ss.SSS")}
                           </span>
-                        </span>
+                        </button>
+                        <div className="flex items-center space-x-2 flex-1">
+                          <span className="flex items-center space-x-2">
+                            {getSeverityIcon(log.rule_level)}
+                            <span className="text-purple-100">
+                              {log.title}
+                            </span>
+                          </span>
+                        </div>
                       </div>
+                      
+                      {expandedLogs.has(log.id) && (
+                        <div className="ml-8 mt-2 mb-4 space-y-3 text-sm text-purple-200/70 bg-purple-400/5 p-4 rounded-md">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="flex items-center space-x-2">
+                              <Shield className="h-4 w-4 text-purple-400" />
+                              <span>Rule ID: {log.ruleid || 'N/A'}</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Globe className="h-4 w-4 text-purple-400" />
+                              <span>Domain: {log.target_domain_name || 'N/A'}</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Hash className="h-4 w-4 text-purple-400" />
+                              <span>Event ID: {log.event_id || 'N/A'}</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Database className="h-4 w-4 text-purple-400" />
+                              <span>ML Cluster: {log.ml_cluster === -1 ? 'Noise' : log.ml_cluster || 'N/A'}</span>
+                            </div>
+                          </div>
+                          <div className="mt-2">
+                            <p className="text-purple-200/90">{log.description}</p>
+                          </div>
+                          {log.tags && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {log.tags.split(',').map((tag, i) => (
+                                <span
+                                  key={i}
+                                  className="px-2 py-0.5 bg-purple-400/10 rounded-full text-xs text-purple-200"
+                                >
+                                  {tag.trim()}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
