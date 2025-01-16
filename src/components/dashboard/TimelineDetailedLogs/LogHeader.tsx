@@ -1,4 +1,4 @@
-import { Terminal } from "lucide-react";
+import { Activity } from "lucide-react";
 
 interface LogHeaderProps {
   totalRecords?: number;
@@ -6,13 +6,16 @@ interface LogHeaderProps {
 
 const LogHeader = ({ totalRecords }: LogHeaderProps) => {
   return (
-    <div className="sticky top-0 z-20 p-4 flex justify-between items-center bg-gradient-to-r from-purple-900/50 via-blue-900/30 to-indigo-900/50 backdrop-blur-sm border-b border-purple-500/20">
+    <div className="flex items-center justify-between p-4 border-b border-purple-500/20">
       <div className="flex items-center gap-2">
-        <Terminal className="h-5 w-5 text-purple-400" />
-        <span className="text-lg font-semibold text-purple-100">
-          Security Events Log ({totalRecords?.toLocaleString()})
-        </span>
+        <Activity className="h-5 w-5 text-purple-400" />
+        <h3 className="text-lg font-semibold text-purple-100">Detailed Logs</h3>
       </div>
+      {totalRecords !== undefined && (
+        <span className="text-sm text-purple-300/70">
+          {totalRecords.toLocaleString()} records
+        </span>
+      )}
     </div>
   );
 };
