@@ -141,10 +141,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
             </div>
           </div>
 
-          <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
-            <h3 className="text-sm font-medium text-purple-200 mb-2">Raw Data</h3>
-            <TimelineRawLog alert={alert} />
-          </div>
+          <TimelineRawLog alert={alert} />
         </div>
       </ScrollArea>
     </div>
