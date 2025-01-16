@@ -22,8 +22,8 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
 
   if (!alert.raw) {
     return (
-      <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20 flex items-center gap-2 text-purple-200">
-        <Terminal className="h-5 w-5" />
+      <div className="p-4 text-purple-400 flex items-center gap-2">
+        <Terminal className="h-4 w-4" />
         No raw log data available
       </div>
     );
@@ -48,26 +48,70 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
   }
 
   return (
-    <div className="bg-purple-400/5 rounded-lg border border-purple-400/20 transition-all duration-300">
+    <div className="w-full">
       <button 
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center gap-2 p-4 text-purple-200 hover:bg-purple-400/10 transition-colors rounded-lg"
+        className="w-full flex items-center gap-2 p-4 text-purple-400 hover:text-purple-300 transition-colors bg-black/20 rounded-t-lg"
       >
         <ChevronRight className={cn(
-          "h-5 w-5 transition-transform duration-300",
+          "h-5 w-5 transition-transform duration-200",
           isExpanded && "transform rotate-90"
         )} />
         <Terminal className="h-5 w-5" />
-        <span className="text-sm font-medium">Raw Data</span>
+        <span className="font-mono text-base font-medium">Raw Log Data</span>
       </button>
       
       <div className={cn(
         "overflow-hidden transition-all duration-300",
-        isExpanded ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+        isExpanded ? "max-h-[800px]" : "max-h-0"
       )}>
-        <div className="px-4 pb-4">
-          <div className="bg-[#1A1F2C] rounded-lg border border-purple-500/20 overflow-hidden">
-            <pre className="p-4 text-sm overflow-auto max-h-[500px] scrollbar-thin scrollbar-thumb-purple-400/20 scrollbar-track-transparent">
+        <div className="bg-[#1A1F2C] rounded-b-lg border border-purple-500/20 transition-all duration-200 hover:border-purple-500/30 mx-4 mb-4">
+          <style>
+            {`
+              .custom-scrollbar::-webkit-scrollbar {
+                width: 10px;
+                height: 10px;
+              }
+              .custom-scrollbar::-webkit-scrollbar-track {
+                background: rgba(139, 92, 246, 0.1);
+                border-radius: 6px;
+              }
+              .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: rgba(139, 92, 246, 0.3);
+                border-radius: 6px;
+                border: 2px solid rgba(139, 92, 246, 0.1);
+              }
+              .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: rgba(139, 92, 246, 0.4);
+              }
+              .raw-log-content {
+                color: #E2E8F0;
+                font-size: 1rem !important;
+                line-height: 1.6 !important;
+                font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace !important;
+              }
+              .raw-log-content .token.property {
+                color: #93C5FD;
+              }
+              .raw-log-content .token.string {
+                color: #86EFAC;
+              }
+              .raw-log-content .token.number {
+                color: #FDA4AF;
+              }
+              .raw-log-content .token.boolean {
+                color: #93C5FD;
+              }
+              .raw-log-content .token.null {
+                color: #F9A8D4;
+              }
+              .raw-log-content .token.punctuation {
+                color: #94A3B8;
+              }
+            `}
+          </style>
+          <div className="bg-gradient-to-r from-purple-500/5 to-blue-500/5 backdrop-blur-sm">
+            <pre className="p-8 max-h-[600px] overflow-auto custom-scrollbar">
               <code ref={codeRef} className="language-json raw-log-content">
                 {formattedJson}
               </code>
@@ -75,32 +119,6 @@ const TimelineRawLog = ({ alert }: TimelineRawLogProps) => {
           </div>
         </div>
       </div>
-
-      <style jsx global>{`
-        .raw-log-content {
-          font-family: 'JetBrains Mono', monospace !important;
-          font-size: 0.875rem !important;
-          line-height: 1.5 !important;
-        }
-        .raw-log-content .token.property {
-          color: #93C5FD;
-        }
-        .raw-log-content .token.string {
-          color: #86EFAC;
-        }
-        .raw-log-content .token.number {
-          color: #FDA4AF;
-        }
-        .raw-log-content .token.boolean {
-          color: #93C5FD;
-        }
-        .raw-log-content .token.null {
-          color: #F9A8D4;
-        }
-        .raw-log-content .token.punctuation {
-          color: #94A3B8;
-        }
-      `}</style>
     </div>
   );
 };
