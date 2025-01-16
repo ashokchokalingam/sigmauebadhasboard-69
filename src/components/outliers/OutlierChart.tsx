@@ -19,7 +19,7 @@ const CustomDot = ({ cx, cy, payload }: any) => {
   };
 
   const dotColor = severityColors[payload.severity.toLowerCase()] || "#60A5FA";
-  const shouldGlow = isActive && (payload.severity.toLowerCase() === 'high' || payload.severity.toLowerCase() === 'medium');
+  const shouldGlow = payload.severity.toLowerCase() === 'high' || payload.severity.toLowerCase() === 'medium';
   
   return (
     <g>
@@ -28,11 +28,21 @@ const CustomDot = ({ cx, cy, payload }: any) => {
           <circle
             cx={cx}
             cy={cy}
+            r={16}
+            fill="none"
+            stroke={dotColor}
+            strokeWidth={2}
+            strokeOpacity={0.15}
+            className="animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"
+          />
+          <circle
+            cx={cx}
+            cy={cy}
             r={12}
             fill="none"
             stroke={dotColor}
             strokeWidth={2}
-            strokeOpacity={0.2}
+            strokeOpacity={0.3}
             className="animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"
           />
           <circle
@@ -42,8 +52,8 @@ const CustomDot = ({ cx, cy, payload }: any) => {
             fill="none"
             stroke={dotColor}
             strokeWidth={2}
-            strokeOpacity={0.4}
-            className="animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"
+            strokeOpacity={0.45}
+            className="animate-[ping_1s_cubic-bezier(0,0,0.2,1)_infinite]"
           />
         </>
       )}
