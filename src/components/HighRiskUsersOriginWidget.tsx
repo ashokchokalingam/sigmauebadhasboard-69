@@ -14,13 +14,11 @@ const HighRiskUsersOriginWidget = () => {
   const { data: riskyUsers } = useQuery({
     queryKey: ['riskyUsersOrigin'],
     queryFn: async () => {
-      // Simulated data - replace with actual API endpoint when available
-      return [
-        { id: "1", name: "Sarah Chen", riskScore: 9.5, trend: "up" },
-        { id: "2", name: "Mike Johnson", riskScore: 8.7, trend: "stable" },
-        { id: "3", name: "Emma Davis", riskScore: 8.4, trend: "down" },
-        { id: "4", name: "Alex Wong", riskScore: 9.3, trend: "up" }
-      ] as RiskyUser[];
+      const response = await fetch('/api/user_origin_outlier_highrisk');
+      if (!response.ok) {
+        throw new Error('Failed to fetch high risk users');
+      }
+      return response.json() as Promise<RiskyUser[]>;
     }
   });
 
