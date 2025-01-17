@@ -1,25 +1,25 @@
-import { Database, AlertTriangle } from "lucide-react";
+import { User, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
-interface RiskyAsset {
+interface RiskyUser {
   id: string;
   name: string;
   riskScore: number;
   trend: "up" | "down" | "stable";
-  type: "server" | "database" | "application";
+  avatar?: string;
 }
 
-const HighRiskAssetsWidget = () => {
-  const { data: riskyAssets } = useQuery({
-    queryKey: ['riskyAssets'],
+const HighRiskUsersImpactedWidget = () => {
+  const { data: riskyUsers } = useQuery({
+    queryKey: ['riskyUsersImpacted'],
     queryFn: async () => {
       // Simulated data - replace with actual API endpoint when available
       return [
-        { id: "1", name: "prod-db-01", riskScore: 9.2, trend: "up", type: "database" },
-        { id: "2", name: "auth-server", riskScore: 8.9, trend: "stable", type: "server" },
-        { id: "3", name: "payment-api", riskScore: 8.6, trend: "down", type: "application" },
-        { id: "4", name: "user-db", riskScore: 9.1, trend: "up", type: "database" }
-      ] as RiskyAsset[];
+        { id: "1", name: "ashok.chokalingam", riskScore: 9.4, trend: "up" },
+        { id: "2", name: "zavely", riskScore: 8.9, trend: "stable" },
+        { id: "3", name: "zaynah", riskScore: 8.6, trend: "down" },
+        { id: "4", name: "zaynes", riskScore: 9.1, trend: "up" }
+      ] as RiskyUser[];
     }
   });
 
@@ -28,8 +28,8 @@ const HighRiskAssetsWidget = () => {
       <div className="entity-header">
         <div className="entity-title">
           <AlertTriangle className="h-5 w-5 text-purple-500" />
-          High Risk Assets
-          <span className="entity-count">{riskyAssets?.length || 0} risky assets</span>
+          High Risk Users Impacted
+          <span className="entity-count">{riskyUsers?.length || 0} risky users</span>
         </div>
       </div>
 
@@ -42,15 +42,23 @@ const HighRiskAssetsWidget = () => {
       </div>
 
       <div className="entity-content scrollbar-thin">
-        {riskyAssets?.map((asset) => (
-          <div key={asset.id} className="entity-item">
+        {riskyUsers?.map((user) => (
+          <div key={user.id} className="entity-item">
             <div className="entity-item-left">
               <div className="entity-item-icon">
-                <Database className="w-5 h-5 text-purple-400" />
+                {user.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="w-10 h-10 rounded-full"
+                  />
+                ) : (
+                  <User className="w-5 h-5 text-purple-400" />
+                )}
               </div>
               <div className="entity-item-text">
-                <div className="entity-item-title">{asset.name}</div>
-                <div className="entity-item-subtitle">Type: {asset.type}</div>
+                <div className="entity-item-title">{user.name}</div>
+                <div className="entity-item-subtitle">Risk Level: High</div>
               </div>
             </div>
             <div className="entity-item-right">
@@ -69,7 +77,7 @@ const HighRiskAssetsWidget = () => {
                     />
                   </svg>
                 </div>
-                <span className="risk-score">{asset.riskScore}</span>
+                <span className="risk-score">{user.riskScore}</span>
               </div>
             </div>
           </div>
@@ -79,4 +87,4 @@ const HighRiskAssetsWidget = () => {
   );
 };
 
-export default HighRiskAssetsWidget;
+export default HighRiskUsersImpactedWidget;

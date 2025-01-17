@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Alert } from "./types";
+import TimelineLogCard from "./TimelineLogCard";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
 import { ScrollArea } from "../ui/scroll-area";
-import { Shield, Clock, User, Monitor, AlertTriangle, Server, Network } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 import DetailsPanel from "./TimelineDetailedLogs/DetailsPanel";
 
 interface TimelineDetailedLogsProps {
@@ -15,6 +15,21 @@ interface TimelineDetailedLogsProps {
 
 const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "user" }: TimelineDetailedLogsProps) => {
   const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
+  const [visibleColumns] = useState<string[]>([
+    "system_time",
+    "user_id",
+    "target_user_name",
+    "computer_name",
+    "title",
+    "tags"
+  ]);
+  const detailsRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  const handleLogClick = (log: Alert) => {
+    console.log("Log clicked:", log);
+    setSelectedLog(log);
+  };
 
   if (isLoading) {
     return (
@@ -32,102 +47,83 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
     );
   }
 
-  const formatDateTime = (dateStr: string) => {
-    try {
-      return format(new Date(dateStr), "MMM d, yyyy HH:mm:ss");
-    } catch {
-      return "Invalid Date";
-    }
-  };
-
-  const getRiskColor = (risk: number | null) => {
-    if (risk === null) return "text-gray-400 bg-gray-500/10";
-    if (risk >= 80) return "text-red-400 bg-red-500/10";
-    if (risk >= 60) return "text-orange-400 bg-orange-500/10";
-    if (risk >= 40) return "text-yellow-400 bg-yellow-500/10";
-    return "text-green-400 bg-green-500/10";
-  };
-
   return (
-    <div className="flex">
-      <ScrollArea className="h-[800px] flex-1">
-        <div className="space-y-1 p-4">
-          {logs.map((log) => (
-            <div
-              key={log.id}
-              onClick={() => setSelectedLog(log)}
-              className={cn(
-                "group flex items-center gap-4 p-3 rounded-lg cursor-pointer",
-                "hover:bg-blue-500/5 border border-transparent",
-                "hover:border-blue-500/20 transition-all duration-200",
-                selectedLog?.id === log.id ? "bg-blue-500/10 border-blue-500/30" : ""
-              )}
-            >
-              {/* Risk Score */}
-              <div className={cn(
-                "px-3 py-1 rounded-full text-sm font-medium min-w-[80px] text-center",
-                getRiskColor(log.risk)
-              )}>
-                {log.risk === null ? 'N/A' : `${log.risk}%`}
-              </div>
-
-              {/* Timestamp */}
-              <div className="flex items-center gap-2 min-w-[200px]">
-                <Clock className="h-4 w-4 text-blue-400" />
-                <span className="text-sm text-blue-200 font-mono">
-                  {formatDateTime(log.system_time)}
-                </span>
-              </div>
-
-              {/* Title & Description */}
-              <div className="flex-1">
-                <h4 className="text-sm font-medium text-blue-100">{log.title}</h4>
-                <p className="text-xs text-blue-300/70 line-clamp-1">{log.description}</p>
-              </div>
-
-              {/* User Info */}
-              <div className="flex items-center gap-2 min-w-[150px]">
-                <User className="h-4 w-4 text-blue-400" />
-                <span className="text-sm text-blue-200 font-mono">{log.user_id || 'N/A'}</span>
-              </div>
-
-              {/* Computer Info */}
-              <div className="flex items-center gap-2 min-w-[150px]">
-                <Monitor className="h-4 w-4 text-blue-400" />
-                <span className="text-sm text-blue-200 font-mono">{log.computer_name || 'N/A'}</span>
-              </div>
-
-              {/* MITRE Tags */}
-              <div className="flex gap-1 min-w-[200px] overflow-x-auto">
-                {log.tags.split(',').slice(0, 2).map((tag, index) => (
-                  <span
-                    key={index}
-                    className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full whitespace-nowrap"
-                  >
-                    {tag.trim()}
-                  </span>
-                ))}
-                {log.tags.split(',').length > 2 && (
-                  <span className="px-2 py-1 bg-purple-500/10 text-purple-300 text-xs rounded-full whitespace-nowrap">
-                    +{log.tags.split(',').length - 2}
-                  </span>
-                )}
+    <div className="mt-4">
+      <ResizablePanelGroup 
+        direction="horizontal" 
+        className="min-h-[800px] rounded-lg border border-purple-400/20"
+      >
+        <ResizablePanel 
+          defaultSize={60}
+          minSize={30}
+        >
+          <ScrollArea className="h-[800px]">
+            <div ref={tableRef} className="h-full">
+              <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
+                <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
+                  <div>
+                    <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
+                  </div>
+                </div>
+                <Table>
+                  <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
+                    <TableRow className="hover:bg-transparent border-b border-purple-400/20">
+                      <TableHead className="text-purple-100 font-semibold">Time</TableHead>
+                      {entityType === "user" ? (
+                        <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
+                      ) : (
+                        <TableHead className="text-purple-100 font-semibold">Computer Name</TableHead>
+                      )}
+                      <TableHead className="text-purple-100 font-semibold">User Impacted</TableHead>
+                      <TableHead className="text-purple-100 font-semibold">Computer</TableHead>
+                      <TableHead className="text-purple-100 font-semibold">Event</TableHead>
+                      <TableHead className="text-purple-100 font-semibold">MITRE Tactics</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {logs.map((log) => (
+                      <TimelineLogCard
+                        key={log.id}
+                        log={log}
+                        isExpanded={selectedLog?.id === log.id}
+                        onToggleExpand={handleLogClick}
+                        visibleColumns={visibleColumns}
+                      />
+                    ))}
+                  </TableBody>
+                </Table>
               </div>
             </div>
-          ))}
-        </div>
-      </ScrollArea>
+          </ScrollArea>
+        </ResizablePanel>
 
-      {/* Details Panel */}
-      {selectedLog && (
-        <div className="w-1/3 border-l border-purple-500/20">
-          <DetailsPanel 
-            alert={selectedLog} 
-            onClose={() => setSelectedLog(null)} 
-            formatTime={formatDateTime}
-          />
-        </div>
-      )}
+        {selectedLog && (
+          <>
+            <ResizableHandle 
+              withHandle 
+              className="bg-purple-400/20 hover:bg-purple-400/30 transition-colors"
+              onPointerDown={(e) => {
+                e.stopPropagation();
+              }}
+            />
+            <ResizablePanel 
+              defaultSize={40}
+              minSize={30}
+            >
+              <div 
+                ref={detailsRef}
+                className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-purple-400/20 scrollbar-track-transparent"
+              >
+                <DetailsPanel 
+                  alert={selectedLog}
+                  onClose={() => setSelectedLog(null)}
+                  formatTime={(timeString) => new Date(timeString).toLocaleString()}
+                />
+              </div>
+            </ResizablePanel>
+          </>
+        )}
+      </ResizablePanelGroup>
     </div>
   );
 };

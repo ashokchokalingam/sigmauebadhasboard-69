@@ -5,9 +5,10 @@ import RiskyEntities from "./RiskyEntities";
 import TimelineView from "./TimelineView";
 import AnomaliesTable from "./AnomaliesTable";
 import { calculateStats } from "./alertUtils";
-import RiskyUsersWidget from "../RiskyUsersWidget";
-import OutliersWidget from "../OutliersWidget";
+import HighRiskUsersOriginWidget from "../HighRiskUsersOriginWidget";
+import HighRiskUsersImpactedWidget from "../HighRiskUsersImpactedWidget";
 import HighRiskAssetsWidget from "../HighRiskAssetsWidget";
+import OutliersWidget from "../OutliersWidget";
 
 interface DashboardLayoutProps {
   alerts: Alert[];
@@ -59,17 +60,18 @@ const DashboardLayout = ({
         <StatsSection stats={stats} totalAlerts={totalRecords} />
       </div>
 
-      {/* Full-width ML Outliers section */}
       <div className="w-full bg-black/40 border border-purple-500/10 rounded-lg p-4 md:p-6 mb-6 min-h-[500px]">
         <OutliersWidget />
       </div>
 
-      {/* Risk Widgets in a row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
-        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4 md:p-6">
-          <RiskyUsersWidget />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
+        <div className="h-[400px] overflow-hidden">
+          <HighRiskUsersOriginWidget />
         </div>
-        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4 md:p-6">
+        <div className="h-[400px] overflow-hidden">
+          <HighRiskUsersImpactedWidget />
+        </div>
+        <div className="h-[400px] overflow-hidden">
           <HighRiskAssetsWidget />
         </div>
       </div>
