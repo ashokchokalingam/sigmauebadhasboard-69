@@ -1,5 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, AlertTriangle } from "lucide-react";
+import { AlertTriangle, User } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -38,13 +37,13 @@ const HighRiskUsersOriginWidget = () => {
     useEffect(() => {
       const timer = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % metrics.length);
-      }, 1000); // Changed from 3000 to 1000 for 1-second intervals
+      }, 3000);
   
       return () => clearInterval(timer);
     }, [metrics.length]);
   
     return (
-      <div className="text-sm text-purple-300/80 animate-fade-in">
+      <div className="spotify-item-subtitle">
         {metrics[currentIndex].label}: {metrics[currentIndex].value}
       </div>
     );
@@ -52,89 +51,78 @@ const HighRiskUsersOriginWidget = () => {
 
   if (isLoading) {
     return (
-      <Card className="bg-black/40 border-purple-900/20">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-purple-100">
+      <div className="spotify-card">
+        <div className="spotify-header">
+          <h2 className="flex items-center gap-2 text-purple-100 text-lg font-semibold">
             <AlertTriangle className="h-5 w-5 text-purple-500" />
             High Risk Users Origin
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center h-40">
-            <div className="animate-pulse text-purple-400">Loading...</div>
-          </div>
-        </CardContent>
-      </Card>
+          </h2>
+        </div>
+        <div className="spotify-content flex items-center justify-center">
+          <div className="animate-pulse text-purple-400">Loading...</div>
+        </div>
+      </div>
     );
   }
 
   if (isError) {
     return (
-      <Card className="bg-black/40 border-purple-900/20">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-purple-100">
+      <div className="spotify-card">
+        <div className="spotify-header">
+          <h2 className="flex items-center gap-2 text-purple-100 text-lg font-semibold">
             <AlertTriangle className="h-5 w-5 text-red-500" />
             High Risk Users Origin
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </h2>
+        </div>
+        <div className="spotify-content">
           <div className="text-red-400">Failed to load high risk users</div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className="h-full bg-[#1A1F2C]/80 border-purple-900/20 hover:bg-[#1A1F2C]/90 transition-all duration-300">
-      <CardHeader className="p-4">
-        <CardTitle className="flex items-center gap-2 text-purple-100 text-lg">
+    <div className="spotify-card">
+      <div className="spotify-header">
+        <h2 className="flex items-center gap-2 text-purple-100 text-lg font-semibold">
           <AlertTriangle className="h-5 w-5 text-purple-500" />
           High Risk Users Origin
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-4 pt-0 overflow-y-auto max-h-[320px] scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
-        <div className="grid gap-3">
-          {(riskyUsers || []).map((user: RiskyUser) => {
-            const metrics: MetricDisplay[] = [
-              { label: "Unique Anomalies", value: user.unique_title_count },
-              { label: "Unique Tactics", value: user.unique_tactics_count },
-              { label: "Unique Outliers", value: user.unique_outliers }
-            ];
+        </h2>
+      </div>
+      <div className="spotify-content">
+        {(riskyUsers || []).map((user: RiskyUser) => {
+          const metrics: MetricDisplay[] = [
+            { label: "Unique Anomalies", value: user.unique_title_count },
+            { label: "Unique Tactics", value: user.unique_tactics_count },
+            { label: "Unique Outliers", value: user.unique_outliers }
+          ];
 
-            return (
-              <div
-                key={user.user}
-                className="bg-purple-950/30 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/40 transition-all duration-300 group"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-purple-900/50 flex items-center justify-center">
-                      <User className="w-4 h-4 text-purple-400" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-gray-200 group-hover:text-gray-100 transition-colors">
-                        {user.user}
-                      </span>
-                      <MetricCycler metrics={metrics} />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono font-bold text-2xl text-red-500">
-                      {user.cumulative_risk_score}
-                    </span>
-                  </div>
+          return (
+            <div key={user.user} className="spotify-item">
+              <div className="spotify-item-left">
+                <div className="spotify-item-icon">
+                  <User className="w-5 h-5 text-purple-400" />
+                </div>
+                <div className="spotify-item-text">
+                  <div className="spotify-item-title">{user.user}</div>
+                  <MetricCycler metrics={metrics} />
                 </div>
               </div>
-            );
-          })}
-          {(!riskyUsers || riskyUsers.length === 0) && (
-            <div className="text-gray-400 text-center py-4">
-              No high risk users found
+              <div className="spotify-item-right">
+                <span className="font-mono font-bold text-2xl text-red-500">
+                  {user.cumulative_risk_score}
+                </span>
+              </div>
             </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+          );
+        })}
+        {(!riskyUsers || riskyUsers.length === 0) && (
+          <div className="text-gray-400 text-center py-4">
+            No high risk users found
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

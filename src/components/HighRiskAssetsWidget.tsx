@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Database, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -39,53 +38,47 @@ const HighRiskAssetsWidget = () => {
   };
 
   return (
-    <Card className="h-full bg-[#1A1F2C]/80 border-purple-900/20 hover:bg-[#1A1F2C]/90 transition-all duration-300">
-      <CardHeader className="p-4">
-        <CardTitle className="flex items-center gap-2 text-purple-100 text-lg">
+    <div className="spotify-card">
+      <div className="spotify-header">
+        <h2 className="flex items-center gap-2 text-purple-100 text-lg font-semibold">
           <AlertTriangle className="h-5 w-5 text-purple-500" />
           High Risk Assets
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-4 pt-0 overflow-y-auto max-h-[320px] scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
-        <div className="grid gap-3">
-          {riskyAssets?.map((asset) => (
-            <div
-              key={asset.id}
-              className="bg-purple-950/30 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/40 transition-all duration-300 group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-purple-900/50 flex items-center justify-center">
-                    <Database className="w-4 h-4 text-purple-400" />
-                  </div>
-                  <span className="text-gray-200 group-hover:text-gray-100 transition-colors">
-                    {asset.name}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <svg
-                    width="40"
-                    height="14"
-                    viewBox="0 0 40 14"
-                    className={`${getTrendColor(asset.riskScore)} opacity-60`}
-                  >
-                    <path
-                      d={getTrendLine(asset.trend)}
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      fill="none"
-                    />
-                  </svg>
-                  <span className={`font-mono font-bold ${getTrendColor(asset.riskScore)}`}>
-                    {asset.riskScore}
-                  </span>
-                </div>
+        </h2>
+      </div>
+      <div className="spotify-content">
+        {riskyAssets?.map((asset) => (
+          <div key={asset.id} className="spotify-item">
+            <div className="spotify-item-left">
+              <div className="spotify-item-icon">
+                <Database className="w-5 h-5 text-purple-400" />
+              </div>
+              <div className="spotify-item-text">
+                <div className="spotify-item-title">{asset.name}</div>
+                <div className="spotify-item-subtitle">Type: {asset.type}</div>
               </div>
             </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+            <div className="spotify-item-right">
+              <svg
+                width="40"
+                height="14"
+                viewBox="0 0 40 14"
+                className={`${getTrendColor(asset.riskScore)} opacity-60`}
+              >
+                <path
+                  d={getTrendLine(asset.trend)}
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  fill="none"
+                />
+              </svg>
+              <span className={`font-mono font-bold ${getTrendColor(asset.riskScore)}`}>
+                {asset.riskScore}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
