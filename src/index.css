@@ -28,52 +28,63 @@
 }
 
 @layer components {
-  .spotify-card {
-    @apply bg-[#1A1F2C]/80 border-purple-900/20 hover:bg-[#1A1F2C]/90 transition-all duration-300 h-[400px] rounded-xl overflow-hidden;
+  .entity-card {
+    @apply bg-[#1A1F2C]/80 border border-purple-900/20 rounded-xl overflow-hidden h-[400px] transition-all duration-300;
   }
 
-  .spotify-header {
-    @apply p-4 border-b border-purple-900/20 sticky top-0 bg-[#1A1F2C]/95 backdrop-blur-sm z-10;
+  .entity-header {
+    @apply p-4 flex items-center justify-between border-b border-purple-900/20;
   }
 
-  .spotify-content {
-    @apply p-4 space-y-2 overflow-y-auto h-[calc(100%-64px)] scrollbar-thin scrollbar-thumb-purple-500/40 hover:scrollbar-thumb-purple-500/60 scrollbar-track-transparent;
+  .entity-title {
+    @apply flex items-center gap-2 text-purple-100 text-lg font-semibold;
   }
 
-  .spotify-item {
-    @apply relative flex items-center justify-between p-3 rounded-lg bg-[#1e2c3d]/40 border border-purple-900/20 hover:bg-[#1e2c3d]/60 transition-all duration-300 cursor-pointer;
+  .entity-count {
+    @apply text-sm text-purple-400;
   }
 
-  .spotify-item-left {
+  .entity-search {
+    @apply relative mt-2 px-4 py-2;
+  }
+
+  .entity-search-input {
+    @apply w-full bg-[#1e2c3d]/40 border border-purple-900/20 rounded-lg px-4 py-2 text-sm text-purple-100 placeholder-purple-400/50
+    focus:outline-none focus:ring-1 focus:ring-purple-500/20;
+  }
+
+  .entity-content {
+    @apply p-4 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/40 hover:scrollbar-thumb-purple-500/60 scrollbar-track-transparent;
+    height: calc(100% - 120px);
+  }
+
+  .entity-item {
+    @apply flex items-center justify-between p-3 rounded-lg bg-[#1e2c3d]/40 border border-purple-900/20 
+    hover:bg-[#1e2c3d]/60 transition-all duration-300 cursor-pointer;
+  }
+
+  .entity-item-left {
     @apply flex items-center gap-3 flex-1 min-w-0;
   }
 
-  .spotify-item-icon {
+  .entity-item-icon {
     @apply w-10 h-10 rounded-full bg-purple-900/50 flex items-center justify-center flex-shrink-0;
   }
 
-  .spotify-item-text {
+  .entity-item-text {
     @apply flex flex-col min-w-0;
   }
 
-  .spotify-item-title {
+  .entity-item-title {
     @apply text-base text-gray-200 font-medium truncate;
   }
 
-  .spotify-item-subtitle {
+  .entity-item-subtitle {
     @apply text-sm text-purple-300/60 truncate;
   }
 
-  .spotify-item:hover .spotify-item-title {
-    @apply text-gray-100;
-  }
-
-  .spotify-item:hover .spotify-item-subtitle {
-    @apply text-purple-300/80;
-  }
-
-  .spotify-item-right {
-    @apply flex items-center gap-3 flex-shrink-0;
+  .entity-item-right {
+    @apply flex items-center gap-3;
   }
 
   .risk-score {
@@ -104,6 +115,11 @@
 @keyframes shine {
   0% { background-position: 0% center; }
   100% { background-position: 200% center; }
+}
+
+@keyframes cardiogram {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 /* Base styles */

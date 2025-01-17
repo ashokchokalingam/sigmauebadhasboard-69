@@ -1,4 +1,4 @@
-import { AlertTriangle, User } from "lucide-react";
+import { AlertTriangle, Search, User } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -16,6 +16,7 @@ interface MetricDisplay {
 }
 
 const HighRiskUsersOriginWidget = () => {
+  const [searchQuery, setSearchQuery] = useState("");
   const { data: riskyUsers, isError, isLoading } = useQuery({
     queryKey: ['riskyUsersOrigin'],
     queryFn: async () => {
@@ -31,6 +32,10 @@ const HighRiskUsersOriginWidget = () => {
     }
   });
 
+  const filteredUsers = riskyUsers?.filter(user => 
+    user.user.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const MetricCycler = ({ metrics }: { metrics: MetricDisplay[] }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
   
@@ -43,7 +48,7 @@ const HighRiskUsersOriginWidget = () => {
     }, [metrics.length]);
   
     return (
-      <div className="spotify-item-subtitle">
+      <div className="entity-item-subtitle">
         {metrics[currentIndex].label}: {metrics[currentIndex].value}
       </div>
     );
@@ -58,14 +63,14 @@ const HighRiskUsersOriginWidget = () => {
 
   if (isLoading) {
     return (
-      <div className="spotify-card">
-        <div className="spotify-header">
-          <h2 className="flex items-center gap-2 text-purple-100 text-lg font-semibold">
+      <div className="entity-card">
+        <div className="entity-header">
+          <h2 className="entity-title">
             <AlertTriangle className="h-5 w-5 text-purple-500" />
             High Risk Users Origin
           </h2>
         </div>
-        <div className="spotify-content flex items-center justify-center">
+        <div className="entity-content flex items-center justify-center">
           <div className="animate-pulse text-purple-400">Loading...</div>
         </div>
       </div>
@@ -74,14 +79,14 @@ const HighRiskUsersOriginWidget = () => {
 
   if (isError) {
     return (
-      <div className="spotify-card">
-        <div className="spotify-header">
-          <h2 className="flex items-center gap-2 text-purple-100 text-lg font-semibold">
+      <div className="entity-card">
+        <div className="entity-header">
+          <h2 className="entity-title">
             <AlertTriangle className="h-5 w-5 text-red-500" />
             High Risk Users Origin
           </h2>
         </div>
-        <div className="spotify-content">
+        <div className="entity-content">
           <div className="text-red-400">Failed to load high risk users</div>
         </div>
       </div>
@@ -89,15 +94,30 @@ const HighRiskUsersOriginWidget = () => {
   }
 
   return (
-    <div className="spotify-card">
-      <div className="spotify-header">
-        <h2 className="flex items-center gap-2 text-purple-100 text-lg font-semibold">
+    <div className="entity-card">
+      <div className="entity-header">
+        <h2 className="entity-title">
           <AlertTriangle className="h-5 w-5 text-purple-500" />
           High Risk Users Origin
+          <span className="entity-count">
+            {filteredUsers?.length || 0} risky users
+          </span>
         </h2>
       </div>
-      <div className="spotify-content">
-        {(riskyUsers || []).map((user: RiskyUser) => {
+      <div className="entity-search">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-purple-400/50" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search entities..."
+            className="entity-search-input pl-10"
+          />
+        </div>
+      </div>
+      <div className="entity-content">
+        {filteredUsers?.map((user: RiskyUser) => {
           const metrics: MetricDisplay[] = [
             { label: "Unique Anomalies", value: user.unique_title_count },
             { label: "Unique Tactics", value: user.unique_tactics_count },
@@ -107,17 +127,17 @@ const HighRiskUsersOriginWidget = () => {
           const riskColorClass = getRiskColor(user.cumulative_risk_score);
 
           return (
-            <div key={user.user} className="spotify-item">
-              <div className="spotify-item-left">
-                <div className="spotify-item-icon">
+            <div key={user.user} className="entity-item">
+              <div className="entity-item-left">
+                <div className="entity-item-icon">
                   <User className="w-5 h-5 text-purple-400" />
                 </div>
-                <div className="spotify-item-text">
-                  <div className="spotify-item-title">{user.user}</div>
+                <div className="entity-item-text">
+                  <div className="entity-item-title">{user.user}</div>
                   <MetricCycler metrics={metrics} />
                 </div>
               </div>
-              <div className="spotify-item-right">
+              <div className="entity-item-right">
                 <div className="cardiogram">
                   <svg viewBox="0 0 600 100" preserveAspectRatio="none">
                     <path
@@ -135,8 +155,8 @@ const HighRiskUsersOriginWidget = () => {
             </div>
           );
         })}
-        {(!riskyUsers || riskyUsers.length === 0) && (
-          <div className="text-gray-400 text-center py-4">
+        {(!filteredUsers || filteredUsers.length === 0) && (
+          <div className="text-purple-400/60 text-center py-4">
             No high risk users found
           </div>
         )}
