@@ -29,7 +29,7 @@
 
 @layer components {
   .entity-card {
-    @apply bg-[#15161E] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[800px] 
+    @apply bg-[#15161E] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[900px] 
     transition-all duration-300 shadow-lg shadow-[#5856D6]/5 hover:shadow-[#5856D6]/10;
   }
 
