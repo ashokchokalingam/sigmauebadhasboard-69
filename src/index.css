@@ -4,44 +4,44 @@
 
 @layer base {
   :root {
-    --background: 262 43% 12%;
-    --foreground: 240 4.8% 95.9%;
-    --card: 262 43% 12%;
-    --card-foreground: 240 4.8% 95.9%;
-    --popover: 262 43% 12%;
-    --popover-foreground: 240 4.8% 95.9%;
-    --primary: 262 60% 75%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 262 32% 54%;
-    --secondary-foreground: 240 4.8% 95.9%;
-    --muted: 262 32% 54%;
+    --background: 225 25% 7%;
+    --foreground: 210 40% 98%;
+    --card: 225 25% 9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 225 25% 9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 32% 17%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 262 32% 54%;
-    --accent-foreground: 240 4.8% 95.9%;
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 240 4.8% 95.9%;
-    --border: 262 32% 54%;
-    --input: 262 32% 54%;
-    --ring: 262 60% 75%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 224 76% 48%;
     --radius: 0.5rem;
   }
 }
 
 @layer components {
   .entity-card {
-    @apply bg-[#1e1f3b]/80 border border-purple-500/20 rounded-xl overflow-hidden h-[500px] transition-all duration-300;
+    @apply bg-[#1A1F2C]/80 border border-blue-500/20 rounded-xl overflow-hidden h-[500px] transition-all duration-300;
   }
 
   .entity-header {
-    @apply p-4 flex items-center justify-between bg-[#252644]/60 backdrop-blur-sm rounded-t-xl;
+    @apply p-4 flex items-center justify-between bg-[#1E2235]/60 backdrop-blur-sm rounded-t-xl;
   }
 
   .entity-title {
-    @apply flex items-center gap-2 text-lg font-semibold text-purple-200/90;
+    @apply flex items-center gap-2 text-lg font-semibold text-blue-200/90;
   }
 
   .entity-count {
-    @apply text-sm font-medium text-purple-300/80 ml-2;
+    @apply text-sm font-medium text-blue-300/80 ml-2;
   }
 
   .entity-search {
@@ -49,11 +49,11 @@
   }
 
   .entity-search-input {
-    @apply w-full pl-10 pr-4 py-2.5 bg-[#252644]/40 hover:bg-[#252644]/60
-    border border-purple-500/10 hover:border-purple-400/20 rounded-lg
-    text-sm text-purple-200/90 placeholder:text-purple-400/50
+    @apply w-full pl-10 pr-4 py-2.5 bg-[#1E2235]/40 hover:bg-[#1E2235]/60
+    border border-blue-500/10 hover:border-blue-400/20 rounded-lg
+    text-sm text-blue-200/90 placeholder:text-blue-400/50
     transition-colors duration-200
-    focus:outline-none focus:ring-1 focus:ring-purple-400/20;
+    focus:outline-none focus:ring-1 focus:ring-blue-400/20;
   }
 
   .entity-content {
@@ -63,8 +63,8 @@
 
   .entity-item {
     @apply flex items-center justify-between p-4 rounded-lg 
-    bg-[#252644]/40 hover:bg-[#252644]/60
-    border border-purple-500/10 hover:border-purple-400/20
+    bg-[#1E2235]/40 hover:bg-[#1E2235]/60
+    border border-blue-500/10 hover:border-blue-400/20
     transition-all duration-300 cursor-pointer h-[72px];
   }
 
@@ -73,7 +73,7 @@
   }
 
   .entity-item-icon {
-    @apply w-10 h-10 rounded-full bg-purple-800/30 flex items-center justify-center;
+    @apply w-10 h-10 rounded-full bg-blue-800/30 flex items-center justify-center;
   }
 
   .entity-item-text {
@@ -81,11 +81,11 @@
   }
 
   .entity-item-title {
-    @apply font-mono text-base text-purple-200/90 font-medium hover:text-purple-100 truncate max-w-[200px];
+    @apply font-mono text-base text-blue-200/90 font-medium hover:text-blue-100 truncate max-w-[200px];
   }
 
   .entity-item-subtitle {
-    @apply text-sm text-purple-400/60 mt-1;
+    @apply text-sm text-blue-400/60 mt-1;
   }
 
   .entity-item-right {
@@ -101,7 +101,7 @@
   }
 
   .risk-level-text {
-    @apply text-purple-300/90 font-medium text-base;
+    @apply text-blue-300/90 font-medium text-base;
   }
 
   .risk-level-value {
@@ -132,10 +132,10 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground min-h-screen w-full m-0 p-0;
+    @apply bg-[#1A1F2C] text-foreground min-h-screen w-full m-0 p-0;
   }
   #root {
-    @apply min-h-screen w-full bg-background m-0 p-0;
+    @apply min-h-screen w-full bg-[#1A1F2C] m-0 p-0;
   }
 }
 
@@ -145,9 +145,9 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  @apply bg-purple-800/20 rounded;
+  @apply bg-blue-800/20 rounded;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-purple-500/30 rounded hover:bg-purple-400/50 transition-colors;
+  @apply bg-blue-500/30 rounded hover:bg-blue-400/50 transition-colors;
 }
