@@ -19,8 +19,11 @@ const HighRiskUsersOriginWidget = () => {
         throw new Error('Failed to fetch high risk users');
       }
       const data = await response.json();
-      console.log('API Response:', data);
-      return data.user_origin_outlier_highrisk_logs || [];
+      // Sort users by cumulative_risk_score in descending order
+      const sortedUsers = data.user_origin_outlier_highrisk_logs.sort((a: RiskyUser, b: RiskyUser) => 
+        parseInt(b.cumulative_risk_score) - parseInt(a.cumulative_risk_score)
+      );
+      return sortedUsers || [];
     }
   });
 
@@ -29,11 +32,6 @@ const HighRiskUsersOriginWidget = () => {
     if (score >= 100) return "text-orange-500";
     return "text-yellow-500";
   };
-
-  // Calculate cumulative stats
-  const totalHighRiskUsers = (riskyUsers || []).length;
-  const criticalRiskUsers = (riskyUsers || []).filter(user => parseInt(user.cumulative_risk_score) >= 200).length;
-  const highRiskUsers = (riskyUsers || []).filter(user => parseInt(user.cumulative_risk_score) >= 100 && parseInt(user.cumulative_risk_score) < 200).length;
 
   if (isLoading) {
     return (
@@ -79,7 +77,7 @@ const HighRiskUsersOriginWidget = () => {
       </CardHeader>
       <CardContent>
         <div className="grid gap-3">
-          {(riskyUsers || []).map((user) => (
+          {(riskyUsers || []).map((user: RiskyUser) => (
             <div
               key={user.user}
               className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 group"
@@ -106,7 +104,7 @@ const HighRiskUsersOriginWidget = () => {
               </div>
             </div>
           ))}
-          {(riskyUsers?.length === 0) && (
+          {(!riskyUsers || riskyUsers.length === 0) && (
             <div className="text-gray-400 text-center py-4">
               No high risk users found
             </div>
