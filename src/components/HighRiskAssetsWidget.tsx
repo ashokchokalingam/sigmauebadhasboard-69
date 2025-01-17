@@ -30,7 +30,7 @@ const HighRiskAssetsWidget = () => {
   };
 
   return (
-    <div className="bg-[#1A1F2C] border border-blue-500/10 rounded-xl overflow-hidden">
+    <div className="bg-[#1e2c3d]/40 border border-blue-500/10 rounded-xl overflow-hidden">
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <AlertTriangle className="h-5 w-5 text-purple-400/80" />
