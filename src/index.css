@@ -41,8 +41,7 @@
   }
 
   .spotify-item {
-    @apply flex items-center justify-between p-3 rounded-lg bg-purple-950/30 border border-purple-900/30 
-           hover:bg-purple-950/50 transition-all duration-300 cursor-pointer group;
+    @apply flex items-center justify-between p-3 rounded-lg bg-purple-950/30 border border-purple-900/30 hover:bg-purple-950/50 transition-all duration-300 cursor-pointer;
   }
 
   .spotify-item-left {
@@ -58,11 +57,19 @@
   }
 
   .spotify-item-title {
-    @apply text-gray-200 group-hover:text-gray-100 transition-colors truncate;
+    @apply text-gray-200 truncate;
   }
 
   .spotify-item-subtitle {
-    @apply text-sm text-purple-300/60 group-hover:text-purple-300/80 transition-colors truncate;
+    @apply text-sm text-purple-300/60 truncate;
+  }
+
+  .spotify-item:hover .spotify-item-title {
+    @apply text-gray-100;
+  }
+
+  .spotify-item:hover .spotify-item-subtitle {
+    @apply text-purple-300/80;
   }
 
   .spotify-item-right {
