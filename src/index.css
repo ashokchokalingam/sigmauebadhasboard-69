@@ -4,38 +4,38 @@
 
 @layer base {
   :root {
-    --background: 222 25% 12%;
+    --background: 231 15% 18%;  /* #282A36 */
     --foreground: 210 40% 98%;
-    --card: 222 25% 14%;
+    --card: 231 15% 20%;
     --card-foreground: 210 40% 98%;
-    --popover: 222 25% 14%;
+    --popover: 231 15% 20%;
     --popover-foreground: 210 40% 98%;
-    --primary: 142 71% 49%;  /* Adjusted to match logo green */
+    --primary: 250 84% 78%;    /* #BD93F9 */
     --primary-foreground: 210 40% 98%;
-    --secondary: 199 89% 48%;  /* Adjusted to match logo blue */
+    --secondary: 250 84% 78%;  /* #BD93F9 */
     --secondary-foreground: 210 40% 98%;
-    --muted: 222 25% 14%;
+    --muted: 231 15% 20%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 142 71% 49%;
+    --accent: 250 84% 78%;     /* #BD93F9 */
     --accent-foreground: 210 40% 98%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-    --border: 142 71% 49%;
-    --input: 222 25% 14%;
-    --ring: 142 71% 49%;
+    --border: 250 84% 78%;     /* #BD93F9 */
+    --input: 231 15% 20%;
+    --ring: 250 84% 78%;       /* #BD93F9 */
     --radius: 0.5rem;
   }
 }
 
 @layer components {
   .entity-card {
-    @apply bg-[#1A1F2C] border border-[#34C759]/20 rounded-xl overflow-hidden h-[500px] 
-    transition-all duration-300 shadow-lg shadow-[#34C759]/5 hover:shadow-[#34C759]/10;
+    @apply bg-[#282A36] border border-[#BD93F9]/20 rounded-xl overflow-hidden h-[500px] 
+    transition-all duration-300 shadow-lg shadow-[#BD93F9]/5 hover:shadow-[#BD93F9]/10;
   }
 
   .entity-header {
-    @apply p-4 flex items-center justify-between bg-[#1A1F2C]/60 backdrop-blur-sm rounded-t-xl
-    border-b border-[#34C759]/10;
+    @apply p-4 flex items-center justify-between bg-[#282A36]/60 backdrop-blur-sm rounded-t-xl
+    border-b border-[#BD93F9]/10;
   }
 
   .entity-title {
@@ -43,7 +43,7 @@
   }
 
   .entity-count {
-    @apply text-sm font-medium text-[#34C759] ml-2;
+    @apply text-sm font-medium text-[#BD93F9] ml-2;
   }
 
   .entity-search {
@@ -52,13 +52,13 @@
 
   .entity-search-input {
     @apply w-full pl-10 pr-4 py-2.5 
-    bg-[#1A1F2C]/80 hover:bg-[#1A1F2C]
-    border border-[#34C759]/20 hover:border-[#34C759]/40 
+    bg-[#282A36]/80 hover:bg-[#282A36]
+    border border-[#BD93F9]/20 hover:border-[#BD93F9]/40 
     rounded-lg text-sm text-white/90 
     placeholder:text-white/30
     transition-colors duration-200
-    focus:outline-none focus:ring-1 focus:ring-[#34C759]/40
-    shadow-sm shadow-[#34C759]/5;
+    focus:outline-none focus:ring-1 focus:ring-[#BD93F9]/40
+    shadow-sm shadow-[#BD93F9]/5;
   }
 
   .entity-content {
@@ -68,10 +68,10 @@
 
   .entity-item {
     @apply flex items-center justify-between p-4 rounded-lg 
-    bg-[#1A1F2C]/80 hover:bg-[#1A1F2C]
-    border border-[#34C759]/20 hover:border-[#34C759]/40
+    bg-[#282A36]/80 hover:bg-[#282A36]
+    border border-[#BD93F9]/20 hover:border-[#BD93F9]/40
     transition-all duration-300 cursor-pointer h-[72px]
-    shadow-sm shadow-[#34C759]/5 hover:shadow-md hover:shadow-[#34C759]/10;
+    shadow-sm shadow-[#BD93F9]/5 hover:shadow-md hover:shadow-[#BD93F9]/10;
   }
 
   .entity-item-left {
@@ -79,8 +79,8 @@
   }
 
   .entity-item-icon {
-    @apply w-10 h-10 rounded-full bg-[#34C759]/10 flex items-center justify-center
-    border border-[#34C759]/20;
+    @apply w-10 h-10 rounded-full bg-[#BD93F9]/10 flex items-center justify-center
+    border border-[#BD93F9]/20;
   }
 
   .entity-item-text {
@@ -92,7 +92,7 @@
   }
 
   .entity-item-subtitle {
-    @apply text-sm text-[#34C759]/80 mt-1;
+    @apply text-sm text-[#BD93F9]/80 mt-1;
   }
 
   .entity-item-right {
@@ -139,27 +139,27 @@
     @apply border-border;
   }
   body {
-    @apply bg-[#1A1F2C] text-foreground min-h-screen w-full m-0 p-0 font-sans;
+    @apply bg-[#282A36] text-foreground min-h-screen w-full m-0 p-0 font-sans;
   }
   #root {
-    @apply min-h-screen w-full bg-[#1A1F2C] m-0 p-0;
+    @apply min-h-screen w-full bg-[#282A36] m-0 p-0;
   }
 }
 
 /* Risk value styles with modern glows */
 .critical-value {
-  @apply text-red-500 font-bold;
-  text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+  @apply text-[#FF5555] font-bold;
+  text-shadow: 0 0 10px rgba(255, 85, 85, 0.5);
 }
 
 .medium-value {
-  @apply text-[#0EA5E9] font-bold;
-  text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+  @apply text-[#FFB86C] font-bold;
+  text-shadow: 0 0 10px rgba(255, 184, 108, 0.5);
 }
 
 .low-value {
-  @apply text-[#34C759] font-bold;
-  text-shadow: 0 0 10px rgba(52, 199, 89, 0.5);
+  @apply text-[#50FA7B] font-bold;
+  text-shadow: 0 0 10px rgba(80, 250, 123, 0.5);
 }
 
 /* Supporting text */
@@ -177,9 +177,9 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  @apply bg-[#34C759]/10 rounded;
+  @apply bg-[#BD93F9]/10 rounded;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-[#34C759]/30 rounded hover:bg-[#34C759]/50 transition-colors;
+  @apply bg-[#BD93F9]/30 rounded hover:bg-[#BD93F9]/50 transition-colors;
 }
