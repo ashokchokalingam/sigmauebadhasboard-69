@@ -10,9 +10,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const page = parseInt(req.query.page as string) || 1;
     const per_page = parseInt(req.query.per_page as string) || 100;
+    const timeframe = req.query.timeframe || '1d';
     const offset = (page - 1) * per_page;
 
-    console.log('Executing query with params:', { page, per_page, offset });
+    // Convert timeframe to days
+    const days = parseInt(timeframe.replace('d', '')) || 1;
+
+    console.log('Executing query with params:', { page, per_page, offset, days });
 
     const query = `
       SELECT 
@@ -21,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         task, rule_level, target_user_name, target_domain_name,
         ruleid, raw, tactics, techniques, ml_description, risk
       FROM sigma_alerts
-      WHERE system_time >= NOW() - INTERVAL 24 HOUR
+      WHERE system_time >= NOW() - INTERVAL ? DAY
       ORDER BY system_time DESC
       LIMIT ? OFFSET ?
     `;
@@ -29,16 +33,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const countQuery = `
       SELECT COUNT(*) as total
       FROM sigma_alerts
-      WHERE system_time >= NOW() - INTERVAL 24 HOUR
+      WHERE system_time >= NOW() - INTERVAL ? DAY
     `;
 
-    const [rows] = await db.query(query, [per_page, offset]);
-    const [countResult] = await db.query(countQuery);
+    const [rows] = await db.query(query, [days, per_page, offset]);
+    const [countResult] = await db.query(countQuery, [days]);
     const total = (countResult as any)[0].total;
 
     console.log('Query results:', {
       rowCount: Array.isArray(rows) ? rows.length : 0,
-      total
+      total,
+      timeframe: `${days} days`
     });
 
     res.status(200).json({

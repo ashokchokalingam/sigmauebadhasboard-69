@@ -3,6 +3,7 @@ import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Alert } from "@/components/dashboard/types";
 import { useQuery } from "@tanstack/react-query";
+import TimeFrameSelector from "@/components/TimeFrameSelector";
 
 const INITIAL_BATCH_SIZE = 100;
 const TOTAL_BATCH_SIZE = 1000;
@@ -12,16 +13,17 @@ const Index = () => {
   const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
   const [currentTotalRecords, setCurrentTotalRecords] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [timeFrame, setTimeFrame] = useState("1d");
   const { toast } = useToast();
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
 
   // Initial alerts query
   const { isLoading: isLoadingInitial } = useQuery({
-    queryKey: ['initial-alerts'],
+    queryKey: ['initial-alerts', timeFrame],
     queryFn: async () => {
       try {
         console.log('Fetching initial alerts...');
-        const response = await fetch(`/api/alerts?page=1&per_page=${INITIAL_BATCH_SIZE}`);
+        const response = await fetch(`/api/alerts?page=1&per_page=${INITIAL_BATCH_SIZE}&timeframe=${timeFrame}`);
         
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -51,20 +53,20 @@ const Index = () => {
         return null;
       }
     },
-    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
-    retry: 3, // Retry failed requests 3 times
-    retryDelay: 1000, // Wait 1 second between retries
+    refetchInterval: 5 * 60 * 1000,
+    retry: 3,
+    retryDelay: 1000,
   });
 
   // Remaining alerts query
   const { isLoading: isLoadingRemaining } = useQuery({
-    queryKey: ['remaining-alerts', currentPage],
+    queryKey: ['remaining-alerts', currentPage, timeFrame],
     queryFn: async () => {
       if (currentAlerts.length >= TOTAL_BATCH_SIZE) return null;
       
       try {
         console.log('Fetching remaining alerts...');
-        const response = await fetch(`/api/alerts?page=2&per_page=${TOTAL_BATCH_SIZE - INITIAL_BATCH_SIZE}`);
+        const response = await fetch(`/api/alerts?page=2&per_page=${TOTAL_BATCH_SIZE - INITIAL_BATCH_SIZE}&timeframe=${timeFrame}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch remaining alerts');
@@ -90,7 +92,7 @@ const Index = () => {
       }
     },
     enabled: currentAlerts.length > 0 && currentAlerts.length < TOTAL_BATCH_SIZE,
-    refetchInterval: 5 * 60 * 1000 // Refetch every 5 minutes
+    refetchInterval: 5 * 60 * 1000
   });
 
   const handleLoadMore = () => {
@@ -111,6 +113,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-[#1a1f2c]">
+      <div className="p-6">
+        <TimeFrameSelector value={timeFrame} onValueChange={setTimeFrame} />
+      </div>
       <DashboardLayout
         alerts={currentAlerts}
         allAlerts={allAlerts}
