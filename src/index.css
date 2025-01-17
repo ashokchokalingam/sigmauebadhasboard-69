@@ -4,38 +4,38 @@
 
 @layer base {
   :root {
-    --background: 231 15% 18%;  /* #282A36 */
-    --foreground: 210 40% 98%;
-    --card: 231 15% 20%;
-    --card-foreground: 210 40% 98%;
-    --popover: 231 15% 20%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 250 84% 78%;    /* #BD93F9 */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 250 84% 78%;  /* #BD93F9 */
-    --secondary-foreground: 210 40% 98%;
-    --muted: 231 15% 20%;
+    --background: 220 37% 16%;    /* #1A233A */
+    --foreground: 0 0% 100%;      /* #FFFFFF */
+    --card: 220 37% 18%;
+    --card-foreground: 0 0% 100%;
+    --popover: 220 37% 18%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 220 29% 31%;       /* #3A4A67 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 29% 31%;     /* #3A4A67 */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 37% 18%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 250 84% 78%;     /* #BD93F9 */
-    --accent-foreground: 210 40% 98%;
+    --accent: 220 29% 31%;        /* #3A4A67 */
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 250 84% 78%;     /* #BD93F9 */
-    --input: 231 15% 20%;
-    --ring: 250 84% 78%;       /* #BD93F9 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 29% 31%;        /* #3A4A67 */
+    --input: 220 37% 18%;
+    --ring: 220 29% 31%;          /* #3A4A67 */
     --radius: 0.5rem;
   }
 }
 
 @layer components {
   .entity-card {
-    @apply bg-[#282A36] border border-[#BD93F9]/20 rounded-xl overflow-hidden h-[500px] 
-    transition-all duration-300 shadow-lg shadow-[#BD93F9]/5 hover:shadow-[#BD93F9]/10;
+    @apply bg-[#1A233A] border border-[#3A4A67]/20 rounded-xl overflow-hidden h-[500px] 
+    transition-all duration-300 shadow-lg shadow-[#3A4A67]/5 hover:shadow-[#3A4A67]/10;
   }
 
   .entity-header {
-    @apply p-4 flex items-center justify-between bg-[#282A36]/60 backdrop-blur-sm rounded-t-xl
-    border-b border-[#BD93F9]/10;
+    @apply p-4 flex items-center justify-between bg-[#1A233A]/60 backdrop-blur-sm rounded-t-xl
+    border-b border-[#3A4A67]/10;
   }
 
   .entity-title {
@@ -43,7 +43,7 @@
   }
 
   .entity-count {
-    @apply text-sm font-medium text-[#BD93F9] ml-2;
+    @apply text-sm font-medium text-[#3A4A67] ml-2;
   }
 
   .entity-search {
@@ -52,13 +52,13 @@
 
   .entity-search-input {
     @apply w-full pl-10 pr-4 py-2.5 
-    bg-[#282A36]/80 hover:bg-[#282A36]
-    border border-[#BD93F9]/20 hover:border-[#BD93F9]/40 
+    bg-[#1A233A]/80 hover:bg-[#1A233A]
+    border border-[#3A4A67]/20 hover:border-[#3A4A67]/40 
     rounded-lg text-sm text-white/90 
     placeholder:text-white/30
     transition-colors duration-200
-    focus:outline-none focus:ring-1 focus:ring-[#BD93F9]/40
-    shadow-sm shadow-[#BD93F9]/5;
+    focus:outline-none focus:ring-1 focus:ring-[#3A4A67]/40
+    shadow-sm shadow-[#3A4A67]/5;
   }
 
   .entity-content {
@@ -68,10 +68,10 @@
 
   .entity-item {
     @apply flex items-center justify-between p-4 rounded-lg 
-    bg-[#282A36]/80 hover:bg-[#282A36]
-    border border-[#BD93F9]/20 hover:border-[#BD93F9]/40
+    bg-[#1A233A]/80 hover:bg-[#1A233A]
+    border border-[#3A4A67]/20 hover:border-[#3A4A67]/40
     transition-all duration-300 cursor-pointer h-[72px]
-    shadow-sm shadow-[#BD93F9]/5 hover:shadow-md hover:shadow-[#BD93F9]/10;
+    shadow-sm shadow-[#3A4A67]/5 hover:shadow-md hover:shadow-[#3A4A67]/10;
   }
 
   .entity-item-left {
@@ -79,8 +79,8 @@
   }
 
   .entity-item-icon {
-    @apply w-10 h-10 rounded-full bg-[#BD93F9]/10 flex items-center justify-center
-    border border-[#BD93F9]/20;
+    @apply w-10 h-10 rounded-full bg-[#3A4A67]/10 flex items-center justify-center
+    border border-[#3A4A67]/20;
   }
 
   .entity-item-text {
@@ -92,7 +92,7 @@
   }
 
   .entity-item-subtitle {
-    @apply text-sm text-[#BD93F9]/80 mt-1;
+    @apply text-sm text-[#3A4A67]/80 mt-1;
   }
 
   .entity-item-right {
@@ -139,27 +139,27 @@
     @apply border-border;
   }
   body {
-    @apply bg-[#282A36] text-foreground min-h-screen w-full m-0 p-0 font-sans;
+    @apply bg-[#1A233A] text-foreground min-h-screen w-full m-0 p-0 font-sans;
   }
   #root {
-    @apply min-h-screen w-full bg-[#282A36] m-0 p-0;
+    @apply min-h-screen w-full bg-[#1A233A] m-0 p-0;
   }
 }
 
 /* Risk value styles with modern glows */
 .critical-value {
-  @apply text-[#FF5555] font-bold;
-  text-shadow: 0 0 10px rgba(255, 85, 85, 0.5);
+  @apply text-[#FF4D4D] font-bold;
+  text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
 }
 
 .medium-value {
-  @apply text-[#FFB86C] font-bold;
-  text-shadow: 0 0 10px rgba(255, 184, 108, 0.5);
+  @apply text-[#FFA726] font-bold;
+  text-shadow: 0 0 10px rgba(255, 167, 38, 0.5);
 }
 
 .low-value {
-  @apply text-[#50FA7B] font-bold;
-  text-shadow: 0 0 10px rgba(80, 250, 123, 0.5);
+  @apply text-[#66BB6A] font-bold;
+  text-shadow: 0 0 10px rgba(102, 187, 106, 0.5);
 }
 
 /* Supporting text */
@@ -177,9 +177,9 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  @apply bg-[#BD93F9]/10 rounded;
+  @apply bg-[#3A4A67]/10 rounded;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-[#BD93F9]/30 rounded hover:bg-[#BD93F9]/50 transition-colors;
+  @apply bg-[#3A4A67]/30 rounded hover:bg-[#3A4A67]/50 transition-colors;
 }
