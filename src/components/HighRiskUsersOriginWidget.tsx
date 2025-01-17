@@ -11,14 +11,16 @@ interface RiskyUser {
 }
 
 const HighRiskUsersOriginWidget = () => {
-  const { data: riskyUsers } = useQuery({
+  const { data: riskyUsers, isError, isLoading } = useQuery({
     queryKey: ['riskyUsersOrigin'],
     queryFn: async () => {
       const response = await fetch('/api/user_origin_outlier_highrisk');
       if (!response.ok) {
         throw new Error('Failed to fetch high risk users');
       }
-      return response.json() as Promise<RiskyUser[]>;
+      const data = await response.json();
+      // Ensure we're returning an array
+      return Array.isArray(data) ? data : [];
     }
   });
 
@@ -36,6 +38,40 @@ const HighRiskUsersOriginWidget = () => {
     return "text-yellow-500";
   };
 
+  if (isLoading) {
+    return (
+      <Card className="bg-black/40 border-purple-900/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-purple-100">
+            <AlertTriangle className="h-5 w-5 text-purple-500" />
+            High Risk Users Origin
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center h-40">
+            <div className="animate-pulse text-purple-400">Loading...</div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card className="bg-black/40 border-purple-900/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-purple-100">
+            <AlertTriangle className="h-5 w-5 text-red-500" />
+            High Risk Users Origin
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-red-400">Failed to load high risk users</div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
@@ -46,7 +82,7 @@ const HighRiskUsersOriginWidget = () => {
       </CardHeader>
       <CardContent>
         <div className="grid gap-3">
-          {riskyUsers?.map((user) => (
+          {(riskyUsers || []).map((user) => (
             <div
               key={user.id}
               className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 group"
@@ -89,6 +125,11 @@ const HighRiskUsersOriginWidget = () => {
               </div>
             </div>
           ))}
+          {(riskyUsers?.length === 0) && (
+            <div className="text-gray-400 text-center py-4">
+              No high risk users found
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
