@@ -1,12 +1,9 @@
 import { Alert } from "./types";
 import EntityHeader from "./EntityHeader";
 import EntitySearchInput from "./EntitySearchInput";
-import EntityList from "./EntityList";
-import { useEntitySearch } from "./hooks/useEntitySearch";
-import { useEntityData } from "./hooks/useEntityData";
-import { getUniqueEntities } from "./utils/entityUtils";
-import TimelineView from "./TimelineView";
-import { useState } from "react";
+import EntityCard from "./EntityCard";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useQuery } from "@tanstack/react-query";
 
 interface RiskyEntitiesProps {
   alerts: Alert[];
@@ -14,81 +11,65 @@ interface RiskyEntitiesProps {
   onEntitySelect: (entityId: string) => void;
 }
 
-const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => {
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+interface RiskUser {
+  user: string;
+  cumulative_risk_score: string;
+  unique_outliers: number;
+  unique_tactics_count: string;
+  unique_title_count: number;
+}
 
-  const {
-    originUsers,
-    impactedUsers,
-    impactedComputers,
-    isLoadingOrigin,
-    isLoadingImpacted,
-    isLoadingComputers
-  } = useEntityData(type);
-
-  const entities = getUniqueEntities(
-    type,
-    impactedUsers,
-    originUsers,
-    impactedComputers
-  ).sort((a, b) => b.uniqueTitles - a.uniqueTitles);
-
-  const { searchQuery, setSearchQuery, filteredEntities } = useEntitySearch(entities);
-
-  const handleEntityClick = (entityId: string) => {
-    if (type === "users-impacted" || type === "users-origin") {
-      setSelectedUser(entityId);
+const RiskyEntities = ({ type, onEntitySelect }: RiskyEntitiesProps) => {
+  const { data: riskyUsers, isLoading } = useQuery({
+    queryKey: ['riskyUsers', type],
+    queryFn: async () => {
+      const response = await fetch('/api/user_origin_outlier_highrisk');
+      if (!response.ok) {
+        throw new Error('Failed to fetch risky users');
+      }
+      const data = await response.json();
+      return data.user_origin_outlier_highrisk_logs || [];
     }
-    onEntitySelect(entityId);
-  };
-
-  const isLoading = type === "users-origin" ? isLoadingOrigin : 
-                   type === "users-impacted" ? isLoadingImpacted : 
-                   isLoadingComputers;
+  });
 
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <EntityHeader totalEntities={0} isLoading={true} type={type} />
-        <div className="text-center text-blue-400/60 py-6 text-sm">
+        <h2 className="text-lg font-semibold text-purple-100 flex items-center gap-2">
           Loading...
-        </div>
+        </h2>
       </div>
-    );
-  }
-
-  if (selectedUser) {
-    const entityType = type === "users-origin" ? "userorigin" :
-                      type === "users-impacted" ? "userimpacted" :
-                      "computersimpacted";
-                      
-    return (
-      <TimelineView
-        entityType={entityType}
-        entityId={selectedUser}
-        onClose={() => setSelectedUser(null)}
-        inSidebar={true}
-      />
     );
   }
 
   return (
     <div className="space-y-4">
       <EntityHeader 
-        totalEntities={entities.length} 
+        totalEntities={riskyUsers?.length || 0} 
         isLoading={isLoading}
         type={type}
       />
       
       <EntitySearchInput
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        searchQuery=""
+        onSearchChange={() => {}}
       />
       
-      <EntityList
-        entities={filteredEntities}
-        onEntitySelect={handleEntityClick}
-      />
+      <ScrollArea className="h-[600px]">
+        <div className="space-y-3 pr-4">
+          {(riskyUsers || []).map((user: RiskUser) => (
+            <EntityCard
+              key={user.user}
+              id={user.user}
+              uniqueTitles={user.unique_title_count}
+              riskScore={user.cumulative_risk_score}
+              tacticsCount={user.unique_tactics_count}
+              uniqueOutliers={user.unique_outliers}
+              onClick={() => onEntitySelect(user.user)}
+            />
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   );
 };
