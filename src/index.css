@@ -119,39 +119,6 @@
   .risk-score {
     @apply font-bold text-3xl min-w-[70px] text-right;
   }
-
-  /* Stats Card Styles */
-  .stats-card {
-    @apply bg-[#1E1E2F] border-purple-500/20 hover:bg-[#1E1E2F]/80 transition-all duration-300;
-  }
-
-  .stats-icon {
-    @apply text-purple-400/80;
-  }
-
-  .stats-value {
-    @apply text-2xl font-bold text-purple-100;
-  }
-
-  .stats-subtitle {
-    @apply flex items-center gap-2 mt-2 text-sm text-purple-300/70;
-  }
-
-  .stats-breakdown {
-    @apply mt-4 space-y-2;
-  }
-
-  .stats-breakdown-item {
-    @apply flex justify-between items-center text-sm;
-  }
-
-  .stats-breakdown-label {
-    @apply text-purple-200/70;
-  }
-
-  .stats-breakdown-value {
-    @apply font-medium text-purple-100;
-  }
 }
 
 @keyframes cardiogram {
