@@ -11,7 +11,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const highRiskUsers = stats?.uniqueUsers?.users?.filter(user => (user?.risk_score ?? 0) > 80)?.length ?? 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl bg-[#1A233A]/40 backdrop-blur-lg border border-[#3A4A67]/20">
       <StatsCard
         title="Total Events (24h)"
         value={totalAlerts}
