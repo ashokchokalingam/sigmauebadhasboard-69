@@ -13,12 +13,12 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
     bg-[#15161E] shadow-2xl border border-[#5856D6]/20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#5856D6]/5 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#5856D6]/10 via-[#5856D6]/5 to-transparent pointer-events-none" />
       <StatsCard
         title="Total Events (24h)"
         value={totalAlerts}
         icon={Database}
-        subtitle={`Total events in last 24 hours`}
+        subtitle="Total events in last 24 hours"
         subtitleIcon={AlertTriangle}
         breakdown={[
           { rule_level: "Critical", event_count: stats?.severity?.critical ?? 0 },
