@@ -38,7 +38,7 @@ const HighRiskUsersOriginWidget = () => {
     useEffect(() => {
       const timer = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % metrics.length);
-      }, 3000); // Change every 3 seconds
+      }, 1000); // Changed from 3000 to 1000 for 1-second intervals
   
       return () => clearInterval(timer);
     }, [metrics.length]);
