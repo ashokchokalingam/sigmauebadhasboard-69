@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, AlertTriangle } from "lucide-react";
+import { User, AlertTriangle, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 interface RiskyUser {
@@ -19,6 +19,7 @@ const HighRiskUsersOriginWidget = () => {
         throw new Error('Failed to fetch high risk users');
       }
       const data = await response.json();
+      console.log('API Response:', data); // Debug log
       // Ensure we're returning an array
       return Array.isArray(data) ? data : [];
     }
@@ -37,6 +38,11 @@ const HighRiskUsersOriginWidget = () => {
     if (score >= 8) return "text-orange-500";
     return "text-yellow-500";
   };
+
+  // Calculate cumulative stats
+  const totalHighRiskUsers = (riskyUsers || []).length;
+  const criticalRiskUsers = (riskyUsers || []).filter(user => user.riskScore >= 9).length;
+  const highRiskUsers = (riskyUsers || []).filter(user => user.riskScore >= 8 && user.riskScore < 9).length;
 
   if (isLoading) {
     return (
@@ -81,6 +87,20 @@ const HighRiskUsersOriginWidget = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
+        <div className="mb-4 grid grid-cols-3 gap-2 bg-purple-950/20 p-3 rounded-lg border border-purple-900/30">
+          <div className="text-center">
+            <div className="text-sm text-purple-300">Total High Risk</div>
+            <div className="text-2xl font-bold text-purple-100">{totalHighRiskUsers}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-sm text-red-300">Critical Risk</div>
+            <div className="text-2xl font-bold text-red-500">{criticalRiskUsers}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-sm text-orange-300">High Risk</div>
+            <div className="text-2xl font-bold text-orange-500">{highRiskUsers}</div>
+          </div>
+        </div>
         <div className="grid gap-3">
           {(riskyUsers || []).map((user) => (
             <div
