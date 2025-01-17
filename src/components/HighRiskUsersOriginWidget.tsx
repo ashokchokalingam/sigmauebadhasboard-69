@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 interface RiskyUser {
   user: string;
@@ -8,6 +9,11 @@ interface RiskyUser {
   unique_outliers: number;
   unique_tactics_count: string;
   unique_title_count: number;
+}
+
+interface MetricDisplay {
+  label: string;
+  value: string | number;
 }
 
 const HighRiskUsersOriginWidget = () => {
@@ -19,7 +25,6 @@ const HighRiskUsersOriginWidget = () => {
         throw new Error('Failed to fetch high risk users');
       }
       const data = await response.json();
-      // Sort users by cumulative_risk_score in descending order
       const sortedUsers = data.user_origin_outlier_highrisk_logs.sort((a: RiskyUser, b: RiskyUser) => 
         parseInt(b.cumulative_risk_score) - parseInt(a.cumulative_risk_score)
       );
@@ -27,10 +32,22 @@ const HighRiskUsersOriginWidget = () => {
     }
   });
 
-  const getTrendColor = (score: number) => {
-    if (score >= 200) return "text-red-500";
-    if (score >= 100) return "text-orange-500";
-    return "text-yellow-500";
+  const MetricCycler = ({ metrics }: { metrics: MetricDisplay[] }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+  
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % metrics.length);
+      }, 3000); // Change every 3 seconds
+  
+      return () => clearInterval(timer);
+    }, [metrics.length]);
+  
+    return (
+      <div className="text-sm text-purple-300/80 animate-fade-in">
+        {metrics[currentIndex].label}: {metrics[currentIndex].value}
+      </div>
+    );
   };
 
   if (isLoading) {
@@ -77,33 +94,39 @@ const HighRiskUsersOriginWidget = () => {
       </CardHeader>
       <CardContent>
         <div className="grid gap-3">
-          {(riskyUsers || []).map((user: RiskyUser) => (
-            <div
-              key={user.user}
-              className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-purple-900/50 flex items-center justify-center">
-                    <User className="w-4 h-4 text-purple-400" />
+          {(riskyUsers || []).map((user: RiskyUser) => {
+            const metrics: MetricDisplay[] = [
+              { label: "Unique Anomalies", value: user.unique_title_count },
+              { label: "Unique Tactics", value: user.unique_tactics_count },
+              { label: "Unique Outliers", value: user.unique_outliers }
+            ];
+
+            return (
+              <div
+                key={user.user}
+                className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-purple-900/50 flex items-center justify-center">
+                      <User className="w-4 h-4 text-purple-400" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-gray-200 group-hover:text-gray-100 transition-colors">
+                        {user.user}
+                      </span>
+                      <MetricCycler metrics={metrics} />
+                    </div>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-gray-200 group-hover:text-gray-100 transition-colors">
-                      {user.user}
-                    </span>
-                    <span className="text-sm text-gray-400">
-                      {user.unique_outliers} unique anomalies
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono font-bold text-2xl text-red-500">
+                      {user.cumulative_risk_score}
                     </span>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className={`font-mono font-bold ${getTrendColor(parseInt(user.cumulative_risk_score))}`}>
-                    {user.cumulative_risk_score}
-                  </span>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {(!riskyUsers || riskyUsers.length === 0) && (
             <div className="text-gray-400 text-center py-4">
               No high risk users found
