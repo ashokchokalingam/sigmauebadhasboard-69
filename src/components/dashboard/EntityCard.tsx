@@ -52,7 +52,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
             <span className="font-mono text-base text-blue-200/90 font-medium group-hover:text-blue-100 truncate max-w-[200px]">
               {id || 'Unknown'}
             </span>
-            <span className="text-sm text-[#5856D6] font-medium mt-1 drop-shadow-[0_0_3px_rgba(88,86,214,0.3)]">
+            <span className="text-sm text-[#60A5FA] font-semibold mt-1 drop-shadow-[0_0_3px_rgba(96,165,250,0.3)]">
               {safeUniqueTitles} unique anomalies
             </span>
           </div>
