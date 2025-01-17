@@ -52,7 +52,7 @@ const HighRiskUsersOriginWidget = () => {
   }
 
   return (
-    <div className="bg-[#0A0B0F] border border-indigo-500/10 rounded-xl overflow-hidden shadow-2xl shadow-indigo-500/10 h-[900px] flex flex-col">
+    <div className="bg-[#0A0B0F] border border-indigo-500/10 rounded-xl overflow-hidden shadow-2xl shadow-indigo-500/10 h-[675px] flex flex-col">
       <div className="p-6 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 border-b border-indigo-500/10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

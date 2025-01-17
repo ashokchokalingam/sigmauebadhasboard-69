@@ -1,7 +1,7 @@
 @layer components {
   /* Widget Layout */
   .widget-container {
-    @apply bg-[#15161E] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[900px] 
+    @apply bg-[#15161E] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[675px] 
     transition-all duration-300 shadow-lg shadow-[#5856D6]/5 hover:shadow-[#5856D6]/10;
   }
 
