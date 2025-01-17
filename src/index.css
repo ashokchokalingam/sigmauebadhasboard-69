@@ -29,7 +29,7 @@
 
 @layer components {
   .entity-card {
-    @apply bg-[#15161E] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[500px] 
+    @apply bg-[#15161E] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[600px] 
     transition-all duration-300 shadow-lg shadow-[#5856D6]/5 hover:shadow-[#5856D6]/10;
   }
 
@@ -47,7 +47,7 @@
   }
 
   .entity-search {
-    @apply p-6;
+    @apply p-6 border-b border-[#5856D6]/10;
   }
 
   .entity-search-input {
@@ -63,7 +63,7 @@
 
   .entity-content {
     @apply px-6 pb-6 space-y-3 overflow-y-auto;
-    height: calc(100% - 140px);
+    height: calc(100% - 180px);
   }
 
   .entity-item {
