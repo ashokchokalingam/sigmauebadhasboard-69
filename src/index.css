@@ -10,19 +10,19 @@
     --card-foreground: 240 4.8% 95.9%;
     --popover: 232 24% 14%;
     --popover-foreground: 240 4.8% 95.9%;
-    --primary: 262 60% 75%;
+    --primary: 262 60% 55%;
     --primary-foreground: 240 5.9% 10%;
-    --secondary: 262 32% 54%;
+    --secondary: 262 32% 44%;
     --secondary-foreground: 240 4.8% 95.9%;
-    --muted: 262 32% 54%;
+    --muted: 262 32% 44%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 262 32% 54%;
+    --accent: 262 32% 44%;
     --accent-foreground: 240 4.8% 95.9%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 240 4.8% 95.9%;
-    --border: 262 32% 54%;
-    --input: 262 32% 54%;
-    --ring: 262 60% 75%;
+    --border: 262 32% 44%;
+    --input: 262 32% 44%;
+    --ring: 262 60% 55%;
     --radius: 0.5rem;
   }
 }
@@ -37,11 +37,11 @@
   }
 
   .entity-title {
-    @apply flex items-center gap-2 text-lg font-semibold text-purple-100/90;
+    @apply flex items-center gap-2 text-lg font-semibold text-purple-200/90;
   }
 
   .entity-count {
-    @apply text-sm font-medium text-purple-400/80 ml-2;
+    @apply text-sm font-medium text-purple-300/80 ml-2;
   }
 
   .entity-search {
@@ -50,10 +50,10 @@
 
   .entity-search-input {
     @apply w-full pl-10 pr-4 py-2.5 bg-[#1e2c3d]/40 hover:bg-[#1e2c3d]/60
-    border border-purple-500/5 hover:border-purple-500/10 rounded-lg
-    text-sm text-purple-100/90 placeholder:text-purple-400/50
+    border border-purple-800/10 hover:border-purple-700/20 rounded-lg
+    text-sm text-purple-200/90 placeholder:text-purple-400/50
     transition-colors duration-200
-    focus:outline-none focus:ring-1 focus:ring-purple-500/20;
+    focus:outline-none focus:ring-1 focus:ring-purple-700/20;
   }
 
   .entity-content {
@@ -64,7 +64,7 @@
   .entity-item {
     @apply flex items-center justify-between p-4 rounded-lg 
     bg-[#1e2c3d]/40 hover:bg-[#1e2c3d]/60
-    border border-purple-500/5 hover:border-purple-500/10
+    border border-purple-800/10 hover:border-purple-700/20
     transition-all duration-300 cursor-pointer h-[72px];
   }
 
@@ -85,7 +85,7 @@
   }
 
   .entity-item-subtitle {
-    @apply text-sm text-purple-300/60 mt-1;
+    @apply text-sm text-purple-400/60 mt-1;
   }
 
   .entity-item-right {
@@ -149,5 +149,5 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-purple-500/30 rounded hover:bg-purple-500/50 transition-colors;
+  @apply bg-purple-800/30 rounded hover:bg-purple-700/50 transition-colors;
 }
