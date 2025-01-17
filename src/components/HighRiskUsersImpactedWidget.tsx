@@ -39,19 +39,19 @@ const HighRiskUsersImpactedWidget = () => {
   };
 
   return (
-    <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-purple-100">
+    <Card className="h-full bg-[#1A1F2C]/80 border-purple-900/20 hover:bg-[#1A1F2C]/90 transition-all duration-300">
+      <CardHeader className="p-4">
+        <CardTitle className="flex items-center gap-2 text-purple-100 text-lg">
           <AlertTriangle className="h-5 w-5 text-purple-500" />
           High Risk Users Impacted
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4 pt-0 overflow-y-auto max-h-[320px] scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
         <div className="grid gap-3">
           {riskyUsers?.map((user) => (
             <div
               key={user.id}
-              className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 group"
+              className="bg-purple-950/30 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/40 transition-all duration-300 group"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
