@@ -29,7 +29,7 @@
 
 @layer components {
   .spotify-card {
-    @apply bg-[#1A1F2C]/80 border-purple-900/20 hover:bg-[#1A1F2C]/90 transition-all duration-300 h-[500px] rounded-xl overflow-hidden;
+    @apply bg-[#1A1F2C]/80 border-purple-900/20 hover:bg-[#1A1F2C]/90 transition-all duration-300 h-[400px] rounded-xl overflow-hidden;
   }
 
   .spotify-header {
@@ -41,7 +41,7 @@
   }
 
   .spotify-item {
-    @apply flex items-center justify-between p-3 rounded-lg bg-purple-950/30 border border-purple-900/30 hover:bg-purple-950/50 transition-all duration-300 cursor-pointer;
+    @apply relative flex items-center justify-between p-3 rounded-lg bg-[#1e2c3d]/40 border border-purple-900/20 hover:bg-[#1e2c3d]/60 transition-all duration-300 cursor-pointer;
   }
 
   .spotify-item-left {
@@ -57,7 +57,7 @@
   }
 
   .spotify-item-title {
-    @apply text-gray-200 truncate;
+    @apply text-base text-gray-200 font-medium truncate;
   }
 
   .spotify-item-subtitle {
@@ -76,65 +76,28 @@
     @apply flex items-center gap-3 flex-shrink-0;
   }
 
-  .stats-card {
-    @apply relative overflow-hidden bg-black/40 border-blue-500/10;
-    background: linear-gradient(
-      135deg,
-      rgba(99, 102, 241, 0.05) 0%,
-      rgba(168, 85, 247, 0.05) 50%,
-      rgba(59, 130, 246, 0.05) 100%
-    );
-    transition: all 0.3s ease-in-out;
+  .risk-score {
+    @apply font-mono font-bold text-2xl;
   }
 
-  .stats-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  .risk-score-high {
+    @apply text-red-500;
   }
 
-  .stats-value {
-    @apply text-4xl font-bold;
-    background: linear-gradient(to right, #60A5FA, #8B5CF6, #60A5FA);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    background-size: 200% auto;
-    animation: shine 3s linear infinite;
+  .risk-score-medium {
+    @apply text-orange-500;
   }
 
-  .stats-subtitle {
-    @apply text-xs flex items-center gap-1 text-blue-300/80;
+  .risk-score-low {
+    @apply text-yellow-500;
   }
 
-  .stats-icon {
-    @apply opacity-80;
-    filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.3));
+  .cardiogram {
+    @apply relative w-20 h-6 overflow-hidden;
   }
 
-  .stats-breakdown {
-    @apply mt-4 space-y-2 text-xs;
-  }
-
-  .stats-breakdown-item {
-    @apply flex justify-between items-center px-2 py-1 rounded transition-all duration-300 bg-black/40 hover:bg-black/60;
-  }
-
-  .stats-breakdown-label {
-    @apply text-blue-200/70;
-  }
-
-  .stats-breakdown-value {
-    @apply text-blue-100/90 font-mono;
-  }
-
-  .timeline-event {
-    @apply relative px-4 py-2 rounded-lg cursor-pointer;
-    transition: all 0.3s ease-out;
-  }
-
-  .timeline-event:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  .cardiogram svg {
+    @apply w-[200%] h-full animate-cardiogram;
   }
 }
 
@@ -162,9 +125,9 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  @apply bg-blue-950/20 rounded;
+  @apply bg-purple-950/20 rounded;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-blue-500/30 rounded hover:bg-blue-500/50 transition-colors;
+  @apply bg-purple-500/30 rounded hover:bg-purple-500/50 transition-colors;
 }
