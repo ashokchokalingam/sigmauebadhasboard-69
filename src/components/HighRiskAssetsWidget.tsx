@@ -37,8 +37,8 @@ const HighRiskAssetsWidget = () => {
   };
 
   return (
-    <div className="entity-card">
-      <div className="entity-header">
+    <div className="widget-container">
+      <div className="widget-header">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20">
             <AlertTriangle className="h-5 w-5 text-red-400" />
@@ -52,35 +52,35 @@ const HighRiskAssetsWidget = () => {
         </span>
       </div>
 
-      <div className="entity-search">
+      <div className="widget-search">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-400/50" />
           <input
             type="text"
             placeholder="Search critical assets..."
-            className="entity-search-input"
+            className="widget-search-input"
           />
         </div>
       </div>
 
-      <div className="entity-content scrollbar-thin scrollbar-thumb-indigo-500/10 scrollbar-track-transparent">
+      <div className="widget-content">
         {riskyAssets?.map((asset) => (
-          <div key={asset.id} className="entity-item">
-            <div className="entity-item-left">
-              <div className="entity-item-icon">
+          <div key={asset.id} className="widget-item">
+            <div className="widget-item-left">
+              <div className="widget-item-icon">
                 {getAssetIcon(asset.type)}
               </div>
-              <div className="entity-item-text">
-                <h3 className="entity-item-title">
+              <div className="widget-item-text">
+                <h3 className="widget-item-title">
                   {asset.name}
                 </h3>
-                <p className="entity-item-subtitle">
+                <p className="widget-item-subtitle">
                   Type: {asset.type}
                 </p>
               </div>
             </div>
 
-            <div className="entity-item-right">
+            <div className="widget-item-right">
               <div className="risk-score-container">
                 <div className="risk-level">
                   <span className="risk-level-text text-red-400 animate-pulse">
@@ -91,7 +91,7 @@ const HighRiskAssetsWidget = () => {
                   </span>
                 </div>
                 <div className="cardiogram">
-                  <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
+                  <svg viewBox="0 0 600 100" preserveAspectRatio="none">
                     <path
                       d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
                       className="stroke-red-500 fill-none stroke-[3]"

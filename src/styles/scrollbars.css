@@ -1,0 +1,13 @@
+@layer components {
+  .scrollbar-thin::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-[#5856D6]/5 rounded;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-[#5856D6]/20 rounded hover:bg-[#5856D6]/30 transition-colors;
+  }
+}
