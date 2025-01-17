@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 232 25% 15%;
+    --background: 232 25% 10%;
     --foreground: 210 40% 98%;
-    --card: 232 25% 18%;
+    --card: 232 25% 12%;
     --card-foreground: 210 40% 98%;
-    --popover: 232 25% 18%;
+    --popover: 232 25% 12%;
     --popover-foreground: 210 40% 98%;
     --primary: 217 91% 60%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 232 32% 17%;
+    --secondary: 232 32% 12%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 232 32% 17%;
+    --muted: 232 32% 12%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 232 32% 17%;
+    --accent: 232 32% 12%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 232 32% 17%;
-    --input: 232 32% 17%;
+    --border: 232 32% 12%;
+    --input: 232 32% 12%;
     --ring: 224 76% 48%;
     --radius: 0.5rem;
   }
@@ -29,19 +29,21 @@
 
 @layer components {
   .entity-card {
-    @apply bg-[#1E1E2F] border border-purple-500/20 rounded-xl overflow-hidden h-[500px] transition-all duration-300;
+    @apply bg-[#15161E] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[500px] 
+    transition-all duration-300 shadow-lg shadow-[#5856D6]/5 hover:shadow-[#5856D6]/10;
   }
 
   .entity-header {
-    @apply p-4 flex items-center justify-between bg-[#1E1E2F]/60 backdrop-blur-sm rounded-t-xl;
+    @apply p-4 flex items-center justify-between bg-[#15161E]/60 backdrop-blur-sm rounded-t-xl
+    border-b border-[#5856D6]/10;
   }
 
   .entity-title {
-    @apply flex items-center gap-2 text-lg font-semibold text-purple-200/90;
+    @apply flex items-center gap-2 text-lg font-semibold text-white/90;
   }
 
   .entity-count {
-    @apply text-sm font-medium text-purple-300/80 ml-2;
+    @apply text-sm font-medium text-[#5856D6] ml-2;
   }
 
   .entity-search {
@@ -49,11 +51,14 @@
   }
 
   .entity-search-input {
-    @apply w-full pl-10 pr-4 py-2.5 bg-[#1E1E2F]/40 hover:bg-[#1E1E2F]/60
-    border border-purple-500/10 hover:border-purple-400/20 rounded-lg
-    text-sm text-purple-200/90 placeholder:text-purple-400/50
+    @apply w-full pl-10 pr-4 py-2.5 
+    bg-[#15161E]/80 hover:bg-[#15161E]
+    border border-[#5856D6]/20 hover:border-[#5856D6]/40 
+    rounded-lg text-sm text-white/90 
+    placeholder:text-white/30
     transition-colors duration-200
-    focus:outline-none focus:ring-1 focus:ring-purple-400/20;
+    focus:outline-none focus:ring-1 focus:ring-[#5856D6]/40
+    shadow-sm shadow-[#5856D6]/5;
   }
 
   .entity-content {
@@ -63,9 +68,10 @@
 
   .entity-item {
     @apply flex items-center justify-between p-4 rounded-lg 
-    bg-[#1E1E2F]/40 hover:bg-[#1E1E2F]/60
-    border border-purple-500/10 hover:border-purple-400/20
-    transition-all duration-300 cursor-pointer h-[72px];
+    bg-[#15161E]/80 hover:bg-[#15161E]
+    border border-[#5856D6]/20 hover:border-[#5856D6]/40
+    transition-all duration-300 cursor-pointer h-[72px]
+    shadow-sm shadow-[#5856D6]/5 hover:shadow-md hover:shadow-[#5856D6]/10;
   }
 
   .entity-item-left {
@@ -73,7 +79,8 @@
   }
 
   .entity-item-icon {
-    @apply w-10 h-10 rounded-full bg-purple-800/30 flex items-center justify-center;
+    @apply w-10 h-10 rounded-full bg-[#5856D6]/10 flex items-center justify-center
+    border border-[#5856D6]/20;
   }
 
   .entity-item-text {
@@ -81,11 +88,11 @@
   }
 
   .entity-item-title {
-    @apply font-mono text-base text-purple-200/90 font-medium hover:text-purple-100 truncate max-w-[200px];
+    @apply font-mono text-base text-white/90 font-medium hover:text-white truncate max-w-[200px];
   }
 
   .entity-item-subtitle {
-    @apply text-sm text-purple-400/60 mt-1;
+    @apply text-sm text-[#5856D6]/80 mt-1;
   }
 
   .entity-item-right {
@@ -101,7 +108,7 @@
   }
 
   .risk-level-text {
-    @apply text-purple-300/90 font-medium text-base;
+    @apply text-white/90 font-medium text-base;
   }
 
   .risk-level-value {
@@ -117,7 +124,7 @@
   }
 
   .risk-score {
-    @apply font-bold text-3xl min-w-[70px] text-right;
+    @apply font-bold text-3xl min-w-[70px] text-right font-mono;
   }
 }
 
@@ -132,33 +139,36 @@
     @apply border-border;
   }
   body {
-    @apply bg-[#1E1E2F] text-foreground min-h-screen w-full m-0 p-0 font-sans;
+    @apply bg-[#15161E] text-foreground min-h-screen w-full m-0 p-0 font-sans;
   }
   #root {
-    @apply min-h-screen w-full bg-[#1E1E2F] m-0 p-0;
+    @apply min-h-screen w-full bg-[#15161E] m-0 p-0;
   }
 }
 
 /* Critical values */
 .critical-value {
-  @apply text-[#FF4D4D] font-bold;
+  @apply text-[#FF3B30] font-bold;
+  text-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
 }
 
 .medium-value {
-  @apply text-[#FFC107] font-bold;
+  @apply text-[#FF9500] font-bold;
+  text-shadow: 0 0 10px rgba(255, 149, 0, 0.5);
 }
 
 .low-value {
-  @apply text-[#4CAF50] font-bold;
+  @apply text-[#34C759] font-bold;
+  text-shadow: 0 0 10px rgba(52, 199, 89, 0.5);
 }
 
 /* Supporting text */
 .supporting-text {
-  @apply text-[#B0BEC5];
+  @apply text-white/70;
 }
 
 .annotation-text {
-  @apply text-[#90A4AE] text-sm;
+  @apply text-white/50 text-sm;
 }
 
 /* Scrollbar styles */
@@ -167,9 +177,9 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  @apply bg-purple-800/20 rounded;
+  @apply bg-[#5856D6]/10 rounded;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-purple-500/30 rounded hover:bg-purple-400/50 transition-colors;
+  @apply bg-[#5856D6]/30 rounded hover:bg-[#5856D6]/50 transition-colors;
 }
