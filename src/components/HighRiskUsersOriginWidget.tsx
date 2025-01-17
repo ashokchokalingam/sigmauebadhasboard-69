@@ -69,65 +69,91 @@ const HighRiskUsersOriginWidget = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4">
+        <div className="grid gap-6">
           {(riskyUsers || []).map((user: RiskyUser) => (
             <div
               key={user.user}
-              className="bg-purple-950/20 p-4 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 group"
+              className="relative overflow-hidden bg-gradient-to-br from-purple-950/30 to-purple-900/10 rounded-xl border border-purple-900/30 p-6 hover:shadow-lg hover:shadow-purple-500/5 transition-all duration-500 group"
             >
-              <div className="flex flex-col space-y-4">
-                {/* User Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-purple-900/50 flex items-center justify-center">
-                      <User className="w-5 h-5 text-purple-400" />
-                    </div>
-                    <span className="text-lg font-medium text-gray-200 group-hover:text-gray-100 transition-colors">
+              {/* Background Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-purple-400/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              {/* User Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-700/20 flex items-center justify-center border border-purple-500/20 shadow-lg">
+                    <User className="w-6 h-6 text-purple-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-purple-100 group-hover:text-white transition-colors">
                       {user.user}
-                    </span>
-                  </div>
-                  <div className="text-[#ea384c] text-3xl font-bold font-mono animate-pulse">
-                    {user.cumulative_risk_score}
+                    </h3>
+                    <p className="text-purple-300/60 text-sm">High Risk User</p>
                   </div>
                 </div>
+                <div className="text-[#ea384c] text-5xl font-bold font-mono tracking-tight group-hover:scale-110 transition-transform duration-300">
+                  {user.cumulative_risk_score}
+                </div>
+              </div>
 
-                {/* Metrics Grid */}
-                <div className="grid grid-cols-2 gap-3">
-                  {/* Unique Anomalies */}
-                  <div className="bg-purple-900/20 p-3 rounded-lg border border-purple-900/20">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Activity className="w-4 h-4 text-purple-400" />
-                      <span className="text-sm text-purple-200">Unique Anomalies</span>
-                    </div>
-                    <div className="text-xl font-semibold text-purple-100">
+              {/* Metrics Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Combined Anomalies Card */}
+                <div className="bg-purple-950/30 rounded-lg p-4 border border-purple-800/20">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Activity className="w-5 h-5 text-purple-400" />
+                    <span className="text-purple-200 font-medium">Total Anomalies</span>
+                  </div>
+                  <div className="flex items-end gap-2">
+                    <span className="text-3xl font-bold text-purple-100">
                       {parseInt(user.unique_tactics_count) + user.unique_title_count}
-                    </div>
+                    </span>
+                    <span className="text-purple-400/60 text-sm mb-1">detected</span>
                   </div>
-
-                  {/* Unique Outliers */}
-                  <div className="bg-purple-900/20 p-3 rounded-lg border border-purple-900/20">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Target className="w-4 h-4 text-purple-400" />
-                      <span className="text-sm text-purple-200">Unique Outliers</span>
-                    </div>
-                    <div className="text-xl font-semibold text-purple-100">
-                      {user.unique_outliers}
-                    </div>
+                  <div className="mt-2 text-xs text-purple-300/60">
+                    Tactics: {user.unique_tactics_count} | Titles: {user.unique_title_count}
                   </div>
                 </div>
 
-                {/* Risk Score Progress */}
-                <div className="w-full bg-purple-900/20 rounded-full h-2">
+                {/* Outliers Card */}
+                <div className="bg-purple-950/30 rounded-lg p-4 border border-purple-800/20">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Target className="w-5 h-5 text-purple-400" />
+                    <span className="text-purple-200 font-medium">Unique Outliers</span>
+                  </div>
+                  <div className="flex items-end gap-2">
+                    <span className="text-3xl font-bold text-purple-100">
+                      {user.unique_outliers}
+                    </span>
+                    <span className="text-purple-400/60 text-sm mb-1">detected</span>
+                  </div>
+                  <div className="mt-2 text-xs text-purple-300/60">
+                    Behavioral anomalies detected
+                  </div>
+                </div>
+              </div>
+
+              {/* Risk Score Progress Bar */}
+              <div className="mt-6">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-purple-300">Risk Level</span>
+                  <span className="text-sm text-[#ea384c] font-semibold">
+                    {Math.min((parseInt(user.cumulative_risk_score) / 300) * 100, 100).toFixed(0)}%
+                  </span>
+                </div>
+                <div className="w-full h-2 bg-purple-950/40 rounded-full overflow-hidden">
                   <div 
-                    className="bg-[#ea384c] h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min((parseInt(user.cumulative_risk_score) / 300) * 100, 100)}%` }}
+                    className="h-full bg-gradient-to-r from-purple-500 to-[#ea384c] transition-all duration-500"
+                    style={{ 
+                      width: `${Math.min((parseInt(user.cumulative_risk_score) / 300) * 100, 100)}%`,
+                    }}
                   />
                 </div>
               </div>
             </div>
           ))}
           {(!riskyUsers || riskyUsers.length === 0) && (
-            <div className="text-gray-400 text-center py-4">
+            <div className="text-purple-300 text-center py-8">
               No high risk users found
             </div>
           )}
