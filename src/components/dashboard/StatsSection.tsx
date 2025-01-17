@@ -8,7 +8,6 @@ interface StatsSectionProps {
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
-  // Safely calculate high risk users with optional chaining and nullish coalescing
   const highRiskUsers = stats?.uniqueUsers?.users?.filter(user => (user?.risk_score ?? 0) > 80)?.length ?? 0;
 
   return (
