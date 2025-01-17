@@ -46,7 +46,8 @@ const DashboardLayout = ({
 
   return (
     <div className="min-h-screen w-full bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-4 md:p-6">
-      <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-6 bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10">
+      {/* Stats Section */}
+      <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-6">
         <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">
           ATT&CK User Behavior Analytics
         </h1>
@@ -56,42 +57,44 @@ const DashboardLayout = ({
         </button>
       </div>
 
-      <div className="w-full bg-black/40 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10 mb-6">
+      <div className="mb-6">
         <StatsSection stats={stats} totalAlerts={totalRecords} />
       </div>
 
-      <div className="w-full bg-black/40 border border-purple-500/10 rounded-lg p-4 md:p-6 mb-6 min-h-[500px]">
+      <div className="mb-6">
         <OutliersWidget />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
-        <div className="h-[400px] overflow-hidden">
+      {/* High Risk Widgets */}
+      <div className="widgets-grid">
+        <div className="widget-container">
           <HighRiskUsersOriginWidget />
         </div>
-        <div className="h-[400px] overflow-hidden">
+        <div className="widget-container">
           <HighRiskUsersImpactedWidget />
         </div>
-        <div className="h-[400px] overflow-hidden">
+        <div className="widget-container">
           <HighRiskAssetsWidget />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
-        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4 md:p-6">
+      {/* Active Users Widgets */}
+      <div className="widgets-grid">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4">
           <RiskyEntities 
             alerts={allAlerts} 
             type="users-origin"
             onEntitySelect={(id) => onEntitySelect({ type: "userorigin", id })}
           />
         </div>
-        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4 md:p-6">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4">
           <RiskyEntities 
             alerts={allAlerts} 
             type="users-impacted"
             onEntitySelect={(id) => onEntitySelect({ type: "userimpacted", id })}
           />
         </div>
-        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4 md:p-6">
+        <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4">
           <RiskyEntities 
             alerts={allAlerts} 
             type="computers"
@@ -100,7 +103,7 @@ const DashboardLayout = ({
         </div>
       </div>
 
-      <div className="w-full bg-black/40 rounded-lg backdrop-blur-sm border border-blue-500/10">
+      <div className="mt-6 bg-black/40 rounded-lg backdrop-blur-sm border border-blue-500/10">
         <AnomaliesTable 
           alerts={alerts.slice(0, 1000)} 
           onLoadMore={onLoadMore}

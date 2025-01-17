@@ -29,29 +29,29 @@
 
 @layer components {
   .entity-card {
-    @apply bg-[#15161E] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[900px] 
+    @apply bg-[#15161E] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[400px] 
     transition-all duration-300 shadow-lg shadow-[#5856D6]/5 hover:shadow-[#5856D6]/10;
   }
 
   .entity-header {
-    @apply p-6 flex items-center justify-between bg-[#15161E]/60 backdrop-blur-sm rounded-t-xl
+    @apply p-4 flex items-center justify-between bg-[#15161E]/60 backdrop-blur-sm rounded-t-xl
     border-b border-[#5856D6]/10;
   }
 
   .entity-title {
-    @apply flex items-center gap-3 text-lg font-semibold text-white/90;
+    @apply flex items-center gap-2 text-base font-semibold text-white/90;
   }
 
   .entity-count {
-    @apply text-sm font-medium text-[#5856D6] ml-2;
+    @apply text-xs font-medium text-[#5856D6] px-2 py-1 rounded-full bg-[#5856D6]/10 border border-[#5856D6]/20;
   }
 
   .entity-search {
-    @apply p-6 border-b border-[#5856D6]/10;
+    @apply p-4 border-b border-[#5856D6]/10;
   }
 
   .entity-search-input {
-    @apply w-full pl-10 pr-4 py-3
+    @apply w-full pl-9 pr-4 py-2
     bg-[#15161E]/80 hover:bg-[#15161E]
     border border-[#5856D6]/20 hover:border-[#5856D6]/40 
     rounded-lg text-sm text-white/90 
@@ -62,37 +62,37 @@
   }
 
   .entity-content {
-    @apply px-6 pb-6 space-y-3 overflow-y-auto scrollbar-thin scrollbar-thumb-[#5856D6]/20 scrollbar-track-transparent;
-    height: calc(100% - 180px);
+    @apply px-4 pb-4 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-[#5856D6]/20 scrollbar-track-transparent;
+    height: calc(100% - 120px);
   }
 
   .entity-item {
-    @apply flex items-center justify-between p-5 rounded-lg 
+    @apply flex items-center justify-between p-3 rounded-lg 
     bg-[#15161E]/80 hover:bg-[#15161E]
     border border-[#5856D6]/20 hover:border-[#5856D6]/40
-    transition-all duration-300 cursor-pointer h-[80px]
+    transition-all duration-300 cursor-pointer h-[64px]
     shadow-sm shadow-[#5856D6]/5 hover:shadow-md hover:shadow-[#5856D6]/10;
   }
 
   .entity-item-left {
-    @apply flex items-center gap-4 flex-[0_0_50%];
+    @apply flex items-center gap-3 flex-[0_0_50%];
   }
 
   .entity-item-icon {
-    @apply w-10 h-10 rounded-full bg-[#5856D6]/10 flex items-center justify-center
+    @apply w-8 h-8 rounded-full bg-[#5856D6]/10 flex items-center justify-center
     border border-[#5856D6]/20;
   }
 
   .entity-item-text {
-    @apply flex flex-col min-w-[120px] gap-2;
+    @apply flex flex-col min-w-[120px] gap-1;
   }
 
   .entity-item-title {
-    @apply font-mono text-base text-white/90 font-medium hover:text-white truncate max-w-[200px];
+    @apply font-mono text-sm text-white/90 font-medium hover:text-white truncate max-w-[200px];
   }
 
   .entity-item-subtitle {
-    @apply text-sm text-[#5856D6]/80;
+    @apply text-xs text-[#5856D6]/80;
   }
 
   .entity-item-right {
@@ -100,23 +100,23 @@
   }
 
   .risk-score-container {
-    @apply flex items-center gap-3;
+    @apply flex items-center gap-2;
   }
 
   .risk-level {
-    @apply flex flex-col items-center gap-0.5;
+    @apply flex flex-col items-end;
   }
 
   .risk-level-text {
-    @apply text-base font-medium;
+    @apply text-sm font-medium;
   }
 
   .risk-level-value {
-    @apply text-xs font-medium;
+    @apply text-xs font-medium -mt-0.5;
   }
 
   .cardiogram {
-    @apply relative w-20 h-6 overflow-hidden;
+    @apply relative w-16 h-5 overflow-hidden opacity-70;
   }
 
   .cardiogram svg {
@@ -124,7 +124,7 @@
   }
 
   .risk-score {
-    @apply font-bold text-3xl min-w-[70px] text-right font-mono;
+    @apply font-mono font-bold text-2xl min-w-[60px] text-right tabular-nums;
   }
 }
 
@@ -162,24 +162,24 @@
   text-shadow: 0 0 10px rgba(52, 199, 89, 0.5);
 }
 
-/* Supporting text */
-.supporting-text {
-  @apply text-white/70;
-}
-
-.annotation-text {
-  @apply text-white/50 text-sm;
-}
-
 /* Scrollbar styles */
 .scrollbar-thin::-webkit-scrollbar {
-  @apply w-1.5 h-1.5;
+  @apply w-1.5;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  @apply bg-[#5856D6]/10 rounded;
+  @apply bg-[#5856D6]/5 rounded;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-[#5856D6]/30 rounded hover:bg-[#5856D6]/50 transition-colors;
+  @apply bg-[#5856D6]/20 rounded hover:bg-[#5856D6]/30 transition-colors;
+}
+
+/* Grid layout for widgets */
+.widgets-grid {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6;
+}
+
+.widget-container {
+  @apply h-[400px] overflow-hidden;
 }
