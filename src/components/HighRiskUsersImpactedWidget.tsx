@@ -39,7 +39,7 @@ const HighRiskUsersImpactedWidget = () => {
   };
 
   return (
-    <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300 h-[280px] overflow-auto">
+    <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-purple-100">
           <AlertTriangle className="h-5 w-5 text-purple-500" />

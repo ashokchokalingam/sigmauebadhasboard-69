@@ -52,7 +52,7 @@ const HighRiskUsersOriginWidget = () => {
 
   if (isLoading) {
     return (
-      <Card className="bg-black/40 border-purple-900/20 h-[280px]">
+      <Card className="bg-black/40 border-purple-900/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-purple-100">
             <AlertTriangle className="h-5 w-5 text-purple-500" />
@@ -70,7 +70,7 @@ const HighRiskUsersOriginWidget = () => {
 
   if (isError) {
     return (
-      <Card className="bg-black/40 border-purple-900/20 h-[280px]">
+      <Card className="bg-black/40 border-purple-900/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-purple-100">
             <AlertTriangle className="h-5 w-5 text-red-500" />
@@ -85,7 +85,7 @@ const HighRiskUsersOriginWidget = () => {
   }
 
   return (
-    <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300 h-[280px] overflow-auto">
+    <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-purple-100">
           <AlertTriangle className="h-5 w-5 text-purple-500" />
