@@ -80,10 +80,10 @@ const HighRiskAssetsWidget = () => {
               <div className="flex-1 flex items-center justify-end">
                 <div className="flex items-center gap-2">
                   <div className="flex flex-col items-center">
-                    <span className={`text-base font-medium ${getRiskClass(asset.riskScore)}`}>
+                    <span className="text-base font-medium text-red-500 animate-pulse">
                       Risk
                     </span>
-                    <span className={`text-xs font-medium -mt-0.5 ${getRiskClass(asset.riskScore)}`}>
+                    <span className="text-xs font-medium -mt-0.5 text-red-500 animate-pulse">
                       critical
                     </span>
                   </div>
@@ -91,13 +91,13 @@ const HighRiskAssetsWidget = () => {
                     <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
                       <path
                         d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
-                        className={`stroke-current fill-none stroke-[4] ${getRiskClass(asset.riskScore)}`}
+                        className="stroke-red-500 fill-none stroke-[4] animate-pulse"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
                     </svg>
                   </div>
-                  <span className={`font-bold text-3xl min-w-[70px] text-right ${getRiskClass(asset.riskScore)}`}>
+                  <span className="font-bold text-3xl min-w-[70px] text-right text-red-500 animate-pulse">
                     {asset.riskScore}
                   </span>
                 </div>
