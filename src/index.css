@@ -34,12 +34,12 @@
   }
 
   .entity-header {
-    @apply p-4 flex items-center justify-between bg-[#15161E]/60 backdrop-blur-sm rounded-t-xl
+    @apply p-6 flex items-center justify-between bg-[#15161E]/60 backdrop-blur-sm rounded-t-xl
     border-b border-[#5856D6]/10;
   }
 
   .entity-title {
-    @apply flex items-center gap-2 text-lg font-semibold text-white/90;
+    @apply flex items-center gap-3 text-lg font-semibold text-white/90;
   }
 
   .entity-count {
@@ -47,11 +47,11 @@
   }
 
   .entity-search {
-    @apply relative p-4;
+    @apply p-6;
   }
 
   .entity-search-input {
-    @apply w-full pl-10 pr-4 py-2.5 
+    @apply w-full pl-10 pr-4 py-3
     bg-[#15161E]/80 hover:bg-[#15161E]
     border border-[#5856D6]/20 hover:border-[#5856D6]/40 
     rounded-lg text-sm text-white/90 
@@ -62,15 +62,15 @@
   }
 
   .entity-content {
-    @apply p-4 space-y-2 overflow-y-auto;
+    @apply px-6 pb-6 space-y-3 overflow-y-auto;
     height: calc(100% - 140px);
   }
 
   .entity-item {
-    @apply flex items-center justify-between p-4 rounded-lg 
+    @apply flex items-center justify-between p-5 rounded-lg 
     bg-[#15161E]/80 hover:bg-[#15161E]
     border border-[#5856D6]/20 hover:border-[#5856D6]/40
-    transition-all duration-300 cursor-pointer h-[72px]
+    transition-all duration-300 cursor-pointer h-[80px]
     shadow-sm shadow-[#5856D6]/5 hover:shadow-md hover:shadow-[#5856D6]/10;
   }
 
@@ -84,7 +84,7 @@
   }
 
   .entity-item-text {
-    @apply flex flex-col min-w-[120px];
+    @apply flex flex-col min-w-[120px] gap-2;
   }
 
   .entity-item-title {
@@ -92,7 +92,7 @@
   }
 
   .entity-item-subtitle {
-    @apply text-sm text-[#5856D6]/80 mt-1;
+    @apply text-sm text-[#5856D6]/80;
   }
 
   .entity-item-right {
@@ -100,19 +100,19 @@
   }
 
   .risk-score-container {
-    @apply flex items-center gap-2;
+    @apply flex items-center gap-3;
   }
 
   .risk-level {
-    @apply flex flex-col items-center;
+    @apply flex flex-col items-center gap-0.5;
   }
 
   .risk-level-text {
-    @apply text-white/90 font-medium text-base;
+    @apply text-base font-medium;
   }
 
   .risk-level-value {
-    @apply text-xs font-medium -mt-0.5;
+    @apply text-xs font-medium;
   }
 
   .cardiogram {
