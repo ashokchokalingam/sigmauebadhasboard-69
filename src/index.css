@@ -4,11 +4,11 @@
 
 @layer base {
   :root {
-    --background: 262 43% 12%;
+    --background: 232 24% 14%;
     --foreground: 240 4.8% 95.9%;
-    --card: 262 43% 12%;
+    --card: 232 24% 14%;
     --card-foreground: 240 4.8% 95.9%;
-    --popover: 262 43% 12%;
+    --popover: 232 24% 14%;
     --popover-foreground: 240 4.8% 95.9%;
     --primary: 262 60% 75%;
     --primary-foreground: 240 5.9% 10%;
@@ -28,102 +28,71 @@
 }
 
 @layer components {
-  .entity-card {
-    @apply bg-[#1e1f3b]/80 border border-purple-500/20 rounded-xl overflow-hidden h-[500px] transition-all duration-300;
+  .stats-card {
+    @apply relative overflow-hidden bg-black/40 border-blue-500/10;
+    background: linear-gradient(
+      135deg,
+      rgba(99, 102, 241, 0.05) 0%,
+      rgba(168, 85, 247, 0.05) 50%,
+      rgba(59, 130, 246, 0.05) 100%
+    );
+    transition: all 0.3s ease-in-out;
   }
 
-  .entity-header {
-    @apply p-4 flex items-center justify-between bg-[#252644]/60 backdrop-blur-sm rounded-t-xl;
+  .stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
   }
 
-  .entity-title {
-    @apply flex items-center gap-2 text-lg font-semibold text-purple-200/90;
+  .stats-value {
+    @apply text-4xl font-bold;
+    background: linear-gradient(to right, #60A5FA, #8B5CF6, #60A5FA);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 200% auto;
+    animation: shine 3s linear infinite;
   }
 
-  .entity-count {
-    @apply text-sm font-medium text-purple-300/80 ml-2;
+  .stats-subtitle {
+    @apply text-xs flex items-center gap-1 text-blue-300/80;
   }
 
-  .entity-search {
-    @apply relative p-4;
+  .stats-icon {
+    @apply opacity-80;
+    filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.3));
   }
 
-  .entity-search-input {
-    @apply w-full pl-10 pr-4 py-2.5 bg-[#252644]/40 hover:bg-[#252644]/60
-    border border-purple-500/10 hover:border-purple-400/20 rounded-lg
-    text-sm text-purple-200/90 placeholder:text-purple-400/50
-    transition-colors duration-200
-    focus:outline-none focus:ring-1 focus:ring-purple-400/20;
+  .stats-breakdown {
+    @apply mt-4 space-y-2 text-xs;
   }
 
-  .entity-content {
-    @apply p-4 space-y-2 overflow-y-auto;
-    height: calc(100% - 140px);
+  .stats-breakdown-item {
+    @apply flex justify-between items-center px-2 py-1 rounded transition-all duration-300 bg-black/40 hover:bg-black/60;
   }
 
-  .entity-item {
-    @apply flex items-center justify-between p-4 rounded-lg 
-    bg-[#252644]/40 hover:bg-[#252644]/60
-    border border-purple-500/10 hover:border-purple-400/20
-    transition-all duration-300 cursor-pointer h-[72px];
+  .stats-breakdown-label {
+    @apply text-blue-200/70;
   }
 
-  .entity-item-left {
-    @apply flex items-center gap-4 flex-[0_0_50%];
+  .stats-breakdown-value {
+    @apply text-blue-100/90 font-mono;
   }
 
-  .entity-item-icon {
-    @apply w-10 h-10 rounded-full bg-purple-800/30 flex items-center justify-center;
+  .timeline-event {
+    @apply relative px-4 py-2 rounded-lg cursor-pointer;
+    transition: all 0.3s ease-out;
   }
 
-  .entity-item-text {
-    @apply flex flex-col min-w-[120px];
-  }
-
-  .entity-item-title {
-    @apply font-mono text-base text-purple-200/90 font-medium hover:text-purple-100 truncate max-w-[200px];
-  }
-
-  .entity-item-subtitle {
-    @apply text-sm text-purple-400/60 mt-1;
-  }
-
-  .entity-item-right {
-    @apply flex-1 flex items-center justify-end;
-  }
-
-  .risk-score-container {
-    @apply flex items-center gap-2;
-  }
-
-  .risk-level {
-    @apply flex flex-col items-center;
-  }
-
-  .risk-level-text {
-    @apply text-purple-300/90 font-medium text-base;
-  }
-
-  .risk-level-value {
-    @apply text-xs font-medium -mt-0.5;
-  }
-
-  .cardiogram {
-    @apply relative w-20 h-6 overflow-hidden;
-  }
-
-  .cardiogram svg {
-    @apply w-[200%] h-full animate-cardiogram;
-  }
-
-  .risk-score {
-    @apply font-bold text-3xl min-w-[70px] text-right;
+  .timeline-event:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 }
 
-@keyframes cardiogram {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+@keyframes shine {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 
 /* Base styles */
@@ -145,9 +114,9 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  @apply bg-purple-800/20 rounded;
+  @apply bg-blue-950/20 rounded;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-purple-500/30 rounded hover:bg-purple-400/50 transition-colors;
+  @apply bg-blue-500/30 rounded hover:bg-blue-500/50 transition-colors;
 }

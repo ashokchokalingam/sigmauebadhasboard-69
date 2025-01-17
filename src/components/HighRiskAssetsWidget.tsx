@@ -1,3 +1,4 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Database, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -23,59 +24,68 @@ const HighRiskAssetsWidget = () => {
     }
   });
 
+  const getTrendLine = (trend: string) => {
+    switch (trend) {
+      case "up": return "M1 9L5 5L9 9";
+      case "down": return "M1 5L5 9L9 5";
+      default: return "M1 7H9";
+    }
+  };
+
+  const getTrendColor = (score: number) => {
+    if (score >= 9) return "text-red-500";
+    if (score >= 8) return "text-orange-500";
+    return "text-yellow-500";
+  };
+
   return (
-    <div className="entity-card">
-      <div className="entity-header">
-        <div className="entity-title">
+    <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-purple-100">
           <AlertTriangle className="h-5 w-5 text-purple-500" />
           High Risk Assets
-          <span className="entity-count">{riskyAssets?.length || 0} risky assets</span>
-        </div>
-      </div>
-
-      <div className="entity-search">
-        <input
-          type="text"
-          placeholder="Search entities..."
-          className="entity-search-input"
-        />
-      </div>
-
-      <div className="entity-content scrollbar-thin">
-        {riskyAssets?.map((asset) => (
-          <div key={asset.id} className="entity-item">
-            <div className="entity-item-left">
-              <div className="entity-item-icon">
-                <Database className="w-5 h-5 text-purple-400" />
-              </div>
-              <div className="entity-item-text">
-                <div className="entity-item-title">{asset.name}</div>
-                <div className="entity-item-subtitle">Type: {asset.type}</div>
-              </div>
-            </div>
-            <div className="entity-item-right">
-              <div className="risk-score-container">
-                <div className="risk-level">
-                  <span className="risk-level-text">Risk</span>
-                  <span className="risk-level-value">critical</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-3">
+          {riskyAssets?.map((asset) => (
+            <div
+              key={asset.id}
+              className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 group"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-purple-900/50 flex items-center justify-center">
+                    <Database className="w-4 h-4 text-purple-400" />
+                  </div>
+                  <span className="text-gray-200 group-hover:text-gray-100 transition-colors">
+                    {asset.name}
+                  </span>
                 </div>
-                <div className="cardiogram">
-                  <svg viewBox="0 0 600 100" preserveAspectRatio="none">
+                <div className="flex items-center gap-3">
+                  <svg
+                    width="40"
+                    height="14"
+                    viewBox="0 0 40 14"
+                    className={`${getTrendColor(asset.riskScore)} opacity-60`}
+                  >
                     <path
-                      d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
-                      className="stroke-current fill-none stroke-[4]"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                      d={getTrendLine(asset.trend)}
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      fill="none"
                     />
                   </svg>
+                  <span className={`font-mono font-bold ${getTrendColor(asset.riskScore)}`}>
+                    {asset.riskScore}
+                  </span>
                 </div>
-                <span className="risk-score">{asset.riskScore}</span>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
