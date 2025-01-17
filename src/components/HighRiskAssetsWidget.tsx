@@ -23,57 +23,54 @@ const HighRiskAssetsWidget = () => {
     }
   });
 
-  const getTrendLine = (trend: string) => {
-    switch (trend) {
-      case "up": return "M1 9L5 5L9 9";
-      case "down": return "M1 5L5 9L9 5";
-      default: return "M1 7H9";
-    }
-  };
-
-  const getTrendColor = (score: number) => {
-    if (score >= 9) return "text-red-500";
-    if (score >= 8) return "text-orange-500";
-    return "text-yellow-500";
-  };
-
   return (
-    <div className="spotify-card">
-      <div className="spotify-header">
-        <h2 className="flex items-center gap-2 text-purple-100 text-lg font-semibold">
+    <div className="entity-card">
+      <div className="entity-header">
+        <div className="entity-title">
           <AlertTriangle className="h-5 w-5 text-purple-500" />
           High Risk Assets
-        </h2>
+          <span className="entity-count">{riskyAssets?.length || 0} risky assets</span>
+        </div>
       </div>
-      <div className="spotify-content">
+
+      <div className="entity-search">
+        <input
+          type="text"
+          placeholder="Search entities..."
+          className="entity-search-input"
+        />
+      </div>
+
+      <div className="entity-content scrollbar-thin">
         {riskyAssets?.map((asset) => (
-          <div key={asset.id} className="spotify-item">
-            <div className="spotify-item-left">
-              <div className="spotify-item-icon">
+          <div key={asset.id} className="entity-item">
+            <div className="entity-item-left">
+              <div className="entity-item-icon">
                 <Database className="w-5 h-5 text-purple-400" />
               </div>
-              <div className="spotify-item-text">
-                <div className="spotify-item-title">{asset.name}</div>
-                <div className="spotify-item-subtitle">Type: {asset.type}</div>
+              <div className="entity-item-text">
+                <div className="entity-item-title">{asset.name}</div>
+                <div className="entity-item-subtitle">Type: {asset.type}</div>
               </div>
             </div>
-            <div className="spotify-item-right">
-              <svg
-                width="40"
-                height="14"
-                viewBox="0 0 40 14"
-                className={`${getTrendColor(asset.riskScore)} opacity-60`}
-              >
-                <path
-                  d={getTrendLine(asset.trend)}
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  fill="none"
-                />
-              </svg>
-              <span className={`font-mono font-bold ${getTrendColor(asset.riskScore)}`}>
-                {asset.riskScore}
-              </span>
+            <div className="entity-item-right">
+              <div className="risk-score-container">
+                <div className="risk-level">
+                  <span className="risk-level-text">Risk</span>
+                  <span className="risk-level-value">critical</span>
+                </div>
+                <div className="cardiogram">
+                  <svg viewBox="0 0 600 100" preserveAspectRatio="none">
+                    <path
+                      d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
+                      className="stroke-current fill-none stroke-[4]"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <span className="risk-score">{asset.riskScore}</span>
+              </div>
             </div>
           </div>
         ))}
