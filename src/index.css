@@ -62,7 +62,7 @@
   }
 
   .entity-content {
-    @apply px-6 pb-6 space-y-3 overflow-y-auto;
+    @apply px-6 pb-6 space-y-3 overflow-y-auto scrollbar-thin scrollbar-thumb-[#5856D6]/20 scrollbar-track-transparent;
     height: calc(100% - 180px);
   }
 
