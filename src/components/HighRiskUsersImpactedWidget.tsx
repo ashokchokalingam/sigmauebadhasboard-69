@@ -23,11 +23,17 @@ const HighRiskUsersImpactedWidget = () => {
     }
   });
 
+  const getRiskClass = (score: number) => {
+    if (score >= 9) return "critical-value";
+    if (score >= 8) return "medium-value";
+    return "low-value";
+  };
+
   return (
     <div className="entity-card">
       <div className="entity-header">
         <div className="entity-title">
-          <AlertTriangle className="h-5 w-5 text-purple-500" />
+          <AlertTriangle className="h-5 w-5 text-[#5856D6]" />
           High Risk Users Impacted
           <span className="entity-count">{riskyUsers?.length || 0} risky users</span>
         </div>
@@ -53,7 +59,7 @@ const HighRiskUsersImpactedWidget = () => {
                     className="w-10 h-10 rounded-full"
                   />
                 ) : (
-                  <User className="w-5 h-5 text-purple-400" />
+                  <User className="w-5 h-5 text-[#5856D6]" />
                 )}
               </div>
               <div className="entity-item-text">
@@ -71,13 +77,15 @@ const HighRiskUsersImpactedWidget = () => {
                   <svg viewBox="0 0 600 100" preserveAspectRatio="none">
                     <path
                       d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
-                      className="stroke-current fill-none stroke-[4]"
+                      className={`stroke-current fill-none stroke-[4] ${getRiskClass(user.riskScore)}`}
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
                   </svg>
                 </div>
-                <span className="risk-score">{user.riskScore}</span>
+                <span className={`risk-score ${getRiskClass(user.riskScore)}`}>
+                  {user.riskScore}
+                </span>
               </div>
             </div>
           </div>
