@@ -33,7 +33,7 @@ const HighRiskUsersImpactedWidget = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-[#0A0B0F] border border-blue-500/10 rounded-xl overflow-hidden">
+      <div className="bg-[#1A1F2C] border border-blue-500/10 rounded-xl overflow-hidden">
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-purple-400/80" />
@@ -49,7 +49,7 @@ const HighRiskUsersImpactedWidget = () => {
 
   if (isError) {
     return (
-      <div className="bg-[#0A0B0F] border border-blue-500/10 rounded-xl overflow-hidden">
+      <div className="bg-[#1A1F2C] border border-blue-500/10 rounded-xl overflow-hidden">
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" />
@@ -64,7 +64,7 @@ const HighRiskUsersImpactedWidget = () => {
   }
 
   return (
-    <div className="bg-[#0A0B0F] border border-blue-500/10 rounded-xl overflow-hidden">
+    <div className="bg-[#1A1F2C] border border-blue-500/10 rounded-xl overflow-hidden">
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <AlertTriangle className="h-5 w-5 text-purple-400/80" />
@@ -83,7 +83,7 @@ const HighRiskUsersImpactedWidget = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search entities..."
-            className="w-full pl-10 pr-4 py-2.5 bg-[#0A0B0F]/80 hover:bg-[#0A0B0F] 
+            className="w-full pl-10 pr-4 py-2.5 bg-[#1A1F2C]/40 hover:bg-[#1A1F2C]/60 
               border border-blue-500/5 hover:border-blue-500/10 rounded-lg
               text-sm text-blue-100/90 placeholder:text-blue-400/50
               transition-colors duration-200 focus:outline-none focus:ring-1 focus:ring-blue-500/20"
@@ -96,7 +96,7 @@ const HighRiskUsersImpactedWidget = () => {
           <div key={user.user} 
             className="group relative flex items-center p-4 rounded-lg h-[72px]
               transition-all duration-300 cursor-pointer
-              bg-[#0A0B0F]/80 hover:bg-[#0A0B0F]
+              bg-[#1A1F2C]/40 hover:bg-[#1A1F2C]/60
               border border-blue-500/5 hover:border-blue-500/10">
             <div className="flex items-center w-full">
               <div className="flex items-center gap-4 flex-[0_0_50%]">
