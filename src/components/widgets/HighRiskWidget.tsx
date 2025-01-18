@@ -20,7 +20,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
   useEffect(() => {
     const interval = setInterval(() => {
       setStatIndex((prev) => (prev + 1) % 3);
-    }, 800); // Rotate every 800ms
+    }, 800);
 
     return () => clearInterval(interval);
   }, []);
@@ -35,10 +35,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
       const data = await response.json();
       const key = Object.keys(data)[0];
       return data[key] || [];
-    }
-  });
-
-  const filteredEntities = entities
+    } = entities
     .filter((entity: any) => {
       const entityName = entityType === 'computer' ? entity.computer : entity.user;
       return entityName?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -52,7 +49,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
   };
 
   const getRiskColor = (score: number): string => {
-    if (score >= 200) return "text-red-500";
+    if (score >= 200) return "text-[#ea384c]";
     if (score >= 50) return "text-orange-500";
     return "text-yellow-500";
   };
@@ -91,13 +88,13 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
 
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300 h-[500px]">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-purple-100">
+      <CardHeader className="p-6">
+        <CardTitle className="flex items-center gap-3 text-purple-100">
           <Shield className="h-5 w-5 text-purple-500" />
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6 pt-0">
         <div className="space-y-4">
           <Input
             type="text"
@@ -106,7 +103,8 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
             onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-purple-950/20 border-purple-900/30 text-purple-100 placeholder:text-purple-400/50"
           />
-          <div className="space-y-2 overflow-y-auto pr-2" style={{ height: 'calc(500px - 140px)' }}>
+          <div className="space-y-3 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-purple-900/20 scrollbar-track-transparent" 
+               style={{ height: 'calc(500px - 140px)' }}>
             {filteredEntities.map((entity: any, index: number) => {
               const entityId = entityType === 'computer' ? entity.computer : entity.user;
               const riskScore = parseFloat(entity.cumulative_risk_score);
@@ -118,17 +116,20 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
                   key={index}
                   onClick={() => handleEntityClick(entityId)}
                   className="bg-purple-950/20 p-4 rounded-lg border border-purple-900/30 
-                           hover:bg-purple-950/30 transition-all duration-300 cursor-pointer"
+                           hover:bg-purple-950/30 transition-all duration-300 cursor-pointer
+                           group"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex flex-col gap-1">
-                      <span className="text-purple-100 font-mono">{entityId}</span>
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-purple-100 font-mono group-hover:text-white transition-colors">
+                        {entityId}
+                      </span>
                       <span className="text-xs text-purple-400/70 transition-all duration-300">
                         {currentStat.label}: {currentStat.value}
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className={`text-sm ${getRiskColor(riskScore)}`}>
+                      <span className={`text-sm font-medium ${getRiskColor(riskScore)}`}>
                         {riskLevel} risk
                       </span>
                       <div className="relative w-24 h-8 overflow-hidden">
