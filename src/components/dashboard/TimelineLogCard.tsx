@@ -6,11 +6,11 @@ import { format } from "date-fns";
 interface TimelineLogCardProps {
   log: Alert;
   isExpanded: boolean;
-  onToggleExpand: (e: React.MouseEvent) => void;
+  onToggleExpand: () => void;
   visibleColumns: string[];
 }
 
-const TimelineLogCard = ({ log, isExpanded, onToggleExpand, visibleColumns }: TimelineLogCardProps) => {
+const TimelineLogCard = ({ log, isExpanded, onToggleExpand }: TimelineLogCardProps) => {
   const formattedTime = format(new Date(log.system_time), "MMM d, yyyy hh:mm:ss aa");
 
   return (
@@ -28,24 +28,24 @@ const TimelineLogCard = ({ log, isExpanded, onToggleExpand, visibleColumns }: Ti
         {log.target_user_name || 'N/A'}
       </TableCell>
       <TableCell className="w-[140px] text-purple-200/90 text-base">
-        {log.computer_name}
+        {log.computer_name || 'N/A'}
       </TableCell>
       <TableCell className="min-w-[200px] text-purple-200/90">
         <div className="flex flex-col gap-1">
           <span className="font-medium text-base">{log.title}</span>
-          <span className="text-base text-purple-200/70 line-clamp-1">
+          <span className="text-sm text-purple-200/70 line-clamp-2">
             {log.description}
           </span>
         </div>
       </TableCell>
       <TableCell className="w-[200px]">
         <div className="flex flex-wrap gap-1.5">
-          {log.tags.split(',').map((tag, index) => (
+          {log.tactics?.split(',').map((tactic, index) => (
             <span
               key={index}
               className="px-3 py-1 text-sm rounded-full bg-purple-400/10 text-purple-200/90"
             >
-              {tag.trim()}
+              {tactic.trim()}
             </span>
           ))}
         </div>

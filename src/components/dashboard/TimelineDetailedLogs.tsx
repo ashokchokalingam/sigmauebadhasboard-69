@@ -74,10 +74,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
                       key={log.id}
                       log={log}
                       isExpanded={selectedLog?.id === log.id}
-                      onToggleExpand={(e) => {
-                        e.stopPropagation();
-                        handleLogClick(log);
-                      }}
+                      onToggleExpand={() => handleLogClick(log)}
                       visibleColumns={[]}
                     />
                   ))}
@@ -96,7 +93,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
             
             <ResizablePanel 
               defaultSize={40}
-              minSize
+              minSize={30}
             >
               <div className="absolute inset-0 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
                 <DetailsPanel 
