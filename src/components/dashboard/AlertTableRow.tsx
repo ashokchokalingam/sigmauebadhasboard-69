@@ -1,3 +1,4 @@
+import React from "react";
 import { TableRow } from "@/components/ui/table";
 import { ChevronRight } from "lucide-react";
 import { Alert } from "./types";
