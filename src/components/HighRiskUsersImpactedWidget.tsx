@@ -72,10 +72,10 @@ const HighRiskUsersImpactedWidget = () => {
           <div
             key={user.user}
             className="group relative p-4 rounded-xl
-              bg-gradient-to-r from-[#0D0E12] to-[#0D0E12]/80
+              bg-[#0A0B0F] hover:bg-[#0F1115]
               border border-indigo-500/10 hover:border-indigo-500/20
               transition-all duration-300 cursor-pointer
-              hover:shadow-lg hover:shadow-indigo-500/5"
+              shadow-lg shadow-indigo-500/5 hover:shadow-indigo-500/10"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
