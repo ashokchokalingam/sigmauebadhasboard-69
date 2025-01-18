@@ -1,6 +1,6 @@
 import { AlertTriangle, Search, User } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface RiskyAsset {
   computer: string;
@@ -10,8 +10,15 @@ interface RiskyAsset {
   unique_title_count: number;
 }
 
+interface MetricDisplay {
+  value: number | string;
+  label: string;
+}
+
 const HighRiskAssetsWidget = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentMetricIndex, setCurrentMetricIndex] = useState(0);
+  
   const { data: riskyAssets, isError, isLoading } = useQuery({
     queryKey: ['riskyAssets'],
     queryFn: async () => {
@@ -26,6 +33,20 @@ const HighRiskAssetsWidget = () => {
       return sortedAssets || [];
     }
   });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentMetricIndex((prev) => (prev + 1) % 3);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const getMetricsForAsset = (asset: RiskyAsset): MetricDisplay[] => [
+    { value: asset.unique_title_count, label: 'unique anomalies' },
+    { value: asset.unique_tactics_count, label: 'unique tactics' },
+    { value: asset.unique_outliers, label: 'unique outliers' }
+  ];
 
   const filteredAssets = riskyAssets?.filter(asset => 
     asset.computer.toLowerCase().includes(searchQuery.toLowerCase())
@@ -87,56 +108,61 @@ const HighRiskAssetsWidget = () => {
       </div>
 
       <div className="px-6 pb-6 space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-500/10 scrollbar-track-transparent">
-        {filteredAssets?.map((asset: RiskyAsset) => (
-          <div
-            key={asset.computer}
-            className="group relative p-4 rounded-xl
-              bg-gradient-to-r from-[#0D0E12] to-[#0D0E12]/80
-              border border-indigo-500/10 hover:border-indigo-500/20
-              transition-all duration-300 cursor-pointer
-              hover:shadow-lg hover:shadow-indigo-500/5"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="p-2.5 rounded-lg bg-indigo-500/5 border border-indigo-500/10 group-hover:border-indigo-500/20 transition-colors">
-                  <User className="h-5 w-5 text-indigo-400" />
+        {filteredAssets?.map((asset: RiskyAsset) => {
+          const metrics = getMetricsForAsset(asset);
+          const currentMetric = metrics[currentMetricIndex];
+          
+          return (
+            <div
+              key={asset.computer}
+              className="group relative p-4 rounded-xl
+                bg-gradient-to-r from-[#0D0E12] to-[#0D0E12]/80
+                border border-indigo-500/10 hover:border-indigo-500/20
+                transition-all duration-300 cursor-pointer
+                hover:shadow-lg hover:shadow-indigo-500/5"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="p-2.5 rounded-lg bg-indigo-500/5 border border-indigo-500/10 group-hover:border-indigo-500/20 transition-colors">
+                    <User className="h-5 w-5 text-indigo-400" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-mono text-base text-indigo-100/90 font-medium group-hover:text-indigo-100">
+                      {asset.computer}
+                    </h3>
+                    <p className="text-sm text-indigo-400/70 font-medium transition-all duration-200">
+                      {currentMetric.value} {currentMetric.label}
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <h3 className="font-mono text-base text-indigo-100/90 font-medium group-hover:text-indigo-100">
-                    {asset.computer}
-                  </h3>
-                  <p className="text-sm text-indigo-400/70 font-medium">
-                    {asset.unique_title_count} unique anomalies
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col items-end">
-                  <span className="text-sm font-medium text-red-400 animate-pulse">
-                    Risk Level
-                  </span>
-                  <span className="text-xs font-medium text-red-400/70">
-                    Critical
+                <div className="flex items-center gap-4">
+                  <div className="flex flex-col items-end">
+                    <span className="text-sm font-medium text-red-400 animate-pulse">
+                      Risk Level
+                    </span>
+                    <span className="text-xs font-medium text-red-400/70">
+                      Critical
+                    </span>
+                  </div>
+                  <div className="relative w-20 h-6 overflow-hidden opacity-70">
+                    <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
+                      <path
+                        d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
+                        className="stroke-red-500 fill-none stroke-[3]"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <span className="font-mono font-bold text-2xl text-red-400 tabular-nums">
+                    {asset.cumulative_risk_score}
                   </span>
                 </div>
-                <div className="relative w-20 h-6 overflow-hidden opacity-70">
-                  <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
-                    <path
-                      d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
-                      className="stroke-red-500 fill-none stroke-[3]"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-                <span className="font-mono font-bold text-2xl text-red-400 tabular-nums">
-                  {asset.cumulative_risk_score}
-                </span>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
         {(!filteredAssets || filteredAssets.length === 0) && (
           <div className="text-center py-8">
             <span className="text-indigo-400/60">No critical assets found</span>
