@@ -7,8 +7,8 @@ interface BasicCellProps {
 
 const BasicCell = ({ value }: BasicCellProps) => {
   return (
-    <TableCell className="px-4">
-      <span className="text-xs">{value}</span>
+    <TableCell className="px-3 py-0">
+      <span className="text-[13px]">{value}</span>
     </TableCell>
   );
 };

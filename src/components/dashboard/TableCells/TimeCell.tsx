@@ -13,10 +13,10 @@ const TimeCell = ({ time }: TimeCellProps) => {
   });
 
   return (
-    <TableCell className="px-4">
+    <TableCell className="px-3 py-0">
       <div className="flex items-center gap-2">
         <Clock className="h-3.5 w-3.5 text-slate-400" />
-        <span className="font-mono text-xs">{browserTime}</span>
+        <span className="font-mono text-[13px]">{browserTime}</span>
       </div>
     </TableCell>
   );
