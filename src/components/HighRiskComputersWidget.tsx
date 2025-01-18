@@ -4,7 +4,6 @@ import { useState } from "react";
 import WidgetHeader from "./widgets/WidgetHeader";
 import SearchInput from "./widgets/SearchInput";
 import { useToast } from "@/hooks/use-toast";
-import TimelineView from "./dashboard/TimelineView";
 
 interface RiskyComputer {
   computer: string;
@@ -16,7 +15,6 @@ interface RiskyComputer {
 
 const HighRiskComputersWidget = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedComputer, setSelectedComputer] = useState<string | null>(null);
   const { toast } = useToast();
 
   const { data: riskyComputers, isError, isLoading } = useQuery({
@@ -34,23 +32,13 @@ const HighRiskComputersWidget = () => {
     }
   });
 
-  const handleComputerClick = async (computer: string) => {
-    setSelectedComputer(computer);
+  const handleComputerClick = (computer: string) => {
+    window.open(`/timeline/computersimpacted/${encodeURIComponent(computer)}`, '_blank');
   };
 
   const filteredComputers = riskyComputers?.filter(computer => 
     computer.computer.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  if (selectedComputer) {
-    return (
-      <TimelineView 
-        entityType="computersimpacted"
-        entityId={selectedComputer}
-        onClose={() => setSelectedComputer(null)}
-      />
-    );
-  }
 
   if (isLoading) {
     return (

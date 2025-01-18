@@ -4,7 +4,6 @@ import { useState } from "react";
 import WidgetHeader from "./widgets/WidgetHeader";
 import SearchInput from "./widgets/SearchInput";
 import { useToast } from "@/hooks/use-toast";
-import TimelineView from "./dashboard/TimelineView";
 
 interface RiskyUser {
   user: string;
@@ -16,7 +15,6 @@ interface RiskyUser {
 
 const HighRiskUsersImpactedWidget = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const { toast } = useToast();
 
   const { data: riskyUsers, isError, isLoading } = useQuery({
@@ -34,23 +32,13 @@ const HighRiskUsersImpactedWidget = () => {
     }
   });
 
-  const handleUserClick = async (userId: string) => {
-    setSelectedUser(userId);
+  const handleUserClick = (userId: string) => {
+    window.open(`/timeline/userimpacted/${encodeURIComponent(userId)}`, '_blank');
   };
 
   const filteredUsers = riskyUsers?.filter(user => 
     user.user.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  if (selectedUser) {
-    return (
-      <TimelineView 
-        entityType="userimpacted"
-        entityId={selectedUser}
-        onClose={() => setSelectedUser(null)}
-      />
-    );
-  }
 
   if (isLoading) {
     return (
