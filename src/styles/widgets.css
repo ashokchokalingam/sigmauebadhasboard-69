@@ -11,7 +11,7 @@
   }
 
   .widget-title {
-    @apply flex items-center gap-2 text-base font-semibold text-white/90;
+    @apply flex items-center gap-2 text-sm font-medium text-white/90;
   }
 
   .widget-count {
@@ -20,14 +20,14 @@
 
   /* Search Section */
   .widget-search {
-    @apply p-4 border-b border-[#5856D6]/10;
+    @apply p-3 border-b border-[#5856D6]/10;
   }
 
   .widget-search-input {
     @apply w-full pl-9 pr-4 py-2
     bg-[#15161E]/80 hover:bg-[#15161E]
     border border-[#5856D6]/20 hover:border-[#5856D6]/40 
-    rounded-lg text-sm text-white/90 
+    rounded-lg text-xs text-white/90 
     placeholder:text-white/30
     transition-colors duration-200
     focus:outline-none focus:ring-1 focus:ring-[#5856D6]/40
@@ -45,7 +45,7 @@
     @apply flex items-center justify-between p-3 rounded-lg 
     bg-[#15161E]/80 hover:bg-[#15161E]
     border border-[#5856D6]/20 hover:border-[#5856D6]/40
-    transition-all duration-300 cursor-pointer h-[64px]
+    transition-all duration-300 cursor-pointer h-[60px]
     shadow-sm shadow-[#5856D6]/5 hover:shadow-md hover:shadow-[#5856D6]/10;
   }
 
