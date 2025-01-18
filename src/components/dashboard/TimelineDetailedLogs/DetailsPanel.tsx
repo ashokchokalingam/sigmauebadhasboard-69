@@ -12,8 +12,8 @@ const DetailsPanel = ({ alert, onClose }: DetailsPanelProps) => {
     .map(tag => tag.trim().toUpperCase()) || [];
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] overflow-hidden">
-      <div className="flex-none bg-[#1E1E2F] p-6 border-b border-purple-400/20">
+    <div className="h-full flex flex-col bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
+      <div className="flex-none p-4 border-b border-purple-400/20">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-purple-100">
             {alert.title || 'N/A'}
@@ -27,8 +27,8 @@ const DetailsPanel = ({ alert, onClose }: DetailsPanelProps) => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
-        <div className="p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-4">
+        <div className="space-y-4">
           <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
             <h3 className="text-sm font-medium text-purple-200 mb-2">Description</h3>
             <p className="text-sm text-purple-100/70">{alert.description || 'N/A'}</p>

@@ -22,8 +22,6 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
     "title",
     "tags"
   ]);
-  const detailsRef = useRef<HTMLDivElement>(null);
-  const tableRef = useRef<HTMLDivElement>(null);
 
   const handleLogClick = (log: Alert) => {
     console.log("Log clicked:", log);
@@ -56,8 +54,8 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
           defaultSize={60}
           minSize={30}
         >
-          <div ref={tableRef} className="h-full overflow-auto">
-            <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
+          <div className="h-full overflow-auto custom-scrollbar">
+            <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
               <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
                 <div>
                   <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
@@ -99,18 +97,12 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
             <ResizableHandle 
               withHandle 
               className="bg-purple-400/20 hover:bg-purple-400/30 transition-colors"
-              onPointerDown={(e) => {
-                e.stopPropagation();
-              }}
             />
             <ResizablePanel 
               defaultSize={40}
               minSize={30}
             >
-              <div 
-                ref={detailsRef}
-                className="h-full"
-              >
+              <div className="h-full">
                 <DetailsPanel 
                   alert={selectedLog}
                   onClose={() => setSelectedLog(null)}
