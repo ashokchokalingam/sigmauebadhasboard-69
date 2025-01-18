@@ -60,12 +60,11 @@ const AlertTableRow = ({
       case "ml_cluster":
         return (
           <BasicCell 
-            value={alert.ml_cluster === null ? 'N/A' : `Cluster ${alert.ml_cluster}`}
-            className="text-slate-200 font-mono"
+            value={alert.ml_cluster === null ? 'N/A' : `${alert.ml_cluster}`}
           />
         );
       default:
-        return <BasicCell value={alert[key as keyof Alert]} />;
+        return <BasicCell value={String(alert[key as keyof Alert] || 'N/A')} />;
     }
   };
   
@@ -77,19 +76,11 @@ const AlertTableRow = ({
       {visibleColumns.map(columnKey => renderCell(columnKey))}
       <BasicCell
         value={
-          <button 
-            className="p-2 hover:bg-slate-800/50 rounded-full transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle();
-            }}
-          >
-            <ChevronRight 
-              className={`h-4 w-4 text-slate-400 transition-transform ${
-                isSelected ? 'rotate-90' : ''
-              }`} 
-            />
-          </button>
+          <ChevronRight 
+            className={`h-4 w-4 text-slate-400 transition-transform ${
+              isSelected ? 'rotate-90' : ''
+            }`}
+          />
         }
       />
     </TableRow>
