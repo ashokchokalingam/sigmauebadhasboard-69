@@ -1,13 +1,24 @@
-@layer components {
-  .scrollbar-thin::-webkit-scrollbar {
-    @apply w-1.5;
-  }
+/* Custom scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
 
-  .scrollbar-thin::-webkit-scrollbar-track {
-    @apply bg-[#5856D6]/5 rounded;
-  }
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 4px;
+}
 
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply bg-[#5856D6]/20 rounded hover:bg-[#5856D6]/30 transition-colors;
-  }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.2);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.3);
+}
+
+/* Firefox scrollbar styles */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.2) rgba(139, 92, 246, 0.1);
 }
