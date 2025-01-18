@@ -28,6 +28,10 @@ const HighRiskWidget = ({ title, entityType, endpoint, dataKey }: HighRiskWidget
     return entityName?.toLowerCase().includes(searchTerm);
   });
 
+  const criticalCount = filteredEntities?.filter((entity: RiskyEntity) => 
+    parseInt(String(entity.cumulative_risk_score)) >= 200
+  ).length || 0;
+
   if (isLoading) {
     return (
       <div className="bg-[#0A0B0F] border border-blue-500/10 rounded-xl overflow-hidden h-[500px]">
@@ -56,12 +60,12 @@ const HighRiskWidget = ({ title, entityType, endpoint, dataKey }: HighRiskWidget
             <div className="p-1.5 rounded-lg bg-red-500/10 border border-red-500/20">
               <AlertTriangle className="h-4 w-4 text-red-400" />
             </div>
-            <span className="text-sm font-semibold text-red-400">
+            <span className="text-base font-semibold text-red-400">
               {title}
             </span>
           </div>
-          <span className="px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-[11px] font-medium text-red-400">
-            {filteredEntities?.length || 0} critical {entityType === 'asset' ? 'assets' : 'users'}
+          <span className="px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-sm font-medium text-red-400">
+            {criticalCount} critical {entityType === 'asset' ? 'assets' : 'users'}
           </span>
         </div>
       </div>
@@ -76,7 +80,7 @@ const HighRiskWidget = ({ title, entityType, endpoint, dataKey }: HighRiskWidget
             placeholder={`Search critical ${entityType === 'asset' ? 'assets' : 'users'}...`}
             className="w-full pl-9 pr-3 py-2 bg-[#0D0E12] rounded-lg
               border border-blue-500/20 hover:border-blue-500/30 
-              text-xs text-blue-100/90 placeholder:text-blue-400/30
+              text-sm text-blue-100/90 placeholder:text-blue-400/30
               transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-blue-500/30"
           />
         </div>
@@ -93,7 +97,7 @@ const HighRiskWidget = ({ title, entityType, endpoint, dataKey }: HighRiskWidget
         ))}
         {(!filteredEntities || filteredEntities.length === 0) && (
           <div className="text-center py-4">
-            <span className="text-blue-400/60 text-xs">No critical {entityType === 'asset' ? 'assets' : 'users'} found</span>
+            <span className="text-blue-400/60 text-sm">No critical {entityType === 'asset' ? 'assets' : 'users'} found</span>
           </div>
         )}
       </div>

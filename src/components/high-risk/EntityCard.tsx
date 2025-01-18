@@ -42,9 +42,31 @@ const EntityCard = ({ entity, entityType, showMetricCycle = false }: EntityCardP
     }
   ];
 
+  const getRiskLevel = (score: number) => {
+    if (score >= 200) return "critical";
+    if (score >= 50) return "high";
+    return "low";
+  };
+
+  const getRiskColor = (level: string) => {
+    switch (level) {
+      case "critical":
+        return "text-red-500";
+      case "high":
+        return "text-orange-500";
+      case "low":
+        return "text-green-500";
+      default:
+        return "text-blue-500";
+    }
+  };
+
   const metrics = getMetrics(entity);
   const currentMetric = showMetricCycle ? metrics[currentMetricIndex] : metrics[0];
   const entityName = entityType === 'asset' ? entity.computer : entity.user;
+  const riskScore = getMetricValue(entity.cumulative_risk_score);
+  const riskLevel = getRiskLevel(riskScore);
+  const riskColor = getRiskColor(riskLevel);
 
   return (
     <div className="group relative p-3 rounded-lg
@@ -62,28 +84,36 @@ const EntityCard = ({ entity, entityType, showMetricCycle = false }: EntityCardP
             )}
           </div>
           <div className="space-y-0.5">
-            <h3 className="font-mono text-sm text-blue-100/90 font-medium group-hover:text-blue-100 truncate max-w-[150px]">
+            <h3 className="font-mono text-base text-blue-100/90 font-medium group-hover:text-blue-100 truncate max-w-[150px]">
               {entityName}
             </h3>
-            <p className="text-[11px] text-blue-400/70">
+            <p className="text-sm text-blue-400/70">
               {currentMetric.value} {currentMetric.label}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
+          <div className="flex flex-col items-end mr-2">
+            <span className={`text-sm font-medium ${riskColor}`}>
+              Risk
+            </span>
+            <span className={`text-xs font-medium -mt-0.5 ${riskColor}`}>
+              {riskLevel}
+            </span>
+          </div>
           <div className="relative w-16 h-6 overflow-hidden opacity-70">
             <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
               <path
                 d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
-                className="stroke-red-500 fill-none stroke-[3]"
+                className={`fill-none stroke-[3] ${riskColor.replace('text-', 'stroke-')}`}
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             </svg>
           </div>
-          <span className="font-mono font-bold text-lg text-red-400 tabular-nums">
-            {entity.cumulative_risk_score}
+          <span className={`font-mono font-bold text-2xl tabular-nums ${riskColor}`}>
+            {riskScore}
           </span>
         </div>
       </div>
