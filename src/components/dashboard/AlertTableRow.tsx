@@ -25,10 +25,8 @@ const AlertTableRow = ({
   onTimelineView,
   visibleColumns 
 }: AlertTableRowProps) => {
-  const renderCell = (key: string) => {
-    if (!visibleColumns.includes(key)) return null;
-
-    switch (key) {
+  const renderCell = (columnKey: string) => {
+    switch (columnKey) {
       case "system_time":
         return <TimeCell time={alert.system_time} />;
       case "user_origin":
@@ -55,16 +53,18 @@ const AlertTableRow = ({
         return <TitleCell title={alert.title || ''} />;
       case "description":
         return <DescriptionCell description={alert.description || ''} />;
+      case "event_id":
+        return <BasicCell value={alert.event_id || 'N/A'} />;
+      case "provider_name":
+        return <BasicCell value={alert.provider_name || 'N/A'} />;
+      case "ml_cluster":
+        return <BasicCell value={alert.ml_cluster === null ? 'N/A' : `${alert.ml_cluster}`} />;
+      case "ip_address":
+        return <BasicCell value={alert.ip_address || 'N/A'} />;
       case "risk":
         return <RiskScoreCell risk={alert.risk} />;
-      case "ml_cluster":
-        return (
-          <BasicCell 
-            value={alert.ml_cluster === null ? 'N/A' : `${alert.ml_cluster}`}
-          />
-        );
       default:
-        const value = alert[key as keyof Alert];
+        const value = alert[columnKey as keyof Alert];
         return <BasicCell value={value !== undefined ? String(value) : 'N/A'} />;
     }
   };
@@ -74,7 +74,11 @@ const AlertTableRow = ({
       className={`hover:bg-slate-900/30 cursor-pointer ${isSelected ? 'bg-slate-900/20' : ''}`}
       onClick={onToggle}
     >
-      {visibleColumns.map(columnKey => renderCell(columnKey))}
+      {visibleColumns.map((columnKey) => (
+        <React.Fragment key={columnKey}>
+          {renderCell(columnKey)}
+        </React.Fragment>
+      ))}
       <BasicCell
         value={
           <ChevronRight 
