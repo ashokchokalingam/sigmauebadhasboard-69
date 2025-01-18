@@ -14,7 +14,7 @@ interface EntityListProps {
 const EntityList = ({ entities, onEntitySelect }: EntityListProps) => {
   return (
     <ScrollArea className="entity-list h-[400px] pr-4">
-      <div className="entity-list-container space-y-2">
+      <div className="space-y-2">
         {entities?.map((entity) => (
           <EntityCard
             key={entity.id}
@@ -26,7 +26,7 @@ const EntityList = ({ entities, onEntitySelect }: EntityListProps) => {
           />
         ))}
         {(!entities || entities.length === 0) && (
-          <div className="entity-list-empty text-center text-blue-400/60 py-6 text-sm">
+          <div className="text-center text-blue-400/60 py-6 text-sm">
             No entities found
           </div>
         )}
