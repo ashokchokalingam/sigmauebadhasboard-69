@@ -32,27 +32,28 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
     <div 
       onClick={onClick}
       className={cn(
-        "group relative flex items-center p-4 rounded-lg h-[72px]",
+        "group relative flex items-center p-6 rounded-lg h-[84px]",
         "transition-all duration-300 cursor-pointer",
-        "bg-[#1e2c3d]/40 hover:bg-[#1e2c3d]/60",
-        "border border-red-500/5 hover:border-red-500/10"
+        "bg-gradient-to-r from-[#0A0B0F] to-[#12131A]",
+        "border border-[#5856D6]/20 hover:border-[#5856D6]/40",
+        "hover:shadow-lg hover:shadow-[#5856D6]/5"
       )}
     >
       <div className="flex items-center w-full">
         <div className="flex items-center gap-4 flex-[0_0_50%]">
-          <div className="relative w-10 h-10 rounded-full bg-red-950/30 flex items-center justify-center">
+          <div className="relative w-12 h-12 rounded-full bg-[#5856D6]/10 flex items-center justify-center border border-[#5856D6]/20">
             {isComputer ? (
-              <Computer className="w-5 h-5 text-red-400/70" />
+              <Computer className="w-6 h-6 text-[#9b87f5]" />
             ) : (
-              <User className="w-5 h-5 text-red-400/70" />
+              <User className="w-6 h-6 text-[#9b87f5]" />
             )}
           </div>
           
           <div className="flex flex-col min-w-[120px]">
-            <span className="font-mono text-base text-red-200/90 font-medium group-hover:text-red-100 truncate max-w-[200px]">
+            <span className="font-mono text-lg text-white/90 font-medium group-hover:text-white truncate max-w-[200px]">
               {id || 'Unknown'}
             </span>
-            <span className="text-sm text-red-500 font-semibold mt-1 drop-shadow-[0_0_3px_rgba(239,68,68,0.3)]">
+            <span className="text-base text-[#9b87f5] font-semibold mt-1 drop-shadow-[0_0_3px_rgba(155,135,245,0.3)]">
               {safeUniqueTitles} unique anomalies
             </span>
           </div>
@@ -60,18 +61,16 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
 
         {riskScore && (
           <div className="flex-1 flex items-center justify-end">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
               <div className="flex flex-col items-end">
                 <span className={cn(
-                  "text-red-300/90 font-medium text-base",
-                  getRiskColor(getRiskLevel(riskScore)),
+                  "text-[#9b87f5] font-medium text-lg",
                   isHighRisk(riskScore) && "animate-pulse"
                 )}>
                   Risk Level
                 </span>
                 <span className={cn(
-                  "text-xs font-medium -mt-0.5",
-                  getRiskColor(getRiskLevel(riskScore)),
+                  "text-sm font-medium -mt-0.5 text-[#D6BCFA]",
                   isHighRisk(riskScore) && "animate-pulse"
                 )}>
                   {getRiskLevel(riskScore)}
@@ -79,11 +78,11 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
               </div>
               
               {/* Cardiogram Animation */}
-              <div className="relative w-20 h-6 overflow-hidden">
+              <div className="relative w-24 h-8 overflow-hidden">
                 <svg 
                   className={cn(
                     "w-[200%] h-full animate-cardiogram",
-                    getRiskColor(getRiskLevel(riskScore))
+                    "stroke-[#9b87f5]"
                   )} 
                   viewBox="0 0 600 100" 
                   preserveAspectRatio="none"
@@ -98,8 +97,8 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
               </div>
 
               <span className={cn(
-                "font-mono font-bold text-3xl min-w-[70px] text-right",
-                getRiskColor(getRiskLevel(riskScore)),
+                "font-mono font-bold text-4xl min-w-[80px] text-right",
+                "text-[#9b87f5]",
                 isHighRisk(riskScore) && "animate-pulse"
               )}>
                 {riskScore}

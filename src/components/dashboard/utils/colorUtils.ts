@@ -2,15 +2,15 @@ export const getRiskColor = (level: string = ''): string => {
   const l = level.toLowerCase();
   switch (l) {
     case 'critical':
-      return 'text-[#FF0000]'; // Bright Red
+      return 'text-[#9b87f5]'; // Primary Purple
     case 'high':
-      return 'text-[#FFA500]'; // Orange
+      return 'text-[#7E69AB]'; // Secondary Purple
     case 'medium':
-      return 'text-[#FFFF00]'; // Yellow
+      return 'text-[#6E59A5]'; // Tertiary Purple
     case 'low':
-      return 'text-[#008000]'; // Green
+      return 'text-[#D6BCFA]'; // Light Purple
     default:
-      return 'text-[#0000FF]'; // Blue (Informational)
+      return 'text-[#9b87f5]'; // Primary Purple
   }
 };
 
@@ -18,15 +18,15 @@ export const getRiskBgColor = (level: string = ''): string => {
   const l = level.toLowerCase();
   switch (l) {
     case 'critical':
-      return 'bg-[#FF0000]/20'; // Red background
+      return 'bg-[#9b87f5]/20';
     case 'high':
-      return 'bg-[#FFA500]/20'; // Orange background
+      return 'bg-[#7E69AB]/20';
     case 'medium':
-      return 'bg-[#FFFF00]/20'; // Yellow background
+      return 'bg-[#6E59A5]/20';
     case 'low':
-      return 'bg-[#008000]/20'; // Green background
+      return 'bg-[#D6BCFA]/20';
     default:
-      return 'bg-[#0000FF]/20'; // Blue background
+      return 'bg-[#9b87f5]/20';
   }
 };
 
