@@ -19,13 +19,13 @@ const EntityCardRiskLevel = ({ riskScore, isHighRisk }: EntityCardRiskLevelProps
     <div className="flex items-center gap-4">
       <div className="flex flex-col items-end">
         <span className={cn(
-          "text-[#9b87f5] font-medium text-xl",
+          "text-[#9b87f5] font-medium text-2xl",
           isHighRisk && "animate-pulse"
         )}>
           Risk Level
         </span>
         <span className={cn(
-          "text-base font-medium -mt-0.5 text-[#D6BCFA]",
+          "text-xl font-medium mt-1 text-[#D6BCFA]",
           isHighRisk && "animate-pulse"
         )}>
           {getRiskLevel(riskScore)}

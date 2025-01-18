@@ -25,7 +25,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
     <div 
       onClick={onClick}
       className={cn(
-        "group relative flex items-center p-6 rounded-lg h-[84px]",
+        "group relative flex items-center p-8 rounded-lg h-[100px]",
         "transition-all duration-300 cursor-pointer",
         "bg-gradient-to-r from-[#0A0B0F] to-[#12131A]",
         "border border-[#5856D6]/20 hover:border-[#5856D6]/40",
@@ -33,14 +33,14 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
       )}
     >
       <div className="flex items-center w-full">
-        <div className="flex items-center gap-4 flex-[0_0_50%]">
+        <div className="flex items-center gap-6 flex-[0_0_50%]">
           <EntityCardIcon isComputer={isComputer} />
           
           <div className="flex flex-col min-w-[120px]">
-            <span className="font-mono text-xl text-white/90 font-medium group-hover:text-white truncate max-w-[200px]">
+            <span className="font-mono text-2xl text-white/90 font-medium group-hover:text-white truncate max-w-[250px]">
               {id || 'Unknown'}
             </span>
-            <span className="text-lg text-[#9b87f5] font-semibold mt-1 drop-shadow-[0_0_3px_rgba(155,135,245,0.3)]">
+            <span className="text-xl text-[#9b87f5] font-semibold mt-2 drop-shadow-[0_0_3px_rgba(155,135,245,0.3)]">
               {safeUniqueTitles} unique anomalies
             </span>
           </div>
@@ -48,7 +48,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
 
         {riskScore && (
           <div className="flex-1 flex items-center justify-end">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               <EntityCardRiskLevel 
                 riskScore={riskScore} 
                 isHighRisk={isHighRisk(riskScore)} 
@@ -57,7 +57,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
               <EntityCardCardiogram isHighRisk={isHighRisk(riskScore)} />
 
               <span className={cn(
-                "font-mono font-bold text-5xl min-w-[80px] text-right",
+                "font-mono font-bold text-6xl min-w-[100px] text-right",
                 "text-[#9b87f5]",
                 isHighRisk(riskScore) && "animate-pulse"
               )}>
