@@ -44,9 +44,9 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
         <ResizablePanel 
           defaultSize={selectedLog ? 60 : 100}
           minSize={30}
-          className="h-full"
+          className="relative h-full"
         >
-          <div className="h-full flex flex-col">
+          <div className="absolute inset-0 flex flex-col">
             <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-500/20 bg-purple-950/90 backdrop-blur-sm">
               <div>
                 <span className="font-medium">Total Records:</span> {totalRecords?.toLocaleString()}
@@ -94,9 +94,9 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
             <ResizablePanel 
               defaultSize={40}
               minSize={30}
-              className="h-full overflow-hidden"
+              className="relative h-full"
             >
-              <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
+              <div className="absolute inset-0 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
                 <DetailsPanel 
                   alert={selectedLog}
                   onClose={() => setSelectedLog(null)}
