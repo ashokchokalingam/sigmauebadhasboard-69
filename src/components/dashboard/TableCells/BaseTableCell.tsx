@@ -15,6 +15,7 @@ interface BaseCellProps {
   tooltipContent?: string;
   className?: string;
   align?: "left" | "center" | "right";
+  style?: React.CSSProperties;
 }
 
 const BaseTableCell = ({ 
@@ -24,7 +25,8 @@ const BaseTableCell = ({
   onClick,
   tooltipContent,
   className = "",
-  align = "left"
+  align = "left",
+  style
 }: BaseCellProps) => {
   const content = (
     <div className={`flex items-center gap-1.5 ${
@@ -40,6 +42,7 @@ const BaseTableCell = ({
     <TableCell 
       className={`px-2 py-1.5 ${width} ${className} ${onClick ? 'cursor-pointer hover:text-blue-400 transition-colors' : ''}`}
       onClick={onClick}
+      style={style}
     >
       {content}
     </TableCell>
