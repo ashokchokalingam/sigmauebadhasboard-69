@@ -27,7 +27,7 @@ const DetailsPanel = ({ alert, onClose }: DetailsPanelProps) => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 overflow-y-auto custom-scrollbar" style={{ height: 'calc(100vh - 180px)' }}>
         <div className="p-4 space-y-4">
           <div className="bg-purple-400/5 rounded-lg p-4 border border-purple-400/20">
             <h3 className="text-sm font-medium text-purple-200 mb-2">Description</h3>
