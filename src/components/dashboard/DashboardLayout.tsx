@@ -75,13 +75,13 @@ const DashboardLayout = ({
 
       {/* High Risk Widgets */}
       <div className="widgets-grid">
-        <div className="widget-container">
+        <div className="widget-container h-[500px]">
           <HighRiskUsersOriginWidget />
         </div>
-        <div className="widget-container">
+        <div className="widget-container h-[500px]">
           <HighRiskUsersImpactedWidget />
         </div>
-        <div className="widget-container">
+        <div className="widget-container h-[500px]">
           <HighRiskAssetsWidget />
         </div>
       </div>
