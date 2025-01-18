@@ -2,7 +2,6 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { Alert } from "./types";
 import { useInView } from "react-intersection-observer";
 import TimelineSummaryStats from "./TimelineComponents/TimelineSummaryStats";
-import TimelineVisualizer from "./TimelineComponents/TimelineVisualizer";
 import TimelineHeader from "../timeline/TimelineHeader";
 import TimelineContent from "../timeline/TimelineContent";
 import { formatTimelineData, getTimelineEndpoint } from "@/utils/timelineHelpers";
@@ -69,10 +68,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         <div className="h-full flex flex-col space-y-4 p-6">
           <div className="flex-none">
             <TimelineSummaryStats alerts={allEvents} />
-          </div>
-
-          <div className="flex-none">
-            <TimelineVisualizer events={allEvents} />
           </div>
 
           <div className="flex-1 min-h-0 bg-black/40 rounded-xl border border-blue-500/10">
