@@ -47,25 +47,25 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
           className="relative h-full"
         >
           <div className="absolute inset-0 flex flex-col">
-            <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-500/20 bg-purple-950/90 backdrop-blur-sm">
+            <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-base text-purple-200/80 border-b border-purple-500/20 bg-purple-950/90 backdrop-blur-sm">
               <div>
-                <span className="font-medium">Total Records:</span> {totalRecords?.toLocaleString()}
+                <span className="font-medium text-lg">Total Records:</span> {totalRecords?.toLocaleString()}
               </div>
             </div>
             <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
               <Table>
                 <TableHeader className="bg-purple-950/90 backdrop-blur-sm sticky top-0 z-10">
                   <TableRow className="hover:bg-transparent border-b border-purple-500/20">
-                    <TableHead className="text-purple-100 font-medium">Time</TableHead>
+                    <TableHead className="text-purple-100 font-medium text-base">Time</TableHead>
                     {entityType === "user" ? (
-                      <TableHead className="text-purple-100 font-medium">User Origin</TableHead>
+                      <TableHead className="text-purple-100 font-medium text-base">User Origin</TableHead>
                     ) : (
-                      <TableHead className="text-purple-100 font-medium">Computer Name</TableHead>
+                      <TableHead className="text-purple-100 font-medium text-base">Computer Name</TableHead>
                     )}
-                    <TableHead className="text-purple-100 font-medium">User Impacted</TableHead>
-                    <TableHead className="text-purple-100 font-medium">Computer</TableHead>
-                    <TableHead className="text-purple-100 font-medium">Event</TableHead>
-                    <TableHead className="text-purple-100 font-medium">MITRE Tactics</TableHead>
+                    <TableHead className="text-purple-100 font-medium text-base">User Impacted</TableHead>
+                    <TableHead className="text-purple-100 font-medium text-base">Computer</TableHead>
+                    <TableHead className="text-purple-100 font-medium text-base">Event</TableHead>
+                    <TableHead className="text-purple-100 font-medium text-base">MITRE Tactics</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody className="bg-transparent">
@@ -96,8 +96,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
             
             <ResizablePanel 
               defaultSize={40}
-              minSize={30}
-              className="relative h-full"
+              minSize
             >
               <div className="absolute inset-0 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
                 <DetailsPanel 
