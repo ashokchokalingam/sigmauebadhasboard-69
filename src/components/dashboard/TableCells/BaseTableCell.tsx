@@ -29,25 +29,27 @@ const BaseTableCell = ({
   style
 }: BaseCellProps) => {
   const content = (
-    <div className={`flex items-center gap-1.5 ${
+    <div className={`flex items-center gap-2 ${
       align === "center" ? "justify-center" : 
       align === "right" ? "justify-end" : "justify-start"
     }`}>
-      {Icon && <Icon className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />}
-      <span className="text-[13px] truncate">{value}</span>
+      {Icon && <Icon className="h-4 w-4 text-purple-400/70 flex-shrink-0" />}
+      <span className="text-[13px] truncate font-medium text-purple-100/90">{value}</span>
     </div>
   );
 
   const cell = (
     <TableCell 
-      className={`px-2 py-1.5 ${width} ${className} ${onClick ? 'cursor-pointer hover:text-blue-400 transition-colors' : ''}`}
+      className={`px-3 py-2.5 border-b border-purple-900/10 ${width} ${className} 
+      ${onClick ? 'cursor-pointer hover:bg-purple-500/5 transition-colors' : ''}`}
       onClick={onClick}
       style={{
         ...style,
         maxWidth: width,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap'
+        whiteSpace: 'nowrap',
+        backgroundColor: 'rgb(26, 31, 44)'
       }}
     >
       {content}
@@ -61,8 +63,11 @@ const BaseTableCell = ({
           <TooltipTrigger asChild>
             {cell}
           </TooltipTrigger>
-          <TooltipContent side="top" className="max-w-[400px] break-words">
-            <p className="text-sm">{tooltipContent}</p>
+          <TooltipContent 
+            side="top" 
+            className="max-w-[400px] break-words bg-[#1A1F2C] border border-purple-900/20"
+          >
+            <p className="text-sm text-purple-100/90">{tooltipContent}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

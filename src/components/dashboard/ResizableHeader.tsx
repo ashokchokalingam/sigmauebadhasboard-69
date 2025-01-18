@@ -69,10 +69,10 @@ const ResizableHeader = ({
   return (
     <TableHead 
       ref={headerRef}
-      className="group relative select-none"
+      className="group relative select-none bg-[#1A1F2C] border-b border-purple-900/20"
       style={{ width: `${width}px`, minWidth: `${minSize}px` }}
     >
-      <div className="flex items-center gap-2 px-2">
+      <div className="flex items-center gap-2 px-3 py-3">
         <ColumnFilter
           title={title}
           options={getUniqueValues(columnKey as keyof Alert)}
@@ -81,7 +81,7 @@ const ResizableHeader = ({
         />
       </div>
       <div
-        className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity"
         onMouseDown={startResizing}
       />
     </TableHead>
