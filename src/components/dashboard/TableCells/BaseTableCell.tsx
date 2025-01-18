@@ -34,7 +34,7 @@ const BaseTableCell = ({
       align === "right" ? "justify-end" : "justify-start"
     }`}>
       {Icon && <Icon className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />}
-      <span className={`text-[13px] truncate max-w-full`}>{value}</span>
+      <span className="text-[13px] truncate">{value}</span>
     </div>
   );
 
@@ -42,7 +42,13 @@ const BaseTableCell = ({
     <TableCell 
       className={`px-2 py-1.5 ${width} ${className} ${onClick ? 'cursor-pointer hover:text-blue-400 transition-colors' : ''}`}
       onClick={onClick}
-      style={style}
+      style={{
+        ...style,
+        maxWidth: width,
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+      }}
     >
       {content}
     </TableCell>

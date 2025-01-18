@@ -1,6 +1,5 @@
 import { TableHead } from "@/components/ui/table";
-import { ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ColumnFilter from "./ColumnFilter";
 import { Alert } from "./types";
 
@@ -23,7 +22,9 @@ const ResizableHeader = ({
   defaultSize = 100,
   minSize = 50
 }: ResizableHeaderProps) => {
-  const [size, setSize] = useState(defaultSize);
+  const [width, setWidth] = useState(defaultSize);
+  const [isResizing, setIsResizing] = useState(false);
+  const headerRef = useRef<HTMLTableCellElement>(null);
 
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -44,24 +45,44 @@ const ResizableHeader = ({
     return uniqueValues.sort();
   };
 
+  const startResizing = (e: React.MouseEvent) => {
+    setIsResizing(true);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', stopResizing);
+    e.preventDefault();
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isResizing || !headerRef.current) return;
+    
+    const headerRect = headerRef.current.getBoundingClientRect();
+    const newWidth = Math.max(minSize, e.clientX - headerRect.left);
+    setWidth(newWidth);
+  };
+
+  const stopResizing = () => {
+    setIsResizing(false);
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', stopResizing);
+  };
+
   return (
-    <TableHead className="group relative">
-      <ResizablePanel 
-        defaultSize={defaultSize} 
-        minSize={minSize}
-        onResize={setSize}
-      >
-        <div className="flex items-center gap-2 px-2">
-          <ColumnFilter
-            title={title}
-            options={getUniqueValues(columnKey as keyof Alert)}
-            onSelect={(value) => onFilterChange(columnKey, value)}
-            selectedValue={selectedValue}
-          />
-        </div>
-      </ResizablePanel>
-      <ResizableHandle 
+    <TableHead 
+      ref={headerRef}
+      className="group relative select-none"
+      style={{ width: `${width}px`, minWidth: `${minSize}px` }}
+    >
+      <div className="flex items-center gap-2 px-2">
+        <ColumnFilter
+          title={title}
+          options={getUniqueValues(columnKey as keyof Alert)}
+          onSelect={(value) => onFilterChange(columnKey, value)}
+          selectedValue={selectedValue}
+        />
+      </div>
+      <div
         className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity"
+        onMouseDown={startResizing}
       />
     </TableHead>
   );
