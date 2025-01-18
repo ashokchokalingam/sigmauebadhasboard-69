@@ -70,12 +70,17 @@ export default {
         'cardiogram': {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' }
+        },
+        'heartbeat': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.1)' }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'cardiogram': 'cardiogram 4s linear infinite'
+        'cardiogram': 'cardiogram 4s linear infinite',
+        'heartbeat': 'heartbeat 1s ease-in-out infinite'
       }
     }
   },

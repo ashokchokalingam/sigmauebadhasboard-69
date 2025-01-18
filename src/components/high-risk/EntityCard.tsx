@@ -102,17 +102,21 @@ const EntityCard = ({ entity, entityType, showMetricCycle = false }: EntityCardP
               {riskLevel}
             </span>
           </div>
-          <div className="relative w-16 h-6 overflow-hidden opacity-70">
-            <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
+          <div className="relative w-16 h-6 overflow-hidden">
+            <svg 
+              className="w-[200%] h-full animate-cardiogram" 
+              viewBox="0 0 600 100" 
+              preserveAspectRatio="none"
+            >
               <path
                 d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
-                className={`fill-none stroke-[3] ${riskColor.replace('text-', 'stroke-')}`}
+                className={`stroke-current fill-none stroke-[3] ${riskColor.replace('text-', 'stroke-')} ${riskLevel === 'critical' ? 'animate-heartbeat' : ''}`}
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             </svg>
           </div>
-          <span className={`font-mono font-bold text-2xl tabular-nums ${riskColor}`}>
+          <span className={`font-mono font-bold text-2xl tabular-nums ${riskColor} ${riskLevel === 'critical' ? 'animate-pulse' : ''}`}>
             {riskScore}
           </span>
         </div>
