@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 interface RiskyAsset {
-  computer_name: string;
+  computer: string;
   cumulative_risk_score: string;
   unique_outliers: number;
   unique_tactics_count: string;
@@ -28,7 +28,7 @@ const HighRiskAssetsWidget = () => {
   });
 
   const filteredAssets = riskyAssets?.filter(asset => 
-    asset.computer_name.toLowerCase().includes(searchQuery.toLowerCase())
+    asset.computer.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (isLoading) {
@@ -89,7 +89,7 @@ const HighRiskAssetsWidget = () => {
       <div className="px-6 pb-6 space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-500/10 scrollbar-track-transparent">
         {filteredAssets?.map((asset: RiskyAsset) => (
           <div
-            key={asset.computer_name}
+            key={asset.computer}
             className="group relative p-4 rounded-xl
               bg-gradient-to-r from-[#0D0E12] to-[#0D0E12]/80
               border border-indigo-500/10 hover:border-indigo-500/20
@@ -103,7 +103,7 @@ const HighRiskAssetsWidget = () => {
                 </div>
                 <div className="space-y-1">
                   <h3 className="font-mono text-base text-indigo-100/90 font-medium group-hover:text-indigo-100">
-                    {asset.computer_name}
+                    {asset.computer}
                   </h3>
                   <p className="text-sm text-indigo-400/70 font-medium">
                     {asset.unique_title_count} unique anomalies
