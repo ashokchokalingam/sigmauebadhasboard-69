@@ -2,15 +2,15 @@ export const getRiskColor = (level: string = ''): string => {
   const l = level.toLowerCase();
   switch (l) {
     case 'critical':
-      return 'text-[#FF0000]'; // Bright Red
+      return 'text-[#ea384c]'; // Red for Critical
     case 'high':
-      return 'text-[#FFA500]'; // Orange
+      return 'text-[#F97316]'; // Orange for High
     case 'medium':
-      return 'text-[#FFFF00]'; // Yellow
+      return 'text-[#3B82F6]'; // Blue for Medium
     case 'low':
-      return 'text-[#008000]'; // Green
+      return 'text-[#22C55E]'; // Green for Low
     default:
-      return 'text-[#0000FF]'; // Blue (Informational)
+      return 'text-[#3B82F6]'; // Default blue
   }
 };
 
@@ -18,40 +18,44 @@ export const getRiskBgColor = (level: string = ''): string => {
   const l = level.toLowerCase();
   switch (l) {
     case 'critical':
-      return 'bg-[#FF0000]/20'; // Red background
+      return 'bg-[#ea384c]/20'; // Red background
     case 'high':
-      return 'bg-[#FFA500]/20'; // Orange background
+      return 'bg-[#F97316]/20'; // Orange background
     case 'medium':
-      return 'bg-[#FFFF00]/20'; // Yellow background
+      return 'bg-[#3B82F6]/20'; // Blue background
     case 'low':
-      return 'bg-[#008000]/20'; // Green background
+      return 'bg-[#22C55E]/20'; // Green background
     default:
-      return 'bg-[#0000FF]/20'; // Blue background
+      return 'bg-[#3B82F6]/20'; // Default blue background
   }
 };
 
 export const getSeverityColor = (severity: string) => {
-  switch (severity) {
-    case "high":
-      return "text-[#FFA500]"; // Orange
-    case "medium":
-      return "text-[#FFFF00]"; // Yellow
-    case "low":
-      return "text-[#008000]"; // Green
+  switch (severity.toLowerCase()) {
+    case 'critical':
+      return 'text-[#ea384c]'; // Red
+    case 'high':
+      return 'text-[#F97316]'; // Orange
+    case 'medium':
+      return 'text-[#3B82F6]'; // Blue
+    case 'low':
+      return 'text-[#22C55E]'; // Green
     default:
-      return "text-[#0000FF]"; // Blue (Informational)
+      return 'text-[#3B82F6]'; // Default blue
   }
 };
 
 export const getSeverityBg = (severity: string) => {
-  switch (severity) {
-    case "high":
-      return "bg-[#FFA500]/20"; // Orange background
-    case "medium":
-      return "bg-[#FFFF00]/20"; // Yellow background
-    case "low":
-      return "bg-[#008000]/20"; // Green background
+  switch (severity.toLowerCase()) {
+    case 'critical':
+      return 'bg-[#ea384c]/20'; // Red background
+    case 'high':
+      return 'bg-[#F97316]/20'; // Orange background
+    case 'medium':
+      return 'bg-[#3B82F6]/20'; // Blue background
+    case 'low':
+      return 'bg-[#22C55E]/20'; // Green background
     default:
-      return "bg-[#0000FF]/20"; // Blue background
+      return 'bg-[#3B82F6]/20'; // Default blue background
   }
 };

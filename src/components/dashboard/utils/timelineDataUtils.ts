@@ -12,6 +12,36 @@ interface TimelineDataPoint {
   cumulativeTotal: number;
 }
 
+export const getSeverityColor = (severity: string = ''): string => {
+  switch (severity.toLowerCase()) {
+    case 'critical':
+      return '#ea384c'; // Red
+    case 'high':
+      return '#F97316'; // Orange
+    case 'medium':
+      return '#3B82F6'; // Blue
+    case 'low':
+      return '#22C55E'; // Green
+    default:
+      return '#94A3B8'; // Gray
+  }
+};
+
+export const getCategoryColor = (category: string = ''): string => {
+  // Hash the category string to generate a consistent color
+  let hash = 0;
+  for (let i = 0; i < category.length; i++) {
+    hash = category.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  // Convert hash to RGB color with theme-appropriate tones
+  const h = Math.abs(hash % 360);  // Hue
+  const s = 70 + (hash % 20);      // Saturation between 70-90%
+  const l = 45 + (hash % 15);      // Lightness between 45-60%
+
+  return `hsl(${h}, ${s}%, ${l}%)`;
+};
+
 const getTimeKey = (date: Date, granularity: '5min' | 'hour' | 'day'): string => {
   switch (granularity) {
     case '5min':
@@ -113,34 +143,4 @@ export const processTimelineData = (
   }
 
   return sortedData;
-};
-
-export const getSeverityColor = (severity: string = ''): string => {
-  switch (severity.toLowerCase()) {
-    case 'high':
-      return '#F87171'; // Warm red
-    case 'medium':
-      return '#FBBF24'; // Warm yellow
-    case 'low':
-      return '#34D399'; // Emerald green
-    case 'informational':
-      return '#60A5FA'; // Blue
-    default:
-      return '#94A3B8'; // Gray
-  }
-};
-
-export const getCategoryColor = (category: string = ''): string => {
-  // Hash the category string to generate a consistent color
-  let hash = 0;
-  for (let i = 0; i < category.length; i++) {
-    hash = category.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  // Convert hash to RGB color with blue tones (for consistency with the theme)
-  const h = Math.abs(hash % 360);  // Hue
-  const s = 70 + (hash % 20);      // Saturation between 70-90%
-  const l = 45 + (hash % 15);      // Lightness between 45-60%
-
-  return `hsl(${h}, ${s}%, ${l}%)`;
 };

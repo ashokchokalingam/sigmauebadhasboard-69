@@ -25,11 +25,11 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
   )?.map(count => ({
     name: count.rule_level,
     value: parseInt(count.event_count),
-    color: count.rule_level === "Critical" ? "#FF3B30" : 
-           count.rule_level === "High" ? "#FF9500" : 
-           count.rule_level === "Medium" ? "#0EA5E9" : // Changed to match the image's blue
-           count.rule_level === "Low" ? "#34C759" : 
-           "#0EA5E9"
+    color: count.rule_level === "Critical" ? "#ea384c" : // Red for Critical
+           count.rule_level === "High" ? "#F97316" :     // Orange for High
+           count.rule_level === "Medium" ? "#3B82F6" :   // Blue for Medium
+           count.rule_level === "Low" ? "#22C55E" :      // Green for Low
+           "#3B82F6"                                     // Default blue
   })) || [];
 
   const RADIAN = Math.PI / 180;
