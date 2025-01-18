@@ -52,7 +52,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
                 <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
               </div>
             </div>
-            <div className="flex-1 overflow-auto custom-scrollbar">
+            <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
               <Table>
                 <TableHeader className="bg-purple-500/5 backdrop-blur-sm sticky top-0 z-10">
                   <TableRow className="hover:bg-transparent border-b border-purple-500/20">

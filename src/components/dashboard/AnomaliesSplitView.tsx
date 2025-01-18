@@ -33,11 +33,11 @@ const AnomaliesSplitView = ({
       direction="horizontal" 
       className="min-h-[800px] rounded-lg border border-blue-500/10"
     >
-      <ResizablePanel defaultSize={75} minSize={30}>
+      <ResizablePanel defaultSize={70} minSize={30}>
         <div className="h-full overflow-hidden border-r border-blue-500/10">
-          <div className="relative h-full">
-            <div className="overflow-x-auto">
-              <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
+          <div className="h-full flex flex-col">
+            <div className="flex-1 overflow-hidden">
+              <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent">
                 <Table>
                   <AnomaliesTableHeader
                     alerts={alerts}
@@ -64,7 +64,7 @@ const AnomaliesSplitView = ({
         className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
       />
       
-      <ResizablePanel defaultSize={25} minSize={20}>
+      <ResizablePanel defaultSize={30} minSize={25}>
         <div className="h-full">
           <AlertDetailsView
             alert={selectedAlert}

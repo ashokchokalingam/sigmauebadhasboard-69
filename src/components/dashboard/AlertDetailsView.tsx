@@ -46,34 +46,34 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
   }, [onClose]);
 
   return (
-    <div className="h-full bg-[#1E1E2F] border-l border-[#7B68EE]/20">
+    <div className="h-full flex flex-col bg-[#1E1E2F]">
       <AlertHeader onClose={onClose} />
 
-      <div className="h-[calc(100%-4rem)] overflow-y-auto">
-        <div className="p-4 space-y-4">
-          <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
-            <h3 className="text-lg font-semibold text-[#E0E0E0] mb-3">Alert Overview</h3>
-            <div className="space-y-3">
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent">
+        <div className="p-6 space-y-6">
+          <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-6">
+            <h3 className="text-xl font-semibold text-[#E0E0E0] mb-4">Alert Overview</h3>
+            <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-medium text-[#A9A9A9]">Title</h4>
-                <p className="text-lg text-white">{alert.title || 'N/A'}</p>
+                <h4 className="text-sm font-medium text-[#A9A9A9] mb-1">Title</h4>
+                <p className="text-xl text-white font-medium">{alert.title || 'N/A'}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-[#A9A9A9]">Description</h4>
-                <p className="text-sm text-[#E0E0E0]">{alert.description || 'N/A'}</p>
+                <h4 className="text-sm font-medium text-[#A9A9A9] mb-1">Description</h4>
+                <p className="text-base text-[#E0E0E0] leading-relaxed">{alert.description || 'N/A'}</p>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <h4 className="text-sm font-medium text-[#A9A9A9]">Risk Score</h4>
-                  <p className={`text-lg font-medium ${getRiskColor(alert.risk)}`}>
+                  <h4 className="text-sm font-medium text-[#A9A9A9] mb-1">Risk Score</h4>
+                  <p className={`text-2xl font-semibold ${getRiskColor(alert.risk)}`}>
                     {alert.risk === null ? 'N/A' : `${alert.risk}%`}
                   </p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-[#A9A9A9]">ML Cluster</h4>
+                  <h4 className="text-sm font-medium text-[#A9A9A9] mb-1">ML Cluster</h4>
                   <div className="flex items-center gap-2">
-                    <Brain className="h-4 w-4 text-blue-400" />
-                    <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20">
+                    <Brain className="h-5 w-5 text-blue-400" />
+                    <span className="px-3 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20 font-medium">
                       {alert.ml_cluster === null ? 'N/A' : `Cluster ${alert.ml_cluster}`}
                     </span>
                   </div>
@@ -85,7 +85,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
                     <Brain className="h-4 w-4" />
                     ML Analysis
                   </h4>
-                  <p className="text-sm text-[#E0E0E0] leading-relaxed">
+                  <p className="text-base text-[#E0E0E0] leading-relaxed">
                     {alert.ml_description}
                   </p>
                 </div>
@@ -97,7 +97,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
             <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
               <h4 className="text-sm font-medium text-[#A9A9A9] mb-2">Rule ID</h4>
               <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-[#7B68EE]" />
+                <Shield className="h-5 w-5 text-[#7B68EE]" />
                 <p className="text-sm text-[#E0E0E0] font-mono">
                   {alert.ruleid || 'N/A'}
                 </p>
@@ -107,8 +107,8 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
             <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
               <h4 className="text-sm font-medium text-[#A9A9A9] mb-2">Severity</h4>
               <div className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-[#7B68EE]" />
-                <p className="text-sm text-[#E0E0E0] capitalize">
+                <AlertTriangle className="h-5 w-5 text-[#7B68EE]" />
+                <p className="text-sm text-[#E0E0E0] capitalize font-medium">
                   {alert.rule_level || 'N/A'}
                 </p>
               </div>
