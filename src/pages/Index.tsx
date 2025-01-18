@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Alert } from "@/components/dashboard/types";
@@ -58,8 +58,7 @@ const Index = () => {
 
   const { initialQuery, remainingQuery, toast } = useAlertsFetching(timeFrame, currentPage);
 
-  // Update state when initial data is fetched
-  React.useEffect(() => {
+  useEffect(() => {
     if (initialQuery.data) {
       setCurrentAlerts(initialQuery.data.alerts);
       setAllAlerts(initialQuery.data.alerts);
@@ -67,8 +66,7 @@ const Index = () => {
     }
   }, [initialQuery.data]);
 
-  // Update state when remaining data is fetched
-  React.useEffect(() => {
+  useEffect(() => {
     if (remainingQuery.data?.alerts) {
       setCurrentAlerts(prev => [...prev, ...remainingQuery.data.alerts]);
       setAllAlerts(prev => [...prev, ...remainingQuery.data.alerts]);
