@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { Alert } from "./types";
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "../ui/table";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
-import DetailsPanel from "./TimelineDetailedLogs/DetailsPanel";
+import { ScrollArea } from "../ui/scroll-area";
 import { format } from "date-fns";
-import { Shield, AlertTriangle } from "lucide-react";
+import { Shield, AlertTriangle, Terminal, User, Monitor } from "lucide-react";
+import { Badge } from "../ui/badge";
+import { Card } from "../ui/card";
 
 interface TimelineDetailedLogsProps {
   logs: Alert[];
@@ -13,16 +13,15 @@ interface TimelineDetailedLogsProps {
   entityType?: "user" | "computer";
 }
 
-const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "user" }: TimelineDetailedLogsProps) => {
-  const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
-
-  const handleLogClick = (log: Alert) => {
-    setSelectedLog(log);
-  };
-
+const TimelineDetailedLogs = ({ 
+  logs, 
+  isLoading, 
+  totalRecords,
+  entityType = "user" 
+}: TimelineDetailedLogsProps) => {
   if (isLoading) {
     return (
-      <div className="w-full p-8 flex items-center justify-center">
+      <div className="flex items-center justify-center h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
       </div>
     );
@@ -30,119 +29,115 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
 
   if (!logs || logs.length === 0) {
     return (
-      <div className="w-full p-8 flex items-center justify-center text-purple-300/70">
-        <AlertTriangle className="h-5 w-5 mr-2" />
-        No logs available
+      <div className="flex flex-col items-center justify-center h-[400px] gap-2">
+        <AlertTriangle className="h-8 w-8 text-purple-400/70" />
+        <p className="text-purple-300/70 text-lg">No timeline events found</p>
       </div>
     );
   }
 
-  const getRiskColor = (risk: number | null) => {
-    if (!risk) return "text-purple-300/70";
-    if (risk >= 80) return "text-red-400";
-    if (risk >= 50) return "text-orange-400";
-    return "text-green-400";
+  const getRiskBadgeColor = (risk: number | null) => {
+    if (!risk) return "bg-purple-500/10 text-purple-400";
+    if (risk >= 80) return "bg-red-500/10 text-red-400";
+    if (risk >= 50) return "bg-amber-500/10 text-amber-400";
+    return "bg-emerald-500/10 text-emerald-400";
   };
 
   return (
-    <div className="mt-4">
-      <ResizablePanelGroup 
-        direction="horizontal" 
-        className="min-h-[800px] rounded-lg border border-purple-500/20"
-      >
-        <ResizablePanel 
-          defaultSize={selectedLog ? 60 : 100}
-          minSize={30}
-          className="relative h-full"
-        >
-          <div className="absolute inset-0 flex flex-col">
-            <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-base text-purple-200/80 border-b border-purple-500/20 bg-purple-950/90 backdrop-blur-sm">
-              <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-purple-400" />
-                <span className="font-medium text-lg">Total Records: {totalRecords?.toLocaleString()}</span>
-              </div>
-            </div>
-            <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
-              <Table>
-                <TableHeader className="bg-purple-950/90 backdrop-blur-sm sticky top-0 z-10">
-                  <TableRow className="hover:bg-transparent border-b border-purple-500/20">
-                    <TableHead className="text-purple-100 font-medium text-base">Time</TableHead>
-                    <TableHead className="text-purple-100 font-medium text-base">Risk</TableHead>
-                    <TableHead className="text-purple-100 font-medium text-base">User</TableHead>
-                    <TableHead className="text-purple-100 font-medium text-base">Computer</TableHead>
-                    <TableHead className="text-purple-100 font-medium text-base">Event</TableHead>
-                    <TableHead className="text-purple-100 font-medium text-base">Description</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {logs.map((log) => (
-                    <TableRow 
-                      key={log.id}
-                      className={`hover:bg-purple-400/5 cursor-pointer ${selectedLog?.id === log.id ? 'bg-purple-400/10' : ''}`}
-                      onClick={() => handleLogClick(log)}
-                    >
-                      <TableCell className="font-mono text-purple-200/90 text-base whitespace-nowrap">
-                        {format(new Date(log.system_time), "MMM d, yyyy HH:mm:ss")}
-                      </TableCell>
-                      <TableCell className={`font-medium ${getRiskColor(log.risk)}`}>
-                        {log.risk || 'N/A'}
-                      </TableCell>
-                      <TableCell className="text-purple-200/90 text-base">
-                        {log.user_id || 'N/A'}
-                      </TableCell>
-                      <TableCell className="text-purple-200/90 text-base">
-                        {log.computer_name || 'N/A'}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col gap-1">
-                          <span className="font-medium text-purple-200">{log.title}</span>
-                          <div className="flex flex-wrap gap-1">
-                            {log.tactics?.split(',').map((tactic, index) => (
-                              <span
-                                key={index}
-                                className="px-2 py-0.5 text-xs rounded-full bg-purple-500/10 text-purple-300"
-                              >
-                                {tactic.trim()}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="max-w-md">
-                        <p className="text-sm text-purple-200/70 line-clamp-2">
-                          {log.description}
-                        </p>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+    <Card className="border border-purple-500/20 bg-purple-950/20">
+      <div className="p-4 border-b border-purple-500/20">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-purple-400" />
+            <h2 className="text-lg font-semibold text-purple-100">
+              Timeline Events {totalRecords && `(${totalRecords})`}
+            </h2>
           </div>
-        </ResizablePanel>
+        </div>
+      </div>
 
-        {selectedLog && (
-          <>
-            <ResizableHandle 
-              withHandle 
-              className="bg-purple-500/20 hover:bg-purple-500/30 transition-colors"
-            />
-            
-            <ResizablePanel 
-              defaultSize={40}
-              minSize={30}
-            >
-              <div className="absolute inset-0 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
-                <DetailsPanel 
-                  alert={selectedLog}
-                  onClose={() => setSelectedLog(null)}
-                />
-              </div>
-            </ResizablePanel>
-          </>
-        )}
-      </ResizablePanelGroup>
-    </div>
+      <ScrollArea className="h-[600px]">
+        <div className="p-4">
+          <Table>
+            <TableHeader className="bg-purple-950/40 sticky top-0 z-10">
+              <TableRow className="hover:bg-transparent border-purple-500/20">
+                <TableHead className="text-purple-100 font-medium">Time</TableHead>
+                <TableHead className="text-purple-100 font-medium">Risk</TableHead>
+                <TableHead className="text-purple-100 font-medium">Event</TableHead>
+                <TableHead className="text-purple-100 font-medium">User</TableHead>
+                <TableHead className="text-purple-100 font-medium">Computer</TableHead>
+                <TableHead className="text-purple-100 font-medium">Details</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {logs.map((log) => (
+                <TableRow 
+                  key={log.id} 
+                  className="hover:bg-purple-500/5 border-purple-500/20"
+                >
+                  <TableCell className="font-mono text-purple-200/90">
+                    {format(new Date(log.system_time), "MMM d, yyyy HH:mm:ss")}
+                  </TableCell>
+                  <TableCell>
+                    <Badge 
+                      variant="outline" 
+                      className={`${getRiskBadgeColor(log.risk)} border-none`}
+                    >
+                      {log.risk || 'N/A'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1">
+                      <p className="text-purple-100 font-medium">{log.title}</p>
+                      <div className="flex flex-wrap gap-1">
+                        {log.tactics?.split(',').map((tactic, index) => (
+                          <Badge 
+                            key={index}
+                            variant="outline"
+                            className="bg-purple-500/10 text-purple-300 border-purple-500/20"
+                          >
+                            {tactic.trim()}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-purple-400" />
+                      <span className="text-purple-200 font-mono">
+                        {log.user_id || 'N/A'}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Monitor className="h-4 w-4 text-purple-400" />
+                      <span className="text-purple-200 font-mono">
+                        {log.computer_name || 'N/A'}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1 max-w-md">
+                      <p className="text-purple-200/70 text-sm line-clamp-2">
+                        {log.description}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <Terminal className="h-4 w-4 text-purple-400" />
+                        <span className="text-purple-200/70 text-sm">
+                          {log.event_id}
+                        </span>
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </ScrollArea>
+    </Card>
   );
 };
 
