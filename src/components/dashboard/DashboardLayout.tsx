@@ -7,7 +7,7 @@ import AnomaliesTable from "./AnomaliesTable";
 import { calculateStats } from "./alertUtils";
 import HighRiskUsersOriginWidget from "../HighRiskUsersOriginWidget";
 import HighRiskUsersImpactedWidget from "../HighRiskUsersImpactedWidget";
-import HighRiskAssetsWidget from "../HighRiskAssetsWidget";
+import HighRiskComputersWidget from "../HighRiskComputersWidget";
 import OutliersWidget from "../OutliersWidget";
 
 interface DashboardLayoutProps {
@@ -66,20 +66,14 @@ const DashboardLayout = ({
       </div>
 
       {/* High Risk Widgets */}
-      <div className="widgets-grid">
-        <div className="widget-container">
-          <HighRiskUsersOriginWidget />
-        </div>
-        <div className="widget-container">
-          <HighRiskUsersImpactedWidget />
-        </div>
-        <div className="widget-container">
-          <HighRiskAssetsWidget />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        <HighRiskUsersOriginWidget />
+        <HighRiskUsersImpactedWidget />
+        <HighRiskComputersWidget />
       </div>
 
       {/* Active Users Widgets */}
-      <div className="widgets-grid">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4">
           <RiskyEntities 
             alerts={allAlerts} 
