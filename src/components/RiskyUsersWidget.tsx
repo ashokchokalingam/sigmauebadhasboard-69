@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import TimelineView from "./dashboard/TimelineView";
 import { useState } from "react";
 
 interface RiskyUser {
@@ -20,13 +19,20 @@ const RiskyUsersWidget = ({ onEntitySelect }: RiskyUsersWidgetProps) => {
   const { data: riskyUsers } = useQuery({
     queryKey: ['riskyUsers'],
     queryFn: async () => {
-      // Simulated data - replace with actual API endpoint when available
-      return [
-        { id: "1", name: "Sarah Chen", riskScore: 9.5, trend: "up" },
-        { id: "2", name: "Mike Johnson", riskScore: 8.7, trend: "stable" },
-        { id: "3", name: "Emma Davis", riskScore: 8.4, trend: "down" },
-        { id: "4", name: "Alex Wong", riskScore: 9.3, trend: "up" }
-      ] as RiskyUser[];
+      const response = await fetch('/api/user_origin');
+      if (!response.ok) {
+        throw new Error('Failed to fetch risky users');
+      }
+      const data = await response.json();
+      
+      // Transform API data to match our interface
+      return data.user_origin.map((user: any) => ({
+        id: user.user_origin,
+        name: user.user_origin,
+        riskScore: parseFloat(user.total_unique_risk_score) || 0,
+        trend: user.trend || "stable",
+        uniqueTitles: user.unique_titles
+      })).slice(0, 4); // Get top 4 risky users
     }
   });
 
@@ -113,7 +119,7 @@ const RiskyUsersWidget = ({ onEntitySelect }: RiskyUsersWidgetProps) => {
                     />
                   </svg>
                   <span className={`font-mono font-bold ${getTrendColor(user.riskScore)}`}>
-                    {user.riskScore}
+                    {user.riskScore.toFixed(1)}
                   </span>
                 </div>
               </div>
