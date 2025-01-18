@@ -14,7 +14,7 @@ interface EntityListProps {
 const EntityList = ({ entities, onEntitySelect }: EntityListProps) => {
   return (
     <ScrollArea className="h-[400px] pr-4">
-      <div className="flex flex-col space-y-2">
+      <div className="space-y-2">
         {entities?.map((entity) => (
           <EntityCard
             key={entity.id}

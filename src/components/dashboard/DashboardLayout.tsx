@@ -9,7 +9,6 @@ import HighRiskUsersOriginWidget from "../HighRiskUsersOriginWidget";
 import HighRiskUsersImpactedWidget from "../HighRiskUsersImpactedWidget";
 import HighRiskAssetsWidget from "../HighRiskAssetsWidget";
 import OutliersWidget from "../OutliersWidget";
-import TimeFrameSelector from "../TimeFrameSelector";
 
 interface DashboardLayoutProps {
   alerts: Alert[];
@@ -20,8 +19,6 @@ interface DashboardLayoutProps {
   selectedEntity: { type: "userorigin" | "userimpacted" | "computersimpacted"; id: string } | null;
   onLoadMore: () => void;
   hasMore: boolean;
-  timeFrame: string;
-  onTimeFrameChange: (value: string) => void;
 }
 
 const DashboardLayout = ({
@@ -32,9 +29,7 @@ const DashboardLayout = ({
   onEntitySelect,
   selectedEntity,
   onLoadMore,
-  hasMore,
-  timeFrame,
-  onTimeFrameChange
+  hasMore
 }: DashboardLayoutProps) => {
   const stats = calculateStats(allAlerts, totalRecords);
 
@@ -51,18 +46,15 @@ const DashboardLayout = ({
 
   return (
     <div className="min-h-screen w-full bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-4 md:p-6">
-      {/* Header Section */}
+      {/* Stats Section */}
       <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-6">
         <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">
           ATT&CK User Behavior Analytics
         </h1>
-        <div className="flex items-center gap-4">
-          <TimeFrameSelector value={timeFrame} onValueChange={onTimeFrameChange} />
-          <button className="flex items-center gap-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 transition-all duration-300 rounded-lg px-4 py-2 border border-blue-500/10">
-            <Download className="h-4 w-4" />
-            Export Data
-          </button>
-        </div>
+        <button className="flex items-center gap-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 transition-all duration-300 rounded-lg px-4 py-2 border border-blue-500/10">
+          <Download className="h-4 w-4" />
+          Export Data
+        </button>
       </div>
 
       <div className="mb-6">
@@ -75,13 +67,13 @@ const DashboardLayout = ({
 
       {/* High Risk Widgets */}
       <div className="widgets-grid">
-        <div className="widget-container h-[500px]">
+        <div className="widget-container">
           <HighRiskUsersOriginWidget />
         </div>
-        <div className="widget-container h-[500px]">
+        <div className="widget-container">
           <HighRiskUsersImpactedWidget />
         </div>
-        <div className="widget-container h-[500px]">
+        <div className="widget-container">
           <HighRiskAssetsWidget />
         </div>
       </div>

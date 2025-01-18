@@ -25,43 +25,27 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
   )?.map(count => ({
     name: count.rule_level,
     value: parseInt(count.event_count),
-    color: count.rule_level === "Critical" ? "#ea384c" : // Red for Critical
-           count.rule_level === "High" ? "#F97316" :     // Orange for High
-           count.rule_level === "Medium" ? "#3B82F6" :   // Blue for Medium
-           count.rule_level === "Low" ? "#22C55E" :      // Green for Low
-           "#3B82F6"                                     // Default blue
+    color: count.rule_level === "Critical" ? "#FF0000" : // Bright Red
+           count.rule_level === "High" ? "#FFA500" : // Orange
+           count.rule_level === "Medium" ? "#FFFF00" : // Yellow
+           count.rule_level === "Low" ? "#008000" : // Green
+           "#0000FF" // Blue (Informational)
   })) || [];
-
-  const RADIAN = Math.PI / 180;
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, value }: any) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-    
-    return (
-      <g>
-        <text
-          x={x}
-          y={y}
-          fill="white"
-          textAnchor={x > cx ? 'start' : 'end'}
-          dominantBaseline="central"
-          className="text-xs font-medium"
-        >
-          {value}
-        </text>
-      </g>
-    );
-  };
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-[#1a1f2c]/95 border border-gray-700 rounded-lg p-2 shadow-lg">
-          <p className="text-gray-200 font-medium">{data.name}</p>
-          <p className="text-gray-300">
-            {data.value.toLocaleString()} events
+        <div className="bg-[#1a1f2c] border border-gray-700 rounded-lg p-3 shadow-xl">
+          <div className="flex items-center gap-2 mb-1">
+            <div 
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: data.color }}
+            />
+            <p className="text-gray-200 font-medium">{data.name}</p>
+          </div>
+          <p className="text-gray-300 font-mono">
+            {data.value.toLocaleString()} alerts
           </p>
         </div>
       );
@@ -70,53 +54,56 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
   };
 
   return (
-    <Card className="bg-[#0F1218] border-gray-800">
+    <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
-        <CardTitle className="text-gray-200">Severity Distribution</CardTitle>
+        <CardTitle className="flex items-center gap-2 text-blue-100">
+          <AlertTriangle className="h-5 w-5 text-blue-500" />
+          Risk Distribution
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px] relative">
+        <div className="h-[400px] relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={severityData}
                 cx="50%"
                 cy="50%"
-                innerRadius={80}
-                outerRadius={120}
+                innerRadius={100}
+                outerRadius={160}
                 paddingAngle={2}
                 dataKey="value"
-                labelLine={false}
-                label={renderCustomizedLabel}
-                onMouseEnter={(data) => {
+                onDoubleClick={(data) => {
                   if (data && data.name) {
                     onSeveritySelect(data.name);
                   }
                 }}
-                onMouseLeave={() => {
-                  onSeveritySelect(null);
+                onClick={(data) => {
+                  if (data && data.name) {
+                    onSeveritySelect(null);
+                  }
                 }}
               >
                 {severityData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
                     fill={entry.color}
-                    stroke="#0F1218"
-                    strokeWidth={2}
+                    stroke="transparent"
+                    className="transition-opacity duration-300 hover:opacity-90"
                   />
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
             </PieChart>
           </ResponsiveContainer>
-          <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-4 pt-4">
+          <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-6 pt-4">
             {severityData.map((entry, index) => (
               <div key={index} className="flex items-center gap-2">
                 <div 
                   className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: entry.color }} 
                 />
-                <span className="text-sm text-gray-400">{entry.name}</span>
+                <span className="text-sm text-gray-300">{entry.name}</span>
               </div>
             ))}
           </div>

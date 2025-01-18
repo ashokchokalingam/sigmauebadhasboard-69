@@ -3,6 +3,7 @@ import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Alert } from "@/components/dashboard/types";
 import { useQuery } from "@tanstack/react-query";
+import TimeFrameSelector from "@/components/TimeFrameSelector";
 
 const INITIAL_BATCH_SIZE = 100;
 const TOTAL_BATCH_SIZE = 1000;
@@ -112,6 +113,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-[#1a1f2c]">
+      <div className="p-6">
+        <TimeFrameSelector value={timeFrame} onValueChange={setTimeFrame} />
+      </div>
       <DashboardLayout
         alerts={currentAlerts}
         allAlerts={allAlerts}
@@ -121,8 +125,6 @@ const Index = () => {
         selectedEntity={selectedEntity}
         onLoadMore={handleLoadMore}
         hasMore={currentAlerts.length < TOTAL_BATCH_SIZE}
-        timeFrame={timeFrame}
-        onTimeFrameChange={setTimeFrame}
       />
       
       {(isLoadingInitial || isLoadingRemaining) && currentAlerts.length > 0 && (
