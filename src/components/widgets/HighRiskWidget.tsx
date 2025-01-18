@@ -1,17 +1,22 @@
 import { Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { HighRiskWidgetProps, RiskyEntity } from "./types";
-import WidgetHeader from "./WidgetHeader";
-import SearchInput from "./SearchInput";
-import EntityCard from "./EntityCard";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import TimelineView from "../dashboard/TimelineView";
+
+interface HighRiskWidgetProps {
+  entityType: "userOrigin" | "userImpacted" | "computer";
+  title: string;
+  apiEndpoint: string;
+  searchPlaceholder: string;
+}
 
 const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: HighRiskWidgetProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
 
-  const { data: entities, isError, isLoading } = useQuery({
+  const { data: entities = [] } = useQuery({
     queryKey: [apiEndpoint],
     queryFn: async () => {
       const response = await fetch(`/api/${apiEndpoint}`);
@@ -20,102 +25,86 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
       }
       const data = await response.json();
       const key = Object.keys(data)[0];
-      const sortedEntities = data[key].sort((a: RiskyEntity, b: RiskyEntity) => 
-        parseInt(b.cumulative_risk_score) - parseInt(a.cumulative_risk_score)
-      );
-      return sortedEntities || [];
+      return data[key] || [];
     }
   });
 
-  const handleEntityClick = (entity: RiskyEntity) => {
-    const entityId = entityType === 'computer' ? entity.computer : entity.user;
-    if (entityId) {
-      setSelectedEntity(entityId);
-    }
+  const filteredEntities = entities.filter((entity: any) => {
+    const entityName = entityType === 'computer' ? entity.computer : entity.user;
+    return entityName?.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  const handleEntityClick = (entityId: string) => {
+    setSelectedEntity(entityId);
   };
 
-  const filteredEntities = entities?.filter(entity => {
-    const searchTerm = searchQuery.toLowerCase();
-    const entityName = entityType === 'computer' ? entity.computer : entity.user;
-    return entityName?.toLowerCase().includes(searchTerm);
-  });
-
   if (selectedEntity) {
-    const timelineEntityType = entityType === 'computer' ? 'computersimpacted' :
-                              entityType === 'userOrigin' ? 'userorigin' : 'userimpacted';
-    
-    return (
-      <TimelineView
-        entityType={timelineEntityType}
-        entityId={selectedEntity}
-        onClose={() => setSelectedEntity(null)}
-        inSidebar={false}
-      />
-    );
-  }
+    const timelineEntityType = entityType === 'userOrigin' ? 'userorigin' :
+                              entityType === 'userImpacted' ? 'userimpacted' :
+                              'computersimpacted';
 
-  if (isLoading) {
     return (
-      <div className="bg-[#0A0B0F] border border-purple-500/20 rounded-xl overflow-hidden shadow-2xl">
-        <div className="p-6">
-          <div className="animate-pulse flex space-x-4">
-            <div className="flex-1 space-y-4 py-1">
-              <div className="h-4 bg-purple-500/20 rounded w-3/4"></div>
-              <div className="space-y-3">
-                <div className="h-4 bg-purple-500/20 rounded"></div>
-                <div className="h-4 bg-purple-500/20 rounded w-5/6"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="bg-[#0A0B0F] border border-purple-500/20 rounded-xl overflow-hidden shadow-2xl">
-        <div className="p-6">
-          <div className="text-purple-400 flex items-center justify-center gap-2">
-            <Shield className="h-5 w-5" />
-            Failed to load {title}
-          </div>
-        </div>
+      <div className="fixed inset-0 z-50 bg-background">
+        <TimelineView
+          entityType={timelineEntityType}
+          entityId={selectedEntity}
+          onClose={() => setSelectedEntity(null)}
+          inSidebar={false}
+        />
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-br from-[#0A0B0F] to-[#1A1F2C] border border-purple-500/20 rounded-xl overflow-hidden h-[500px] flex flex-col shadow-2xl backdrop-blur-sm transition-all duration-300 hover:shadow-purple-500/10">
-      <WidgetHeader 
-        title={title} 
-        count={filteredEntities?.length || 0} 
-      />
-
-      <div className="p-4 bg-black/20">
-        <SearchInput 
-          value={searchQuery}
-          onChange={setSearchQuery}
-          placeholder={searchPlaceholder}
-        />
-      </div>
-
-      <div className="px-4 pb-4 space-y-2 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/10 scrollbar-track-transparent">
-        {filteredEntities?.map((entity: RiskyEntity) => (
-          <EntityCard
-            key={entityType === 'computer' ? entity.computer : entity.user}
-            entity={entity}
-            entityType={entityType}
-            onClick={() => handleEntityClick(entity)}
+    <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-purple-100">
+          <Shield className="h-5 w-5 text-purple-500" />
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <Input
+            type="text"
+            placeholder={searchPlaceholder}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-purple-950/20 border-purple-900/30 text-purple-100 placeholder:text-purple-400/50"
           />
-        ))}
-        {(!filteredEntities || filteredEntities.length === 0) && (
-          <div className="text-center py-8">
-            <span className="text-purple-400/60">No critical entities found</span>
+          <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2">
+            {filteredEntities.map((entity: any, index: number) => {
+              const entityId = entityType === 'computer' ? entity.computer : entity.user;
+              const riskScore = parseFloat(entity.cumulative_risk_score);
+              
+              return (
+                <div
+                  key={index}
+                  className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 cursor-pointer"
+                  onClick={() => handleEntityClick(entityId)}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-purple-100 font-mono">{entityId}</span>
+                    <span className={`font-mono font-bold ${
+                      riskScore >= 80 ? 'text-red-500' :
+                      riskScore >= 60 ? 'text-orange-500' :
+                      'text-yellow-500'
+                    }`}>
+                      {riskScore.toFixed(1)}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+            {filteredEntities.length === 0 && (
+              <div className="text-center text-purple-400/60 py-4">
+                No high risk entities found
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
