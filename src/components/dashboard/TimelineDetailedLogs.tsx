@@ -45,43 +45,42 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
         <ResizablePanel 
           defaultSize={60}
           minSize={30}
+          className="h-full"
         >
-          <div className="h-full overflow-hidden">
-            <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C]">
-              <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
-                <div>
-                  <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
-                </div>
+          <div className="h-full flex flex-col">
+            <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
+              <div>
+                <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
               </div>
-              <div className="overflow-auto custom-scrollbar" style={{ height: 'calc(100vh - 180px)' }}>
-                <Table>
-                  <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
-                    <TableRow className="hover:bg-transparent border-b border-purple-400/20">
-                      <TableHead className="text-purple-100 font-semibold">Time</TableHead>
-                      {entityType === "user" ? (
-                        <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
-                      ) : (
-                        <TableHead className="text-purple-100 font-semibold">Computer Name</TableHead>
-                      )}
-                      <TableHead className="text-purple-100 font-semibold">User Impacted</TableHead>
-                      <TableHead className="text-purple-100 font-semibold">Computer</TableHead>
-                      <TableHead className="text-purple-100 font-semibold">Event</TableHead>
-                      <TableHead className="text-purple-100 font-semibold">MITRE Tactics</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {logs.map((log) => (
-                      <TimelineLogCard
-                        key={log.id}
-                        log={log}
-                        isExpanded={selectedLog?.id === log.id}
-                        onToggleExpand={handleLogClick}
-                        visibleColumns={[]}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+            </div>
+            <div className="flex-1 overflow-auto custom-scrollbar">
+              <Table>
+                <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
+                  <TableRow className="hover:bg-transparent border-b border-purple-400/20">
+                    <TableHead className="text-purple-100 font-semibold">Time</TableHead>
+                    {entityType === "user" ? (
+                      <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
+                    ) : (
+                      <TableHead className="text-purple-100 font-semibold">Computer Name</TableHead>
+                    )}
+                    <TableHead className="text-purple-100 font-semibold">User Impacted</TableHead>
+                    <TableHead className="text-purple-100 font-semibold">Computer</TableHead>
+                    <TableHead className="text-purple-100 font-semibold">Event</TableHead>
+                    <TableHead className="text-purple-100 font-semibold">MITRE Tactics</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {logs.map((log) => (
+                    <TimelineLogCard
+                      key={log.id}
+                      log={log}
+                      isExpanded={selectedLog?.id === log.id}
+                      onToggleExpand={handleLogClick}
+                      visibleColumns={[]}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </div>
         </ResizablePanel>
@@ -94,15 +93,14 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
         <ResizablePanel 
           defaultSize={40}
           minSize={30}
+          className="h-full"
         >
-          <div className="h-full">
-            {selectedLog && (
-              <DetailsPanel 
-                alert={selectedLog}
-                onClose={() => setSelectedLog(null)}
-              />
-            )}
-          </div>
+          {selectedLog && (
+            <DetailsPanel 
+              alert={selectedLog}
+              onClose={() => setSelectedLog(null)}
+            />
+          )}
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
