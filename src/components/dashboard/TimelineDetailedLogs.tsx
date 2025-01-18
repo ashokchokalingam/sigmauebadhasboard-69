@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Alert } from "./types";
 import TimelineLogCard from "./TimelineLogCard";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table";
@@ -62,7 +62,7 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
                 </div>
               </div>
               <Table>
-                <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
+                <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-[57px] z-10">
                   <TableRow className="hover:bg-transparent border-b border-purple-400/20">
                     <TableHead className="text-purple-100 font-semibold">Time</TableHead>
                     {entityType === "user" ? (
