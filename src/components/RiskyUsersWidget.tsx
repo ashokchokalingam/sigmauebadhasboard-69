@@ -12,10 +12,11 @@ interface RiskyUser {
   avatar?: string;
 }
 
-const RiskyUsersWidget = () => {
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
-  const [timelineType, setTimelineType] = useState<"userorigin" | "userimpacted" | null>(null);
+interface RiskyUsersWidgetProps {
+  onEntitySelect?: (entity: { type: "userorigin" | "userimpacted"; id: string } | null) => void;
+}
 
+const RiskyUsersWidget = ({ onEntitySelect }: RiskyUsersWidgetProps) => {
   const { data: riskyUsers } = useQuery({
     queryKey: ['riskyUsers'],
     queryFn: async () => {
@@ -44,23 +45,10 @@ const RiskyUsersWidget = () => {
   };
 
   const handleUserClick = (user: RiskyUser, type: "userorigin" | "userimpacted") => {
-    setSelectedUser(user.name);
-    setTimelineType(type);
+    if (onEntitySelect) {
+      onEntitySelect({ type, id: user.name });
+    }
   };
-
-  if (selectedUser && timelineType) {
-    return (
-      <TimelineView
-        entityType={timelineType}
-        entityId={selectedUser}
-        onClose={() => {
-          setSelectedUser(null);
-          setTimelineType(null);
-        }}
-        inSidebar={false}
-      />
-    );
-  }
 
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
