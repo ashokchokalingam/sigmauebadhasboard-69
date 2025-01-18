@@ -47,7 +47,7 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
           onSelectAll={handleSelectAll}
           onDeselectAll={handleDeselectAll}
         />
-        <CardContent>
+        <CardContent className="p-0">
           {selectedAlert ? (
             <AnomaliesSplitView
               selectedAlert={selectedAlert}
