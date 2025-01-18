@@ -72,7 +72,7 @@ const AlertTableRow = ({
   
   return (
     <TableRow 
-      className={`hover:bg-slate-900/30 cursor-pointer ${isSelected ? 'bg-slate-900/20' : ''}`}
+      className={`hover:bg-slate-900/30 cursor-pointer whitespace-nowrap ${isSelected ? 'bg-slate-900/20' : ''}`}
       onClick={onToggle}
     >
       {visibleColumns.map((columnKey) => (

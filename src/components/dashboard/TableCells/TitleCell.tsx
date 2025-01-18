@@ -7,10 +7,10 @@ interface TitleCellProps {
 
 const TitleCell = ({ title }: TitleCellProps) => {
   return (
-    <TableCell className="px-3 py-0">
-      <div className="flex items-center gap-2">
-        <FileText className="h-3.5 w-3.5 text-slate-400" />
-        <span className="text-[13px]">{title || '-'}</span>
+    <TableCell className="px-3 py-0 max-w-[250px]">
+      <div className="flex items-center gap-2 whitespace-nowrap overflow-hidden">
+        <FileText className="h-3.5 w-3.5 flex-shrink-0 text-slate-400" />
+        <span className="text-[13px] truncate">{title || '-'}</span>
       </div>
     </TableCell>
   );
