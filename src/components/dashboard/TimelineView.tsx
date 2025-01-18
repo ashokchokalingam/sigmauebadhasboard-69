@@ -20,6 +20,8 @@ interface TimelineViewProps {
 const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: TimelineViewProps) => {
   const { ref, inView } = useInView();
 
+  console.log('TimelineView mounted with:', { entityType, entityId });
+
   const {
     data,
     fetchNextPage,
@@ -31,35 +33,35 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     queryFn: async ({ pageParam = 1 }) => {
       console.log("Fetching timeline data:", { entityType, entityId, pageParam });
       
-      // Determine the correct endpoint based on entityType
-      let endpoint = entityType === "computersimpacted" ? "computer_impacted_timeline" : 
-                    entityType === "userorigin" ? "user_origin_timeline" :
-                    "user_impacted_timeline";
+      let endpoint = '';
+      let queryParam = '';
       
-      let queryParams = new URLSearchParams();
-      
-      // Set the correct query parameter based on entityType
-      if (entityType === "computersimpacted") {
-        queryParams.append("computer_name", entityId);
-      } else if (entityType === "userorigin") {
-        queryParams.append("user_origin", entityId);
-      } else {
-        queryParams.append("user_impacted", entityId);
+      switch (entityType) {
+        case 'userorigin':
+          endpoint = '/api/user_origin_timeline';
+          queryParam = `user_origin=${entityId}`;
+          break;
+        case 'userimpacted':
+          endpoint = '/api/user_impacted_timeline';
+          queryParam = `user_impacted=${entityId}`;
+          break;
+        case 'computersimpacted':
+          endpoint = '/api/computer_impacted_timeline';
+          queryParam = `computer_name=${entityId}`;
+          break;
+        default:
+          throw new Error(`Unsupported entity type: ${entityType}`);
       }
+
+      console.log(`Fetching from ${endpoint}?${queryParam}`);
       
-      queryParams.append("page", pageParam.toString());
-      queryParams.append("per_page", EVENTS_PER_PAGE.toString());
-      
-      console.log(`Fetching from /api/${endpoint}?${queryParams.toString()}`);
-      
-      const response = await fetch(`/api/${endpoint}?${queryParams.toString()}`);
-      
+      const response = await fetch(`${endpoint}?${queryParam}`);
       if (!response.ok) {
-        throw new Error(`Failed to fetch timeline data: ${response.statusText}`);
+        throw new Error('Failed to fetch timeline data');
       }
-      
+
       const data = await response.json();
-      console.log("Timeline data received:", data);
+      console.log('Timeline data received:', data);
       
       return {
         computer_impacted_timeline: data.computer_impacted_timeline || [],
@@ -68,9 +70,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         pagination: {
           current_page: pageParam,
           per_page: EVENTS_PER_PAGE,
-          has_more: (data.computer_impacted_timeline?.length === EVENTS_PER_PAGE || 
-                    data.user_impacted_timeline?.length === EVENTS_PER_PAGE ||
-                    data.user_origin_timeline?.length === EVENTS_PER_PAGE)
+          has_more: false
         }
       };
     },
@@ -81,7 +81,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       }
       return undefined;
     },
-    enabled: !!entityId,
+    enabled: Boolean(entityType && entityId),
   });
 
   const allEvents = data?.pages.flatMap(

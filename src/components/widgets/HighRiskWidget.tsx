@@ -5,9 +5,11 @@ import { HighRiskWidgetProps, RiskyEntity } from "./types";
 import WidgetHeader from "./WidgetHeader";
 import SearchInput from "./SearchInput";
 import EntityCard from "./EntityCard";
+import TimelineView from "../dashboard/TimelineView";
 
 const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: HighRiskWidgetProps) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
 
   const { data: entities, isError, isLoading } = useQuery({
     queryKey: [apiEndpoint],
@@ -27,9 +29,9 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
 
   const handleEntityClick = (entity: RiskyEntity) => {
     const entityId = entityType === 'computer' ? entity.computer : entity.user;
-    const route = entityType === 'computer' ? 'computersimpacted' :
-                 entityType === 'userOrigin' ? 'userorigin' : 'userimpacted';
-    window.open(`/timeline/${route}/${encodeURIComponent(entityId!)}`, '_blank');
+    if (entityId) {
+      setSelectedEntity(entityId);
+    }
   };
 
   const filteredEntities = entities?.filter(entity => {
@@ -37,6 +39,20 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
     const entityName = entityType === 'computer' ? entity.computer : entity.user;
     return entityName?.toLowerCase().includes(searchTerm);
   });
+
+  if (selectedEntity) {
+    const timelineEntityType = entityType === 'computer' ? 'computersimpacted' :
+                              entityType === 'userOrigin' ? 'userorigin' : 'userimpacted';
+    
+    return (
+      <TimelineView
+        entityType={timelineEntityType}
+        entityId={selectedEntity}
+        onClose={() => setSelectedEntity(null)}
+        inSidebar={false}
+      />
+    );
+  }
 
   if (isLoading) {
     return (

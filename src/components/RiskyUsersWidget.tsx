@@ -14,6 +14,7 @@ interface RiskyUser {
 
 const RiskyUsersWidget = () => {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [timelineType, setTimelineType] = useState<"userorigin" | "userimpacted" | null>(null);
 
   const { data: riskyUsers } = useQuery({
     queryKey: ['riskyUsers'],
@@ -42,16 +43,20 @@ const RiskyUsersWidget = () => {
     return "text-yellow-500";
   };
 
-  const handleUserClick = (user: RiskyUser) => {
+  const handleUserClick = (user: RiskyUser, type: "userorigin" | "userimpacted") => {
     setSelectedUser(user.name);
+    setTimelineType(type);
   };
 
-  if (selectedUser) {
+  if (selectedUser && timelineType) {
     return (
       <TimelineView
-        entityType="userorigin"
+        entityType={timelineType}
         entityId={selectedUser}
-        onClose={() => setSelectedUser(null)}
+        onClose={() => {
+          setSelectedUser(null);
+          setTimelineType(null);
+        }}
         inSidebar={false}
       />
     );
@@ -70,8 +75,7 @@ const RiskyUsersWidget = () => {
           {riskyUsers?.map((user) => (
             <div
               key={user.id}
-              className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 group cursor-pointer"
-              onClick={() => handleUserClick(user)}
+              className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 group"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -86,9 +90,25 @@ const RiskyUsersWidget = () => {
                       <User className="w-4 h-4 text-purple-400" />
                     )}
                   </div>
-                  <span className="text-gray-200 group-hover:text-gray-100 transition-colors">
-                    {user.name}
-                  </span>
+                  <div className="space-y-1">
+                    <span className="text-gray-200 group-hover:text-gray-100 transition-colors">
+                      {user.name}
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleUserClick(user, "userorigin")}
+                        className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
+                      >
+                        View as Origin
+                      </button>
+                      <button
+                        onClick={() => handleUserClick(user, "userimpacted")}
+                        className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
+                      >
+                        View as Impacted
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <svg
