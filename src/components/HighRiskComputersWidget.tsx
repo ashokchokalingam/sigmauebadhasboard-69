@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import WidgetHeader from "./widgets/WidgetHeader";
 import SearchInput from "./widgets/SearchInput";
+import { useToast } from "@/components/ui/use-toast";
 
 interface RiskyComputer {
   computer: string;
@@ -14,6 +15,8 @@ interface RiskyComputer {
 
 const HighRiskComputersWidget = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { toast } = useToast();
+
   const { data: riskyComputers, isError, isLoading } = useQuery({
     queryKey: ['riskyComputers'],
     queryFn: async () => {
@@ -28,6 +31,30 @@ const HighRiskComputersWidget = () => {
       return sortedComputers || [];
     }
   });
+
+  const handleComputerClick = async (computer: string) => {
+    try {
+      const response = await fetch(`/api/computer_impacted_timeline?computer_name=${computer}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch timeline data');
+      }
+      const data = await response.json();
+      console.log('Timeline data for computer:', data);
+      
+      // Show success toast
+      toast({
+        title: "Timeline Data Retrieved",
+        description: `Successfully loaded timeline for ${computer}`,
+      });
+    } catch (error) {
+      console.error('Error fetching timeline:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load timeline data",
+      });
+    }
+  };
 
   const filteredComputers = riskyComputers?.filter(computer => 
     computer.computer.toLowerCase().includes(searchQuery.toLowerCase())
@@ -83,6 +110,7 @@ const HighRiskComputersWidget = () => {
         {filteredComputers?.map((computer: RiskyComputer) => (
           <div
             key={computer.computer}
+            onClick={() => handleComputerClick(computer.computer)}
             className="group p-4 rounded-lg
               bg-gradient-to-r from-[#0D0E12] to-[#12131A]
               hover:from-[#12131A] hover:to-[#1A1F2C]

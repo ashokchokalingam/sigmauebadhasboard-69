@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import WidgetHeader from "./widgets/WidgetHeader";
 import SearchInput from "./widgets/SearchInput";
+import { useToast } from "@/components/ui/use-toast";
 
 interface RiskyUser {
   user: string;
@@ -14,6 +15,8 @@ interface RiskyUser {
 
 const HighRiskUsersImpactedWidget = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { toast } = useToast();
+
   const { data: riskyUsers, isError, isLoading } = useQuery({
     queryKey: ['riskyUsersImpacted'],
     queryFn: async () => {
@@ -28,6 +31,29 @@ const HighRiskUsersImpactedWidget = () => {
       return sortedUsers || [];
     }
   });
+
+  const handleUserClick = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/user_impacted_timeline?user_impacted=${userId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch timeline data');
+      }
+      const data = await response.json();
+      console.log('Timeline data for impacted user:', data);
+      
+      toast({
+        title: "Timeline Data Retrieved",
+        description: `Successfully loaded timeline for ${userId}`,
+      });
+    } catch (error) {
+      console.error('Error fetching timeline:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load timeline data",
+      });
+    }
+  };
 
   const filteredUsers = riskyUsers?.filter(user => 
     user.user.toLowerCase().includes(searchQuery.toLowerCase())
@@ -75,6 +101,7 @@ const HighRiskUsersImpactedWidget = () => {
         <SearchInput 
           value={searchQuery}
           onChange={setSearchQuery}
+          placeholder="Search critical users..."
         />
       </div>
 
@@ -82,6 +109,7 @@ const HighRiskUsersImpactedWidget = () => {
         {filteredUsers?.map((user: RiskyUser) => (
           <div
             key={user.user}
+            onClick={() => handleUserClick(user.user)}
             className="group p-4 rounded-lg
               bg-gradient-to-r from-[#0D0E12] to-[#12131A]
               hover:from-[#12131A] hover:to-[#1A1F2C]
