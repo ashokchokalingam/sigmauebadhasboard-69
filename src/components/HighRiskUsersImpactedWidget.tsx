@@ -1,6 +1,8 @@
-import { AlertTriangle, Search, User } from "lucide-react";
+import { User } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import WidgetHeader from "./widgets/WidgetHeader";
+import SearchInput from "./widgets/SearchInput";
 
 interface RiskyUser {
   user: string;
@@ -52,41 +54,20 @@ const HighRiskUsersImpactedWidget = () => {
   }
 
   return (
-    <div className="bg-[#0A0B0F] border border-indigo-500/10 rounded-xl overflow-hidden shadow-2xl shadow-indigo-500/10 h-[675px] flex flex-col">
-      <div className="p-6 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 border-b border-indigo-500/10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-              <AlertTriangle className="h-5 w-5 text-red-400" />
-            </div>
-            <span className="text-lg font-semibold bg-gradient-to-r from-red-400 to-purple-400 bg-clip-text text-transparent">
-              High Risk Users Impacted
-            </span>
-          </div>
-          <span className="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-sm font-medium text-red-400">
-            {filteredUsers?.length || 0} critical users
-          </span>
-        </div>
-      </div>
+    <div className="bg-[#0A0B0F] border border-indigo-500/10 rounded-xl overflow-hidden shadow-2xl shadow-indigo-500/10 h-[500px] flex flex-col">
+      <WidgetHeader 
+        title="High Risk Users Impacted" 
+        count={filteredUsers?.length || 0} 
+      />
 
       <div className="p-6">
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-400/50" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search critical users..."
-            className="w-full pl-11 pr-4 py-3 bg-[#0D0E12] rounded-xl
-              border border-indigo-500/10 hover:border-indigo-500/20 
-              text-sm text-indigo-100/90 placeholder:text-indigo-400/30
-              transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-indigo-500/20
-              shadow-inner shadow-indigo-500/5"
-          />
-        </div>
+        <SearchInput 
+          value={searchQuery}
+          onChange={setSearchQuery}
+        />
       </div>
 
-      <div className="px-6 pb-6 space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-500/10 scrollbar-track-transparent">
+      <div className="px-6 pb-6 space-y-4 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-500/10 scrollbar-track-transparent">
         {filteredUsers?.map((user: RiskyUser) => (
           <div
             key={user.user}
