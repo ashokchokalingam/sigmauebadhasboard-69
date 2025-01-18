@@ -14,6 +14,7 @@ interface BaseCellProps {
   onClick?: (e: React.MouseEvent) => void;
   tooltipContent?: string;
   className?: string;
+  align?: "left" | "center" | "right";
 }
 
 const BaseTableCell = ({ 
@@ -22,12 +23,16 @@ const BaseTableCell = ({
   width = "min-w-[120px]",
   onClick,
   tooltipContent,
-  className = ""
+  className = "",
+  align = "left"
 }: BaseCellProps) => {
   const content = (
-    <div className="flex items-center gap-1 whitespace-nowrap overflow-hidden">
+    <div className={`flex items-center gap-1.5 overflow-hidden ${
+      align === "center" ? "justify-center" : 
+      align === "right" ? "justify-end" : "justify-start"
+    }`}>
       {Icon && <Icon className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />}
-      <span className="text-[13px] truncate">{value}</span>
+      <span className={`text-[13px] ${align === "left" ? "truncate" : ""}`}>{value}</span>
     </div>
   );
 

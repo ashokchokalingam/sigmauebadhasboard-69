@@ -16,8 +16,9 @@ const TimeCell = ({ time }: TimeCellProps) => {
     <BaseTableCell 
       value={browserTime}
       icon={Clock}
-      width="w-[120px]"
+      width="w-[160px]"
       className="font-mono"
+      align="left"
     />
   );
 };
