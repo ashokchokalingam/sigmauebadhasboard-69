@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 import { Alert } from "../types";
-import { MetadataGrid } from "./MetadataGrid";
+import MetadataGrid from "./MetadataGrid";
 
 interface DetailsPanelProps {
   alert: Alert;

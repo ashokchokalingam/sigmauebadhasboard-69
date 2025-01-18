@@ -3,7 +3,6 @@ import { Alert } from "./types";
 import TimelineLogCard from "./TimelineLogCard";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "../ui/table";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/resizable";
-import { ScrollArea } from "../ui/scroll-area";
 import DetailsPanel from "./TimelineDetailedLogs/DetailsPanel";
 
 interface TimelineDetailedLogsProps {
@@ -57,44 +56,42 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
           defaultSize={60}
           minSize={30}
         >
-          <ScrollArea className="h-[800px]">
-            <div ref={tableRef} className="h-full">
-              <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
-                <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
-                  <div>
-                    <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
-                  </div>
+          <div ref={tableRef} className="h-full overflow-auto">
+            <div className="w-full border-r border-purple-400/20 bg-gradient-to-b from-[#1E1E2F] to-[#1A1F2C] shadow-xl">
+              <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
+                <div>
+                  <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
                 </div>
-                <Table>
-                  <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
-                    <TableRow className="hover:bg-transparent border-b border-purple-400/20">
-                      <TableHead className="text-purple-100 font-semibold">Time</TableHead>
-                      {entityType === "user" ? (
-                        <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
-                      ) : (
-                        <TableHead className="text-purple-100 font-semibold">Computer Name</TableHead>
-                      )}
-                      <TableHead className="text-purple-100 font-semibold">User Impacted</TableHead>
-                      <TableHead className="text-purple-100 font-semibold">Computer</TableHead>
-                      <TableHead className="text-purple-100 font-semibold">Event</TableHead>
-                      <TableHead className="text-purple-100 font-semibold">MITRE Tactics</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {logs.map((log) => (
-                      <TimelineLogCard
-                        key={log.id}
-                        log={log}
-                        isExpanded={selectedLog?.id === log.id}
-                        onToggleExpand={handleLogClick}
-                        visibleColumns={visibleColumns}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
               </div>
+              <Table>
+                <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
+                  <TableRow className="hover:bg-transparent border-b border-purple-400/20">
+                    <TableHead className="text-purple-100 font-semibold">Time</TableHead>
+                    {entityType === "user" ? (
+                      <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
+                    ) : (
+                      <TableHead className="text-purple-100 font-semibold">Computer Name</TableHead>
+                    )}
+                    <TableHead className="text-purple-100 font-semibold">User Impacted</TableHead>
+                    <TableHead className="text-purple-100 font-semibold">Computer</TableHead>
+                    <TableHead className="text-purple-100 font-semibold">Event</TableHead>
+                    <TableHead className="text-purple-100 font-semibold">MITRE Tactics</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {logs.map((log) => (
+                    <TimelineLogCard
+                      key={log.id}
+                      log={log}
+                      isExpanded={selectedLog?.id === log.id}
+                      onToggleExpand={handleLogClick}
+                      visibleColumns={visibleColumns}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
             </div>
-          </ScrollArea>
+          </div>
         </ResizablePanel>
 
         {selectedLog && (
@@ -112,12 +109,11 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
             >
               <div 
                 ref={detailsRef}
-                className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-purple-400/20 scrollbar-track-transparent"
+                className="h-full"
               >
                 <DetailsPanel 
                   alert={selectedLog}
                   onClose={() => setSelectedLog(null)}
-                  formatTime={(timeString) => new Date(timeString).toLocaleString()}
                 />
               </div>
             </ResizablePanel>

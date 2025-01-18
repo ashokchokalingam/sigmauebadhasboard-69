@@ -4,10 +4,9 @@ import { Shield, Monitor, User, Hash, Database, Tag, Terminal, Info } from "luci
 
 interface MetadataGridProps {
   alert: Alert;
-  formatTime: (timeString: string) => string;
 }
 
-const MetadataGrid = ({ alert, formatTime }: MetadataGridProps) => {
+const MetadataGrid = ({ alert }: MetadataGridProps) => {
   return (
     <div className="grid grid-cols-2 gap-4">
       <div>
@@ -64,7 +63,7 @@ const MetadataGrid = ({ alert, formatTime }: MetadataGridProps) => {
       </div>
       <div>
         <h4 className="text-sm font-medium text-blue-400">System Time</h4>
-        <p className="text-sm text-blue-100 font-mono">{formatTime(alert.system_time)}</p>
+        <p className="text-sm text-blue-100 font-mono">{new Date(alert.system_time).toLocaleString()}</p>
       </div>
       <div>
         <h4 className="text-sm font-medium text-blue-400">IP Address</h4>
