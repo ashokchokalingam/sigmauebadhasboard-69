@@ -13,7 +13,7 @@ const EntityCard = ({ entity, entityType, showMetricCycle = false }: EntityCardP
 
   useEffect(() => {
     if (!showMetricCycle) return;
-    
+
     const interval = setInterval(() => {
       setCurrentMetricIndex((prev) => (prev + 1) % 3);
     }, 1000);
@@ -22,13 +22,13 @@ const EntityCard = ({ entity, entityType, showMetricCycle = false }: EntityCardP
   }, [showMetricCycle]);
 
   const getMetrics = (entity: RiskyEntity) => [
-    { value: entity.unique_title_count, label: 'unique anomalies' },
-    { value: entity.unique_tactics_count, label: 'unique tactics' },
-    { value: entity.unique_outliers, label: 'unique outliers' }
+    { value: entity.unique_title_count || 0, label: 'unique anomalies' },
+    { value: parseInt(entity.unique_tactics_count || '0'), label: 'unique tactics' },
+    { value: entity.unique_outliers || 0, label: 'unique outliers' }
   ];
 
   const metrics = getMetrics(entity);
-  const currentMetric = showMetricCycle ? metrics[currentMetricIndex] : metrics[0];
+  const currentMetric = metrics[currentMetricIndex];
   const entityName = entityType === 'asset' ? entity.computer : entity.user;
 
   return (
