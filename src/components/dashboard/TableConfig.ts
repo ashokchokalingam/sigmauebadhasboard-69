@@ -1,6 +1,7 @@
 export const defaultColumns = [
   { key: "system_time", label: "Time" },
-  { key: "users", label: "Users" },
+  { key: "user_origin", label: "User Origin" },
+  { key: "user_impacted", label: "User Impacted" },
   { key: "title", label: "Title" },
   { key: "description", label: "Description" },
   { key: "computer_name", label: "Computer" },
@@ -10,7 +11,8 @@ export const defaultColumns = [
 
 export const allColumns = [
   { key: "system_time", label: "Time" },
-  { key: "users", label: "Users" },
+  { key: "user_origin", label: "User Origin" },
+  { key: "user_impacted", label: "User Impacted" },
   { key: "title", label: "Title" },
   { key: "description", label: "Description" },
   { key: "computer_name", label: "Computer" },

@@ -1,5 +1,5 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { ChevronRight, User } from "lucide-react";
+import { ChevronRight, User, Shield } from "lucide-react";
 import { Alert } from "./types";
 import { extractTacticsAndTechniques } from "./utils";
 
@@ -36,35 +36,37 @@ const AlertTableRow = ({ alert, isSelected, onToggle, onTimelineView, visibleCol
     if (!visibleColumns.includes(key)) return null;
 
     switch (key) {
-      case "users":
+      case "user_origin":
         return (
-          <TableCell className="min-w-[220px] px-6">
-            <div className="space-y-4">
-              <div className="p-2 rounded-lg bg-blue-950/30 border border-blue-500/10 hover:bg-blue-950/40 transition-all">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <User className="h-3.5 w-3.5 text-blue-400" />
-                  <span className="text-xs font-medium text-blue-400">User Origin</span>
-                </div>
-                <p 
-                  className="text-sm font-mono text-blue-100 hover:text-blue-400 transition-colors cursor-pointer pl-5"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onTimelineView("user", alert.user_id || '');
-                  }}
-                >
-                  {alert.user_id || 'N/A'}
-                </p>
+          <TableCell className="min-w-[200px] px-6">
+            <div className="p-2.5 rounded-lg bg-blue-950/30 border border-blue-500/10 hover:bg-blue-950/40 transition-all">
+              <div className="flex items-center gap-2 mb-1.5">
+                <User className="h-3.5 w-3.5 text-blue-400" />
+                <span className="text-xs font-medium text-blue-400">User Origin</span>
               </div>
-              
-              <div className="p-2 rounded-lg bg-purple-950/30 border border-purple-500/10 hover:bg-purple-950/40 transition-all">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <User className="h-3.5 w-3.5 text-purple-400" />
-                  <span className="text-xs font-medium text-purple-400">User Impacted</span>
-                </div>
-                <p className="text-sm font-mono text-purple-100 pl-5">
-                  {alert.target_user_name || 'N/A'}
-                </p>
+              <p 
+                className="text-sm font-mono text-blue-100 hover:text-blue-400 transition-colors cursor-pointer pl-5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onTimelineView("user", alert.user_id || '');
+                }}
+              >
+                {alert.user_id || 'N/A'}
+              </p>
+            </div>
+          </TableCell>
+        );
+      case "user_impacted":
+        return (
+          <TableCell className="min-w-[200px] px-6">
+            <div className="p-2.5 rounded-lg bg-purple-950/30 border border-purple-500/10 hover:bg-purple-950/40 transition-all">
+              <div className="flex items-center gap-2 mb-1.5">
+                <Shield className="h-3.5 w-3.5 text-purple-400" />
+                <span className="text-xs font-medium text-purple-400">User Impacted</span>
               </div>
+              <p className="text-sm font-mono text-purple-100 pl-5">
+                {alert.target_user_name || 'N/A'}
+              </p>
             </div>
           </TableCell>
         );
