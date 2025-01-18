@@ -29,7 +29,7 @@ const AnomaliesMainView = ({
       <div className="relative">
         <div className="overflow-x-auto">
           <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-500/10 scrollbar-track-transparent">
-            <Table>
+            <Table className="[&_tr]:h-[42px] text-sm">
               <AnomaliesTableHeader
                 alerts={alerts}
                 onFilterChange={onFilterChange}
