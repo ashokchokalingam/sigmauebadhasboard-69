@@ -1,4 +1,4 @@
-import { Monitor } from "lucide-react";
+import { Monitor, Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import WidgetHeader from "./widgets/WidgetHeader";
@@ -35,9 +35,17 @@ const HighRiskComputersWidget = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-[#0A0B0F] border border-red-500/10 rounded-xl overflow-hidden">
+      <div className="bg-[#0A0B0F] border border-red-500/20 rounded-xl overflow-hidden shadow-2xl">
         <div className="p-6">
-          <div className="animate-pulse text-red-400">Loading...</div>
+          <div className="animate-pulse flex space-x-4">
+            <div className="flex-1 space-y-4 py-1">
+              <div className="h-4 bg-red-500/20 rounded w-3/4"></div>
+              <div className="space-y-3">
+                <div className="h-4 bg-red-500/20 rounded"></div>
+                <div className="h-4 bg-red-500/20 rounded w-5/6"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -45,22 +53,25 @@ const HighRiskComputersWidget = () => {
 
   if (isError) {
     return (
-      <div className="bg-[#0A0B0F] border border-red-500/10 rounded-xl overflow-hidden">
+      <div className="bg-[#0A0B0F] border border-red-500/20 rounded-xl overflow-hidden shadow-2xl">
         <div className="p-6">
-          <div className="text-red-400">Failed to load high risk computers</div>
+          <div className="text-red-400 flex items-center justify-center gap-2">
+            <Shield className="h-5 w-5" />
+            Failed to load high risk computers
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#0A0B0F] border border-red-500/10 rounded-xl overflow-hidden h-[500px] flex flex-col">
+    <div className="bg-gradient-to-br from-[#0A0B0F] to-[#1A1F2C] border border-red-500/20 rounded-xl overflow-hidden h-[500px] flex flex-col shadow-2xl backdrop-blur-sm transition-all duration-300 hover:shadow-red-500/10">
       <WidgetHeader 
         title="High Risk Computers" 
         count={filteredComputers?.length || 0} 
       />
 
-      <div className="p-4">
+      <div className="p-4 bg-black/20">
         <SearchInput 
           value={searchQuery}
           onChange={setSearchQuery}
@@ -73,18 +84,23 @@ const HighRiskComputersWidget = () => {
           <div
             key={computer.computer}
             className="group p-4 rounded-lg
-              bg-[#0D0E12] hover:bg-[#12131A]
-              border border-red-500/10 hover:border-red-500/20
-              transition-all duration-300 cursor-pointer"
+              bg-gradient-to-r from-[#0D0E12] to-[#12131A]
+              hover:from-[#12131A] hover:to-[#1A1F2C]
+              border border-red-500/20 hover:border-red-500/40
+              transition-all duration-300 cursor-pointer
+              shadow-lg hover:shadow-xl hover:shadow-red-500/5"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Monitor className="h-5 w-5 text-red-400" />
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-red-500 rounded-full blur opacity-25 group-hover:opacity-40 transition-opacity duration-300"></div>
+                  <Monitor className="relative h-5 w-5 text-red-400" />
+                </div>
                 <div>
-                  <h3 className="text-sm font-medium text-red-100/90">
+                  <h3 className="text-sm font-medium text-red-100/90 group-hover:text-red-100">
                     {computer.computer}
                   </h3>
-                  <p className="text-xs text-red-400/70">
+                  <p className="text-xs text-red-400/70 group-hover:text-red-400/90">
                     {computer.unique_title_count} unique anomalies
                   </p>
                 </div>
@@ -92,16 +108,19 @@ const HighRiskComputersWidget = () => {
 
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <span className="block text-sm font-medium text-red-400">
+                  <span className="block text-sm font-medium text-red-400 group-hover:text-red-300">
                     Risk Level
                   </span>
-                  <span className="block text-xs text-red-400/70">
+                  <span className="block text-xs text-red-400/70 group-hover:text-red-400">
                     Critical
                   </span>
                 </div>
-                <span className="font-mono font-bold text-2xl text-red-400">
-                  {computer.cumulative_risk_score}
-                </span>
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-red-500 rounded-lg blur opacity-25 group-hover:opacity-40 transition-opacity duration-300"></div>
+                  <span className="relative font-mono font-bold text-2xl text-red-400 group-hover:text-red-300">
+                    {computer.cumulative_risk_score}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
