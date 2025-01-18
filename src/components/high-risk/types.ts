@@ -12,4 +12,5 @@ export interface HighRiskWidgetProps {
   entityType: 'user-origin' | 'user-impacted' | 'asset';
   endpoint: string;
   dataKey: string;
+  showMetricCycle?: boolean;
 }

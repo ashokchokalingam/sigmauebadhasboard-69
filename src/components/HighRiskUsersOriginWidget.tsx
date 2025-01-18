@@ -7,6 +7,7 @@ const HighRiskUsersOriginWidget = () => {
       entityType="user-origin"
       endpoint="/api/user_origin_outlier_highrisk"
       dataKey="user_origin_outlier_highrisk_logs"
+      showMetricCycle={true}
     />
   );
 };

@@ -7,6 +7,7 @@ const HighRiskAssetsWidget = () => {
       entityType="asset"
       endpoint="/api/computer_impacted_outlier_highrisk"
       dataKey="computer_impacted_outlier_highrisk_logs"
+      showMetricCycle={true}
     />
   );
 };

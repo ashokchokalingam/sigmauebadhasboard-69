@@ -7,6 +7,7 @@ const HighRiskUsersImpactedWidget = () => {
       entityType="user-impacted"
       endpoint="/api/user_impacted_outlier_highrisk"
       dataKey="user_impacted_outlier_highrisk_logs"
+      showMetricCycle={true}
     />
   );
 };
