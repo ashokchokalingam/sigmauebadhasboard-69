@@ -8,92 +8,72 @@ import TimeFrameSelector from "@/components/TimeFrameSelector";
 const INITIAL_BATCH_SIZE = 100;
 const TOTAL_BATCH_SIZE = 1000;
 
-const Index = () => {
-  const [selectedEntity, setSelectedEntity] = useState<{ type: "userorigin" | "userimpacted" | "computersimpacted"; id: string } | null>(null);
-  const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
-  const [currentTotalRecords, setCurrentTotalRecords] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [timeFrame, setTimeFrame] = useState("1d");
+interface AlertsResponse {
+  alerts: Alert[];
+  total_count: number;
+}
+
+const useAlertsFetching = (timeFrame: string, currentPage: number) => {
   const { toast } = useToast();
-  const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
+
+  const fetchAlerts = async (batchSize: number, page: number): Promise<AlertsResponse> => {
+    const response = await fetch(`/api/alerts?page=${page}&per_page=${batchSize}&timeframe=${timeFrame}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch alerts: ${response.statusText}`);
+    }
+    return response.json();
+  };
 
   // Initial alerts query
-  const { isLoading: isLoadingInitial } = useQuery({
+  const initialQuery = useQuery({
     queryKey: ['initial-alerts', timeFrame],
-    queryFn: async () => {
-      try {
-        console.log('Fetching initial alerts...');
-        const response = await fetch(`/api/alerts?page=1&per_page=${INITIAL_BATCH_SIZE}&timeframe=${timeFrame}`);
-        
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          console.error('Response not OK:', response.status, errorData);
-          throw new Error(`Failed to fetch initial alerts: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        console.log('Initial alerts data:', data);
-        
-        if (!data.alerts) {
-          console.error('No alerts in response:', data);
-          throw new Error('Invalid response format');
-        }
-        
-        setCurrentAlerts(data.alerts);
-        setAllAlerts(data.alerts);
-        setCurrentTotalRecords(data.total_count);
-        return data;
-      } catch (error) {
-        console.error('Error fetching initial alerts:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load dashboard data. Please try again.",
-          variant: "destructive",
-        });
-        return null;
-      }
-    },
+    queryFn: () => fetchAlerts(INITIAL_BATCH_SIZE, 1),
     refetchInterval: 5 * 60 * 1000,
     retry: 3,
     retryDelay: 1000,
   });
 
   // Remaining alerts query
-  const { isLoading: isLoadingRemaining } = useQuery({
+  const remainingQuery = useQuery({
     queryKey: ['remaining-alerts', currentPage, timeFrame],
-    queryFn: async () => {
-      if (currentAlerts.length >= TOTAL_BATCH_SIZE) return null;
-      
-      try {
-        console.log('Fetching remaining alerts...');
-        const response = await fetch(`/api/alerts?page=2&per_page=${TOTAL_BATCH_SIZE - INITIAL_BATCH_SIZE}&timeframe=${timeFrame}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch remaining alerts');
-        }
-        
-        const data = await response.json();
-        console.log('Remaining alerts data:', data);
-        
-        if (data.alerts && Array.isArray(data.alerts)) {
-          setCurrentAlerts(prev => [...prev, ...data.alerts]);
-          setAllAlerts(prev => [...prev, ...data.alerts]);
-        }
-        
-        return data;
-      } catch (error) {
-        console.error('Error fetching remaining alerts:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load additional data. Please try again.",
-          variant: "destructive",
-        });
-        return null;
-      }
-    },
-    enabled: currentAlerts.length > 0 && currentAlerts.length < TOTAL_BATCH_SIZE,
+    queryFn: () => fetchAlerts(TOTAL_BATCH_SIZE - INITIAL_BATCH_SIZE, 2),
+    enabled: initialQuery.data?.alerts.length > 0 && initialQuery.data?.alerts.length < TOTAL_BATCH_SIZE,
     refetchInterval: 5 * 60 * 1000
   });
+
+  return {
+    initialQuery,
+    remainingQuery,
+    toast
+  };
+};
+
+const Index = () => {
+  const [selectedEntity, setSelectedEntity] = useState<{ type: "userorigin" | "userimpacted" | "computersimpacted"; id: string } | null>(null);
+  const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
+  const [currentTotalRecords, setCurrentTotalRecords] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [timeFrame, setTimeFrame] = useState("1d");
+  const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
+
+  const { initialQuery, remainingQuery, toast } = useAlertsFetching(timeFrame, currentPage);
+
+  // Update state when initial data is fetched
+  React.useEffect(() => {
+    if (initialQuery.data) {
+      setCurrentAlerts(initialQuery.data.alerts);
+      setAllAlerts(initialQuery.data.alerts);
+      setCurrentTotalRecords(initialQuery.data.total_count);
+    }
+  }, [initialQuery.data]);
+
+  // Update state when remaining data is fetched
+  React.useEffect(() => {
+    if (remainingQuery.data?.alerts) {
+      setCurrentAlerts(prev => [...prev, ...remainingQuery.data.alerts]);
+      setAllAlerts(prev => [...prev, ...remainingQuery.data.alerts]);
+    }
+  }, [remainingQuery.data]);
 
   const handleLoadMore = () => {
     setCurrentPage(prev => prev + 1);
@@ -103,7 +83,7 @@ const Index = () => {
     setSelectedEntity(entity);
   };
 
-  if (isLoadingInitial && currentAlerts.length === 0) {
+  if (initialQuery.isLoading && currentAlerts.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#1a1f2c]">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
@@ -120,14 +100,14 @@ const Index = () => {
         alerts={currentAlerts}
         allAlerts={allAlerts}
         totalRecords={currentTotalRecords}
-        isLoading={isLoadingInitial || isLoadingRemaining}
+        isLoading={initialQuery.isLoading || remainingQuery.isLoading}
         onEntitySelect={handleEntitySelect}
         selectedEntity={selectedEntity}
         onLoadMore={handleLoadMore}
         hasMore={currentAlerts.length < TOTAL_BATCH_SIZE}
       />
       
-      {(isLoadingInitial || isLoadingRemaining) && currentAlerts.length > 0 && (
+      {(initialQuery.isLoading || remainingQuery.isLoading) && currentAlerts.length > 0 && (
         <div className="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
           Loading data... ({currentAlerts.length} / {TOTAL_BATCH_SIZE})
         </div>

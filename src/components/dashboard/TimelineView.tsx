@@ -1,12 +1,11 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { X, Shield } from "lucide-react";
 import { Alert } from "./types";
-import TimelineEventCard from "./TimelineEventCard";
-import InfiniteScrollLoader from "./InfiniteScrollLoader";
 import { useInView } from "react-intersection-observer";
-import { ScrollArea } from "../ui/scroll-area";
 import TimelineSummaryStats from "./TimelineComponents/TimelineSummaryStats";
 import TimelineVisualizer from "./TimelineComponents/TimelineVisualizer";
+import TimelineHeader from "../timeline/TimelineHeader";
+import TimelineContent from "../timeline/TimelineContent";
+import { formatTimelineData, getTimelineEndpoint } from "@/utils/timelineHelpers";
 
 const EVENTS_PER_PAGE = 500;
 
@@ -33,26 +32,11 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     queryFn: async ({ pageParam = 1 }) => {
       console.log("Fetching timeline data:", { entityType, entityId, pageParam });
       
-      let endpoint = '';
-      let queryParam = '';
+      const endpoint = getTimelineEndpoint(entityType);
+      const queryParam = `${entityType.includes('user') ? 
+        (entityType === 'userorigin' ? 'user_origin' : 'user_impacted') : 
+        'computer_name'}=${entityId}`;
       
-      switch (entityType) {
-        case 'userorigin':
-          endpoint = '/api/user_origin_timeline';
-          queryParam = `user_origin=${entityId}`;
-          break;
-        case 'userimpacted':
-          endpoint = '/api/user_impacted_timeline';
-          queryParam = `user_impacted=${entityId}`;
-          break;
-        case 'computersimpacted':
-          endpoint = '/api/computer_impacted_timeline';
-          queryParam = `computer_name=${entityId}`;
-          break;
-        default:
-          throw new Error(`Unsupported entity type: ${entityType}`);
-      }
-
       console.log(`Fetching from ${endpoint}?${queryParam}`);
       
       const response = await fetch(`${endpoint}?${queryParam}`);
@@ -63,16 +47,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       const data = await response.json();
       console.log('Timeline data received:', data);
       
-      return {
-        computer_impacted_timeline: data.computer_impacted_timeline || [],
-        user_impacted_timeline: data.user_impacted_timeline || [],
-        user_origin_timeline: data.user_origin_timeline || [],
-        pagination: {
-          current_page: pageParam,
-          per_page: EVENTS_PER_PAGE,
-          has_more: false
-        }
-      };
+      return formatTimelineData(data);
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
@@ -96,23 +71,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
 
   return (
     <div className={`flex flex-col ${inSidebar ? 'h-full' : 'min-h-screen w-full bg-gradient-to-br from-[#1A1F2C] to-[#121212]'}`}>
-      <div className="flex items-center justify-between p-8 border-b border-blue-500/10 bg-black/40">
-        <div className="flex items-center gap-4">
-          <Shield className="h-8 w-8 text-blue-400" />
-          <div>
-            <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
-              {entityId}
-            </h2>
-            <p className="text-lg text-blue-300/80 mt-2">Security Timeline Analysis</p>
-          </div>
-        </div>
-        <button
-          onClick={onClose}
-          className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-        >
-          <X className="h-6 w-6 text-gray-400" />
-        </button>
-      </div>
+      <TimelineHeader entityId={entityId} onClose={onClose} />
 
       <div className="p-6">
         <TimelineSummaryStats alerts={allEvents} />
@@ -122,37 +81,13 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         <TimelineVisualizer events={allEvents} />
       </div>
 
-      <div className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          <div className="p-4 space-y-6 w-full">
-            {isLoading && allEvents.length === 0 ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-              </div>
-            ) : allEvents.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-400">No timeline events found</p>
-              </div>
-            ) : (
-              <div className="relative space-y-6 w-full">
-                {allEvents.map((event, index) => (
-                  <TimelineEventCard
-                    key={`${event.id}-${index}`}
-                    event={event}
-                    isLast={index === allEvents.length - 1}
-                    entityType={entityType}
-                  />
-                ))}
-                
-                <InfiniteScrollLoader
-                  ref={ref}
-                  hasMore={!!hasNextPage}
-                />
-              </div>
-            )}
-          </div>
-        </ScrollArea>
-      </div>
+      <TimelineContent
+        allEvents={allEvents}
+        entityType={entityType}
+        isLoading={isLoading}
+        hasNextPage={!!hasNextPage}
+        loaderRef={ref}
+      />
     </div>
   );
 };
