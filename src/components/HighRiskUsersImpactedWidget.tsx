@@ -35,9 +35,9 @@ const HighRiskUsersImpactedWidget = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-[#0A0B0F] border border-indigo-500/10 rounded-xl overflow-hidden shadow-2xl shadow-indigo-500/10">
+      <div className="bg-[#0A0B0F] border border-red-500/10 rounded-xl overflow-hidden shadow-2xl shadow-red-500/10">
         <div className="p-6">
-          <div className="animate-pulse text-indigo-400">Loading...</div>
+          <div className="animate-pulse text-red-400">Loading...</div>
         </div>
       </div>
     );
@@ -45,7 +45,7 @@ const HighRiskUsersImpactedWidget = () => {
 
   if (isError) {
     return (
-      <div className="bg-[#0A0B0F] border border-indigo-500/10 rounded-xl overflow-hidden shadow-2xl shadow-indigo-500/10">
+      <div className="bg-[#0A0B0F] border border-red-500/10 rounded-xl overflow-hidden shadow-2xl shadow-red-500/10">
         <div className="p-6">
           <div className="text-red-400">Failed to load high risk users</div>
         </div>
@@ -54,7 +54,7 @@ const HighRiskUsersImpactedWidget = () => {
   }
 
   return (
-    <div className="bg-[#0A0B0F] border border-indigo-500/10 rounded-xl overflow-hidden shadow-2xl shadow-indigo-500/10 h-[500px] flex flex-col">
+    <div className="bg-[#0A0B0F] border border-red-500/10 rounded-xl overflow-hidden shadow-2xl shadow-red-500/10 h-[500px] flex flex-col">
       <WidgetHeader 
         title="High Risk Users Impacted" 
         count={filteredUsers?.length || 0} 
@@ -67,26 +67,26 @@ const HighRiskUsersImpactedWidget = () => {
         />
       </div>
 
-      <div className="px-6 pb-6 space-y-4 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-500/10 scrollbar-track-transparent">
+      <div className="px-6 pb-6 space-y-4 flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-red-500/10 scrollbar-track-transparent">
         {filteredUsers?.map((user: RiskyUser) => (
           <div
             key={user.user}
             className="group relative p-4 rounded-xl
-              bg-[#0A0B0F] hover:bg-[#0F1115]
-              border border-indigo-500/10 hover:border-indigo-500/20
+              bg-[#0D0E12] hover:bg-[#12131A]
+              border border-red-500/10 hover:border-red-500/20
               transition-all duration-300 cursor-pointer
-              shadow-lg shadow-indigo-500/5 hover:shadow-indigo-500/10"
+              shadow-lg shadow-red-500/5 hover:shadow-red-500/10"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="p-2.5 rounded-lg bg-indigo-500/5 border border-indigo-500/10 group-hover:border-indigo-500/20 transition-colors">
-                  <User className="h-5 w-5 text-indigo-400" />
+                <div className="p-2.5 rounded-lg bg-red-500/5 border border-red-500/10 group-hover:border-red-500/20 transition-colors">
+                  <User className="h-5 w-5 text-red-400" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-mono text-base text-indigo-100/90 font-medium group-hover:text-indigo-100">
+                  <h3 className="font-mono text-base text-red-100/90 font-medium group-hover:text-red-100">
                     {user.user}
                   </h3>
-                  <p className="text-sm text-indigo-400/70 font-medium">
+                  <p className="text-sm text-red-400/70 font-medium">
                     {user.unique_title_count} unique anomalies
                   </p>
                 </div>
@@ -120,7 +120,7 @@ const HighRiskUsersImpactedWidget = () => {
         ))}
         {(!filteredUsers || filteredUsers.length === 0) && (
           <div className="text-center py-8">
-            <span className="text-indigo-400/60">No critical users found</span>
+            <span className="text-red-400/60">No critical users found</span>
           </div>
         )}
       </div>
