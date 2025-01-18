@@ -1,6 +1,6 @@
 import { Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import TimelineView from "../dashboard/TimelineView";
@@ -15,6 +15,15 @@ interface HighRiskWidgetProps {
 const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: HighRiskWidgetProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
+  const [statIndex, setStatIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStatIndex((prev) => (prev + 1) % 3);
+    }, 800); // Rotate every 800ms
+
+    return () => clearInterval(interval);
+  }, []);
 
   const { data: entities = [] } = useQuery({
     queryKey: [apiEndpoint],
@@ -52,6 +61,15 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
     if (score >= 200) return "critical";
     if (score >= 50) return "high";
     return "medium";
+  };
+
+  const getRotatingStats = (entity: any) => {
+    const stats = [
+      { label: "Unique Outliers", value: entity.unique_outliers },
+      { label: "Unique Tactics", value: entity.unique_tactics_count },
+      { label: "Unique Threat Names", value: entity.unique_title_count }
+    ];
+    return stats[statIndex];
   };
 
   if (selectedEntity) {
@@ -93,6 +111,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
               const entityId = entityType === 'computer' ? entity.computer : entity.user;
               const riskScore = parseFloat(entity.cumulative_risk_score);
               const riskLevel = getRiskLevel(riskScore);
+              const currentStat = getRotatingStats(entity);
               
               return (
                 <div
@@ -102,8 +121,11 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
                            hover:bg-purple-950/30 transition-all duration-300 cursor-pointer"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
+                    <div className="flex flex-col gap-1">
                       <span className="text-purple-100 font-mono">{entityId}</span>
+                      <span className="text-xs text-purple-400/70 transition-all duration-300">
+                        {currentStat.label}: {currentStat.value}
+                      </span>
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={`text-sm ${getRiskColor(riskScore)}`}>
