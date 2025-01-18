@@ -9,7 +9,6 @@ import HighRiskUsersOriginWidget from "../HighRiskUsersOriginWidget";
 import HighRiskUsersImpactedWidget from "../HighRiskUsersImpactedWidget";
 import HighRiskComputersWidget from "../HighRiskComputersWidget";
 import OutliersWidget from "../OutliersWidget";
-import RiskyUsersWidget from "../RiskyUsersWidget";
 
 interface DashboardLayoutProps {
   alerts: Alert[];
@@ -68,7 +67,7 @@ const DashboardLayout = ({
 
       {/* High Risk Widgets */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-        <RiskyUsersWidget onEntitySelect={onEntitySelect} />
+        <HighRiskUsersOriginWidget />
         <HighRiskUsersImpactedWidget />
         <HighRiskComputersWidget />
       </div>

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import TimelineView from "./dashboard/TimelineView";
 import { useState } from "react";
 
 interface RiskyUser {
@@ -11,28 +12,20 @@ interface RiskyUser {
   avatar?: string;
 }
 
-interface RiskyUsersWidgetProps {
-  onEntitySelect?: (entity: { type: "userorigin" | "userimpacted"; id: string } | null) => void;
-}
+const RiskyUsersWidget = () => {
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [timelineType, setTimelineType] = useState<"userorigin" | "userimpacted" | null>(null);
 
-const RiskyUsersWidget = ({ onEntitySelect }: RiskyUsersWidgetProps) => {
   const { data: riskyUsers } = useQuery({
     queryKey: ['riskyUsers'],
     queryFn: async () => {
-      const response = await fetch('/api/user_origin_outlier_highrisk');
-      if (!response.ok) {
-        throw new Error('Failed to fetch risky users');
-      }
-      const data = await response.json();
-      
-      // Transform API data to match our interface
-      return data.user_origin_outlier_highrisk.map((user: any) => ({
-        id: user.user_origin,
-        name: user.user_origin,
-        riskScore: parseFloat(user.total_unique_risk_score) || 0,
-        trend: user.trend || "stable",
-        uniqueTitles: user.unique_titles
-      })).slice(0, 4); // Get top 4 risky users
+      // Simulated data - replace with actual API endpoint when available
+      return [
+        { id: "1", name: "Sarah Chen", riskScore: 9.5, trend: "up" },
+        { id: "2", name: "Mike Johnson", riskScore: 8.7, trend: "stable" },
+        { id: "3", name: "Emma Davis", riskScore: 8.4, trend: "down" },
+        { id: "4", name: "Alex Wong", riskScore: 9.3, trend: "up" }
+      ] as RiskyUser[];
     }
   });
 
@@ -51,10 +44,23 @@ const RiskyUsersWidget = ({ onEntitySelect }: RiskyUsersWidgetProps) => {
   };
 
   const handleUserClick = (user: RiskyUser, type: "userorigin" | "userimpacted") => {
-    if (onEntitySelect) {
-      onEntitySelect({ type, id: user.name });
-    }
+    setSelectedUser(user.name);
+    setTimelineType(type);
   };
+
+  if (selectedUser && timelineType) {
+    return (
+      <TimelineView
+        entityType={timelineType}
+        entityId={selectedUser}
+        onClose={() => {
+          setSelectedUser(null);
+          setTimelineType(null);
+        }}
+        inSidebar={false}
+      />
+    );
+  }
 
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
@@ -119,7 +125,7 @@ const RiskyUsersWidget = ({ onEntitySelect }: RiskyUsersWidgetProps) => {
                     />
                   </svg>
                   <span className={`font-mono font-bold ${getTrendColor(user.riskScore)}`}>
-                    {user.riskScore.toFixed(1)}
+                    {user.riskScore}
                   </span>
                 </div>
               </div>

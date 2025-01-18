@@ -5,7 +5,7 @@ import InfiniteScrollLoader from "../dashboard/InfiniteScrollLoader";
 
 interface TimelineContentProps {
   allEvents: Alert[];
-  entityType: "userorigin" | "userimpacted" | "computersimpacted";
+  entityType: string;
   isLoading: boolean;
   hasNextPage: boolean;
   loaderRef: (node?: Element | null) => void;
@@ -44,7 +44,7 @@ const TimelineContent = ({
                 key={`${event.id}-${index}`}
                 event={event}
                 isLast={index === allEvents.length - 1}
-                entityType={entityType as "userorigin" | "userimpacted" | "computersimpacted"}
+                entityType={entityType}
               />
             ))}
             
