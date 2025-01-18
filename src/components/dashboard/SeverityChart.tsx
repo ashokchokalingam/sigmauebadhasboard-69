@@ -25,27 +25,58 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
   )?.map(count => ({
     name: count.rule_level,
     value: parseInt(count.event_count),
-    color: count.rule_level === "Critical" ? "#FF0000" : // Bright Red
-           count.rule_level === "High" ? "#FFA500" : // Orange
-           count.rule_level === "Medium" ? "#FFFF00" : // Yellow
-           count.rule_level === "Low" ? "#008000" : // Green
-           "#0000FF" // Blue (Informational)
+    color: count.rule_level === "Critical" ? "#FF3B30" : // Bright Red
+           count.rule_level === "High" ? "#FF9500" : // Orange
+           count.rule_level === "Medium" ? "#FFCC00" : // Yellow
+           count.rule_level === "Low" ? "#34C759" : // Green
+           "#007AFF", // Blue (Informational)
+    gradient: count.rule_level === "Critical" ? ["#FF3B30", "#FF8A80"] :
+              count.rule_level === "High" ? ["#FF9500", "#FFB74D"] :
+              count.rule_level === "Medium" ? ["#FFCC00", "#FFE082"] :
+              count.rule_level === "Low" ? ["#34C759", "#69F0AE"] :
+              ["#007AFF", "#64B5F6"]
   })) || [];
+
+  const RADIAN = Math.PI / 180;
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, value }: any) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? 'start' : 'end'}
+        dominantBaseline="central"
+        className="text-xs font-medium"
+      >
+        {value}
+      </text>
+    );
+  };
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-[#1a1f2c] border border-gray-700 rounded-lg p-3 shadow-xl">
-          <div className="flex items-center gap-2 mb-1">
+        <div className="bg-[#1a1f2c]/95 border border-gray-700 rounded-lg p-4 shadow-xl backdrop-blur-sm">
+          <div className="flex items-center gap-2 mb-2">
             <div 
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: data.color }}
+              className="w-4 h-4 rounded-full"
+              style={{ 
+                background: `linear-gradient(135deg, ${data.gradient[0]}, ${data.gradient[1]})`,
+                boxShadow: `0 0 10px ${data.gradient[0]}50`
+              }}
             />
-            <p className="text-gray-200 font-medium">{data.name}</p>
+            <p className="text-gray-200 font-medium text-lg">{data.name}</p>
           </div>
-          <p className="text-gray-300 font-mono">
-            {data.value.toLocaleString()} alerts
+          <p className="text-gray-300 font-mono text-xl">
+            {data.value.toLocaleString()} events
+          </p>
+          <p className="text-gray-400 text-sm mt-1">
+            {(payload[0].percent * 100).toFixed(1)}% of total
           </p>
         </div>
       );
@@ -54,7 +85,8 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
   };
 
   return (
-    <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300">
+    <Card className="bg-black/40 border-blue-500/10 hover:bg-black/50 transition-all duration-300 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5" />
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-blue-100">
           <AlertTriangle className="h-5 w-5 text-blue-500" />
@@ -65,14 +97,24 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
         <div className="h-[400px] relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
+              <defs>
+                {severityData.map((entry, index) => (
+                  <linearGradient key={`gradient-${index}`} id={`gradient-${entry.name}`}>
+                    <stop offset="0%" stopColor={entry.gradient[0]} />
+                    <stop offset="100%" stopColor={entry.gradient[1]} />
+                  </linearGradient>
+                ))}
+              </defs>
               <Pie
                 data={severityData}
                 cx="50%"
                 cy="50%"
                 innerRadius={100}
                 outerRadius={160}
-                paddingAngle={2}
+                paddingAngle={3}
                 dataKey="value"
+                labelLine={false}
+                label={renderCustomizedLabel}
                 onDoubleClick={(data) => {
                   if (data && data.name) {
                     onSeveritySelect(data.name);
@@ -87,9 +129,12 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
                 {severityData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={entry.color}
-                    stroke="transparent"
-                    className="transition-opacity duration-300 hover:opacity-90"
+                    fill={`url(#gradient-${entry.name})`}
+                    stroke="rgba(255,255,255,0.1)"
+                    className="transition-opacity duration-300 hover:opacity-90 cursor-pointer"
+                    style={{
+                      filter: 'drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.3))'
+                    }}
                   />
                 ))}
               </Pie>
@@ -101,7 +146,10 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
               <div key={index} className="flex items-center gap-2">
                 <div 
                   className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: entry.color }} 
+                  style={{ 
+                    background: `linear-gradient(135deg, ${entry.gradient[0]}, ${entry.gradient[1]})`,
+                    boxShadow: `0 0 10px ${entry.gradient[0]}50`
+                  }} 
                 />
                 <span className="text-sm text-gray-300">{entry.name}</span>
               </div>
