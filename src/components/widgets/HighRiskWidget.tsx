@@ -35,7 +35,10 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
       const data = await response.json();
       const key = Object.keys(data)[0];
       return data[key] || [];
-    } = entities
+    }
+  });
+
+  const filteredEntities = (entities as any[])
     .filter((entity: any) => {
       const entityName = entityType === 'computer' ? entity.computer : entity.user;
       return entityName?.toLowerCase().includes(searchQuery.toLowerCase());
