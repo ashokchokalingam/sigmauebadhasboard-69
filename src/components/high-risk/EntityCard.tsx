@@ -94,11 +94,11 @@ const EntityCard = ({ entity, entityType, showMetricCycle = false }: EntityCardP
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex flex-col items-end mr-2">
+          <div className="flex flex-col items-center w-10">
             <span className={`text-sm font-medium ${riskColor}`}>
               Risk
             </span>
-            <span className={`text-xs font-medium -mt-0.5 ${riskColor}`}>
+            <span className={`text-xs font-medium ${riskColor} whitespace-nowrap`}>
               {riskLevel}
             </span>
           </div>
@@ -110,7 +110,7 @@ const EntityCard = ({ entity, entityType, showMetricCycle = false }: EntityCardP
             >
               <path
                 d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
-                className={`stroke-current fill-none stroke-[3] ${riskColor.replace('text-', 'stroke-')} ${riskLevel === 'critical' ? 'animate-heartbeat' : ''}`}
+                className={`stroke-current fill-none stroke-[3] ${riskColor} ${riskLevel === 'critical' ? 'animate-heartbeat' : ''}`}
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
