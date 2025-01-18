@@ -16,19 +16,34 @@ const EntityCard = ({ entity, entityType, showMetricCycle = false }: EntityCardP
 
     const interval = setInterval(() => {
       setCurrentMetricIndex((prev) => (prev + 1) % 3);
-    }, 1000);
+    }, 3000); // Increased to 3 seconds for better readability
 
     return () => clearInterval(interval);
   }, [showMetricCycle]);
 
   const getMetrics = (entity: RiskyEntity) => [
-    { value: entity.unique_title_count || 0, label: 'unique anomalies' },
-    { value: parseInt(entity.unique_tactics_count || '0'), label: 'unique tactics' },
-    { value: entity.unique_outliers || 0, label: 'unique outliers' }
+    { 
+      value: typeof entity.unique_title_count === 'number' 
+        ? entity.unique_title_count 
+        : parseInt(String(entity.unique_title_count || '0')), 
+      label: 'unique anomalies' 
+    },
+    { 
+      value: typeof entity.unique_tactics_count === 'number'
+        ? entity.unique_tactics_count
+        : parseInt(String(entity.unique_tactics_count || '0')), 
+      label: 'unique tactics' 
+    },
+    { 
+      value: typeof entity.unique_outliers === 'number'
+        ? entity.unique_outliers
+        : parseInt(String(entity.unique_outliers || '0')), 
+      label: 'unique outliers' 
+    }
   ];
 
   const metrics = getMetrics(entity);
-  const currentMetric = metrics[currentMetricIndex];
+  const currentMetric = showMetricCycle ? metrics[currentMetricIndex] : metrics[0];
   const entityName = entityType === 'asset' ? entity.computer : entity.user;
 
   return (
