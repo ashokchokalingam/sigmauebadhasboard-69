@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import TimelineView from "./dashboard/TimelineView";
+import { useState } from "react";
 
 interface RiskyUser {
   id: string;
@@ -11,6 +13,8 @@ interface RiskyUser {
 }
 
 const RiskyUsersWidget = () => {
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+
   const { data: riskyUsers } = useQuery({
     queryKey: ['riskyUsers'],
     queryFn: async () => {
@@ -39,9 +43,19 @@ const RiskyUsersWidget = () => {
   };
 
   const handleUserClick = (user: RiskyUser) => {
-    // Open timeline view in new tab for the selected user
-    window.open(`/timeline/userorigin/${encodeURIComponent(user.name)}`, '_blank');
+    setSelectedUser(user.name);
   };
+
+  if (selectedUser) {
+    return (
+      <TimelineView
+        entityType="userorigin"
+        entityId={selectedUser}
+        onClose={() => setSelectedUser(null)}
+        inSidebar={false}
+      />
+    );
+  }
 
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
