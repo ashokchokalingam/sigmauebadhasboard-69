@@ -104,11 +104,11 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col">
                       <span className="text-purple-100 font-mono">{entityId}</span>
+                    </div>
+                    <div className="flex items-center gap-4">
                       <span className={`text-sm ${getRiskColor(riskScore)}`}>
                         {riskLevel} risk
                       </span>
-                    </div>
-                    <div className="flex items-center gap-4">
                       <div className="relative w-24 h-8 overflow-hidden">
                         <svg 
                           className={`w-[200%] h-full animate-cardiogram ${getRiskColor(riskScore)}`}
