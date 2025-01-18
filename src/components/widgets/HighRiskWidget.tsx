@@ -29,13 +29,29 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
     }
   });
 
-  const filteredEntities = entities.filter((entity: any) => {
-    const entityName = entityType === 'computer' ? entity.computer : entity.user;
-    return entityName?.toLowerCase().includes(searchQuery.toLowerCase());
-  });
+  const filteredEntities = entities
+    .filter((entity: any) => {
+      const entityName = entityType === 'computer' ? entity.computer : entity.user;
+      return entityName?.toLowerCase().includes(searchQuery.toLowerCase());
+    })
+    .sort((a: any, b: any) => {
+      return parseFloat(b.cumulative_risk_score) - parseFloat(a.cumulative_risk_score);
+    });
 
   const handleEntityClick = (entityId: string) => {
     setSelectedEntity(entityId);
+  };
+
+  const getRiskColor = (score: number): string => {
+    if (score >= 200) return "text-red-500";
+    if (score >= 50) return "text-orange-500";
+    return "text-yellow-500";
+  };
+
+  const getRiskLevel = (score: number): string => {
+    if (score >= 200) return "critical";
+    if (score >= 50) return "high";
+    return "medium";
   };
 
   if (selectedEntity) {
@@ -76,22 +92,43 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
             {filteredEntities.map((entity: any, index: number) => {
               const entityId = entityType === 'computer' ? entity.computer : entity.user;
               const riskScore = parseFloat(entity.cumulative_risk_score);
+              const riskLevel = getRiskLevel(riskScore);
               
               return (
                 <div
                   key={index}
-                  className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 cursor-pointer"
                   onClick={() => handleEntityClick(entityId)}
+                  className="bg-purple-950/20 p-4 rounded-lg border border-purple-900/30 
+                           hover:bg-purple-950/30 transition-all duration-300 cursor-pointer"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-purple-100 font-mono">{entityId}</span>
-                    <span className={`font-mono font-bold ${
-                      riskScore >= 80 ? 'text-red-500' :
-                      riskScore >= 60 ? 'text-orange-500' :
-                      'text-yellow-500'
-                    }`}>
-                      {riskScore.toFixed(1)}
-                    </span>
+                    <div className="flex flex-col">
+                      <span className="text-purple-100 font-mono">{entityId}</span>
+                      <span className={`text-sm ${getRiskColor(riskScore)}`}>
+                        {riskLevel} risk
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="relative w-24 h-8 overflow-hidden">
+                        <svg 
+                          className={`w-[200%] h-full animate-cardiogram ${getRiskColor(riskScore)}`}
+                          viewBox="0 0 600 100" 
+                          preserveAspectRatio="none"
+                        >
+                          <path
+                            d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
+                            className="stroke-current fill-none stroke-[4]"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </div>
+                      <span className={`font-mono font-bold text-2xl ${getRiskColor(riskScore)} ${
+                        riskScore >= 200 ? 'animate-pulse' : ''
+                      }`}>
+                        {riskScore.toFixed(1)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               );
