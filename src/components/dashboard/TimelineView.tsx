@@ -19,8 +19,6 @@ interface TimelineViewProps {
 const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: TimelineViewProps) => {
   const { ref, inView } = useInView();
 
-  console.log('TimelineView mounted with:', { entityType, entityId });
-
   const {
     data,
     fetchNextPage,
@@ -30,14 +28,10 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   } = useInfiniteQuery({
     queryKey: ["timeline", entityType, entityId],
     queryFn: async ({ pageParam = 1 }) => {
-      console.log("Fetching timeline data:", { entityType, entityId, pageParam });
-      
       const endpoint = getTimelineEndpoint(entityType);
       const queryParam = `${entityType.includes('user') ? 
         (entityType === 'userorigin' ? 'user_origin' : 'user_impacted') : 
         'computer_name'}=${entityId}`;
-      
-      console.log(`Fetching from ${endpoint}?${queryParam}`);
       
       const response = await fetch(`${endpoint}?${queryParam}`);
       if (!response.ok) {
@@ -45,8 +39,6 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       }
 
       const data = await response.json();
-      console.log('Timeline data received:', data);
-      
       return formatTimelineData(data);
     },
     initialPageParam: 1,
@@ -70,24 +62,30 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   }
 
   return (
-    <div className={`flex flex-col ${inSidebar ? 'h-full' : 'min-h-screen w-full bg-gradient-to-br from-[#1A1F2C] to-[#121212]'}`}>
+    <div className="flex flex-col h-screen bg-[#1A1F2C]">
       <TimelineHeader entityId={entityId} onClose={onClose} />
 
-      <div className="p-6">
-        <TimelineSummaryStats alerts={allEvents} />
-      </div>
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full flex flex-col space-y-4 p-6">
+          <div className="flex-none">
+            <TimelineSummaryStats alerts={allEvents} />
+          </div>
 
-      <div className="px-6 pb-6">
-        <TimelineVisualizer events={allEvents} />
-      </div>
+          <div className="flex-none">
+            <TimelineVisualizer events={allEvents} />
+          </div>
 
-      <TimelineContent
-        allEvents={allEvents}
-        entityType={entityType}
-        isLoading={isLoading}
-        hasNextPage={!!hasNextPage}
-        loaderRef={ref}
-      />
+          <div className="flex-1 min-h-0 bg-black/40 rounded-xl border border-blue-500/10">
+            <TimelineContent
+              allEvents={allEvents}
+              entityType={entityType}
+              isLoading={isLoading}
+              hasNextPage={!!hasNextPage}
+              loaderRef={ref}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

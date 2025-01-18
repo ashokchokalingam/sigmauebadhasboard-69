@@ -20,7 +20,7 @@ const TimelineContent = ({
 }: TimelineContentProps) => {
   if (isLoading && allEvents.length === 0) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center h-full">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
       </div>
     );
@@ -28,34 +28,33 @@ const TimelineContent = ({
 
   if (allEvents.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="flex items-center justify-center h-full">
         <p className="text-gray-400">No timeline events found</p>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 overflow-hidden">
-      <ScrollArea className="h-full">
-        <div className="p-4 space-y-6 w-full">
-          <div className="relative space-y-6 w-full">
-            {allEvents.map((event, index) => (
-              <TimelineEventCard
-                key={`${event.id}-${index}`}
-                event={event}
-                isLast={index === allEvents.length - 1}
-                entityType={entityType as "userorigin" | "userimpacted" | "computersimpacted"}
-              />
-            ))}
-            
-            <InfiniteScrollLoader
-              ref={loaderRef}
-              hasMore={hasNextPage}
-            />
-          </div>
+    <ScrollArea className="h-full">
+      <div className="p-4 space-y-4">
+        {allEvents.map((event, index) => (
+          <TimelineEventCard
+            key={`${event.id}-${index}`}
+            event={event}
+            isLast={index === allEvents.length - 1}
+            entityType={entityType}
+          />
+        ))}
+        
+        <div ref={loaderRef}>
+          {hasNextPage && (
+            <div className="py-4 text-center text-sm text-blue-400/60">
+              Loading more events...
+            </div>
+          )}
         </div>
-      </ScrollArea>
-    </div>
+      </div>
+    </ScrollArea>
   );
 };
 
