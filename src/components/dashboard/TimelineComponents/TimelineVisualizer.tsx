@@ -11,8 +11,7 @@ const TimelineVisualizer = ({ events }: TimelineVisualizerProps) => {
 
   return (
     <div className="bg-black/40 rounded-lg p-6 border border-blue-500/10">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-medium text-blue-100">Attack Timeline</h3>
+      <div className="flex justify-end">
         <button
           onClick={() => setIsModalOpen(true)}
           className="px-6 py-2 text-base font-semibold rounded-full 
