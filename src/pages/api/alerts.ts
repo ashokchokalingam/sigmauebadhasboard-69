@@ -10,11 +10,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const page = parseInt(req.query.page as string) || 1;
     const per_page = parseInt(req.query.per_page as string) || 100;
-    const timeframe = req.query.timeframe || '1d';
+    const timeframe = req.query.timeframe as string || '1d';
     const offset = (page - 1) * per_page;
 
-    // Convert timeframe to days
-    const days = parseInt(timeframe.replace('d', '')) || 1;
+    // Convert timeframe to days, ensuring we handle the string correctly
+    const days = parseInt(timeframe.charAt(0)) || 1;
 
     console.log('Executing query with params:', { page, per_page, offset, days });
 
