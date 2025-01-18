@@ -38,6 +38,11 @@ const RiskyUsersWidget = () => {
     return "text-yellow-500";
   };
 
+  const handleUserClick = (user: RiskyUser) => {
+    // Open timeline view in new tab for the selected user
+    window.open(`/timeline/userorigin/${encodeURIComponent(user.name)}`, '_blank');
+  };
+
   return (
     <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
       <CardHeader>
@@ -51,7 +56,8 @@ const RiskyUsersWidget = () => {
           {riskyUsers?.map((user) => (
             <div
               key={user.id}
-              className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 group"
+              className="bg-purple-950/20 p-3 rounded-lg border border-purple-900/30 hover:bg-purple-950/30 transition-all duration-300 group cursor-pointer"
+              onClick={() => handleUserClick(user)}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
