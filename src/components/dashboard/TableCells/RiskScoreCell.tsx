@@ -14,7 +14,7 @@ const RiskScoreCell = ({ risk }: RiskScoreCellProps) => {
   };
 
   return (
-    <TableCell className="px-2 py-0 min-w-[80px]">
+    <TableCell className="px-2 py-0 w-[150px] flex-shrink-0">
       <span className={`text-sm font-medium ${getRiskColor(risk)}`}>
         {risk === null ? 'N/A' : `${risk}%`}
       </span>

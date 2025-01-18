@@ -9,7 +9,7 @@ interface ComputerCellProps {
 const ComputerCell = ({ computerName, onTimelineView }: ComputerCellProps) => {
   return (
     <TableCell 
-      className="px-2 py-0 min-w-[150px] cursor-pointer hover:text-blue-400 transition-colors"
+      className="px-2 py-0 w-[150px] flex-shrink-0 cursor-pointer hover:text-blue-400 transition-colors"
       onClick={(e) => {
         e.stopPropagation();
         onTimelineView("computer", computerName);
