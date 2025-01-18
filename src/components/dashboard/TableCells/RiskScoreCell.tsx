@@ -17,7 +17,7 @@ const RiskScoreCell = ({ risk }: RiskScoreCellProps) => {
     <BaseTableCell 
       value={risk || 'N/A'}
       icon={AlertTriangle}
-      width="w-[80px]"
+      width="w-[70px]"
       tooltipContent={`Risk Score: ${risk || 'N/A'}`}
       className={`font-medium ${getRiskColor(risk)}`}
       align="center"

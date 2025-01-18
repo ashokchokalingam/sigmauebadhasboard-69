@@ -10,7 +10,7 @@ const DescriptionCell = ({ description }: DescriptionCellProps) => {
     <BaseTableCell 
       value={description || '-'}
       icon={AlignLeft}
-      width="min-w-[200px] max-w-[400px]"
+      width="w-[300px]"
       tooltipContent={description}
       className="text-slate-200/70"
       align="left"

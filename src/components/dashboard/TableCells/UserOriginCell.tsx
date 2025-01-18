@@ -11,7 +11,7 @@ const UserOriginCell = ({ userId, onTimelineView }: UserOriginCellProps) => {
     <BaseTableCell 
       value={userId || '-'}
       icon={User}
-      width="w-[120px]"
+      width="w-[100px]"
       onClick={(e) => {
         e.stopPropagation();
         onTimelineView("user", userId);

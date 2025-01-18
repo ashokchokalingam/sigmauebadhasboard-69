@@ -27,12 +27,12 @@ const BaseTableCell = ({
   align = "left"
 }: BaseCellProps) => {
   const content = (
-    <div className={`flex items-center gap-1.5 overflow-hidden ${
+    <div className={`flex items-center gap-1.5 ${
       align === "center" ? "justify-center" : 
       align === "right" ? "justify-end" : "justify-start"
     }`}>
       {Icon && <Icon className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />}
-      <span className={`text-[13px] ${align === "left" ? "truncate" : ""}`}>{value}</span>
+      <span className={`text-[13px] truncate max-w-full`}>{value}</span>
     </div>
   );
 
@@ -52,8 +52,8 @@ const BaseTableCell = ({
           <TooltipTrigger asChild>
             {cell}
           </TooltipTrigger>
-          <TooltipContent>
-            <p>{tooltipContent}</p>
+          <TooltipContent side="top" className="max-w-[400px] break-words">
+            <p className="text-sm">{tooltipContent}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
