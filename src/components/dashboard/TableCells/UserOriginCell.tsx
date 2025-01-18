@@ -9,15 +9,15 @@ interface UserOriginCellProps {
 const UserOriginCell = ({ userId, onTimelineView }: UserOriginCellProps) => {
   return (
     <TableCell 
-      className="px-6 cursor-pointer hover:text-blue-400 transition-colors"
+      className="px-2 py-0 min-w-[120px] cursor-pointer hover:text-blue-400 transition-colors"
       onClick={(e) => {
         e.stopPropagation();
         onTimelineView("user", userId);
       }}
     >
-      <div className="flex items-center gap-2">
-        <User className="h-4 w-4 text-slate-400" />
-        <span>{userId || '-'}</span>
+      <div className="flex items-center gap-1">
+        <User className="h-3.5 w-3.5 text-slate-400" />
+        <span className="truncate">{userId || '-'}</span>
       </div>
     </TableCell>
   );
