@@ -42,18 +42,21 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
+    
     return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor={x > cx ? 'start' : 'end'}
-        dominantBaseline="central"
-        className="text-xs font-medium"
-      >
-        {value}
-      </text>
+      <g>
+        <text
+          x={x}
+          y={y}
+          fill="white"
+          textAnchor={x > cx ? 'start' : 'end'}
+          dominantBaseline="central"
+          className="text-xs font-medium drop-shadow-lg"
+          style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}
+        >
+          {value}
+        </text>
+      </g>
     );
   };
 
@@ -100,8 +103,8 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
               <defs>
                 {severityData.map((entry, index) => (
                   <linearGradient key={`gradient-${index}`} id={`gradient-${entry.name}`}>
-                    <stop offset="0%" stopColor={entry.gradient[0]} />
-                    <stop offset="100%" stopColor={entry.gradient[1]} />
+                    <stop offset="0%" stopColor={entry.gradient[0]} stopOpacity={1} />
+                    <stop offset="100%" stopColor={entry.gradient[1]} stopOpacity={0.8} />
                   </linearGradient>
                 ))}
               </defs>
@@ -111,29 +114,31 @@ const SeverityChart = ({ onSeveritySelect }: SeverityChartProps) => {
                 cy="50%"
                 innerRadius={100}
                 outerRadius={160}
-                paddingAngle={3}
+                paddingAngle={4}
                 dataKey="value"
                 labelLine={false}
                 label={renderCustomizedLabel}
-                onDoubleClick={(data) => {
+                onMouseEnter={(data) => {
                   if (data && data.name) {
                     onSeveritySelect(data.name);
                   }
                 }}
-                onClick={(data) => {
-                  if (data && data.name) {
-                    onSeveritySelect(null);
-                  }
+                onMouseLeave={() => {
+                  onSeveritySelect(null);
                 }}
+                startAngle={90}
+                endAngle={-270}
               >
                 {severityData.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
                     fill={`url(#gradient-${entry.name})`}
                     stroke="rgba(255,255,255,0.1)"
-                    className="transition-opacity duration-300 hover:opacity-90 cursor-pointer"
+                    strokeWidth={2}
+                    className="transition-all duration-300 hover:scale-105 cursor-pointer"
                     style={{
-                      filter: 'drop-shadow(0px 4px 6px rgba(0, 0, 0, 0.3))'
+                      filter: 'drop-shadow(0px 6px 8px rgba(0, 0, 0, 0.4))',
+                      transformOrigin: 'center'
                     }}
                   />
                 ))}
