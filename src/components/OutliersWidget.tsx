@@ -9,7 +9,8 @@ import { format } from "date-fns";
 import React, { useState } from 'react';
 
 const OutliersWidget = () => {
-  const [isGrouped, setIsGrouped] = useState(true);
+  // Changed initial state to false to show raw data by default
+  const [isGrouped, setIsGrouped] = useState(false);
   const [groupingInterval, setGroupingInterval] = useState<'hour' | 'day'>('day');
 
   const { data: apiResponse, isLoading } = useQuery({
