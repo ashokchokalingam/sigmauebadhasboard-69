@@ -64,7 +64,8 @@ const AlertTableRow = ({
           />
         );
       default:
-        return <BasicCell value={String(alert[key as keyof Alert] || 'N/A')} />;
+        const value = alert[key as keyof Alert];
+        return <BasicCell value={value !== undefined ? String(value) : 'N/A'} />;
     }
   };
   
