@@ -9,15 +9,15 @@ interface ComputerCellProps {
 const ComputerCell = ({ computerName, onTimelineView }: ComputerCellProps) => {
   return (
     <TableCell 
-      className="px-3 py-2 w-[150px] flex-shrink-0 cursor-pointer hover:text-blue-400 transition-colors"
+      className="px-2 py-1.5 w-[120px] flex-shrink-0 cursor-pointer hover:text-blue-400 transition-colors"
       onClick={(e) => {
         e.stopPropagation();
         onTimelineView("computer", computerName);
       }}
     >
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1">
         <Monitor className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
-        <span className="truncate text-center">{computerName || '-'}</span>
+        <span className="truncate text-[13px]">{computerName || '-'}</span>
       </div>
     </TableCell>
   );
