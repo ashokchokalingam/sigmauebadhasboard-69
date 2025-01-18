@@ -74,7 +74,10 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
                       key={log.id}
                       log={log}
                       isExpanded={selectedLog?.id === log.id}
-                      onToggleExpand={handleLogClick}
+                      onToggleExpand={(e) => {
+                        e.stopPropagation();
+                        handleLogClick(log);
+                      }}
                       visibleColumns={[]}
                     />
                   ))}

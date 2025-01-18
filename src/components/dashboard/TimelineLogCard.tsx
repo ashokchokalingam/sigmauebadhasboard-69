@@ -6,22 +6,17 @@ import { format } from "date-fns";
 interface TimelineLogCardProps {
   log: Alert;
   isExpanded: boolean;
-  onToggleExpand: (log: Alert) => void;
+  onToggleExpand: (e: React.MouseEvent) => void;
   visibleColumns: string[];
 }
 
 const TimelineLogCard = ({ log, isExpanded, onToggleExpand, visibleColumns }: TimelineLogCardProps) => {
   const formattedTime = format(new Date(log.system_time), "MMM d, yyyy hh:mm:ss aa");
 
-  const handleRowClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onToggleExpand(log);
-  };
-
   return (
     <TableRow 
       className={`hover:bg-purple-400/5 cursor-pointer ${isExpanded ? 'bg-purple-400/10' : ''}`}
-      onClick={handleRowClick}
+      onClick={onToggleExpand}
     >
       <TableCell className="w-[180px] font-mono text-purple-200/90 text-sm whitespace-nowrap">
         {formattedTime}
