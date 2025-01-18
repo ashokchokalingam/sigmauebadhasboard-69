@@ -47,28 +47,28 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
           className="h-full"
         >
           <div className="h-full flex flex-col">
-            <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-500/20 bg-purple-500/5 backdrop-blur-sm">
+            <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-500/20 bg-purple-950/90 backdrop-blur-sm">
               <div>
-                <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
+                <span className="font-medium">Total Records:</span> {totalRecords?.toLocaleString()}
               </div>
             </div>
             <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
               <Table>
-                <TableHeader className="bg-purple-500/5 backdrop-blur-sm sticky top-0 z-10">
+                <TableHeader className="bg-purple-950/90 backdrop-blur-sm sticky top-0 z-10">
                   <TableRow className="hover:bg-transparent border-b border-purple-500/20">
-                    <TableHead className="text-purple-100 font-semibold">Time</TableHead>
+                    <TableHead className="text-purple-100 font-medium">Time</TableHead>
                     {entityType === "user" ? (
-                      <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
+                      <TableHead className="text-purple-100 font-medium">User Origin</TableHead>
                     ) : (
-                      <TableHead className="text-purple-100 font-semibold">Computer Name</TableHead>
+                      <TableHead className="text-purple-100 font-medium">Computer Name</TableHead>
                     )}
-                    <TableHead className="text-purple-100 font-semibold">User Impacted</TableHead>
-                    <TableHead className="text-purple-100 font-semibold">Computer</TableHead>
-                    <TableHead className="text-purple-100 font-semibold">Event</TableHead>
-                    <TableHead className="text-purple-100 font-semibold">MITRE Tactics</TableHead>
+                    <TableHead className="text-purple-100 font-medium">User Impacted</TableHead>
+                    <TableHead className="text-purple-100 font-medium">Computer</TableHead>
+                    <TableHead className="text-purple-100 font-medium">Event</TableHead>
+                    <TableHead className="text-purple-100 font-medium">MITRE Tactics</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="bg-transparent">
                   {logs.map((log) => (
                     <TimelineLogCard
                       key={log.id}
@@ -94,12 +94,14 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
             <ResizablePanel 
               defaultSize={40}
               minSize={30}
-              className="h-full"
+              className="h-full overflow-hidden"
             >
-              <DetailsPanel 
-                alert={selectedLog}
-                onClose={() => setSelectedLog(null)}
-              />
+              <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20 scrollbar-track-transparent">
+                <DetailsPanel 
+                  alert={selectedLog}
+                  onClose={() => setSelectedLog(null)}
+                />
+              </div>
             </ResizablePanel>
           </>
         )}
