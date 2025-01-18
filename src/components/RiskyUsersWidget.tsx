@@ -19,14 +19,14 @@ const RiskyUsersWidget = ({ onEntitySelect }: RiskyUsersWidgetProps) => {
   const { data: riskyUsers } = useQuery({
     queryKey: ['riskyUsers'],
     queryFn: async () => {
-      const response = await fetch('/api/user_origin');
+      const response = await fetch('/api/user_origin_outlier_highrisk');
       if (!response.ok) {
         throw new Error('Failed to fetch risky users');
       }
       const data = await response.json();
       
       // Transform API data to match our interface
-      return data.user_origin.map((user: any) => ({
+      return data.user_origin_outlier_highrisk.map((user: any) => ({
         id: user.user_origin,
         name: user.user_origin,
         riskScore: parseFloat(user.total_unique_risk_score) || 0,
