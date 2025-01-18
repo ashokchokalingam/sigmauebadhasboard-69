@@ -35,24 +35,24 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
         "group relative flex items-center p-4 rounded-lg h-[72px]",
         "transition-all duration-300 cursor-pointer",
         "bg-[#1e2c3d]/40 hover:bg-[#1e2c3d]/60",
-        "border border-blue-500/5 hover:border-blue-500/10"
+        "border border-red-500/5 hover:border-red-500/10"
       )}
     >
       <div className="flex items-center w-full">
         <div className="flex items-center gap-4 flex-[0_0_50%]">
-          <div className="relative w-10 h-10 rounded-full bg-blue-950/30 flex items-center justify-center">
+          <div className="relative w-10 h-10 rounded-full bg-red-950/30 flex items-center justify-center">
             {isComputer ? (
-              <Computer className="w-5 h-5 text-blue-400/70" />
+              <Computer className="w-5 h-5 text-red-400/70" />
             ) : (
-              <User className="w-5 h-5 text-blue-400/70" />
+              <User className="w-5 h-5 text-red-400/70" />
             )}
           </div>
           
           <div className="flex flex-col min-w-[120px]">
-            <span className="font-mono text-base text-blue-200/90 font-medium group-hover:text-blue-100 truncate max-w-[200px]">
+            <span className="font-mono text-base text-red-200/90 font-medium group-hover:text-red-100 truncate max-w-[200px]">
               {id || 'Unknown'}
             </span>
-            <span className="text-sm text-[#60A5FA] font-semibold mt-1 drop-shadow-[0_0_3px_rgba(96,165,250,0.3)]">
+            <span className="text-sm text-red-500 font-semibold mt-1 drop-shadow-[0_0_3px_rgba(239,68,68,0.3)]">
               {safeUniqueTitles} unique anomalies
             </span>
           </div>
@@ -61,13 +61,13 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
         {riskScore && (
           <div className="flex-1 flex items-center justify-end">
             <div className="flex items-center gap-2">
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-end">
                 <span className={cn(
-                  "text-blue-300/90 font-medium text-base",
+                  "text-red-300/90 font-medium text-base",
                   getRiskColor(getRiskLevel(riskScore)),
                   isHighRisk(riskScore) && "animate-pulse"
                 )}>
-                  Risk
+                  Risk Level
                 </span>
                 <span className={cn(
                   "text-xs font-medium -mt-0.5",
@@ -77,22 +77,28 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
                   {getRiskLevel(riskScore)}
                 </span>
               </div>
+              
+              {/* Cardiogram Animation */}
               <div className="relative w-20 h-6 overflow-hidden">
-                <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 600 100" preserveAspectRatio="none">
+                <svg 
+                  className={cn(
+                    "w-[200%] h-full animate-cardiogram",
+                    getRiskColor(getRiskLevel(riskScore))
+                  )} 
+                  viewBox="0 0 600 100" 
+                  preserveAspectRatio="none"
+                >
                   <path
                     d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
-                    className={cn(
-                      "stroke-current fill-none stroke-[4]",
-                      getRiskColor(getRiskLevel(riskScore)),
-                      isHighRisk(riskScore) && "animate-pulse"
-                    )}
+                    className="stroke-current fill-none stroke-[4]"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </svg>
               </div>
+
               <span className={cn(
-                "font-bold text-3xl min-w-[70px] text-right",
+                "font-mono font-bold text-3xl min-w-[70px] text-right",
                 getRiskColor(getRiskLevel(riskScore)),
                 isHighRisk(riskScore) && "animate-pulse"
               )}>
