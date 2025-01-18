@@ -16,7 +16,6 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
   const [selectedLog, setSelectedLog] = useState<Alert | null>(null);
 
   const handleLogClick = (log: Alert) => {
-    console.log("Log clicked:", log);
     setSelectedLog(log);
   };
 
@@ -40,23 +39,23 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
     <div className="mt-4">
       <ResizablePanelGroup 
         direction="horizontal" 
-        className="min-h-[800px] rounded-lg border border-purple-400/20"
+        className="min-h-[800px] rounded-lg border border-purple-500/20"
       >
         <ResizablePanel 
-          defaultSize={60}
+          defaultSize={selectedLog ? 60 : 100}
           minSize={30}
           className="h-full"
         >
           <div className="h-full flex flex-col">
-            <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-400/20 bg-purple-400/5 backdrop-blur-sm">
+            <div className="sticky top-0 z-20 p-4 flex justify-between items-center text-sm text-purple-200/80 border-b border-purple-500/20 bg-purple-500/5 backdrop-blur-sm">
               <div>
                 <span className="font-semibold">Total Records:</span> {totalRecords?.toLocaleString()}
               </div>
             </div>
             <div className="flex-1 overflow-auto custom-scrollbar">
               <Table>
-                <TableHeader className="bg-purple-400/5 backdrop-blur-sm sticky top-0 z-10">
-                  <TableRow className="hover:bg-transparent border-b border-purple-400/20">
+                <TableHeader className="bg-purple-500/5 backdrop-blur-sm sticky top-0 z-10">
+                  <TableRow className="hover:bg-transparent border-b border-purple-500/20">
                     <TableHead className="text-purple-100 font-semibold">Time</TableHead>
                     {entityType === "user" ? (
                       <TableHead className="text-purple-100 font-semibold">User Origin</TableHead>
@@ -85,23 +84,25 @@ const TimelineDetailedLogs = ({ logs, isLoading, totalRecords, entityType = "use
           </div>
         </ResizablePanel>
 
-        <ResizableHandle 
-          withHandle 
-          className="bg-purple-400/20 hover:bg-purple-400/30 transition-colors"
-        />
-        
-        <ResizablePanel 
-          defaultSize={40}
-          minSize={30}
-          className="h-full"
-        >
-          {selectedLog && (
-            <DetailsPanel 
-              alert={selectedLog}
-              onClose={() => setSelectedLog(null)}
+        {selectedLog && (
+          <>
+            <ResizableHandle 
+              withHandle 
+              className="bg-purple-500/20 hover:bg-purple-500/30 transition-colors"
             />
-          )}
-        </ResizablePanel>
+            
+            <ResizablePanel 
+              defaultSize={40}
+              minSize={30}
+              className="h-full"
+            >
+              <DetailsPanel 
+                alert={selectedLog}
+                onClose={() => setSelectedLog(null)}
+              />
+            </ResizablePanel>
+          </>
+        )}
       </ResizablePanelGroup>
     </div>
   );
