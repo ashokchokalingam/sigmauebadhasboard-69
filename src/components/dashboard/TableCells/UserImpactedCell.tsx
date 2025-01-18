@@ -1,5 +1,11 @@
 import { TableCell } from "@/components/ui/table";
-import { User } from "lucide-react";
+import { UserCheck } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface UserImpactedCellProps {
   userName: string;
@@ -7,11 +13,20 @@ interface UserImpactedCellProps {
 
 const UserImpactedCell = ({ userName }: UserImpactedCellProps) => {
   return (
-    <TableCell className="px-3 py-2 w-[180px] flex-shrink-0">
-      <div className="flex items-center gap-1.5">
-        <User className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
-        <span className="truncate text-center">{userName || '-'}</span>
-      </div>
+    <TableCell className="px-2 py-1.5 w-[120px] flex-shrink-0">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex items-center gap-1">
+              <UserCheck className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
+              <span className="text-[13px] truncate">{userName || '-'}</span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{userName}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </TableCell>
   );
 };

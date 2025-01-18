@@ -13,11 +13,11 @@ interface TitleCellProps {
 
 const TitleCell = ({ title }: TitleCellProps) => {
   return (
-    <TableCell className="px-3 py-2 flex-1 min-w-[200px]">
+    <TableCell className="px-2 py-1.5 min-w-[180px] max-w-[300px]">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
+            <div className="flex items-center gap-1 whitespace-nowrap overflow-hidden">
               <FileText className="h-3.5 w-3.5 flex-shrink-0 text-slate-400" />
               <span className="text-[13px] truncate text-left">{title || '-'}</span>
             </div>
