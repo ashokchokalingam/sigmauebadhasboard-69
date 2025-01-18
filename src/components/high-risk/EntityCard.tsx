@@ -1,4 +1,4 @@
-import { User } from "lucide-react";
+import { User, Computer } from "lucide-react";
 import { RiskyEntity } from "./types";
 import { useState, useEffect } from "react";
 
@@ -30,7 +30,7 @@ const EntityCard = ({ entity, entityType, showMetricCycle = false }: EntityCardP
   const getMetrics = (entity: RiskyEntity) => [
     { 
       value: getMetricValue(entity.unique_title_count),
-      label: 'unique anomalies' 
+      label: 'unique outliers' 
     },
     { 
       value: getMetricValue(entity.unique_tactics_count),
@@ -48,21 +48,24 @@ const EntityCard = ({ entity, entityType, showMetricCycle = false }: EntityCardP
 
   return (
     <div className="group relative p-3 rounded-lg
-      bg-gradient-to-r from-[#0D0E12] to-[#0D0E12]/80
-      border border-indigo-500/20 hover:border-indigo-500/30
-      transition-all duration-300 cursor-pointer
-      hover:shadow-lg hover:shadow-indigo-500/10"
+      bg-[#0D0E12]/90 hover:bg-[#0D0E12]
+      border border-blue-500/10 hover:border-blue-500/20
+      transition-all duration-300 cursor-pointer"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-indigo-500/10 border border-indigo-500/20 group-hover:border-indigo-500/30 transition-colors">
-            <User className="h-4 w-4 text-indigo-400" />
+          <div className="p-2 rounded-lg bg-blue-500/5 border border-blue-500/10">
+            {entityType === 'asset' ? (
+              <Computer className="h-4 w-4 text-blue-400/70" />
+            ) : (
+              <User className="h-4 w-4 text-blue-400/70" />
+            )}
           </div>
           <div className="space-y-0.5">
-            <h3 className="font-mono text-sm text-indigo-100/90 font-medium group-hover:text-indigo-100 truncate max-w-[150px]">
+            <h3 className="font-mono text-sm text-blue-100/90 font-medium group-hover:text-blue-100 truncate max-w-[150px]">
               {entityName}
             </h3>
-            <p className="text-xs text-indigo-400/70 font-medium">
+            <p className="text-[11px] text-blue-400/70">
               {currentMetric.value} {currentMetric.label}
             </p>
           </div>
