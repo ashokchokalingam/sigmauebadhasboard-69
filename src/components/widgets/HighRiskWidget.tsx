@@ -56,7 +56,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
   }
 
   return (
-    <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300">
+    <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300 h-[500px]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-purple-100">
           <Shield className="h-5 w-5 text-purple-500" />
@@ -72,7 +72,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
             onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-purple-950/20 border-purple-900/30 text-purple-100 placeholder:text-purple-400/50"
           />
-          <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2">
+          <div className="space-y-2 overflow-y-auto pr-2" style={{ height: 'calc(500px - 140px)' }}>
             {filteredEntities.map((entity: any, index: number) => {
               const entityId = entityType === 'computer' ? entity.computer : entity.user;
               const riskScore = parseFloat(entity.cumulative_risk_score);
