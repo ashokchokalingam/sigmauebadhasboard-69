@@ -30,10 +30,15 @@ export const useAlerts = (
       console.log(`Fetching alerts for page ${page}`);
       
       const response = await fetch(`/api/alerts?page=${page}&per_page=${INITIAL_LOAD_SIZE}`, {
+        method: 'GET',
+        credentials: 'include',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
         },
+        mode: 'cors'
       });
       
       if (!response.ok) {
@@ -59,8 +64,10 @@ export const useAlerts = (
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
     gcTime: 30 * 60 * 1000,   // Garbage collect after 30 minutes
     meta: {
-      onError: (error: Error) => {
-        console.error("Failed to fetch alerts:", error);
+      onSettled: (data, error) => {
+        if (error) {
+          console.error("Failed to fetch alerts:", error);
+        }
       }
     }
   });

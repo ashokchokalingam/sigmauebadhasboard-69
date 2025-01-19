@@ -25,13 +25,15 @@ const Index = () => {
     console.log('Fetching alerts:', { batchSize, page, timeFrame });
     
     const response = await fetch(`/api/alerts?page=${page}&per_page=${batchSize}&timeframe=${timeFrame}`, {
+      method: 'GET',
+      credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
         'Pragma': 'no-cache'
       },
-      credentials: 'same-origin'
+      mode: 'cors'
     });
 
     if (!response.ok) {
