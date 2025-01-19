@@ -13,45 +13,38 @@ interface AlertsResponse {
   total_count: number;
 }
 
-const useAlertsFetching = (timeFrame: string, currentPage: number) => {
+const Index = () => {
   const { toast } = useToast();
+  const [timeFrame, setTimeFrame] = useState("1d");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedEntity, setSelectedEntity] = useState<{ type: "userorigin" | "userimpacted" | "computersimpacted"; id: string } | null>(null);
+  const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
+  const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
 
   const fetchAlerts = async (batchSize: number, page: number): Promise<AlertsResponse> => {
-    try {
-      console.log('Fetching alerts:', { batchSize, page, timeFrame });
-      const response = await fetch(`/api/alerts?page=${page}&per_page=${batchSize}&timeframe=${timeFrame}`);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API Error Response:', {
-          status: response.status,
-          statusText: response.statusText,
-          body: errorText
-        });
-        throw new Error(`API Error: ${response.status} ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      console.log('Received alerts data:', data);
-      
-      if (!data || !Array.isArray(data.alerts)) {
-        console.error('Invalid data format:', data);
-        throw new Error('Invalid data format received from API');
-      }
-      
-      return {
-        alerts: data.alerts,
-        total_count: data.total_count || 0
-      };
-    } catch (error) {
-      console.error('Error fetching alerts:', error);
-      toast({
-        title: "Error fetching data",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
-        variant: "destructive",
-      });
-      throw error;
+    console.log('Fetching alerts:', { batchSize, page, timeFrame });
+    
+    const response = await fetch(`/api/alerts?page=${page}&per_page=${batchSize}&timeframe=${timeFrame}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      },
+      credentials: 'same-origin'
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const data = await response.json();
+    console.log('Received alerts data:', data);
+    
+    return {
+      alerts: data.alerts || [],
+      total_count: data.total_count || 0
+    };
   };
 
   // Initial alerts query
@@ -65,6 +58,11 @@ const useAlertsFetching = (timeFrame: string, currentPage: number) => {
       onSettled: (data, error) => {
         if (error) {
           console.error('Initial query error:', error);
+          toast({
+            title: "Error fetching data",
+            description: error instanceof Error ? error.message : "An unexpected error occurred",
+            variant: "destructive",
+          });
         }
       }
     }
@@ -80,49 +78,24 @@ const useAlertsFetching = (timeFrame: string, currentPage: number) => {
       onSettled: (data, error) => {
         if (error) {
           console.error('Remaining query error:', error);
+          toast({
+            title: "Error fetching additional data",
+            description: error instanceof Error ? error.message : "An unexpected error occurred",
+            variant: "destructive",
+          });
         }
       }
     }
   });
 
-  return {
-    initialQuery,
-    remainingQuery,
-    toast
-  };
-};
-
-const Index = () => {
-  const [selectedEntity, setSelectedEntity] = useState<{ type: "userorigin" | "userimpacted" | "computersimpacted"; id: string } | null>(null);
-  const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
-  const [currentTotalRecords, setCurrentTotalRecords] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [timeFrame, setTimeFrame] = useState("1d");
-  const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
-
-  const { initialQuery, remainingQuery, toast } = useAlertsFetching(timeFrame, currentPage);
-
   useEffect(() => {
-    console.log('Initial query state:', {
-      isLoading: initialQuery.isLoading,
-      isError: initialQuery.isError,
-      data: initialQuery.data
-    });
-
     if (initialQuery.data) {
       setCurrentAlerts(initialQuery.data.alerts || []);
       setAllAlerts(initialQuery.data.alerts || []);
-      setCurrentTotalRecords(initialQuery.data.total_count || 0);
     }
   }, [initialQuery.data]);
 
   useEffect(() => {
-    console.log('Remaining query state:', {
-      isLoading: remainingQuery.isLoading,
-      isError: remainingQuery.isError,
-      data: remainingQuery.data
-    });
-
     if (remainingQuery.data?.alerts) {
       setCurrentAlerts(prev => [...prev, ...remainingQuery.data.alerts]);
       setAllAlerts(prev => [...prev, ...remainingQuery.data.alerts]);
@@ -170,17 +143,17 @@ const Index = () => {
       <DashboardLayout
         alerts={currentAlerts}
         allAlerts={allAlerts}
-        totalRecords={currentTotalRecords}
+        totalRecords={initialQuery.data?.total_count || 0}
         isLoading={initialQuery.isLoading || remainingQuery.isLoading}
         onEntitySelect={handleEntitySelect}
         selectedEntity={selectedEntity}
         onLoadMore={handleLoadMore}
-        hasMore={currentAlerts.length < TOTAL_BATCH_SIZE}
+        hasMore={currentAlerts.length < (initialQuery.data?.total_count || 0)}
       />
       
       {(initialQuery.isLoading || remainingQuery.isLoading) && currentAlerts.length > 0 && (
         <div className="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
-          Loading data... ({currentAlerts.length} / {TOTAL_BATCH_SIZE})
+          Loading data... ({currentAlerts.length} / {initialQuery.data?.total_count || 0})
         </div>
       )}
     </div>
