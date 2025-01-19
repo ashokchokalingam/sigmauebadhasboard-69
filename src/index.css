@@ -32,8 +32,12 @@
 }
 
 @keyframes cardiogram {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from { 
+    transform: translateX(0); 
+  }
+  to { 
+    transform: translateX(-50%); 
+  }
 }
 
 /* Base styles */
@@ -41,9 +45,11 @@
   * {
     @apply border-border;
   }
+  
   body {
     @apply bg-[#15161E] text-foreground min-h-screen w-full m-0 p-0 font-sans;
   }
+  
   #root {
     @apply min-h-screen w-full bg-[#15161E] m-0 p-0;
   }
