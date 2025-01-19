@@ -15,7 +15,21 @@ interface ColumnFilterProps {
 }
 
 const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterProps) => {
-  const uniqueOptions = Array.from(new Set(options)).filter(Boolean);
+  // Process options to handle empty/null values
+  const processOptions = (opts: string[]) => {
+    const processed = opts
+      .map(opt => opt === null || opt === undefined ? 'N/A' : opt.toString())
+      .filter(Boolean);
+    
+    const uniqueOpts = Array.from(new Set(processed));
+    return uniqueOpts.sort((a, b) => {
+      if (a === 'N/A') return 1;
+      if (b === 'N/A') return -1;
+      return a.localeCompare(b);
+    });
+  };
+
+  const uniqueOptions = processOptions(options);
 
   return (
     <DropdownMenu>
@@ -42,7 +56,7 @@ const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterP
               } hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer truncate`}
               onClick={() => onSelect(option)}
             >
-              {option || 'N/A'}
+              {option}
             </DropdownMenuItem>
           ))}
         </ScrollArea>

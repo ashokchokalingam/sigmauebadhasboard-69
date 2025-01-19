@@ -27,18 +27,16 @@ const ResizableHeader = ({
   const headerRef = useRef<HTMLTableCellElement>(null);
 
   const getUniqueValues = (key: keyof Alert) => {
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    
-    const uniqueValues = Array.from(new Set(alerts.map(alert => {
-      if (key === 'system_time') {
-        return new Date(alert[key]).toLocaleTimeString();
-      }
+    const values = alerts.map(alert => {
       const value = alert[key];
-      return value === null || value === undefined ? 'N/A' : String(value);
-    }))).filter(Boolean);
+      if (value === null || value === undefined) return 'N/A';
+      if (key === 'system_time') {
+        return new Date(value as string).toLocaleString();
+      }
+      return String(value);
+    });
     
-    return uniqueValues.sort((a, b) => a.localeCompare(b));
+    return Array.from(new Set(values)).filter(Boolean);
   };
 
   const startResizing = (e: React.MouseEvent) => {

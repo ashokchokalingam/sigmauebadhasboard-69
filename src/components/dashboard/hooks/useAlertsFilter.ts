@@ -21,45 +21,43 @@ export const useAlertsFilter = (alerts: Alert[]) => {
     return alerts.filter(alert => {
       return Object.entries(filters).every(([column, filterValue]) => {
         if (!filterValue) return true;
-
-        const alertValue = alert[column as keyof Alert];
         
-        // Handle null or undefined values
+        const alertValue = alert[column as keyof Alert];
+        const filterLower = filterValue.toLowerCase();
+        
+        // Special handling for null/undefined values
         if (alertValue === null || alertValue === undefined) {
-          return filterValue.toLowerCase() === 'n/a';
+          return filterLower === 'n/a';
         }
 
-        // Handle system_time separately
-        if (column === 'system_time') {
-          const alertTime = new Date(alertValue as string).toLocaleTimeString();
-          return alertTime.toLowerCase().includes(filterValue.toLowerCase());
-        }
-
-        // Handle numeric values
+        // Handle different value types
         if (typeof alertValue === 'number') {
-          return String(alertValue).includes(filterValue);
+          if (filterLower === 'n/a') return false;
+          return alertValue.toString().includes(filterValue);
         }
 
-        // Handle string values with case-insensitive comparison
         if (typeof alertValue === 'string') {
-          return alertValue.toLowerCase().includes(filterValue.toLowerCase());
+          if (filterLower === 'n/a') return false;
+          return alertValue.toLowerCase().includes(filterLower);
         }
 
-        // Handle arrays
+        // Handle arrays (like tags)
         if (Array.isArray(alertValue)) {
+          if (filterLower === 'n/a') return alertValue.length === 0;
           return alertValue.some(item => 
-            String(item).toLowerCase().includes(filterValue.toLowerCase())
+            item?.toString().toLowerCase().includes(filterLower)
           );
         }
 
         // Handle objects
         if (typeof alertValue === 'object') {
+          if (filterLower === 'n/a') return false;
           return JSON.stringify(alertValue)
             .toLowerCase()
-            .includes(filterValue.toLowerCase());
+            .includes(filterLower);
         }
 
-        return String(alertValue).toLowerCase().includes(filterValue.toLowerCase());
+        return false;
       });
     });
   }, [alerts, filters]);
