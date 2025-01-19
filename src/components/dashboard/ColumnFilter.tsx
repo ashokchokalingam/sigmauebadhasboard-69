@@ -7,6 +7,7 @@ import {
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
+import { processTableOptions } from "./utils/tableUtils";
 
 interface ColumnFilterProps {
   title: string;
@@ -17,23 +18,12 @@ interface ColumnFilterProps {
 
 const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const uniqueOptions = processTableOptions(options);
 
-  const processOptions = (opts: string[]) => {
-    const processed = opts.map(opt => {
-      if (opt === null || opt === undefined || opt === '') return '—';
-      return opt.toString().trim();
-    });
-    
-    const uniqueOpts = Array.from(new Set(processed)).sort((a, b) => {
-      if (a === '—') return 1;
-      if (b === '—') return -1;
-      return a.localeCompare(b);
-    });
-    
-    return uniqueOpts;
+  const handleOptionSelect = (value: string) => {
+    onSelect(value);
+    setIsOpen(false);
   };
-
-  const uniqueOptions = processOptions(options);
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -49,10 +39,7 @@ const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterP
         <ScrollArea className="h-[300px] overflow-y-auto">
           <DropdownMenuItem 
             className="text-blue-300 hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer"
-            onClick={() => {
-              onSelect('');
-              setIsOpen(false);
-            }}
+            onClick={() => handleOptionSelect('')}
           >
             All
           </DropdownMenuItem>
@@ -62,10 +49,7 @@ const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterP
               className={`${
                 selectedValue === option ? 'bg-blue-950/50 text-blue-400' : 'text-blue-300'
               } hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer truncate transition-colors duration-200`}
-              onClick={() => {
-                onSelect(option);
-                setIsOpen(false);
-              }}
+              onClick={() => handleOptionSelect(option)}
             >
               {option}
             </DropdownMenuItem>
