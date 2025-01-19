@@ -6,7 +6,9 @@ interface TooltipProps {
   payload?: any[];
 }
 
-const getSeverityColor = (severity: string): string => {
+const getSeverityColor = (severity?: string | null): string => {
+  if (!severity) return "text-blue-400";
+  
   switch (severity.toLowerCase()) {
     case "high":
       return "text-red-400";
@@ -20,17 +22,17 @@ const getSeverityColor = (severity: string): string => {
 };
 
 export const OutlierTooltip = ({ active, payload }: TooltipProps) => {
-  if (!active || !payload || !payload.length) return null;
+  if (!active || !payload || !payload.length || !payload[0]?.payload) return null;
 
   const data = payload[0].payload as ChartDataPoint;
   
   return (
     <div className="bg-black/90 p-4 rounded-lg border border-purple-500/20 backdrop-blur-sm">
-      <p className="text-purple-300 font-medium mb-2">{data.title}</p>
+      <p className="text-purple-300 font-medium mb-2">{data.title || 'N/A'}</p>
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <span className="text-purple-400">Anomalies:</span>
-          <span className="text-white font-bold">{data.count}</span>
+          <span className="text-white font-bold">{data.count || 0}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-purple-400">Risk Score:</span>
@@ -38,30 +40,34 @@ export const OutlierTooltip = ({ active, payload }: TooltipProps) => {
             {data.risk ? data.risk.toFixed(2) : 'N/A'}
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400">First Seen:</span>
-          <span className="text-white">{format(new Date(data.firstSeen), 'MMM d, yyyy h:mm a')}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400">Last Seen:</span>
-          <span className="text-white">{format(new Date(data.lastSeen), 'MMM d, yyyy h:mm a')}</span>
-        </div>
+        {data.firstSeen && (
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">First Seen:</span>
+            <span className="text-white">{format(new Date(data.firstSeen), 'MMM d, yyyy h:mm a')}</span>
+          </div>
+        )}
+        {data.lastSeen && (
+          <div className="flex items-center gap-2">
+            <span className="text-purple-400">Last Seen:</span>
+            <span className="text-white">{format(new Date(data.lastSeen), 'MMM d, yyyy h:mm a')}</span>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <span className="text-purple-400">Impacted Computers:</span>
-          <span className="text-white">{data.impactedComputers.length}</span>
+          <span className="text-white">{data.impactedComputers?.length || 0}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-purple-400">Impacted Users:</span>
-          <span className="text-white">{data.impactedUsers.length}</span>
+          <span className="text-white">{data.impactedUsers?.length || 0}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-purple-400">Tactics:</span>
-          <span className="text-white">{data.tactics.join(', ') || 'N/A'}</span>
+          <span className="text-white">{data.tactics?.join(', ') || 'N/A'}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-purple-400">Severity:</span>
           <span className={`font-bold ${getSeverityColor(data.severity)}`}>
-            {data.severity.toUpperCase()}
+            {data.severity?.toUpperCase() || 'N/A'}
           </span>
         </div>
       </div>
