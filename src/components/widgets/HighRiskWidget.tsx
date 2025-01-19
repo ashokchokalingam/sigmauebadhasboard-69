@@ -1,8 +1,7 @@
-import { Shield } from "lucide-react";
+import { Shield, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import TimelineView from "../dashboard/TimelineView";
 
 interface HighRiskWidgetProps {
@@ -21,7 +20,6 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
     const interval = setInterval(() => {
       setStatIndex((prev) => (prev + 1) % 3);
     }, 800);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -29,9 +27,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
     queryKey: [apiEndpoint],
     queryFn: async () => {
       const response = await fetch(`/api/${apiEndpoint}`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${title}`);
-      }
+      if (!response.ok) throw new Error(`Failed to fetch ${title}`);
       const data = await response.json();
       const key = Object.keys(data)[0];
       return data[key] || [];
@@ -43,24 +39,13 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
       const entityName = entityType === 'computer' ? entity.computer : entity.user;
       return entityName?.toLowerCase().includes(searchQuery.toLowerCase());
     })
-    .sort((a: any, b: any) => {
-      return parseFloat(b.cumulative_risk_score) - parseFloat(a.cumulative_risk_score);
-    });
+    .sort((a: any, b: any) => parseFloat(b.cumulative_risk_score) - parseFloat(a.cumulative_risk_score));
 
-  const handleEntityClick = (entityId: string) => {
-    setSelectedEntity(entityId);
-  };
-
-  const getRiskColor = (score: number): string => {
-    if (score >= 200) return "text-[#ea384c]";
-    if (score >= 50) return "text-orange-500";
-    return "text-yellow-500";
-  };
-
-  const getRiskLevel = (score: number): string => {
-    if (score >= 200) return "critical";
-    if (score >= 50) return "high";
-    return "medium";
+  const getRiskLevel = (score: number): { level: string; color: string } => {
+    if (score >= 100) return { level: "critical risk", color: "text-red-500" };
+    if (score >= 75) return { level: "high risk", color: "text-orange-500" };
+    if (score >= 50) return { level: "medium risk", color: "text-yellow-500" };
+    return { level: "low risk", color: "text-blue-500" };
   };
 
   const getRotatingStats = (entity: any) => {
@@ -76,7 +61,6 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
     const timelineEntityType = entityType === 'userOrigin' ? 'userorigin' :
                               entityType === 'userImpacted' ? 'userimpacted' :
                               'computersimpacted';
-
     return (
       <div className="fixed inset-0 z-50 bg-background">
         <TimelineView
@@ -90,36 +74,43 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
   }
 
   return (
-    <Card className="bg-black/40 border-purple-900/20 hover:bg-black/50 transition-all duration-300 h-[500px]">
-      <CardHeader className="p-6">
+    <Card className="bg-[#1A1F2C] border-purple-900/20 hover:bg-[#1E2334] transition-all duration-300 h-[500px]">
+      <CardHeader className="p-6 border-b border-purple-900/20">
         <CardTitle className="flex items-center gap-3 text-purple-100">
           <Shield className="h-5 w-5 text-purple-500" />
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-6 pt-0">
+      <CardContent className="p-6 pt-4">
         <div className="space-y-4">
-          <Input
-            type="text"
-            placeholder={searchPlaceholder}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-purple-950/20 border-purple-900/30 text-purple-100 placeholder:text-purple-400/50"
-          />
-          <div className="space-y-3 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-purple-900/20 scrollbar-track-transparent" 
-               style={{ height: 'calc(500px - 140px)' }}>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-purple-400/50" />
+            <input
+              type="text"
+              placeholder={searchPlaceholder}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-[#151823] border border-purple-900/30 
+                         rounded-lg text-purple-100 placeholder:text-purple-400/50
+                         focus:outline-none focus:ring-1 focus:ring-purple-500/30
+                         transition-all duration-200"
+            />
+          </div>
+          
+          <div className="space-y-3 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-purple-900/20 
+                        scrollbar-track-transparent" style={{ height: 'calc(500px - 140px)' }}>
             {filteredEntities.map((entity: any, index: number) => {
               const entityId = entityType === 'computer' ? entity.computer : entity.user;
               const riskScore = parseFloat(entity.cumulative_risk_score);
-              const riskLevel = getRiskLevel(riskScore);
+              const { level, color } = getRiskLevel(riskScore);
               const currentStat = getRotatingStats(entity);
               
               return (
                 <div
                   key={index}
-                  onClick={() => handleEntityClick(entityId)}
-                  className="bg-purple-950/20 p-4 rounded-lg border border-purple-900/30 
-                           hover:bg-purple-950/30 transition-all duration-300 cursor-pointer
+                  onClick={() => setSelectedEntity(entityId)}
+                  className="bg-[#151823] p-4 rounded-lg border border-purple-900/30 
+                           hover:bg-[#1A1F2C] transition-all duration-300 cursor-pointer
                            group"
                 >
                   <div className="flex items-center justify-between">
@@ -132,12 +123,12 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className={`text-sm font-medium ${getRiskColor(riskScore)}`}>
-                        {riskLevel} risk
+                      <span className={`text-sm font-medium ${color}`}>
+                        {level}
                       </span>
                       <div className="relative w-24 h-8 overflow-hidden">
                         <svg 
-                          className={`w-[200%] h-full animate-cardiogram ${getRiskColor(riskScore)}`}
+                          className={`w-[200%] h-full animate-cardiogram ${color}`}
                           viewBox="0 0 600 100" 
                           preserveAspectRatio="none"
                         >
@@ -149,8 +140,8 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
                           />
                         </svg>
                       </div>
-                      <span className={`font-mono font-bold text-2xl ${getRiskColor(riskScore)} ${
-                        riskScore >= 200 ? 'animate-pulse' : ''
+                      <span className={`font-mono font-bold text-2xl ${color} ${
+                        riskScore >= 100 ? 'animate-pulse' : ''
                       }`}>
                         {riskScore.toFixed(1)}
                       </span>

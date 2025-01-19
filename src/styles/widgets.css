@@ -1,52 +1,48 @@
 @layer components {
-  /* Widget Layout */
   .widget-container {
-    @apply bg-[#15161E] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[675px] 
-    transition-all duration-300 shadow-lg shadow-[#5856D6]/5 hover:shadow-[#5856D6]/10;
+    @apply bg-[#1A1F2C] border border-purple-900/20 rounded-xl overflow-hidden h-[675px] 
+    transition-all duration-300 shadow-lg hover:shadow-purple-500/10;
   }
 
   .widget-header {
-    @apply p-4 flex items-center justify-between bg-[#15161E]/60 backdrop-blur-sm rounded-t-xl
-    border-b border-[#5856D6]/10;
+    @apply p-4 flex items-center justify-between bg-[#151823] backdrop-blur-sm rounded-t-xl
+    border-b border-purple-900/20;
   }
 
   .widget-title {
-    @apply flex items-center gap-2 text-sm font-medium text-white/90;
+    @apply flex items-center gap-2 text-sm font-medium text-purple-100;
   }
 
   .widget-count {
-    @apply text-xs font-medium text-[#5856D6] px-2 py-1 rounded-full bg-[#5856D6]/10 border border-[#5856D6]/20;
+    @apply text-xs font-medium text-purple-400 px-2 py-1 rounded-full 
+    bg-purple-500/10 border border-purple-500/20;
   }
 
-  /* Search Section */
   .widget-search {
-    @apply p-3 border-b border-[#5856D6]/10;
+    @apply p-3 border-b border-purple-900/20;
   }
 
   .widget-search-input {
-    @apply w-full pl-9 pr-4 py-2
-    bg-[#15161E]/80 hover:bg-[#15161E]
-    border border-[#5856D6]/20 hover:border-[#5856D6]/40 
-    rounded-lg text-xs text-white/90 
-    placeholder:text-white/30
+    @apply w-full pl-9 pr-4 py-2.5
+    bg-[#151823] hover:bg-[#1A1F2C]
+    border border-purple-900/30 hover:border-purple-900/50 
+    rounded-lg text-xs text-purple-100 
+    placeholder:text-purple-400/50
     transition-colors duration-200
-    focus:outline-none focus:ring-1 focus:ring-[#5856D6]/40
-    shadow-sm shadow-[#5856D6]/5;
+    focus:outline-none focus:ring-1 focus:ring-purple-500/30;
   }
 
-  /* Content Area */
   .widget-content {
     @apply px-4 pb-4 space-y-2 overflow-y-auto h-[calc(100%-120px)]
-    scrollbar-thin scrollbar-thumb-[#5856D6]/20 scrollbar-track-transparent;
+    scrollbar-thin scrollbar-thumb-purple-900/20 scrollbar-track-transparent;
   }
 
-  /* List Items */
   .widget-item {
-    @apply flex items-center justify-between p-3 rounded-lg 
-    bg-[#15161E]/80 hover:bg-[#15161E]
-    border border-[#5856D6]/20 hover:border-[#5856D6]/40
-    transition-all duration-300 cursor-pointer h-[60px]
-    shadow-sm shadow-[#5856D6]/5 hover:shadow-md hover:shadow-[#5856D6]/10;
+    @apply flex items-center justify-between p-4 rounded-lg 
+    bg-[#151823] hover:bg-[#1A1F2C]
+    border border-purple-900/30 hover:border-purple-900/50
+    transition-all duration-300 cursor-pointer
+    shadow-sm hover:shadow-md hover:shadow-purple-500/10;
   }
 
   .widget-item-left {
@@ -54,8 +50,8 @@
   }
 
   .widget-item-icon {
-    @apply w-8 h-8 rounded-full bg-[#5856D6]/10 flex items-center justify-center
-    border border-[#5856D6]/20;
+    @apply w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center
+    border border-purple-500/20;
   }
 
   .widget-item-text {
@@ -63,14 +59,26 @@
   }
 
   .widget-item-title {
-    @apply font-mono text-sm text-white/90 font-medium hover:text-white truncate max-w-[200px];
+    @apply font-mono text-sm text-purple-100 font-medium hover:text-white truncate max-w-[200px];
   }
 
   .widget-item-subtitle {
-    @apply text-xs text-[#5856D6]/80;
+    @apply text-xs text-purple-400/70;
   }
 
   .widget-item-right {
-    @apply flex-1 flex items-center justify-end;
+    @apply flex-1 flex items-center justify-end gap-4;
+  }
+
+  .risk-level {
+    @apply text-sm font-medium;
+  }
+
+  .risk-score {
+    @apply font-mono font-bold text-2xl;
+  }
+
+  .cardiogram {
+    @apply relative w-24 h-8 overflow-hidden opacity-70;
   }
 }
