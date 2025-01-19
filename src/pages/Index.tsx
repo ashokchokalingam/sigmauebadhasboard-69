@@ -47,7 +47,7 @@ const Index = () => {
     queryFn: () => fetchAlerts(INITIAL_BATCH_SIZE, 1),
     refetchInterval: 60 * 1000, // Increased to 60 seconds
     staleTime: 55 * 1000, // Increased stale time
-    cacheTime: 5 * 60 * 1000, // Cache for 5 minutes
+    gcTime: 5 * 60 * 1000, // Cache for 5 minutes (renamed from cacheTime)
     meta: {
       onSettled: (data, error) => {
         if (error) {
@@ -68,7 +68,7 @@ const Index = () => {
     queryFn: () => fetchAlerts(INITIAL_BATCH_SIZE, currentPage),
     enabled: !!initialQuery.data?.alerts?.length && currentAlerts.length < TOTAL_BATCH_SIZE,
     staleTime: 55 * 1000,
-    cacheTime: 5 * 60 * 1000,
+    gcTime: 5 * 60 * 1000, // Cache for 5 minutes (renamed from cacheTime)
     meta: {
       onSettled: (data, error) => {
         if (error) {
