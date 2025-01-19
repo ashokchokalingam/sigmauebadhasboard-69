@@ -15,18 +15,21 @@ interface ColumnFilterProps {
 }
 
 const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterProps) => {
-  // Process options to handle empty/null values
   const processOptions = (opts: string[]) => {
-    const processed = opts
-      .map(opt => opt === null || opt === undefined ? 'N/A' : opt.toString())
-      .filter(Boolean);
+    // Convert all values to strings and replace null/undefined with '—'
+    const processed = opts.map(opt => {
+      if (opt === null || opt === undefined || opt === '') return '—';
+      return opt.toString().trim();
+    });
     
-    const uniqueOpts = Array.from(new Set(processed));
-    return uniqueOpts.sort((a, b) => {
-      if (a === 'N/A') return 1;
-      if (b === 'N/A') return -1;
+    // Remove duplicates and sort
+    const uniqueOpts = Array.from(new Set(processed)).sort((a, b) => {
+      if (a === '—') return 1;
+      if (b === '—') return -1;
       return a.localeCompare(b);
     });
+    
+    return uniqueOpts;
   };
 
   const uniqueOptions = processOptions(options);
@@ -48,9 +51,9 @@ const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterP
           >
             All
           </DropdownMenuItem>
-          {uniqueOptions.map((option, index) => (
+          {uniqueOptions.map((option) => (
             <DropdownMenuItem
-              key={`${option}-${index}`}
+              key={option}
               className={`${
                 selectedValue === option ? 'bg-blue-950/50 text-blue-400' : 'text-blue-300'
               } hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer truncate`}

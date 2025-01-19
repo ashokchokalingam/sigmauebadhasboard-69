@@ -23,41 +23,23 @@ export const useAlertsFilter = (alerts: Alert[]) => {
         if (!filterValue) return true;
         
         const alertValue = alert[column as keyof Alert];
-        const filterLower = filterValue.toLowerCase();
         
-        // Special handling for null/undefined values
-        if (alertValue === null || alertValue === undefined) {
-          return filterLower === 'n/a';
+        // Handle empty values
+        if (alertValue === null || alertValue === undefined || alertValue === '') {
+          return filterValue === '—';
         }
 
-        // Handle different value types
-        if (typeof alertValue === 'number') {
-          if (filterLower === 'n/a') return false;
-          return alertValue.toString().includes(filterValue);
+        // Convert to string for comparison
+        const stringValue = String(alertValue).trim();
+        if (stringValue === '') return filterValue === '—';
+        
+        // Handle exact matches for certain columns
+        if (['event_id', 'ml_cluster', 'risk'].includes(column)) {
+          return stringValue === filterValue;
         }
-
-        if (typeof alertValue === 'string') {
-          if (filterLower === 'n/a') return false;
-          return alertValue.toLowerCase().includes(filterLower);
-        }
-
-        // Handle arrays (like tags)
-        if (Array.isArray(alertValue)) {
-          if (filterLower === 'n/a') return alertValue.length === 0;
-          return alertValue.some(item => 
-            item?.toString().toLowerCase().includes(filterLower)
-          );
-        }
-
-        // Handle objects
-        if (typeof alertValue === 'object') {
-          if (filterLower === 'n/a') return false;
-          return JSON.stringify(alertValue)
-            .toLowerCase()
-            .includes(filterLower);
-        }
-
-        return false;
+        
+        // Default case-insensitive contains match
+        return stringValue.toLowerCase().includes(filterValue.toLowerCase());
       });
     });
   }, [alerts, filters]);

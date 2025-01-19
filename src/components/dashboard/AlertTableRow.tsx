@@ -1,5 +1,5 @@
 import React from "react";
-import { TableRow } from "@/components/ui/table";
+import { TableRow, TableCell } from "@/components/ui/table";
 import { ChevronRight } from "lucide-react";
 import { Alert } from "./types";
 import UserOriginCell from "./TableCells/UserOriginCell";
@@ -27,6 +27,8 @@ const AlertTableRow = ({
   visibleColumns 
 }: AlertTableRowProps) => {
   const renderCell = (columnKey: string) => {
+    const value = alert[columnKey as keyof Alert];
+    
     switch (columnKey) {
       case "system_time":
         return <TimeCell time={alert.system_time} />;
@@ -55,18 +57,17 @@ const AlertTableRow = ({
       case "description":
         return <DescriptionCell description={alert.description || ''} />;
       case "event_id":
-        return <BasicCell value={alert.event_id || 'N/A'} />;
+        return <BasicCell value={alert.event_id || '—'} />;
       case "provider_name":
-        return <BasicCell value={alert.provider_name || 'N/A'} />;
+        return <BasicCell value={alert.provider_name || '—'} />;
       case "ml_cluster":
-        return <BasicCell value={alert.ml_cluster === null ? 'N/A' : `${alert.ml_cluster}`} />;
+        return <BasicCell value={alert.ml_cluster === null ? '—' : `${alert.ml_cluster}`} />;
       case "ip_address":
-        return <BasicCell value={alert.ip_address || 'N/A'} />;
+        return <BasicCell value={alert.ip_address || '—'} />;
       case "risk":
         return <RiskScoreCell risk={alert.risk} />;
       default:
-        const value = alert[columnKey as keyof Alert];
-        return <BasicCell value={value !== undefined ? String(value) : 'N/A'} />;
+        return <BasicCell value={value !== undefined && value !== null ? String(value) : '—'} />;
     }
   };
   
@@ -78,19 +79,17 @@ const AlertTableRow = ({
       onClick={onToggle}
     >
       {visibleColumns.map((columnKey) => (
-        <React.Fragment key={columnKey}>
+        <TableCell key={columnKey} className="px-4 py-2">
           {renderCell(columnKey)}
-        </React.Fragment>
+        </TableCell>
       ))}
-      <BasicCell
-        value={
-          <ChevronRight 
-            className={`h-4 w-4 text-blue-400/70 transition-transform ${
-              isSelected ? 'rotate-90' : ''
-            }`}
-          />
-        }
-      />
+      <TableCell className="w-4">
+        <ChevronRight 
+          className={`h-4 w-4 text-blue-400/70 transition-transform ${
+            isSelected ? 'rotate-90' : ''
+          }`}
+        />
+      </TableCell>
     </TableRow>
   );
 };
