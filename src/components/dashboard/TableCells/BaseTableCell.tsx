@@ -34,13 +34,13 @@ const BaseTableCell = ({
       align === "right" ? "justify-end" : "justify-start"
     }`}>
       {Icon && <Icon className="h-4 w-4 text-blue-400/70 flex-shrink-0" />}
-      <span className="text-[13px] font-medium text-slate-200/90">{value}</span>
+      <span className="text-[14px] font-medium text-slate-200/90">{value}</span>
     </div>
   );
 
   const cell = (
     <TableCell 
-      className={`px-4 py-2 border-b border-blue-900/10 ${width} ${className} 
+      className={`px-4 py-2.5 border-b border-blue-900/10 ${width} ${className} 
       ${onClick ? 'cursor-pointer hover:bg-blue-950/30 transition-colors' : ''}`}
       onClick={onClick}
       style={{
