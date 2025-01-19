@@ -5,13 +5,8 @@ import { Alert } from "@/components/dashboard/types";
 import { useQuery } from "@tanstack/react-query";
 import TimeFrameSelector from "@/components/TimeFrameSelector";
 
-const INITIAL_BATCH_SIZE = 100;
-const TOTAL_BATCH_SIZE = 1000;
-
-interface AlertsResponse {
-  alerts: Alert[];
-  total_count: number;
-}
+const INITIAL_BATCH_SIZE = 50; // Reduced from 100 for better initial load
+const TOTAL_BATCH_SIZE = 500; // Reduced from 1000 for better performance
 
 const Index = () => {
   const { toast } = useToast();
@@ -21,7 +16,7 @@ const Index = () => {
   const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
 
-  const fetchAlerts = async (batchSize: number, page: number): Promise<AlertsResponse> => {
+  const fetchAlerts = async (batchSize: number, page: number): Promise<{ alerts: Alert[]; total_count: number }> => {
     console.log('Fetching alerts:', { batchSize, page, timeFrame });
     
     const response = await fetch(`/api/alerts?page=${page}&per_page=${batchSize}&timeframe=${timeFrame}`, {
@@ -32,8 +27,7 @@ const Index = () => {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
         'Pragma': 'no-cache'
-      },
-      mode: 'cors'
+      }
     });
 
     if (!response.ok) {
@@ -41,28 +35,25 @@ const Index = () => {
     }
 
     const data = await response.json();
-    console.log('Received alerts data:', data);
-    
     return {
       alerts: data.alerts || [],
       total_count: data.total_count || 0
     };
   };
 
-  // Initial alerts query
+  // Initial alerts query with smaller batch size
   const initialQuery = useQuery({
     queryKey: ['initial-alerts', timeFrame],
     queryFn: () => fetchAlerts(INITIAL_BATCH_SIZE, 1),
-    refetchInterval: 5 * 60 * 1000,
-    retry: 3,
-    retryDelay: 1000,
+    refetchInterval: 30 * 1000, // Reduced to 30 seconds
+    staleTime: 25 * 1000, // Added stale time
     meta: {
       onSettled: (data, error) => {
         if (error) {
           console.error('Initial query error:', error);
           toast({
             title: "Error fetching data",
-            description: error instanceof Error ? error.message : "An unexpected error occurred",
+            description: "Failed to load alerts. Please try again.",
             variant: "destructive",
           });
         }
@@ -70,19 +61,19 @@ const Index = () => {
     }
   });
 
-  // Remaining alerts query
+  // Remaining alerts query with pagination
   const remainingQuery = useQuery({
     queryKey: ['remaining-alerts', currentPage, timeFrame],
-    queryFn: () => fetchAlerts(TOTAL_BATCH_SIZE - INITIAL_BATCH_SIZE, 2),
-    enabled: !!initialQuery.data?.alerts?.length && initialQuery.data.alerts.length < TOTAL_BATCH_SIZE,
-    refetchInterval: 5 * 60 * 1000,
+    queryFn: () => fetchAlerts(INITIAL_BATCH_SIZE, currentPage),
+    enabled: !!initialQuery.data?.alerts?.length && currentAlerts.length < TOTAL_BATCH_SIZE,
+    staleTime: 25 * 1000,
     meta: {
       onSettled: (data, error) => {
         if (error) {
           console.error('Remaining query error:', error);
           toast({
             title: "Error fetching additional data",
-            description: error instanceof Error ? error.message : "An unexpected error occurred",
+            description: "Failed to load more alerts. Please try again.",
             variant: "destructive",
           });
         }
@@ -92,20 +83,38 @@ const Index = () => {
 
   useEffect(() => {
     if (initialQuery.data) {
-      setCurrentAlerts(initialQuery.data.alerts || []);
-      setAllAlerts(initialQuery.data.alerts || []);
+      setCurrentAlerts(initialQuery.data.alerts);
+      setAllAlerts(initialQuery.data.alerts);
     }
   }, [initialQuery.data]);
 
   useEffect(() => {
     if (remainingQuery.data?.alerts) {
-      setCurrentAlerts(prev => [...prev, ...remainingQuery.data.alerts]);
-      setAllAlerts(prev => [...prev, ...remainingQuery.data.alerts]);
+      setCurrentAlerts(prev => {
+        const newAlerts = [...prev];
+        remainingQuery.data.alerts.forEach(alert => {
+          if (!newAlerts.find(a => a.id === alert.id)) {
+            newAlerts.push(alert);
+          }
+        });
+        return newAlerts;
+      });
+      setAllAlerts(prev => {
+        const newAlerts = [...prev];
+        remainingQuery.data.alerts.forEach(alert => {
+          if (!newAlerts.find(a => a.id === alert.id)) {
+            newAlerts.push(alert);
+          }
+        });
+        return newAlerts;
+      });
     }
   }, [remainingQuery.data]);
 
   const handleLoadMore = () => {
-    setCurrentPage(prev => prev + 1);
+    if (currentAlerts.length < TOTAL_BATCH_SIZE) {
+      setCurrentPage(prev => prev + 1);
+    }
   };
 
   const handleEntitySelect = (entity: { type: "userorigin" | "userimpacted" | "computersimpacted"; id: string } | null) => {
@@ -125,14 +134,6 @@ const Index = () => {
         >
           Retry
         </button>
-      </div>
-    );
-  }
-
-  if (initialQuery.isLoading && currentAlerts.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-[#1a1f2c]">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
       </div>
     );
   }

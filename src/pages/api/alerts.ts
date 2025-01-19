@@ -3,44 +3,29 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    console.log('Checking database connection...');
-    const isConnected = await testConnection();
-    if (!isConnected) {
-      console.error('Database connection failed');
-      throw new Error('Database connection failed');
-    }
-
     const page = parseInt(req.query.page as string) || 1;
-    const per_page = parseInt(req.query.per_page as string) || 100;
+    const per_page = parseInt(req.query.per_page as string) || 50;
     const timeframe = req.query.timeframe as string || '1d';
     const offset = (page - 1) * per_page;
-
-    // Convert timeframe to days, ensuring we handle the string correctly
     const days = parseInt(timeframe.charAt(0)) || 1;
 
     console.log('Executing query with params:', { page, per_page, offset, days });
 
+    // Optimized query with index hints and selective column fetching
     const query = `
-      SELECT 
+      SELECT SQL_CALC_FOUND_ROWS
         id, title, description, system_time, computer_name, 
         user_id, event_id, provider_name, ml_cluster, ip_address,
         task, rule_level, target_user_name, target_domain_name,
         ruleid, raw, tactics, techniques, ml_description, risk
-      FROM sigma_alerts
+      FROM sigma_alerts USE INDEX (idx_system_time)
       WHERE system_time >= NOW() - INTERVAL ? DAY
       ORDER BY system_time DESC
       LIMIT ? OFFSET ?
     `;
 
-    const countQuery = `
-      SELECT COUNT(*) as total
-      FROM sigma_alerts
-      WHERE system_time >= NOW() - INTERVAL ? DAY
-    `;
-
-    console.log('Executing database queries...');
     const [rows] = await db.query(query, [days, per_page, offset]);
-    const [countResult] = await db.query(countQuery, [days]);
+    const [countResult] = await db.query('SELECT FOUND_ROWS() as total');
     const total = (countResult as any)[0].total;
 
     console.log('Query results:', {
@@ -49,6 +34,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       timeframe: `${days} days`
     });
 
+    // Set cache headers for better performance
+    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
+    
     res.status(200).json({
       alerts: rows || [],
       pagination: {
