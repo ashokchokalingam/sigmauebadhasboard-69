@@ -33,23 +33,22 @@ const BaseTableCell = ({
       align === "center" ? "justify-center" : 
       align === "right" ? "justify-end" : "justify-start"
     }`}>
-      {Icon && <Icon className="h-4 w-4 text-purple-400/70 flex-shrink-0" />}
-      <span className="text-[13px] truncate font-medium text-purple-100/90">{value}</span>
+      {Icon && <Icon className="h-4 w-4 text-blue-400/70 flex-shrink-0" />}
+      <span className="text-[13px] font-medium text-slate-200/90">{value}</span>
     </div>
   );
 
   const cell = (
     <TableCell 
-      className={`px-3 py-2.5 border-b border-purple-900/10 ${width} ${className} 
-      ${onClick ? 'cursor-pointer hover:bg-purple-500/5 transition-colors' : ''}`}
+      className={`px-4 py-2 border-b border-blue-900/10 ${width} ${className} 
+      ${onClick ? 'cursor-pointer hover:bg-blue-950/30 transition-colors' : ''}`}
       onClick={onClick}
       style={{
         ...style,
         maxWidth: width,
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        backgroundColor: 'rgb(26, 31, 44)'
+        whiteSpace: 'nowrap'
       }}
     >
       {content}
@@ -65,9 +64,9 @@ const BaseTableCell = ({
           </TooltipTrigger>
           <TooltipContent 
             side="top" 
-            className="max-w-[400px] break-words bg-[#1A1F2C] border border-purple-900/20"
+            className="max-w-[400px] break-words bg-[#0A0D14] border border-blue-900/20"
           >
-            <p className="text-sm text-purple-100/90">{tooltipContent}</p>
+            <p className="text-sm text-slate-200/90">{tooltipContent}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

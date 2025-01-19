@@ -72,7 +72,9 @@ const AlertTableRow = ({
   
   return (
     <TableRow 
-      className={`hover:bg-slate-900/30 cursor-pointer whitespace-nowrap ${isSelected ? 'bg-slate-900/20' : ''}`}
+      className={`h-14 transition-colors cursor-pointer ${
+        isSelected ? 'bg-blue-950/40' : ''
+      }`}
       onClick={onToggle}
     >
       {visibleColumns.map((columnKey) => (
@@ -83,7 +85,7 @@ const AlertTableRow = ({
       <BasicCell
         value={
           <ChevronRight 
-            className={`h-4 w-4 text-slate-400 transition-transform ${
+            className={`h-4 w-4 text-blue-400/70 transition-transform ${
               isSelected ? 'rotate-90' : ''
             }`}
           />

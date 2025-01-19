@@ -25,11 +25,11 @@ const AnomaliesMainView = ({
   filteredAlerts
 }: AnomaliesMainViewProps) => {
   return (
-    <div className="overflow-hidden border border-purple-900/20 rounded-md bg-[#1A1F2C]">
+    <div className="overflow-hidden border border-blue-900/20 rounded-md bg-[#0A0D14]">
       <div className="relative">
         <div className="overflow-x-auto">
-          <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-purple-900/20 scrollbar-track-transparent">
-            <Table className="[&_tr]:h-[42px] text-[13px] border-collapse">
+          <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-900/20 scrollbar-track-transparent">
+            <Table className="w-full border-collapse [&_tr:hover]:bg-blue-950/30 [&_tr]:border-b [&_tr]:border-blue-900/10">
               <AnomaliesTableHeader
                 alerts={alerts}
                 onFilterChange={onFilterChange}
