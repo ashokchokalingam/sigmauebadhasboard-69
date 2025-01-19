@@ -22,17 +22,32 @@ const useAlertsFetching = (timeFrame: string, currentPage: number) => {
       const response = await fetch(`/api/alerts?page=${page}&per_page=${batchSize}&timeframe=${timeFrame}`);
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch alerts: ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('API Error Response:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorText
+        });
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
       }
       
       const data = await response.json();
       console.log('Received alerts data:', data);
-      return data;
+      
+      if (!data || !Array.isArray(data.alerts)) {
+        console.error('Invalid data format:', data);
+        throw new Error('Invalid data format received from API');
+      }
+      
+      return {
+        alerts: data.alerts,
+        total_count: data.total_count || 0
+      };
     } catch (error) {
       console.error('Error fetching alerts:', error);
       toast({
         title: "Error fetching data",
-        description: "Please try refreshing the page",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
         variant: "destructive",
       });
       throw error;
@@ -127,7 +142,10 @@ const Index = () => {
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#1a1f2c] p-4">
         <div className="text-red-500 text-xl mb-4">Error loading dashboard data</div>
         <button 
-          onClick={() => window.location.reload()}
+          onClick={() => {
+            initialQuery.refetch();
+            remainingQuery.refetch();
+          }}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
         >
           Retry
