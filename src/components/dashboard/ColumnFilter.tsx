@@ -17,9 +17,13 @@ const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterP
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-1 hover:text-blue-400 transition-colors">
-        {title} <ChevronDown className="h-4 w-4" />
+        <span className={selectedValue ? "text-blue-400" : ""}>{title}</span>
+        <ChevronDown className="h-4 w-4" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-slate-900 border border-blue-500/20">
+      <DropdownMenuContent 
+        className="bg-slate-900 border border-blue-500/20 max-h-[300px] overflow-y-auto"
+        align="start"
+      >
         <DropdownMenuItem 
           className="text-blue-300 hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer"
           onClick={() => onSelect('')}
@@ -30,8 +34,8 @@ const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterP
           <DropdownMenuItem
             key={option}
             className={`${
-              selectedValue === option ? 'bg-blue-950/50' : ''
-            } text-blue-300 hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer`}
+              selectedValue === option ? 'bg-blue-950/50 text-blue-400' : 'text-blue-300'
+            } hover:text-blue-400 hover:bg-blue-950/50 cursor-pointer`}
             onClick={() => onSelect(option)}
           >
             {option}
