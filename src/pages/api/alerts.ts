@@ -3,8 +3,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
+    console.log('Checking database connection...');
     const isConnected = await testConnection();
     if (!isConnected) {
+      console.error('Database connection failed');
       throw new Error('Database connection failed');
     }
 
@@ -36,6 +38,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       WHERE system_time >= NOW() - INTERVAL ? DAY
     `;
 
+    console.log('Executing database queries...');
     const [rows] = await db.query(query, [days, per_page, offset]);
     const [countResult] = await db.query(countQuery, [days]);
     const total = (countResult as any)[0].total;
@@ -47,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     res.status(200).json({
-      alerts: rows,
+      alerts: rows || [],
       pagination: {
         current_page: page,
         per_page,
@@ -60,7 +63,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error('API error:', error);
     res.status(500).json({ 
       error: 'Internal Server Error',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString()
     });
   }
 }

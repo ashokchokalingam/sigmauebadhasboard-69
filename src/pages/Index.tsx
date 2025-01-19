@@ -17,11 +17,26 @@ const useAlertsFetching = (timeFrame: string, currentPage: number) => {
   const { toast } = useToast();
 
   const fetchAlerts = async (batchSize: number, page: number): Promise<AlertsResponse> => {
-    const response = await fetch(`/api/alerts?page=${page}&per_page=${batchSize}&timeframe=${timeFrame}`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch alerts: ${response.statusText}`);
+    try {
+      console.log('Fetching alerts:', { batchSize, page, timeFrame });
+      const response = await fetch(`/api/alerts?page=${page}&per_page=${batchSize}&timeframe=${timeFrame}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch alerts: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('Received alerts data:', data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching alerts:', error);
+      toast({
+        title: "Error fetching data",
+        description: "Please try refreshing the page",
+        variant: "destructive",
+      });
+      throw error;
     }
-    return response.json();
   };
 
   // Initial alerts query
@@ -31,14 +46,28 @@ const useAlertsFetching = (timeFrame: string, currentPage: number) => {
     refetchInterval: 5 * 60 * 1000,
     retry: 3,
     retryDelay: 1000,
+    meta: {
+      onSettled: (data, error) => {
+        if (error) {
+          console.error('Initial query error:', error);
+        }
+      }
+    }
   });
 
   // Remaining alerts query
   const remainingQuery = useQuery({
     queryKey: ['remaining-alerts', currentPage, timeFrame],
     queryFn: () => fetchAlerts(TOTAL_BATCH_SIZE - INITIAL_BATCH_SIZE, 2),
-    enabled: initialQuery.data?.alerts.length > 0 && initialQuery.data?.alerts.length < TOTAL_BATCH_SIZE,
-    refetchInterval: 5 * 60 * 1000
+    enabled: !!initialQuery.data?.alerts?.length && initialQuery.data.alerts.length < TOTAL_BATCH_SIZE,
+    refetchInterval: 5 * 60 * 1000,
+    meta: {
+      onSettled: (data, error) => {
+        if (error) {
+          console.error('Remaining query error:', error);
+        }
+      }
+    }
   });
 
   return {
@@ -59,14 +88,26 @@ const Index = () => {
   const { initialQuery, remainingQuery, toast } = useAlertsFetching(timeFrame, currentPage);
 
   useEffect(() => {
+    console.log('Initial query state:', {
+      isLoading: initialQuery.isLoading,
+      isError: initialQuery.isError,
+      data: initialQuery.data
+    });
+
     if (initialQuery.data) {
-      setCurrentAlerts(initialQuery.data.alerts);
-      setAllAlerts(initialQuery.data.alerts);
-      setCurrentTotalRecords(initialQuery.data.total_count);
+      setCurrentAlerts(initialQuery.data.alerts || []);
+      setAllAlerts(initialQuery.data.alerts || []);
+      setCurrentTotalRecords(initialQuery.data.total_count || 0);
     }
   }, [initialQuery.data]);
 
   useEffect(() => {
+    console.log('Remaining query state:', {
+      isLoading: remainingQuery.isLoading,
+      isError: remainingQuery.isError,
+      data: remainingQuery.data
+    });
+
     if (remainingQuery.data?.alerts) {
       setCurrentAlerts(prev => [...prev, ...remainingQuery.data.alerts]);
       setAllAlerts(prev => [...prev, ...remainingQuery.data.alerts]);
@@ -80,6 +121,20 @@ const Index = () => {
   const handleEntitySelect = (entity: { type: "userorigin" | "userimpacted" | "computersimpacted"; id: string } | null) => {
     setSelectedEntity(entity);
   };
+
+  if (initialQuery.isError || remainingQuery.isError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#1a1f2c] p-4">
+        <div className="text-red-500 text-xl mb-4">Error loading dashboard data</div>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   if (initialQuery.isLoading && currentAlerts.length === 0) {
     return (
