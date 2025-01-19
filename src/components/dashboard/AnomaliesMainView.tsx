@@ -27,25 +27,23 @@ const AnomaliesMainView = ({
   return (
     <div className="overflow-hidden border border-blue-900/20 rounded-md bg-[#0A0D14]">
       <div className="relative">
-        <div className="overflow-x-auto">
+        <Table className="w-full border-collapse [&_tr:hover]:bg-blue-950/30 [&_tr]:border-b [&_tr]:border-blue-900/10">
+          <AnomaliesTableHeader
+            alerts={alerts}
+            onFilterChange={onFilterChange}
+            filters={filters}
+            visibleColumns={visibleColumns}
+          />
           <div className="overflow-y-auto max-h-[800px] scrollbar-thin scrollbar-thumb-blue-900/20 scrollbar-track-transparent">
-            <Table className="w-full border-collapse [&_tr:hover]:bg-blue-950/30 [&_tr]:border-b [&_tr]:border-blue-900/10">
-              <AnomaliesTableHeader
-                alerts={alerts}
-                onFilterChange={onFilterChange}
-                filters={filters}
-                visibleColumns={visibleColumns}
-              />
-              <AnomaliesTableContent
-                alerts={filteredAlerts}
-                selectedAlert={selectedAlert}
-                onAlertSelect={onAlertSelect}
-                onTimelineView={onTimelineView}
-                visibleColumns={visibleColumns}
-              />
-            </Table>
+            <AnomaliesTableContent
+              alerts={filteredAlerts}
+              selectedAlert={selectedAlert}
+              onAlertSelect={onAlertSelect}
+              onTimelineView={onTimelineView}
+              visibleColumns={visibleColumns}
+            />
           </div>
-        </div>
+        </Table>
       </div>
     </div>
   );

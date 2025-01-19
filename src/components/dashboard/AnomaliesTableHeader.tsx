@@ -33,7 +33,7 @@ const AnomaliesTableHeader = ({
   };
 
   return (
-    <TableHeader className="sticky top-0 z-50 bg-[#1a1f2c]">
+    <TableHeader className="sticky top-0 z-50 bg-[#0A0D14] shadow-md">
       <TableRow className="hover:bg-[#1a1f2c]/80 border-b border-blue-500/20">
         {allColumns
           .filter(column => visibleColumns.includes(column.key))
