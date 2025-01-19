@@ -27,8 +27,6 @@ const AlertTableRow = ({
   visibleColumns 
 }: AlertTableRowProps) => {
   const renderCell = (columnKey: string) => {
-    const value = alert[columnKey as keyof Alert];
-    
     switch (columnKey) {
       case "system_time":
         return <TimeCell time={alert.system_time} />;
@@ -61,13 +59,31 @@ const AlertTableRow = ({
       case "provider_name":
         return <BasicCell value={alert.provider_name || '—'} />;
       case "ml_cluster":
-        return <BasicCell value={alert.ml_cluster === null ? '—' : `${alert.ml_cluster}`} />;
+        return <BasicCell value={alert.ml_cluster === null || alert.ml_cluster === undefined ? '—' : `${alert.ml_cluster}`} />;
       case "ip_address":
         return <BasicCell value={alert.ip_address || '—'} />;
+      case "ruleid":
+        return <BasicCell value={alert.ruleid || '—'} />;
+      case "rule_level":
+        return <BasicCell value={alert.rule_level || '—'} />;
+      case "task":
+        return <BasicCell value={alert.task || '—'} />;
+      case "target_domain_name":
+        return <BasicCell value={alert.target_domain_name || '—'} />;
+      case "tactics":
+        return <BasicCell value={alert.tactics || '—'} />;
+      case "techniques":
+        return <BasicCell value={alert.techniques || '—'} />;
+      case "ml_description":
+        return <BasicCell value={alert.ml_description || '—'} />;
       case "risk":
-        return <RiskScoreCell risk={alert.risk} />;
+        return <RiskScoreCell risk={alert.risk || 0} />;
+      case "tags":
+        return <BasicCell value={alert.tags || '—'} />;
+      case "raw":
+        return <BasicCell value={typeof alert.raw === 'object' ? JSON.stringify(alert.raw) : (alert.raw || '—')} />;
       default:
-        return <BasicCell value={value !== undefined && value !== null ? String(value) : '—'} />;
+        return <BasicCell value="—" />;
     }
   };
   

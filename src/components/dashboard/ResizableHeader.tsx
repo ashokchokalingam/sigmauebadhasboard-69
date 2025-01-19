@@ -29,14 +29,26 @@ const ResizableHeader = ({
   const getUniqueValues = (key: keyof Alert) => {
     const values = alerts.map(alert => {
       const value = alert[key];
-      if (value === null || value === undefined) return 'N/A';
+      if (value === null || value === undefined) return '—';
       if (key === 'system_time') {
         return new Date(value as string).toLocaleString();
+      }
+      if (key === 'ml_cluster' && typeof value === 'number') {
+        return value.toString();
+      }
+      if (typeof value === 'object') {
+        return JSON.stringify(value);
       }
       return String(value);
     });
     
-    return Array.from(new Set(values)).filter(Boolean);
+    return Array.from(new Set(values))
+      .filter(value => value !== undefined && value !== null)
+      .sort((a, b) => {
+        if (a === '—') return 1;
+        if (b === '—') return -1;
+        return a.localeCompare(b);
+      });
   };
 
   const startResizing = (e: React.MouseEvent) => {
