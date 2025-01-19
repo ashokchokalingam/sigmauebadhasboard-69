@@ -2,13 +2,16 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import { format } from "date-fns";
 import { ChartDataPoint } from "./types";
 import { OutlierTooltip } from "./OutlierTooltip";
-import { isWithinLastHour } from "./utils";
 
 interface OutlierChartProps {
   data: ChartDataPoint[];
 }
 
 const CustomDot = ({ cx, cy, payload }: any) => {
+  if (!payload || !payload.severity) {
+    return null;
+  }
+
   const severityColors = {
     high: "#EF4444",
     medium: "#F59E0B",
@@ -46,6 +49,14 @@ const CustomDot = ({ cx, cy, payload }: any) => {
 };
 
 export const OutlierChart = ({ data }: OutlierChartProps) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="h-[300px] flex items-center justify-center text-purple-400">
+        No data available
+      </div>
+    );
+  }
+
   return (
     <div className="h-[300px]">
       <ResponsiveContainer width="100%" height="100%">
@@ -69,12 +80,13 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
             height={70}
             tick={{ fill: '#E2E8F0' }}
             tickFormatter={(timestamp) => {
+              if (!timestamp) return '';
               try {
                 const date = new Date(timestamp);
                 return `${format(date, 'MMM d')} - ${getTimeOfDay(date.getHours())}`;
               } catch (e) {
                 console.error('Error formatting date:', e);
-                return timestamp;
+                return '';
               }
             }}
           />
