@@ -2,7 +2,7 @@ import mysql from 'mysql2/promise';
 
 // Create a connection pool
 export const db = mysql.createPool({
-  host: process.env.DB_HOST || '172.16.0.75',
+  host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'sigma',
   database: process.env.DB_NAME || 'sigma_db',
