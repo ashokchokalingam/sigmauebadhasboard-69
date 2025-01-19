@@ -5,7 +5,7 @@ export const useAlertsFilter = (alerts: Alert[]) => {
   const [filters, setFilters] = useState<Record<string, string>>({});
 
   const handleFilterChange = (column: string, value: string) => {
-    if (!value) {
+    if (!value || value.toLowerCase() === 'all') {
       const newFilters = { ...filters };
       delete newFilters[column];
       setFilters(newFilters);
@@ -26,23 +26,18 @@ export const useAlertsFilter = (alerts: Alert[]) => {
         
         // Handle null or undefined values
         if (alertValue === null || alertValue === undefined) {
-          return false;
+          return filterValue.toLowerCase() === 'n/a';
         }
 
         // Handle system_time separately
         if (column === 'system_time') {
           const alertTime = new Date(alertValue as string).toLocaleTimeString();
-          return alertTime === filterValue;
+          return alertTime.toLowerCase().includes(filterValue.toLowerCase());
         }
 
         // Handle numeric values
         if (typeof alertValue === 'number') {
-          return String(alertValue) === filterValue;
-        }
-
-        // Handle boolean values
-        if (typeof alertValue === 'boolean') {
-          return String(alertValue) === filterValue;
+          return String(alertValue).includes(filterValue);
         }
 
         // Handle string values with case-insensitive comparison
@@ -50,14 +45,14 @@ export const useAlertsFilter = (alerts: Alert[]) => {
           return alertValue.toLowerCase().includes(filterValue.toLowerCase());
         }
 
-        // Handle arrays (like tags)
+        // Handle arrays
         if (Array.isArray(alertValue)) {
           return alertValue.some(item => 
             String(item).toLowerCase().includes(filterValue.toLowerCase())
           );
         }
 
-        // Handle objects by converting to string
+        // Handle objects
         if (typeof alertValue === 'object') {
           return JSON.stringify(alertValue)
             .toLowerCase()

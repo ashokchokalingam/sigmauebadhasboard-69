@@ -19,21 +19,23 @@ const ResizableHeader = ({
   onFilterChange,
   selectedValue,
   alerts,
-  defaultSize = 100,
-  minSize = 50
+  defaultSize = 200,
+  minSize = 100
 }: ResizableHeaderProps) => {
   const [width, setWidth] = useState(defaultSize);
   const [isResizing, setIsResizing] = useState(false);
   const headerRef = useRef<HTMLTableCellElement>(null);
 
   const getUniqueValues = (key: keyof Alert) => {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
     const uniqueValues = Array.from(new Set(alerts.map(alert => {
       if (key === 'system_time') {
         return new Date(alert[key]).toLocaleTimeString();
       }
       const value = alert[key];
-      if (value === null || value === undefined) return 'N/A';
-      return String(value);
+      return value === null || value === undefined ? 'N/A' : String(value);
     }))).filter(Boolean);
     
     return uniqueValues.sort((a, b) => a.localeCompare(b));
@@ -63,7 +65,7 @@ const ResizableHeader = ({
   return (
     <TableHead 
       ref={headerRef}
-      className="group relative select-none bg-[#1A1F2C] border-b border-purple-900/20"
+      className="group relative select-none bg-[#1A1F2C] border-b border-blue-900/20"
       style={{ width: `${width}px`, minWidth: `${minSize}px` }}
     >
       <div className="flex items-center gap-2 px-3 py-3">
@@ -75,7 +77,7 @@ const ResizableHeader = ({
         />
       </div>
       <div
-        className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity"
         onMouseDown={startResizing}
       />
     </TableHead>
