@@ -5,8 +5,8 @@ import { Alert } from "@/components/dashboard/types";
 import { useQuery } from "@tanstack/react-query";
 import TimeFrameSelector from "@/components/TimeFrameSelector";
 
-const INITIAL_BATCH_SIZE = 50; // Reduced from 100 for better initial load
-const TOTAL_BATCH_SIZE = 500; // Reduced from 1000 for better performance
+const INITIAL_BATCH_SIZE = 50;
+const TOTAL_BATCH_SIZE = 500;
 
 const Index = () => {
   const { toast } = useToast();
@@ -41,12 +41,13 @@ const Index = () => {
     };
   };
 
-  // Initial alerts query with smaller batch size
+  // Initial alerts query with optimized settings
   const initialQuery = useQuery({
     queryKey: ['initial-alerts', timeFrame],
     queryFn: () => fetchAlerts(INITIAL_BATCH_SIZE, 1),
-    refetchInterval: 30 * 1000, // Reduced to 30 seconds
-    staleTime: 25 * 1000, // Added stale time
+    refetchInterval: 60 * 1000, // Increased to 60 seconds
+    staleTime: 55 * 1000, // Increased stale time
+    cacheTime: 5 * 60 * 1000, // Cache for 5 minutes
     meta: {
       onSettled: (data, error) => {
         if (error) {
@@ -61,12 +62,13 @@ const Index = () => {
     }
   });
 
-  // Remaining alerts query with pagination
+  // Remaining alerts query with optimized settings
   const remainingQuery = useQuery({
     queryKey: ['remaining-alerts', currentPage, timeFrame],
     queryFn: () => fetchAlerts(INITIAL_BATCH_SIZE, currentPage),
     enabled: !!initialQuery.data?.alerts?.length && currentAlerts.length < TOTAL_BATCH_SIZE,
-    staleTime: 25 * 1000,
+    staleTime: 55 * 1000,
+    cacheTime: 5 * 60 * 1000,
     meta: {
       onSettled: (data, error) => {
         if (error) {
