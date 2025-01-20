@@ -53,10 +53,10 @@ export default {
           foreground: 'hsl(var(--card-foreground))'
         },
         risk: {
-          critical: '#D946EF', // Vibrant magenta for critical
-          high: '#8B5CF6',    // Rich purple for high
-          medium: '#0EA5E9',  // Ocean blue for medium
-          low: '#4ADE80'      // Keeping green for low risk
+          critical: '#ea384c',
+          high: '#F97316',
+          medium: '#FEF7CD',
+          low: '#4ADE80'
         }
       },
       borderRadius: {
