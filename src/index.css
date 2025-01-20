@@ -6,31 +6,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 232 25% 10%;
-    --foreground: 210 40% 98%;
-    --card: 232 25% 12%;
-    --card-foreground: 210 40% 98%;
-    --popover: 232 25% 12%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 232 32% 12%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 232 32% 12%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 232 32% 12%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 232 32% 12%;
-    --input: 232 32% 12%;
-    --ring: 224 76% 48%;
-    --radius: 0.5rem;
-  }
-}
-
 @keyframes cardiogram {
   from {
     transform: translateX(0);
@@ -42,10 +17,6 @@
 
 /* Base styles */
 @layer base {
-  * {
-    @apply border-border;
-  }
-  
   body {
     @apply bg-[#15161E] text-foreground min-h-screen w-full m-0 p-0 font-sans;
   }
