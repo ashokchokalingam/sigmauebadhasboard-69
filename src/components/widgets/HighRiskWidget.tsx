@@ -41,20 +41,27 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
     })
     .sort((a: any, b: any) => parseFloat(b.cumulative_risk_score) - parseFloat(a.cumulative_risk_score));
 
-  const getRiskLevel = (score: number): { level: string; color: string } => {
-    if (score >= 100) return { level: "critical risk", color: "text-red-500" };
-    if (score >= 75) return { level: "high risk", color: "text-orange-500" };
-    if (score >= 50) return { level: "medium risk", color: "text-yellow-500" };
-    return { level: "low risk", color: "text-blue-500" };
-  };
-
-  const getRotatingStats = (entity: any) => {
-    const stats = [
-      { label: "Unique Outliers", value: entity.unique_outliers },
-      { label: "Unique Tactics", value: entity.unique_tactics_count },
-      { label: "Unique Threat Names", value: entity.unique_title_count }
-    ];
-    return stats[statIndex];
+  const getRiskLevel = (score: number): { level: string; color: string; bgColor: string } => {
+    if (score >= 200) return { 
+      level: "critical risk", 
+      color: "text-risk-critical",
+      bgColor: "bg-risk-critical/10"
+    };
+    if (score >= 100) return { 
+      level: "high risk", 
+      color: "text-risk-high",
+      bgColor: "bg-risk-high/10"
+    };
+    if (score >= 50) return { 
+      level: "medium risk", 
+      color: "text-risk-medium",
+      bgColor: "bg-risk-medium/10"
+    };
+    return { 
+      level: "low risk", 
+      color: "text-risk-low",
+      bgColor: "bg-risk-low/10"
+    };
   };
 
   if (selectedEntity) {
@@ -102,8 +109,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
             {filteredEntities.map((entity: any, index: number) => {
               const entityId = entityType === 'computer' ? entity.computer : entity.user;
               const riskScore = parseFloat(entity.cumulative_risk_score);
-              const { level, color } = getRiskLevel(riskScore);
-              const currentStat = getRotatingStats(entity);
+              const { level, color, bgColor } = getRiskLevel(riskScore);
               
               return (
                 <div
@@ -140,11 +146,13 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
                           />
                         </svg>
                       </div>
-                      <span className={`font-mono font-bold text-2xl ${color} ${
-                        riskScore >= 100 ? 'animate-pulse' : ''
-                      }`}>
-                        {riskScore.toFixed(1)}
-                      </span>
+                      <div className={`px-4 py-2 rounded-lg ${bgColor}`}>
+                        <span className={`font-mono font-bold text-2xl ${color} ${
+                          riskScore >= 200 ? 'animate-pulse' : ''
+                        }`}>
+                          {riskScore.toFixed(1)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>

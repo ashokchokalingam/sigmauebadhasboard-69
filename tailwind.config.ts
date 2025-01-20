@@ -51,6 +51,12 @@ export default {
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
+        },
+        risk: {
+          critical: '#ea384c',
+          high: '#F97316',
+          medium: '#FEF7CD',
+          low: '#4ADE80'
         }
       },
       borderRadius: {
