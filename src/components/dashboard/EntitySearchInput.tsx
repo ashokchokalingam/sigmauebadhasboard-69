@@ -1,4 +1,3 @@
-import React from "react";
 import { Search } from "lucide-react";
 
 interface EntitySearchInputProps {
@@ -15,16 +14,12 @@ const EntitySearchInput = ({ searchQuery, onSearchChange }: EntitySearchInputPro
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
         placeholder="Search entities..."
-        className={`
-          w-full pl-10 pr-4 py-2.5
-          bg-[#1e2c3d]/40 hover:bg-[#1e2c3d]/60
-          border border-blue-500/5 hover:border-blue-500/10
-          rounded-lg
-          text-sm text-blue-100/90
-          placeholder:text-blue-400/50
-          transition-colors duration-200
+        className="w-full pl-10 pr-4 py-2.5 bg-[#0A0B0F]/60 
+          border border-blue-500/10 hover:border-blue-500/20
+          rounded-lg text-sm text-gray-300 
+          placeholder:text-blue-400/30
           focus:outline-none focus:ring-1 focus:ring-blue-500/20
-        `}
+          transition-all duration-200"
       />
     </div>
   );
