@@ -55,8 +55,12 @@ export default {
         risk: {
           critical: '#ea384c',
           high: '#F97316',
-          medium: '#FEF7CD',
-          low: '#4ADE80'
+          medium: '#0EA5E9',
+          low: '#4ADE80',
+          'critical-glow': '#ea384c33',
+          'high-glow': '#F9731633',
+          'medium-glow': '#0EA5E933',
+          'low-glow': '#4ADE8033'
         }
       },
       borderRadius: {
