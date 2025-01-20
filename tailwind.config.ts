@@ -51,13 +51,6 @@ export default {
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))'
-        },
-        grid: {
-          header: '#1E293B',
-          row: '#0F172A',
-          row-alt: '#1E293B',
-          border: '#2D3B4F',
-          hover: '#2D3B4F'
         }
       },
       borderRadius: {
