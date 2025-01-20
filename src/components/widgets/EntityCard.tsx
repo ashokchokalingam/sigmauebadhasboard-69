@@ -12,53 +12,57 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
   const Icon = isComputer ? Monitor : User;
   const entityName = isComputer ? entity.computer : entity.user;
 
-  const getRiskLevel = (score: number): { level: string; color: string; bgColor: string } => {
+  const getRiskLevel = (score: number): { level: string; color: string; bgColor: string; glowColor: string } => {
     if (score >= 200) return { 
       level: "CRITICAL", 
       color: "text-risk-critical",
-      bgColor: "bg-risk-critical/10"
+      bgColor: "bg-risk-critical/10",
+      glowColor: "shadow-risk-critical/20"
     };
     if (score >= 100) return { 
       level: "HIGH", 
       color: "text-risk-high",
-      bgColor: "bg-risk-high/10"
+      bgColor: "bg-risk-high/10",
+      glowColor: "shadow-risk-high/20"
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
       color: "text-risk-medium",
-      bgColor: "bg-risk-medium/10"
+      bgColor: "bg-risk-medium/10",
+      glowColor: "shadow-risk-medium/20"
     };
     return { 
       level: "LOW", 
       color: "text-risk-low",
-      bgColor: "bg-risk-low/10"
+      bgColor: "bg-risk-low/10",
+      glowColor: "shadow-risk-low/20"
     };
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, color, bgColor } = getRiskLevel(riskScore);
+  const { level, color, bgColor, glowColor } = getRiskLevel(riskScore);
 
   return (
     <div
       onClick={onClick}
       className="group relative p-4 rounded-lg
-        bg-gradient-to-r from-[#0D0E12] to-[#12131A]
+        bg-gradient-to-r from-[#0D0E12]/90 to-[#12131A]/90
         hover:from-[#12131A] hover:to-[#1A1F2C]
         border border-purple-500/20 hover:border-purple-500/40
         transition-all duration-300 cursor-pointer
-        shadow-lg hover:shadow-xl hover:shadow-purple-500/5"
+        backdrop-blur-sm shadow-lg hover:shadow-xl"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="absolute -inset-1 bg-purple-500 rounded-full blur opacity-25 group-hover:opacity-40 transition-opacity duration-300"></div>
-            <Icon className="relative h-5 w-5 text-purple-400" />
+            <div className={`absolute -inset-1 rounded-full blur opacity-25 group-hover:opacity-40 transition-opacity duration-300 ${color}`}></div>
+            <Icon className={`relative h-5 w-5 ${color}`} />
           </div>
           <div>
             <h3 className="text-sm font-medium text-purple-100/90 group-hover:text-purple-100">
               {entityName}
             </h3>
-            <p className="text-xs text-purple-400/70 group-hover:text-purple-400/90">
+            <p className={`text-xs ${color} opacity-70 group-hover:opacity-90`}>
               {entity.unique_title_count} unique anomalies
             </p>
           </div>
@@ -74,7 +78,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
             </span>
           </div>
           
-          <div className="relative w-24 h-8 overflow-hidden">
+          <div className="relative w-24 h-8 overflow-hidden opacity-70 group-hover:opacity-100">
             <svg 
               className={`w-[200%] h-full animate-cardiogram ${color}`}
               viewBox="0 0 600 100" 
@@ -89,7 +93,8 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
             </svg>
           </div>
           
-          <div className={`relative px-4 py-2 rounded-lg ${bgColor}`}>
+          <div className={`relative px-4 py-2 rounded-lg ${bgColor} backdrop-blur-sm
+            shadow-lg ${glowColor} group-hover:shadow-xl transition-all duration-300`}>
             <span className={`font-mono font-bold text-2xl ${color} ${
               riskScore >= 200 ? 'animate-pulse' : ''
             }`}>
