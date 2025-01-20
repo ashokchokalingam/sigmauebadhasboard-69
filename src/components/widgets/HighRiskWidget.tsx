@@ -64,6 +64,21 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
     };
   };
 
+  const getEntityStats = (entity: any) => [
+    {
+      label: "Unique Tactics",
+      value: entity.unique_tactics_count || '0'
+    },
+    {
+      label: "Unique Outliers",
+      value: entity.unique_outliers || '0'
+    },
+    {
+      label: "Unique Titles",
+      value: entity.unique_title_count || '0'
+    }
+  ];
+
   if (selectedEntity) {
     const timelineEntityType = entityType === 'userOrigin' ? 'userorigin' :
                               entityType === 'userImpacted' ? 'userimpacted' :
@@ -110,6 +125,8 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
               const entityId = entityType === 'computer' ? entity.computer : entity.user;
               const riskScore = parseFloat(entity.cumulative_risk_score);
               const { level, color, bgColor } = getRiskLevel(riskScore);
+              const stats = getEntityStats(entity);
+              const currentStat = stats[statIndex];
               
               return (
                 <div
