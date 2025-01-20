@@ -15,7 +15,6 @@
   }
 }
 
-/* Base styles */
 @layer base {
   body {
     @apply bg-[#15161E] text-foreground min-h-screen w-full m-0 p-0 font-sans;
@@ -26,7 +25,6 @@
   }
 }
 
-/* Grid layout for widgets */
 .widgets-grid {
   @apply grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6;
 }
