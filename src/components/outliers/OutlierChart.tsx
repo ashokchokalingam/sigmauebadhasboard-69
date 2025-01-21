@@ -38,25 +38,63 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
           data={dummyData}
           margin={{ top: 20, right: 30, left: 0, bottom: 30 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+          <defs>
+            <linearGradient id="riskGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#9b87f5" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#9b87f5" stopOpacity={0.2}/>
+            </linearGradient>
+          </defs>
+          <CartesianGrid 
+            strokeDasharray="3 3" 
+            stroke="rgba(155, 135, 245, 0.1)" 
+            vertical={false}
+          />
           <XAxis 
             dataKey="timestamp"
-            stroke="#94A3B8"
+            stroke="#D6BCFA"
             tickFormatter={(timestamp) => format(new Date(timestamp), 'MMM d')}
+            tick={{ fill: '#D6BCFA', fontSize: 12 }}
           />
-          <YAxis yAxisId="left" stroke="#94A3B8" />
-          <YAxis yAxisId="right" orientation="right" stroke="#94A3B8" />
+          <YAxis 
+            yAxisId="left" 
+            stroke="#D6BCFA"
+            tick={{ fill: '#D6BCFA', fontSize: 12 }}
+          />
+          <YAxis 
+            yAxisId="right" 
+            orientation="right" 
+            stroke="#D6BCFA"
+            tick={{ fill: '#D6BCFA', fontSize: 12 }}
+          />
           <Tooltip content={<OutlierTooltip />} />
           
-          <Bar dataKey="high" fill="#FF4444" yAxisId="left" />
-          <Bar dataKey="medium" fill="#FFA500" yAxisId="left" />
-          <Bar dataKey="low" fill="#4ADE80" yAxisId="left" />
+          <Bar 
+            dataKey="high" 
+            fill="#ea384c" 
+            yAxisId="left"
+            radius={[4, 4, 0, 0]}
+            maxBarSize={40}
+          />
+          <Bar 
+            dataKey="medium" 
+            fill="#F97316" 
+            yAxisId="left"
+            radius={[4, 4, 0, 0]}
+            maxBarSize={40}
+          />
+          <Bar 
+            dataKey="low" 
+            fill="#4ADE80" 
+            yAxisId="left"
+            radius={[4, 4, 0, 0]}
+            maxBarSize={40}
+          />
           <Line 
             type="monotone" 
             dataKey="risk" 
-            stroke="#8884d8" 
+            stroke="url(#riskGradient)"
+            strokeWidth={3}
             yAxisId="right"
-            strokeWidth={2}
             dot={false}
           />
         </ComposedChart>

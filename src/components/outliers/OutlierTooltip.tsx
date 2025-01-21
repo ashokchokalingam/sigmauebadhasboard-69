@@ -15,22 +15,22 @@ export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
 
   const getColor = (name: string) => {
     switch (name.toLowerCase()) {
-      case "high": return "#FF4444";
-      case "medium": return "#FFA500";
+      case "high": return "#ea384c";
+      case "medium": return "#F97316";
       case "low": return "#4ADE80";
-      case "risk": return "#8884d8";
-      default: return "#94A3B8";
+      case "risk": return "#9b87f5";
+      default: return "#D6BCFA";
     }
   };
 
   return (
-    <div className="bg-black/90 backdrop-blur-sm border border-gray-800 rounded-lg p-4 shadow-xl">
-      <p className="text-gray-400 text-sm mb-2">
+    <div className="bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 shadow-xl">
+      <p className="text-purple-200 text-sm mb-2 font-medium">
         {format(new Date(label), "MMM d, yyyy")}
       </p>
       {payload.map((entry, index) => (
         <div key={index} className="flex items-center justify-between gap-4 text-sm">
-          <span className="text-gray-400 flex items-center gap-2">
+          <span className="text-purple-300 flex items-center gap-2">
             <div 
               className="w-3 h-3 rounded-full" 
               style={{ backgroundColor: getColor(entry.name) }}
