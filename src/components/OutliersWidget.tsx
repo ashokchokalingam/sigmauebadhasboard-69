@@ -9,8 +9,8 @@ import { format } from "date-fns";
 import React, { useState } from 'react';
 
 const OutliersWidget = () => {
-  // Changed initial state to false to show raw data by default
-  const [isGrouped, setIsGrouped] = useState(false);
+  // Changed initial state to true to show grouped data by default
+  const [isGrouped, setIsGrouped] = useState(true);
   const [groupingInterval, setGroupingInterval] = useState<'hour' | 'day'>('day');
 
   const { data: apiResponse, isLoading } = useQuery({
@@ -59,6 +59,13 @@ const OutliersWidget = () => {
     }, { computers: 0, users: 0 });
   };
 
+  const getTimeOfDay = (hour: number): string => {
+    if (hour >= 5 && hour < 12) return "Morning";
+    if (hour >= 12 && hour < 17) return "Afternoon";
+    if (hour >= 17 && hour < 21) return "Evening";
+    return "Night";
+  };
+
   const chartData = React.useMemo(() => {
     if (!apiResponse) return [];
 
@@ -68,7 +75,7 @@ const OutliersWidget = () => {
     apiResponse.forEach((outlier) => {
       const date = new Date(outlier.last_seen);
       const timeKey = isGrouped 
-        ? `${format(date, interval)}-${getTimeOfDay(date.getHours())}`
+        ? `${format(date, interval)} - ${getTimeOfDay(date.getHours())}`
         : outlier.last_seen;
       
       if (!groupedData[timeKey]) {
@@ -159,13 +166,6 @@ const OutliersWidget = () => {
       </CardContent>
     </Card>
   );
-};
-
-const getTimeOfDay = (hour: number): string => {
-  if (hour >= 5 && hour < 12) return "Morning";
-  if (hour >= 12 && hour < 17) return "Afternoon";
-  if (hour >= 17 && hour < 21) return "Evening";
-  return "Night";
 };
 
 export default OutliersWidget;
