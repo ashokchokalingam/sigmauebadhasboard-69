@@ -55,12 +55,19 @@ export default {
         risk: {
           critical: '#ea384c',
           high: '#F97316',
-          medium: '#0EA5E9',
+          medium: '#F97316',
           low: '#4ADE80',
           'critical-glow': '#ea384c33',
           'high-glow': '#F9731633',
-          'medium-glow': '#0EA5E933',
+          'medium-glow': '#F9731633',
           'low-glow': '#4ADE8033'
+        },
+        dashboard: {
+          'section-1': '#1a1f2c',
+          'section-2': '#1c2333',
+          'section-3': '#1e2738',
+          'search-bg': '#8E9196',
+          'neutral': '#33C3F0'
         }
       },
       borderRadius: {
@@ -80,12 +87,17 @@ export default {
         'cardiogram': {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' }
+        },
+        'pulse-glow': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'cardiogram': 'cardiogram 4s linear infinite'
+        'cardiogram': 'cardiogram 4s linear infinite',
+        'pulse-glow': 'pulse-glow 2s ease-in-out infinite'
       }
     }
   },
