@@ -1,74 +1,49 @@
 import { format } from "date-fns";
-import { ChartDataPoint } from "./types";
 
 interface TooltipProps {
   active?: boolean;
   payload?: any[];
+  label?: string;
 }
 
-const getSeverityColor = (severity?: string | null): string => {
-  if (!severity) return "text-blue-400";
-  
-  switch (severity.toLowerCase()) {
-    case "high":
-      return "text-red-400";
-    case "medium":
-      return "text-yellow-400";
-    case "low":
-      return "text-green-400";
-    default:
-      return "text-blue-400";
-  }
-};
+export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
+  if (!active || !payload) return null;
 
-export const OutlierTooltip = ({ active, payload }: TooltipProps) => {
-  if (!active || !payload || !payload.length || !payload[0]?.payload) return null;
+  const formatValue = (value: number) => {
+    return value.toLocaleString();
+  };
 
-  const data = payload[0].payload as ChartDataPoint;
-  
+  const getColor = (name: string) => {
+    switch (name) {
+      case "High Severity": return "#EF4444";
+      case "Medium Severity": return "#F59E0B";
+      case "Low Severity": return "#10B981";
+      default: return "#94A3B8";
+    }
+  };
+
   return (
-    <div className="bg-black/90 p-4 rounded-lg border border-purple-500/20 backdrop-blur-sm">
-      <p className="text-purple-300 font-medium mb-2">{data.title || 'N/A'}</p>
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400">Anomalies:</span>
-          <span className="text-white font-bold">{data.count || 0}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400">Risk Score:</span>
-          <span className="text-white font-bold">
-            {data.risk ? data.risk.toFixed(2) : 'N/A'}
+    <div className="bg-black/90 backdrop-blur-sm border border-gray-800 rounded-lg p-4 shadow-xl">
+      <p className="text-gray-400 text-sm mb-2">
+        {format(new Date(label), "MMM d, yyyy HH:mm")}
+      </p>
+      {payload.map((entry, index) => (
+        <div key={index} className="flex items-center justify-between gap-4 text-sm">
+          <span className="text-gray-400 flex items-center gap-2">
+            <div 
+              className="w-3 h-3 rounded-full" 
+              style={{ backgroundColor: getColor(entry.name) }}
+            />
+            {entry.name}:
+          </span>
+          <span className="text-white font-medium">
+            {formatValue(entry.value)}
           </span>
         </div>
-        {data.firstSeen && (
-          <div className="flex items-center gap-2">
-            <span className="text-purple-400">First Seen:</span>
-            <span className="text-white">{format(new Date(data.firstSeen), 'MMM d, yyyy h:mm a')}</span>
-          </div>
-        )}
-        {data.lastSeen && (
-          <div className="flex items-center gap-2">
-            <span className="text-purple-400">Last Seen:</span>
-            <span className="text-white">{format(new Date(data.lastSeen), 'MMM d, yyyy h:mm a')}</span>
-          </div>
-        )}
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400">Impacted Computers:</span>
-          <span className="text-white">{data.impactedComputers?.length || 0}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400">Impacted Users:</span>
-          <span className="text-white">{data.impactedUsers?.length || 0}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400">Tactics:</span>
-          <span className="text-white">{data.tactics?.join(', ') || 'N/A'}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-purple-400">Severity:</span>
-          <span className={`font-bold ${getSeverityColor(data.severity)}`}>
-            {data.severity?.toUpperCase() || 'N/A'}
-          </span>
+      ))}
+      <div className="mt-2 pt-2 border-t border-gray-800">
+        <div className="text-sm text-gray-400">
+          Total: {formatValue(payload.reduce((sum, entry) => sum + entry.value, 0))}
         </div>
       </div>
     </div>
