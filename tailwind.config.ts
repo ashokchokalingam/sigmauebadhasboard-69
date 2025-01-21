@@ -55,11 +55,11 @@ export default {
         risk: {
           critical: '#ea384c',
           high: '#F97316',
-          medium: '#0EA5E9',
+          medium: '#FEC6A1',
           low: '#4ADE80',
           'critical-glow': '#ea384c33',
           'high-glow': '#F9731633',
-          'medium-glow': '#0EA5E933',
+          'medium-glow': '#FEC6A133',
           'low-glow': '#4ADE8033'
         }
       },
