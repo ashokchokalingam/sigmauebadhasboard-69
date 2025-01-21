@@ -40,43 +40,43 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
         >
           <defs>
             <linearGradient id="riskGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#9b87f5" stopOpacity={0.8}/>
-              <stop offset="95%" stopColor="#9b87f5" stopOpacity={0.2}/>
+              <stop offset="5%" stopColor="#0FA0CE" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#0FA0CE" stopOpacity={0.2}/>
             </linearGradient>
             <linearGradient id="highGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#E879F9" stopOpacity={0.9}/>
-              <stop offset="95%" stopColor="#C026D3" stopOpacity={0.8}/>
+              <stop offset="5%" stopColor="#221F26" stopOpacity={0.9}/>
+              <stop offset="95%" stopColor="#1A1F2C" stopOpacity={0.8}/>
             </linearGradient>
             <linearGradient id="mediumGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#818CF8" stopOpacity={0.9}/>
-              <stop offset="95%" stopColor="#4F46E5" stopOpacity={0.8}/>
+              <stop offset="5%" stopColor="#0FA0CE" stopOpacity={0.9}/>
+              <stop offset="95%" stopColor="#0C7B9E" stopOpacity={0.8}/>
             </linearGradient>
             <linearGradient id="lowGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.9}/>
-              <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0.8}/>
+              <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.9}/>
+              <stop offset="95%" stopColor="#0284C7" stopOpacity={0.8}/>
             </linearGradient>
           </defs>
           <CartesianGrid 
             strokeDasharray="3 3" 
-            stroke="rgba(155, 135, 245, 0.1)" 
+            stroke="rgba(15, 160, 206, 0.1)" 
             vertical={false}
           />
           <XAxis 
             dataKey="timestamp"
-            stroke="#D6BCFA"
+            stroke="#0FA0CE"
             tickFormatter={(timestamp) => format(new Date(timestamp), 'MMM d')}
-            tick={{ fill: '#D6BCFA', fontSize: 12 }}
+            tick={{ fill: '#0FA0CE', fontSize: 12 }}
           />
           <YAxis 
             yAxisId="left" 
-            stroke="#D6BCFA"
-            tick={{ fill: '#D6BCFA', fontSize: 12 }}
+            stroke="#0FA0CE"
+            tick={{ fill: '#0FA0CE', fontSize: 12 }}
           />
           <YAxis 
             yAxisId="right" 
             orientation="right" 
-            stroke="#D6BCFA"
-            tick={{ fill: '#D6BCFA', fontSize: 12 }}
+            stroke="#0FA0CE"
+            tick={{ fill: '#0FA0CE', fontSize: 12 }}
           />
           <Tooltip content={<OutlierTooltip />} />
           
