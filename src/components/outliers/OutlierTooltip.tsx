@@ -14,10 +14,11 @@ export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
   };
 
   const getColor = (name: string) => {
-    switch (name) {
-      case "High Severity": return "#EF4444";
-      case "Medium Severity": return "#F59E0B";
-      case "Low Severity": return "#10B981";
+    switch (name.toLowerCase()) {
+      case "high": return "#FF4444";
+      case "medium": return "#FFA500";
+      case "low": return "#4ADE80";
+      case "risk": return "#8884d8";
       default: return "#94A3B8";
     }
   };
@@ -25,7 +26,7 @@ export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
   return (
     <div className="bg-black/90 backdrop-blur-sm border border-gray-800 rounded-lg p-4 shadow-xl">
       <p className="text-gray-400 text-sm mb-2">
-        {format(new Date(label), "MMM d, yyyy HH:mm")}
+        {format(new Date(label), "MMM d, yyyy")}
       </p>
       {payload.map((entry, index) => (
         <div key={index} className="flex items-center justify-between gap-4 text-sm">
@@ -41,11 +42,6 @@ export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
           </span>
         </div>
       ))}
-      <div className="mt-2 pt-2 border-t border-gray-800">
-        <div className="text-sm text-gray-400">
-          Total: {formatValue(payload.reduce((sum, entry) => sum + entry.value, 0))}
-        </div>
-      </div>
     </div>
   );
 };
