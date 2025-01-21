@@ -2,16 +2,31 @@ import React from "react";
 import { cn } from "@/lib/utils";
 
 interface EntityCardCardiogramProps {
-  isHighRisk: boolean;
+  riskLevel: 'critical' | 'high' | 'medium' | 'low';
 }
 
-const EntityCardCardiogram = ({ isHighRisk }: EntityCardCardiogramProps) => {
+const EntityCardCardiogram = ({ riskLevel }: EntityCardCardiogramProps) => {
+  const getStrokeColor = () => {
+    switch (riskLevel) {
+      case 'critical':
+        return 'stroke-risk-critical';
+      case 'high':
+        return 'stroke-risk-high';
+      case 'medium':
+        return 'stroke-risk-medium';
+      case 'low':
+        return 'stroke-risk-low';
+      default:
+        return 'stroke-risk-low';
+    }
+  };
+
   return (
     <div className="relative w-24 h-8 overflow-hidden">
       <svg 
         className={cn(
           "w-[200%] h-full animate-cardiogram",
-          "stroke-[#9b87f5]"
+          getStrokeColor()
         )} 
         viewBox="0 0 600 100" 
         preserveAspectRatio="none"
