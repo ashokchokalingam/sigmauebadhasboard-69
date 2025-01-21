@@ -17,15 +17,30 @@ const getTimeOfDay = (hour: number): string => {
 const getSeverityColor = (severity: string) => {
   switch (severity.toLowerCase()) {
     case 'critical':
-      return '#ea384c';
+      return 'risk-critical';
     case 'high':
-      return '#F97316';
+      return 'risk-high';
     case 'medium':
-      return '#0EA5E9';
+      return 'risk-medium';
     case 'low':
-      return '#4ADE80';
+      return 'risk-low';
     default:
-      return '#9333EA';
+      return 'risk-medium';
+  }
+};
+
+const getSeverityGlow = (severity: string) => {
+  switch (severity.toLowerCase()) {
+    case 'critical':
+      return 'risk-critical-glow';
+    case 'high':
+      return 'risk-high-glow';
+    case 'medium':
+      return 'risk-medium-glow';
+    case 'low':
+      return 'risk-low-glow';
+    default:
+      return 'risk-medium-glow';
   }
 };
 
@@ -77,13 +92,11 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
                 key={`cell-${index}`}
                 fill="url(#barGradient)"
               >
-                {/* Severity indicator dot on top of each bar */}
                 <circle
                   cx="50%"
                   cy={0}
                   r={4}
-                  fill={getSeverityColor(entry.severity)}
-                  className="animate-pulse"
+                  className={`animate-pulse bg-${getSeverityColor(entry.severity)} shadow-lg shadow-${getSeverityGlow(entry.severity)}`}
                 />
               </Cell>
             ))}
