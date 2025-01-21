@@ -46,9 +46,9 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     <div
       onClick={onClick}
       className={`group relative p-4 rounded-lg
-        bg-gradient-to-r from-[#0A0B0F] to-[#12131A]
-        hover:from-[#12131A] hover:to-[#1A1F2C]
-        border border-[#5856D6]/20 hover:border-[#5856D6]/40
+        bg-gradient-to-r from-black/40 to-black/20
+        hover:from-black/50 hover:to-black/30
+        border border-gray-500/20 hover:border-gray-500/40
         transition-all duration-300 cursor-pointer
         backdrop-blur-sm ${glowColor}
         hover:shadow-lg hover:-translate-y-0.5`}
