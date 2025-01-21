@@ -19,7 +19,7 @@ const AnomaliesTableContent = ({
 }: AnomaliesTableContentProps) => {
   return (
     <TableBody>
-      {alerts.map((alert) => (
+      {alerts.map((alert, index) => (
         <AlertTableRow
           key={alert.id}
           alert={alert}
@@ -27,6 +27,7 @@ const AnomaliesTableContent = ({
           onToggle={() => onAlertSelect(alert)}
           onTimelineView={onTimelineView}
           visibleColumns={visibleColumns}
+          index={index}
         />
       ))}
     </TableBody>
