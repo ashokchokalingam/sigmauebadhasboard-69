@@ -9,11 +9,10 @@ const EntityCardCardiogram = ({ riskLevel }: EntityCardCardiogramProps) => {
   const getStrokeColor = () => {
     switch (riskLevel) {
       case 'critical':
-        return 'stroke-risk-critical';
       case 'high':
-        return 'stroke-risk-high';
+        return 'stroke-risk-critical';
       case 'medium':
-        return 'stroke-risk-medium';
+        return 'stroke-risk-high';
       case 'low':
         return 'stroke-risk-low';
       default:
