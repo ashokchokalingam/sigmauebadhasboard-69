@@ -131,6 +131,19 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
     </ComposedChart>
   );
 
+  const renderChart = () => {
+    switch (chartType) {
+      case 'stacked':
+        return renderStackedAreaChart();
+      case 'composed':
+        return renderComposedChart();
+      case 'scatter':
+        return renderScatterChart();
+      default:
+        return renderStackedAreaChart();
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
@@ -159,9 +172,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
       
       <div className="h-[300px] -mx-2">
         <ResponsiveContainer width="100%" height="100%">
-          {chartType === 'stacked' && renderStackedAreaChart()}
-          {chartType === 'composed' && renderComposedChart()}
-          {chartType === 'scatter' && renderScatterChart()}
+          {renderChart()}
         </ResponsiveContainer>
       </div>
     </div>
