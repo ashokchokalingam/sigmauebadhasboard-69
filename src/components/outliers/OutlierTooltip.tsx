@@ -6,42 +6,57 @@ interface TooltipProps {
   label?: string;
 }
 
+const getTimeOfDay = (hour: number): string => {
+  if (hour >= 5 && hour < 12) return "Morning";
+  if (hour >= 12 && hour < 17) return "Afternoon";
+  if (hour >= 17 && hour < 21) return "Evening";
+  return "Night";
+};
+
 export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
-  if (!active || !payload) return null;
+  if (!active || !payload?.[0]) return null;
 
-  const formatValue = (value: number) => {
-    return value.toLocaleString();
-  };
+  const data = payload[0].payload;
+  const date = new Date(label);
+  const timeOfDay = getTimeOfDay(date.getHours());
 
-  const getColor = (name: string) => {
-    switch (name.toLowerCase()) {
-      case "high": return "#A855F7";
-      case "medium": return "#C084FC";
-      case "low": return "#D8B4FE";
-      case "risk": return "#9333EA";
-      default: return "#D8B4FE";
+  const getSeverityColor = (severity: string) => {
+    switch (severity.toLowerCase()) {
+      case 'critical':
+        return '#ea384c';
+      case 'high':
+        return '#F97316';
+      case 'medium':
+        return '#0EA5E9';
+      case 'low':
+        return '#4ADE80';
+      default:
+        return '#9333EA';
     }
   };
 
   return (
     <div className="bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 shadow-xl">
       <p className="text-purple-200 text-sm mb-2 font-medium">
-        {format(new Date(label), "MMM d, yyyy")}
+        {format(date, "MMM d, yyyy")} - {timeOfDay}
       </p>
-      {payload.map((entry, index) => (
-        <div key={index} className="flex items-center justify-between gap-4 text-sm">
-          <span className="text-purple-300 flex items-center gap-2">
-            <div 
-              className="w-3 h-3 rounded-full" 
-              style={{ backgroundColor: getColor(entry.name) }}
-            />
-            {entry.name}:
-          </span>
-          <span className="text-white font-medium">
-            {formatValue(entry.value)}
-          </span>
+      <div className="flex items-center gap-2 mb-2">
+        <div 
+          className="w-3 h-3 rounded-full animate-pulse"
+          style={{ backgroundColor: getSeverityColor(data.severity) }}
+        />
+        <span className="text-purple-300 text-sm">
+          Severity: {data.severity}
+        </span>
+      </div>
+      <div className="text-white font-medium text-sm">
+        {data.count} anomalies
+      </div>
+      {data.title && (
+        <div className="text-purple-300 text-xs mt-2">
+          {data.title}
         </div>
-      ))}
+      )}
     </div>
   );
 };
