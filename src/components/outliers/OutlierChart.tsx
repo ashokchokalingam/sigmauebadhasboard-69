@@ -43,6 +43,18 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
               <stop offset="5%" stopColor="#9b87f5" stopOpacity={0.8}/>
               <stop offset="95%" stopColor="#9b87f5" stopOpacity={0.2}/>
             </linearGradient>
+            <linearGradient id="highGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#E879F9" stopOpacity={0.9}/>
+              <stop offset="95%" stopColor="#C026D3" stopOpacity={0.8}/>
+            </linearGradient>
+            <linearGradient id="mediumGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#818CF8" stopOpacity={0.9}/>
+              <stop offset="95%" stopColor="#4F46E5" stopOpacity={0.8}/>
+            </linearGradient>
+            <linearGradient id="lowGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.9}/>
+              <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0.8}/>
+            </linearGradient>
           </defs>
           <CartesianGrid 
             strokeDasharray="3 3" 
@@ -70,21 +82,21 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
           
           <Bar 
             dataKey="high" 
-            fill="#ea384c" 
+            fill="url(#highGradient)" 
             yAxisId="left"
             radius={[4, 4, 0, 0]}
             maxBarSize={40}
           />
           <Bar 
             dataKey="medium" 
-            fill="#F97316" 
+            fill="url(#mediumGradient)" 
             yAxisId="left"
             radius={[4, 4, 0, 0]}
             maxBarSize={40}
           />
           <Bar 
             dataKey="low" 
-            fill="#4ADE80" 
+            fill="url(#lowGradient)" 
             yAxisId="left"
             radius={[4, 4, 0, 0]}
             maxBarSize={40}

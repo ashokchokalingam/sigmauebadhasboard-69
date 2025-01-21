@@ -15,9 +15,9 @@ export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
 
   const getColor = (name: string) => {
     switch (name.toLowerCase()) {
-      case "high": return "#ea384c";
-      case "medium": return "#F97316";
-      case "low": return "#4ADE80";
+      case "high": return "#E879F9";
+      case "medium": return "#818CF8";
+      case "low": return "#38BDF8";
       case "risk": return "#9b87f5";
       default: return "#D6BCFA";
     }
