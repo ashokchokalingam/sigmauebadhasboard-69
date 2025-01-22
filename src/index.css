@@ -41,15 +41,62 @@
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-[#0A0B0F] text-foreground min-h-screen w-full m-0 p-0 font-sans;
+  
+  html {
+    @apply h-full;
   }
+  
+  body {
+    @apply bg-[#0A0B0F] text-foreground min-h-screen w-full m-0 p-0 font-sans overflow-x-hidden;
+  }
+  
   #root {
     @apply min-h-screen w-full bg-[#0A0B0F] m-0 p-0;
   }
 }
 
+/* Responsive container */
+.container {
+  @apply w-full mx-auto;
+  max-width: 100%;
+}
+
+@screen sm {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@screen md {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@screen lg {
+  .container {
+  max-width: 1024px;
+  }
+}
+
+@screen xl {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@screen 2xl {
+  .container {
+    max-width: 1536px;
+  }
+}
+
 /* Grid layout for widgets */
 .widgets-grid {
-  @apply grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6;
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+}
+
+/* Scrollbar styles */
+.custom-scrollbar {
+  @apply scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent;
 }
