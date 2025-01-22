@@ -6,12 +6,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert } from "./types";
 
 interface ColumnFilterProps {
   title: string;
   options: string[];
   onSelect: (value: string) => void;
   selectedValue?: string;
+  columnKey: string;  // Added this prop
 }
 
 const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterProps) => {

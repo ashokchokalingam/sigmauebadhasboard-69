@@ -24,6 +24,25 @@ const ResizableHeader = ({
   minSize,
   isLastColumn
 }: ResizableHeaderProps) => {
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  const last7DaysAlerts = alerts.filter(alert => {
+    const alertDate = new Date(alert.system_time);
+    return alertDate >= sevenDaysAgo;
+  });
+
+  const getUniqueValues = (key: keyof Alert) => {
+    const uniqueValues = Array.from(new Set(last7DaysAlerts.map(alert => {
+      if (key === 'system_time') {
+        return new Date(alert[key]).toLocaleTimeString();
+      }
+      return String(alert[key]);
+    }))).filter(Boolean);
+    
+    return uniqueValues.sort();
+  };
+
   return (
     <TableHead className={`p-0 ${isLastColumn ? 'pr-0' : ''}`}>
       <ResizablePanel defaultSize={defaultSize} minSize={minSize}>
@@ -32,10 +51,11 @@ const ResizableHeader = ({
             {title}
           </div>
           <ColumnFilter
+            title={title}
             columnKey={columnKey}
-            onFilterChange={onFilterChange}
+            options={getUniqueValues(columnKey as keyof Alert)}
+            onSelect={(value) => onFilterChange(columnKey, value)}
             selectedValue={selectedValue}
-            alerts={alerts}
           />
         </div>
       </ResizablePanel>
