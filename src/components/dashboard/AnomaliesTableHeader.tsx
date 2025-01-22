@@ -23,21 +23,21 @@ const AnomaliesTableHeader = ({
       case 'description':
         return 300;
       case 'risk':
-        return 70;
+        return 80; // Increased slightly to prevent gap
       case 'user_id':
       case 'target_user_name':
-        return 100;
+        return 120; // Made consistent with other columns
       default:
         return 120;
     }
   };
 
   return (
-    <TableHeader className="sticky top-0 z-50 bg-[#1a1f2c]">
+    <TableHeader className="sticky top-0 z-50 bg-[#1a1f2c] w-full">
       <TableRow className="hover:bg-[#1a1f2c]/80 border-b border-blue-500/20">
         {allColumns
           .filter(column => visibleColumns.includes(column.key))
-          .map(column => (
+          .map((column, index) => (
             <ResizableHeader
               key={column.key}
               title={column.label}
@@ -46,7 +46,8 @@ const AnomaliesTableHeader = ({
               selectedValue={filters[column.key]}
               alerts={alerts}
               defaultSize={getDefaultSize(column.key)}
-              minSize={50}
+              minSize={60}
+              isLastColumn={index === visibleColumns.length - 1}
             />
           ))}
       </TableRow>
