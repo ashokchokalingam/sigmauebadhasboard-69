@@ -1,17 +1,17 @@
-import { db, testConnection } from '@/lib/db';
+import { db } from '@/lib/db';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const per_page = parseInt(req.query.per_page as string) || 50;
+    const per_page = parseInt(req.query.per_page as string) || 25;
     const timeframe = req.query.timeframe as string || '1d';
     const offset = (page - 1) * per_page;
     const days = parseInt(timeframe.charAt(0)) || 1;
 
     console.log('Executing query with params:', { page, per_page, offset, days });
 
-    // Optimized query with index hints and selective column fetching
+    // Optimized query with specific column selection and proper indexing
     const query = `
       SELECT SQL_CALC_FOUND_ROWS
         id, title, description, system_time, computer_name, 
@@ -28,14 +28,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const [countResult] = await db.query('SELECT FOUND_ROWS() as total');
     const total = (countResult as any)[0].total;
 
-    console.log('Query results:', {
-      rowCount: Array.isArray(rows) ? rows.length : 0,
-      total,
-      timeframe: `${days} days`
-    });
-
     // Set cache headers for better performance
-    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
+    res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59');
     
     res.status(200).json({
       alerts: rows || [],

@@ -5,8 +5,9 @@ import { Alert } from "@/components/dashboard/types";
 import { useQuery } from "@tanstack/react-query";
 import TimeFrameSelector from "@/components/TimeFrameSelector";
 
-const INITIAL_BATCH_SIZE = 50; // Reduced from 100 for better initial load
-const TOTAL_BATCH_SIZE = 500; // Reduced from 1000 for better performance
+// Reduced initial batch size for faster initial load
+const INITIAL_BATCH_SIZE = 25;
+const TOTAL_BATCH_SIZE = 100;
 
 const Index = () => {
   const { toast } = useToast();
@@ -16,17 +17,14 @@ const Index = () => {
   const [currentAlerts, setCurrentAlerts] = useState<Alert[]>([]);
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
 
+  // Optimized fetch function with better error handling
   const fetchAlerts = async (batchSize: number, page: number): Promise<{ alerts: Alert[]; total_count: number }> => {
     console.log('Fetching alerts:', { batchSize, page, timeFrame });
     
     const response = await fetch(`/api/alerts?page=${page}&per_page=${batchSize}&timeframe=${timeFrame}`, {
-      method: 'GET',
-      credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache'
       }
     });
 
@@ -41,19 +39,19 @@ const Index = () => {
     };
   };
 
-  // Initial alerts query with smaller batch size
+  // Initial data query with smaller batch size
   const initialQuery = useQuery({
     queryKey: ['initial-alerts', timeFrame],
     queryFn: () => fetchAlerts(INITIAL_BATCH_SIZE, 1),
-    refetchInterval: 30 * 1000, // Reduced to 30 seconds
-    staleTime: 25 * 1000, // Added stale time
+    staleTime: 30 * 1000, // Cache data for 30 seconds
+    gcTime: 5 * 60 * 1000, // Keep unused data for 5 minutes
     meta: {
       onSettled: (data, error) => {
         if (error) {
           console.error('Initial query error:', error);
           toast({
-            title: "Error fetching data",
-            description: "Failed to load alerts. Please try again.",
+            title: "Error loading data",
+            description: "Please try refreshing the page",
             variant: "destructive",
           });
         }
@@ -61,19 +59,19 @@ const Index = () => {
     }
   });
 
-  // Remaining alerts query with pagination
+  // Remaining data query with pagination
   const remainingQuery = useQuery({
     queryKey: ['remaining-alerts', currentPage, timeFrame],
     queryFn: () => fetchAlerts(INITIAL_BATCH_SIZE, currentPage),
     enabled: !!initialQuery.data?.alerts?.length && currentAlerts.length < TOTAL_BATCH_SIZE,
-    staleTime: 25 * 1000,
+    staleTime: 30 * 1000,
     meta: {
       onSettled: (data, error) => {
         if (error) {
           console.error('Remaining query error:', error);
           toast({
-            title: "Error fetching additional data",
-            description: "Failed to load more alerts. Please try again.",
+            title: "Error loading additional data",
+            description: "Some data might be missing",
             variant: "destructive",
           });
         }
@@ -81,6 +79,7 @@ const Index = () => {
     }
   });
 
+  // Update alerts when initial data is loaded
   useEffect(() => {
     if (initialQuery.data) {
       setCurrentAlerts(initialQuery.data.alerts);
@@ -88,25 +87,23 @@ const Index = () => {
     }
   }, [initialQuery.data]);
 
+  // Update alerts when more data is loaded
   useEffect(() => {
     if (remainingQuery.data?.alerts) {
       setCurrentAlerts(prev => {
         const newAlerts = [...prev];
-        remainingQuery.data.alerts.forEach(alert => {
-          if (!newAlerts.find(a => a.id === alert.id)) {
-            newAlerts.push(alert);
-          }
-        });
-        return newAlerts;
+        const uniqueNewAlerts = remainingQuery.data.alerts.filter(
+          alert => !newAlerts.some(existing => existing.id === alert.id)
+        );
+        return [...newAlerts, ...uniqueNewAlerts];
       });
+      
       setAllAlerts(prev => {
         const newAlerts = [...prev];
-        remainingQuery.data.alerts.forEach(alert => {
-          if (!newAlerts.find(a => a.id === alert.id)) {
-            newAlerts.push(alert);
-          }
-        });
-        return newAlerts;
+        const uniqueNewAlerts = remainingQuery.data.alerts.filter(
+          alert => !newAlerts.some(existing => existing.id === alert.id)
+        );
+        return [...newAlerts, ...uniqueNewAlerts];
       });
     }
   }, [remainingQuery.data]);
@@ -121,6 +118,16 @@ const Index = () => {
     setSelectedEntity(entity);
   };
 
+  // Show loading state
+  if (initialQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#1a1f2c]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // Show error state
   if (initialQuery.isError || remainingQuery.isError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#1a1f2c] p-4">
