@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useEffect, useMemo } from "react";
 
 interface ColumnFilterProps {
   title: string;
@@ -16,11 +15,11 @@ interface ColumnFilterProps {
 }
 
 const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterProps) => {
-  const processOptions = useMemo(() => {
+  const processOptions = (opts: string[]) => {
     // Convert all values to strings and replace null/undefined with '—'
-    const processed = options.map(opt => {
+    const processed = opts.map(opt => {
       if (opt === null || opt === undefined || opt === '') return '—';
-      return String(opt).trim();
+      return opt.toString().trim();
     });
     
     // Remove duplicates and sort
@@ -31,24 +30,14 @@ const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterP
     });
     
     return uniqueOpts;
-  }, [options]);
+  };
 
-  // Validate selected value against available options
-  useEffect(() => {
-    if (selectedValue && !processOptions.includes(selectedValue)) {
-      console.warn(`Selected value "${selectedValue}" not found in options for column "${title}"`);
-      onSelect(''); // Reset invalid filter
-    }
-  }, [selectedValue, processOptions, title, onSelect]);
+  const uniqueOptions = processOptions(options);
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger 
-        className={`flex items-center gap-1 hover:text-blue-400 transition-colors ${
-          selectedValue ? "text-blue-400" : ""
-        }`}
-      >
-        <span>{title}</span>
+      <DropdownMenuTrigger className="flex items-center gap-1 hover:text-blue-400 transition-colors">
+        <span className={selectedValue ? "text-blue-400" : ""}>{title}</span>
         <ChevronDown className="h-4 w-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent 
@@ -62,7 +51,7 @@ const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterP
           >
             All
           </DropdownMenuItem>
-          {processOptions.map((option) => (
+          {uniqueOptions.map((option) => (
             <DropdownMenuItem
               key={option}
               className={`${
