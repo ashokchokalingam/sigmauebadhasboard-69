@@ -6,22 +6,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Alert } from "./types";
+import { useEffect, useMemo } from "react";
 
 interface ColumnFilterProps {
   title: string;
   options: string[];
   onSelect: (value: string) => void;
   selectedValue?: string;
-  columnKey: string;  // Added this prop
 }
 
 const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterProps) => {
-  const processOptions = (opts: string[]) => {
+  const processOptions = useMemo(() => {
     // Convert all values to strings and replace null/undefined with '—'
-    const processed = opts.map(opt => {
+    const processed = options.map(opt => {
       if (opt === null || opt === undefined || opt === '') return '—';
-      return opt.toString().trim();
+      return String(opt).trim();
     });
     
     // Remove duplicates and sort
@@ -32,14 +31,24 @@ const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterP
     });
     
     return uniqueOpts;
-  };
+  }, [options]);
 
-  const uniqueOptions = processOptions(options);
+  // Validate selected value against available options
+  useEffect(() => {
+    if (selectedValue && !processOptions.includes(selectedValue)) {
+      console.warn(`Selected value "${selectedValue}" not found in options for column "${title}"`);
+      onSelect(''); // Reset invalid filter
+    }
+  }, [selectedValue, processOptions, title, onSelect]);
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-1 hover:text-blue-400 transition-colors">
-        <span className={selectedValue ? "text-blue-400" : ""}>{title}</span>
+      <DropdownMenuTrigger 
+        className={`flex items-center gap-1 hover:text-blue-400 transition-colors ${
+          selectedValue ? "text-blue-400" : ""
+        }`}
+      >
+        <span>{title}</span>
         <ChevronDown className="h-4 w-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent 
@@ -53,7 +62,7 @@ const ColumnFilter = ({ title, options, onSelect, selectedValue }: ColumnFilterP
           >
             All
           </DropdownMenuItem>
-          {uniqueOptions.map((option) => (
+          {processOptions.map((option) => (
             <DropdownMenuItem
               key={option}
               className={`${

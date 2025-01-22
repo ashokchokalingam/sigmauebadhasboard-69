@@ -16,10 +16,16 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
   const isComputer = id?.endsWith('$') ?? false;
   const safeUniqueTitles = typeof uniqueTitles === 'number' ? uniqueTitles : 0;
 
-  const isHighRisk = (score: string | null) => {
-    if (!score) return false;
-    return parseInt(score) >= 200;
+  const getRiskLevel = (score: string | null) => {
+    if (!score) return 'low';
+    const numScore = parseInt(score);
+    if (numScore >= 200) return 'critical';
+    if (numScore >= 100) return 'high';
+    if (numScore >= 50) return 'medium';
+    return 'low';
   };
+
+  const riskLevel = getRiskLevel(riskScore);
 
   return (
     <div 
@@ -51,15 +57,15 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
             <div className="flex items-center gap-4">
               <EntityCardRiskLevel 
                 riskScore={riskScore} 
-                isHighRisk={isHighRisk(riskScore)} 
+                isHighRisk={riskLevel === 'critical'} 
               />
               
-              <EntityCardCardiogram isHighRisk={isHighRisk(riskScore)} />
+              <EntityCardCardiogram riskLevel={riskLevel} />
 
               <span className={cn(
                 "font-mono font-bold text-2xl min-w-[80px] text-right",
                 "text-[#9b87f5]",
-                isHighRisk(riskScore) && "animate-pulse"
+                riskLevel === 'critical' && "animate-pulse"
               )}>
                 {riskScore}
               </span>

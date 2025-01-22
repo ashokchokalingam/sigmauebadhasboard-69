@@ -19,25 +19,34 @@ const AnomaliesTableHeader = ({
   const getDefaultSize = (columnKey: string): number => {
     switch (columnKey) {
       case 'system_time':
-        return 140;
+        return 160; // Increased for better timestamp visibility
       case 'description':
-        return 300;
+        return 400; // Increased for better readability
       case 'risk':
-        return 80; // Increased slightly to prevent gap
-      case 'user_id':
-      case 'target_user_name':
-        return 120; // Made consistent with other columns
+        return 100; // Adjusted for risk score
+      case 'user_origin':
+      case 'user_impacted':
+        return 150; // Increased for user information
+      case 'computer_name':
+        return 180; // Adjusted for computer names
+      case 'ml_cluster':
+        return 120; // Adjusted for ML cluster info
       default:
-        return 120;
+        return 140;
     }
   };
 
+  // Validate column visibility
+  const validVisibleColumns = visibleColumns.filter(column => 
+    allColumns.some(c => c.key === column)
+  );
+
   return (
-    <TableHeader className="sticky top-0 z-50 bg-[#1a1f2c] w-full">
+    <TableHeader className="sticky top-0 z-50 bg-[#1a1f2c]">
       <TableRow className="hover:bg-[#1a1f2c]/80 border-b border-blue-500/20">
         {allColumns
-          .filter(column => visibleColumns.includes(column.key))
-          .map((column, index) => (
+          .filter(column => validVisibleColumns.includes(column.key))
+          .map(column => (
             <ResizableHeader
               key={column.key}
               title={column.label}
@@ -46,8 +55,7 @@ const AnomaliesTableHeader = ({
               selectedValue={filters[column.key]}
               alerts={alerts}
               defaultSize={getDefaultSize(column.key)}
-              minSize={60}
-              isLastColumn={index === visibleColumns.length - 1}
+              minSize={80}
             />
           ))}
       </TableRow>

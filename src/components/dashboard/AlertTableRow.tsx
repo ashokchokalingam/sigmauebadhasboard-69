@@ -17,6 +17,7 @@ interface AlertTableRowProps {
   onToggle: () => void;
   onTimelineView: (type: "user" | "computer", id: string) => void;
   visibleColumns: string[];
+  index: number; // Added for alternating rows
 }
 
 const AlertTableRow = ({ 
@@ -24,7 +25,8 @@ const AlertTableRow = ({
   isSelected, 
   onToggle, 
   onTimelineView,
-  visibleColumns 
+  visibleColumns,
+  index 
 }: AlertTableRowProps) => {
   const renderCell = (columnKey: string) => {
     switch (columnKey) {
@@ -89,13 +91,22 @@ const AlertTableRow = ({
   
   return (
     <TableRow 
-      className={`h-14 transition-colors cursor-pointer ${
-        isSelected ? 'bg-blue-950/40' : ''
-      }`}
+      className={`h-14 transition-colors cursor-pointer
+        ${isSelected ? 'bg-blue-950/40' : index % 2 === 0 ? 'bg-[#1a1f2c]/40' : 'bg-[#1a1f2c]/20'}
+        hover:bg-blue-950/30
+        ${alert.risk && alert.risk >= 80 ? 'border-l-4 border-l-risk-critical' : 
+          alert.risk && alert.risk >= 50 ? 'border-l-4 border-l-risk-medium' : 
+          'border-l-4 border-l-risk-low'}
+      `}
       onClick={onToggle}
     >
       {visibleColumns.map((columnKey) => (
-        <TableCell key={columnKey} className="px-4 py-2">
+        <TableCell 
+          key={columnKey} 
+          className={`px-4 py-2 ${
+            columnKey === 'description' ? 'max-w-md truncate' : ''
+          }`}
+        >
           {renderCell(columnKey)}
         </TableCell>
       ))}

@@ -61,7 +61,6 @@ const DraggableHeader = ({ id, title, columnKey, onFilterChange, selectedValue, 
         <GripHorizontal className="h-4 w-4 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
         <ColumnFilter
           title={title}
-          columnKey={columnKey}
           options={getUniqueValues(columnKey as keyof Alert)}
           onSelect={(value) => onFilterChange(columnKey, value)}
           selectedValue={selectedValue}

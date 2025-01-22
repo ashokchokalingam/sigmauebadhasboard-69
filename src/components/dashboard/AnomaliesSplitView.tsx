@@ -29,52 +29,50 @@ const AnomaliesSplitView = ({
   onClose
 }: AnomaliesSplitViewProps) => {
   return (
-    <div className="flex h-full w-full">
-      <ResizablePanelGroup 
-        direction="horizontal" 
-        className="min-h-[800px] w-full rounded-lg border border-blue-500/10"
-      >
-        <ResizablePanel defaultSize={70} minSize={30}>
-          <div className="h-full overflow-hidden border-r border-blue-500/10">
-            <div className="flex h-full flex-col">
-              <div className="flex-1 overflow-hidden">
-                <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent">
-                  <Table>
-                    <AnomaliesTableHeader
-                      alerts={alerts}
-                      onFilterChange={onFilterChange}
-                      filters={filters}
-                      visibleColumns={visibleColumns}
-                    />
-                    <AnomaliesTableContent
-                      alerts={filteredAlerts}
-                      selectedAlert={selectedAlert}
-                      onAlertSelect={onAlertSelect}
-                      onTimelineView={onTimelineView}
-                      visibleColumns={visibleColumns}
-                    />
-                  </Table>
-                </div>
+    <ResizablePanelGroup 
+      direction="horizontal" 
+      className="min-h-[800px] rounded-lg border border-blue-500/10"
+    >
+      <ResizablePanel defaultSize={70} minSize={30}>
+        <div className="h-full overflow-hidden border-r border-blue-500/10">
+          <div className="h-full flex flex-col">
+            <div className="flex-1 overflow-hidden">
+              <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent">
+                <Table>
+                  <AnomaliesTableHeader
+                    alerts={alerts}
+                    onFilterChange={onFilterChange}
+                    filters={filters}
+                    visibleColumns={visibleColumns}
+                  />
+                  <AnomaliesTableContent
+                    alerts={filteredAlerts}
+                    selectedAlert={selectedAlert}
+                    onAlertSelect={onAlertSelect}
+                    onTimelineView={onTimelineView}
+                    visibleColumns={visibleColumns}
+                  />
+                </Table>
               </div>
             </div>
           </div>
-        </ResizablePanel>
-        
-        <ResizableHandle 
-          withHandle 
-          className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
-        />
-        
-        <ResizablePanel defaultSize={30} minSize={25}>
-          <div className="h-full">
-            <AlertDetailsView
-              alert={selectedAlert}
-              onClose={onClose}
-            />
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
-    </div>
+        </div>
+      </ResizablePanel>
+      
+      <ResizableHandle 
+        withHandle 
+        className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
+      />
+      
+      <ResizablePanel defaultSize={30} minSize={25}>
+        <div className="h-full">
+          <AlertDetailsView
+            alert={selectedAlert}
+            onClose={onClose}
+          />
+        </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 };
 
