@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Alert } from "@/components/dashboard/types";
 import { useQuery } from "@tanstack/react-query";
 import TimeFrameSelector from "@/components/TimeFrameSelector";
 
-const INITIAL_BATCH_SIZE = 50; // Reduced from 100 for better initial load
-const TOTAL_BATCH_SIZE = 500; // Reduced from 1000 for better performance
+const INITIAL_BATCH_SIZE = 50;
+const TOTAL_BATCH_SIZE = 500;
 
 const Index = () => {
   const { toast } = useToast();
@@ -41,12 +41,11 @@ const Index = () => {
     };
   };
 
-  // Initial alerts query with smaller batch size
   const initialQuery = useQuery({
     queryKey: ['initial-alerts', timeFrame],
     queryFn: () => fetchAlerts(INITIAL_BATCH_SIZE, 1),
-    refetchInterval: 30 * 1000, // Reduced to 30 seconds
-    staleTime: 25 * 1000, // Added stale time
+    refetchInterval: 30 * 1000,
+    staleTime: 25 * 1000,
     meta: {
       onSettled: (data, error) => {
         if (error) {
@@ -61,7 +60,6 @@ const Index = () => {
     }
   });
 
-  // Remaining alerts query with pagination
   const remainingQuery = useQuery({
     queryKey: ['remaining-alerts', currentPage, timeFrame],
     queryFn: () => fetchAlerts(INITIAL_BATCH_SIZE, currentPage),
@@ -141,7 +139,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#1a1f2c]">
       <div className="p-6">
-        <TimeFrameSelector value={timeFrame} onValueChange={setTimeFrame} />
+        <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6] mb-6">
+          ATT&CK User Behavior Analytics
+        </h1>
       </div>
       <DashboardLayout
         alerts={currentAlerts}
