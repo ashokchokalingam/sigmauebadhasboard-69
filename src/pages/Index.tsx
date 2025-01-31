@@ -3,7 +3,6 @@ import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Alert } from "@/components/dashboard/types";
 import { useQuery } from "@tanstack/react-query";
-import TimeFrameSelector from "@/components/TimeFrameSelector";
 
 const INITIAL_BATCH_SIZE = 50;
 const TOTAL_BATCH_SIZE = 500;
@@ -138,11 +137,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-[#1a1f2c]">
-      <div className="p-6">
-        <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6] mb-6">
-          ATT&CK User Behavior Analytics
-        </h1>
-      </div>
       <DashboardLayout
         alerts={currentAlerts}
         allAlerts={allAlerts}

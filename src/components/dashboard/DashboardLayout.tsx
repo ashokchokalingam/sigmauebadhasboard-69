@@ -47,14 +47,10 @@ const DashboardLayout = ({
   return (
     <div className="min-h-screen w-full bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-4 md:p-6">
       {/* Stats Section */}
-      <div className="flex flex-col gap-6 lg:flex-row items-center justify-between mb-6">
+      <div className="mb-6">
         <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">
           ATT&CK User Behavior Analytics
         </h1>
-        <button className="flex items-center gap-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 transition-all duration-300 rounded-lg px-4 py-2 border border-blue-500/10">
-          <Download className="h-4 w-4" />
-          Export Data
-        </button>
       </div>
 
       <div className="mb-6">
