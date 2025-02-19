@@ -51,7 +51,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       className="flex items-center justify-between p-4 rounded-lg 
         bg-[#0A0B0F] hover:bg-[#12131A]
         border border-[#5856D6]/30 hover:border-[#5856D6]/50
-        transition-all duration-300 cursor-pointer
+        transition-colors duration-300 cursor-pointer
         shadow-sm hover:shadow-md hover:shadow-[#5856D6]/10"
     >
       <div className="flex items-center gap-3 flex-[0_0_50%]">
@@ -76,12 +76,12 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         </span>
 
         <div className="relative">
-          <div className={`font-mono font-bold text-2xl ${textColor}`}>
+          <div className={`font-mono font-bold text-2xl ${textColor} select-none`}>
             {riskScore.toFixed(1)}
           </div>
           <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#5856D6]/10 rounded-full overflow-hidden">
             <div 
-              className={`h-full ${progressColor} transition-all duration-300`}
+              className={`h-full ${progressColor}`}
               style={{ width: `${progressWidth}%` }}
             />
           </div>
