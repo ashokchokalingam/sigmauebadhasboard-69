@@ -37,22 +37,30 @@ const AnomaliesSplitView = ({
       >
         <ResizablePanel defaultSize={70} minSize={30}>
           <div className="h-full flex flex-col border-r border-blue-500/10">
-            <div className="flex-1 overflow-auto">
-              <Table>
-                <AnomaliesTableHeader
-                  alerts={alerts}
-                  onFilterChange={onFilterChange}
-                  filters={filters}
-                  visibleColumns={visibleColumns}
-                />
-                <AnomaliesTableContent
-                  alerts={filteredAlerts}
-                  selectedAlert={selectedAlert}
-                  onAlertSelect={onAlertSelect}
-                  onTimelineView={onTimelineView}
-                  visibleColumns={visibleColumns}
-                />
-              </Table>
+            <div className="flex-1 overflow-hidden">
+              <div className="h-full flex flex-col">
+                <div className="flex-none">
+                  <Table>
+                    <AnomaliesTableHeader
+                      alerts={alerts}
+                      onFilterChange={onFilterChange}
+                      filters={filters}
+                      visibleColumns={visibleColumns}
+                    />
+                  </Table>
+                </div>
+                <div className="flex-1 overflow-auto">
+                  <Table>
+                    <AnomaliesTableContent
+                      alerts={filteredAlerts}
+                      selectedAlert={selectedAlert}
+                      onAlertSelect={onAlertSelect}
+                      onTimelineView={onTimelineView}
+                      visibleColumns={visibleColumns}
+                    />
+                  </Table>
+                </div>
+              </div>
             </div>
           </div>
         </ResizablePanel>
