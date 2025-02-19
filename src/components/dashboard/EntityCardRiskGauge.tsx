@@ -66,7 +66,7 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
         <svg 
           className={cn(
             "w-[200%] h-full animate-cardiogram transition-opacity duration-300",
-            pulsing && "animate-[pulse_3s_ease-in-out_infinite]"
+            pulsing && "animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite]"
           )}
           viewBox="0 0 400 100" 
           preserveAspectRatio="none"
@@ -88,7 +88,7 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
           "border border-white/5",
           bgColor,
           bgGlow,
-          pulsing && "animate-[pulse_3s_ease-in-out_infinite]"
+          pulsing && "animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite]"
         )}
         style={{ color }}
       >
