@@ -40,10 +40,10 @@ const AnomaliesMainView = ({
   };
 
   return (
-    <div className="border border-blue-900/20 rounded-md bg-[#0A0D14]">
-      <div className="h-[800px] overflow-auto">
-        <table className="w-full border-collapse [&_tr:hover]:bg-blue-950/30 [&_tr]:border-b [&_tr]:border-blue-900/10">
-          <thead className="sticky top-0 bg-[#0A0D14] z-50">
+    <div className="relative border border-blue-900/20 rounded-md bg-[#0A0D14] h-full max-h-[800px] overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 z-50 bg-[#0A0D14]">
+        <table className="w-full border-collapse">
+          <thead>
             <tr>
               {visibleColumns.map((columnKey) => (
                 <th 
@@ -59,9 +59,13 @@ const AnomaliesMainView = ({
                   />
                 </th>
               ))}
-              <th className="w-[40px]" /> {/* Arrow column */}
+              <th className="w-[40px] bg-[#1A1F2C] border-b border-blue-900/20" /> {/* Arrow column */}
             </tr>
           </thead>
+        </table>
+      </div>
+      <div className="h-full pt-[48px] overflow-auto scrollbar-thin scrollbar-thumb-blue-500/20 scrollbar-track-transparent">
+        <table className="w-full border-collapse [&_tr:hover]:bg-blue-950/30 [&_tr]:border-b [&_tr]:border-blue-900/10">
           <tbody>
             <AnomaliesTableContent
               alerts={filteredAlerts}
