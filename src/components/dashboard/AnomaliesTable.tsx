@@ -1,11 +1,11 @@
+
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert } from "./types";
-import AnomaliesMainView from "./AnomaliesMainView";
-import AnomaliesSplitView from "./AnomaliesSplitView";
-import AnomaliesTableHeaderSection from "./AnomaliesTableHeaderSection";
 import { defaultColumns } from "./TableConfig";
 import { useAlertsFilter } from "./hooks/useAlertsFilter";
+import AnomaliesTableView from "./AnomaliesTableView";
+import AnomaliesTableHeaderSection from "./AnomaliesTableHeaderSection";
 
 interface AnomaliesTableProps {
   alerts: Alert[];
@@ -40,40 +40,25 @@ const AnomaliesTable = ({ alerts, onLoadMore, hasMore }: AnomaliesTableProps) =>
 
   return (
     <Card className="relative border-blue-500/10">
-      <div className="relative">
-        <AnomaliesTableHeaderSection
+      <AnomaliesTableHeaderSection
+        visibleColumns={visibleColumns}
+        onColumnToggle={handleColumnToggle}
+        onSelectAll={handleSelectAll}
+        onDeselectAll={handleDeselectAll}
+      />
+      <CardContent className="p-0">
+        <AnomaliesTableView
+          alerts={alerts}
+          selectedAlert={selectedAlert}
+          onFilterChange={handleFilterChange}
+          filters={filters}
           visibleColumns={visibleColumns}
-          onColumnToggle={handleColumnToggle}
-          onSelectAll={handleSelectAll}
-          onDeselectAll={handleDeselectAll}
+          onAlertSelect={setSelectedAlert}
+          onTimelineView={handleTimelineView}
+          filteredAlerts={filteredAlerts}
+          onClose={() => setSelectedAlert(null)}
         />
-        <CardContent className="p-0">
-          {selectedAlert ? (
-            <AnomaliesSplitView
-              selectedAlert={selectedAlert}
-              alerts={alerts}
-              onFilterChange={handleFilterChange}
-              filters={filters}
-              visibleColumns={visibleColumns}
-              onAlertSelect={setSelectedAlert}
-              onTimelineView={handleTimelineView}
-              filteredAlerts={filteredAlerts}
-              onClose={() => setSelectedAlert(null)}
-            />
-          ) : (
-            <AnomaliesMainView
-              alerts={alerts}
-              onFilterChange={handleFilterChange}
-              filters={filters}
-              visibleColumns={visibleColumns}
-              selectedAlert={selectedAlert}
-              onAlertSelect={setSelectedAlert}
-              onTimelineView={handleTimelineView}
-              filteredAlerts={filteredAlerts}
-            />
-          )}
-        </CardContent>
-      </div>
+      </CardContent>
     </Card>
   );
 };
