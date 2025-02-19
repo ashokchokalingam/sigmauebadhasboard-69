@@ -13,33 +13,48 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
     if (score >= 150) return { 
       level: "HIGH", 
       color: "#ea384c",
-      bgColor: "bg-gradient-to-r from-[#ea384c]/20 to-[#ea384c]/10",
+      textGlow: "text-shadow-[0_0_10px_rgba(234,56,76,0.5)]",
+      bgGlow: "shadow-[0_0_15px_rgba(234,56,76,0.2)]",
+      bgColor: "bg-gradient-to-r from-[#ea384c]/10 to-transparent",
+      pulsing: true
     };
     if (score >= 80) return { 
       level: "MEDIUM", 
       color: "#F97316",
-      bgColor: "bg-gradient-to-r from-[#F97316]/20 to-[#F97316]/10",
+      textGlow: "text-shadow-[0_0_10px_rgba(249,115,22,0.5)]",
+      bgGlow: "shadow-[0_0_15px_rgba(249,115,22,0.2)]",
+      bgColor: "bg-gradient-to-r from-[#F97316]/10 to-transparent",
+      pulsing: false
     };
     return { 
       level: "LOW", 
       color: "#28c76f",
-      bgColor: "bg-gradient-to-r from-[#28c76f]/20 to-[#28c76f]/10",
+      textGlow: "text-shadow-[0_0_10px_rgba(40,199,111,0.5)]",
+      bgGlow: "shadow-[0_0_15px_rgba(40,199,111,0.2)]",
+      bgColor: "bg-gradient-to-r from-[#28c76f]/10 to-transparent",
+      pulsing: false
     };
   };
 
-  const { level, color } = getRiskLevel(score);
+  const { level, color, textGlow, bgGlow, bgColor, pulsing } = getRiskLevel(score);
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 relative">
       <div className="flex flex-col gap-0.5">
         <span 
-          className="text-xs tracking-wide"
+          className={cn(
+            "text-xs tracking-wide transition-colors duration-300",
+            textGlow
+          )}
           style={{ color }}
         >
           Risk Level
         </span>
         <span 
-          className="text-xs font-medium tracking-wide"
+          className={cn(
+            "text-xs font-medium tracking-wide transition-colors duration-300",
+            textGlow
+          )}
           style={{ color }}
         >
           {level}
@@ -49,7 +64,10 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
       {/* Cardiogram SVG */}
       <div className="relative w-12 h-5 overflow-hidden opacity-40">
         <svg 
-          className="w-[200%] h-full animate-cardiogram"
+          className={cn(
+            "w-[200%] h-full animate-cardiogram transition-opacity duration-300",
+            pulsing && "animate-pulse"
+          )}
           viewBox="0 0 400 100" 
           preserveAspectRatio="none"
           style={{ color }}
@@ -64,7 +82,14 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
       </div>
 
       <div 
-        className="font-mono font-bold text-2xl px-3 py-1 rounded bg-black/25"
+        className={cn(
+          "font-mono font-bold text-2xl px-3 py-1 rounded",
+          "transition-all duration-300 backdrop-blur-sm",
+          "border border-white/5",
+          bgColor,
+          bgGlow,
+          pulsing && "animate-pulse"
+        )}
         style={{ color }}
       >
         {score.toFixed(1)}
