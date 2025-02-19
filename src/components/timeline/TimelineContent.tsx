@@ -1,7 +1,9 @@
+
 import { Alert } from "@/components/dashboard/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import TimelineEventCard from "../dashboard/TimelineEventCard";
-import InfiniteScrollLoader from "../dashboard/InfiniteScrollLoader";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 interface TimelineContentProps {
   allEvents: Alert[];
@@ -18,6 +20,55 @@ const TimelineContent = ({
   hasNextPage,
   loaderRef 
 }: TimelineContentProps) => {
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+
+  // This query will only run when an event is selected
+  const { data: detailedLogs } = useQuery({
+    queryKey: ["detailed-logs", entityType, selectedEventId],
+    queryFn: async () => {
+      if (!selectedEventId) return null;
+      
+      const selectedEvent = allEvents.find(event => event.id === selectedEventId);
+      if (!selectedEvent) return null;
+
+      const baseUrl = entityType === "computersimpacted" ? '/api/computer_impacted_logs' :
+                     entityType === "userorigin" ? '/api/user_origin_logs' :
+                     '/api/user_impacted_logs';
+      
+      const params = new URLSearchParams();
+      const identifier = entityType === "computersimpacted" ? selectedEvent.computer_name :
+                        entityType === "userorigin" ? selectedEvent.user_origin :
+                        selectedEvent.user_impacted;
+      
+      if (!identifier) {
+        console.error('No identifier found for detailed logs');
+        return null;
+      }
+
+      params.append(
+        entityType === "computersimpacted" ? 'computer_name' :
+        entityType === "userorigin" ? 'user_origin' :
+        'user_impacted',
+        identifier
+      );
+      
+      params.append('title', selectedEvent.title);
+
+      console.log('Fetching detailed logs:', {
+        baseUrl,
+        params: params.toString()
+      });
+
+      const response = await fetch(`${baseUrl}?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch detailed logs');
+      }
+      
+      return response.json();
+    },
+    enabled: !!selectedEventId
+  });
+
   if (isLoading && allEvents.length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -43,6 +94,8 @@ const TimelineContent = ({
             event={event}
             isLast={index === allEvents.length - 1}
             entityType={entityType}
+            onSelect={() => setSelectedEventId(event.id)}
+            detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
           />
         ))}
         

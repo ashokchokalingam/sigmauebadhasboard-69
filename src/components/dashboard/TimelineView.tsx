@@ -39,6 +39,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
         entityType
       });
       
+      // This API call gets the timeline data, not the detailed logs
       const response = await fetch(`${endpoint}?${queryParam}=${encodeURIComponent(entityId)}`);
       if (!response.ok) {
         throw new Error('Failed to fetch timeline data');
