@@ -16,15 +16,15 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
   const getRiskLevel = (score: number): { level: string; color: string; bgColor: string; glowColor: string } => {
     if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "text-[#FF6B6B]",
-      bgColor: "bg-[#FF6B6B]/10",
-      glowColor: "shadow-[0_0_15px_rgba(255,107,107,0.2)]"
+      color: "text-[#ea384c]",
+      bgColor: "bg-[#ea384c]/10",
+      glowColor: "shadow-[0_0_15px_rgba(234,56,76,0.2)]"
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "text-[#FFA500]",
-      bgColor: "bg-[#FFA500]/10",
-      glowColor: "shadow-[0_0_15px_rgba(255,165,0,0.2)]"
+      color: "text-[#ea384c]",
+      bgColor: "bg-[#ea384c]/10",
+      glowColor: "shadow-[0_0_15px_rgba(234,56,76,0.2)]"
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
