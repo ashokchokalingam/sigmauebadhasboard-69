@@ -85,7 +85,8 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
                 ${textColor}
               `}
               style={{
-                animation: riskScore >= 150 ? 'pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none'
+                animation: riskScore >= 150 ? 'pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none',
+                willChange: riskScore >= 150 ? 'opacity' : 'auto'
               }}
             >
               {riskScore.toFixed(1)}
