@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -143,10 +142,6 @@ const Index = () => {
     <div className="min-h-screen bg-[#1a1f2c] font-sans antialiased">
       <div className="max-w-[2560px] mx-auto">
         <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-clip-text text-transparent 
-            bg-gradient-to-r from-[#60A5FA] to-[#3B82F6] mb-6 md:mb-8 tracking-tight">
-            ATT&CK User Behavior Analytics
-          </h1>
           
           <DashboardLayout
             alerts={currentAlerts}
