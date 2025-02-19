@@ -8,7 +8,7 @@ interface EntityCardCardiogramProps {
 
 const EntityCardCardiogram = ({ isHighRisk }: EntityCardCardiogramProps) => {
   return (
-    <div className="relative w-24 h-8 overflow-hidden opacity-70">
+    <div className="relative w-16 h-6 overflow-hidden opacity-70">
       <svg 
         className={cn(
           "w-[200%] h-full animate-cardiogram",
