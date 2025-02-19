@@ -1,4 +1,3 @@
-
 import { Monitor, FileText, AlignLeft, User, Hash, Server, Activity, Shield, Tag, Network, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
 import { Alert } from "../types";
@@ -14,7 +13,7 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
     case 'system_time':
       return (
         <span className="text-base font-medium">
-          {format(new Date(alert.system_time), "MMM dd, yyyy, HH:mm:ss")}
+          {format(new Date(alert.system_time), "MMM dd, yyyy, hh:mm:ss aa")}
         </span>
       );
     case 'user_id':
