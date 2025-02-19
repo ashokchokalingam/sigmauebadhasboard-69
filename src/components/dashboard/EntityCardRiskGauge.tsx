@@ -1,6 +1,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Progress } from "@/components/ui/progress";
 
 interface EntityCardRiskGaugeProps {
   riskScore: string | null;
@@ -11,11 +12,11 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
 
   const getRiskLevel = (score: number) => {
     if (score >= 150) return { 
-      level: "HIGH", 
+      level: "CRITICAL", 
       color: "#ea384c",
       textGlow: "text-shadow-[0_0_10px_rgba(234,56,76,0.3)]",
       bgGlow: "shadow-[0_0_15px_rgba(234,56,76,0.1)]",
-      bgColor: "bg-[#ea384c]/5",
+      bgColor: "bg-[#ea384c]",
       pulsing: true
     };
     if (score >= 80) return { 
@@ -23,7 +24,7 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
       color: "#F97316",
       textGlow: "text-shadow-[0_0_10px_rgba(249,115,22,0.3)]",
       bgGlow: "shadow-[0_0_15px_rgba(249,115,22,0.1)]",
-      bgColor: "bg-[#F97316]/5",
+      bgColor: "bg-[#F97316]",
       pulsing: false
     };
     return { 
@@ -31,7 +32,7 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
       color: "#28c76f",
       textGlow: "text-shadow-[0_0_10px_rgba(40,199,111,0.3)]",
       bgGlow: "shadow-[0_0_15px_rgba(40,199,111,0.1)]",
-      bgColor: "bg-[#28c76f]/5",
+      bgColor: "bg-[#28c76f]",
       pulsing: false
     };
   };
@@ -40,7 +41,7 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex flex-col gap-0.5">
+      <div className="flex flex-col gap-0.5 items-end">
         <span 
           className={cn(
             "text-xs tracking-wide transition-colors duration-300",
@@ -61,38 +62,27 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
         </span>
       </div>
 
-      {/* Cardiogram SVG */}
-      <div className="relative w-12 h-5 overflow-hidden opacity-30">
-        <svg 
+      <div className="relative">
+        <div 
           className={cn(
-            "w-[200%] h-full animate-cardiogram transition-opacity duration-300",
+            "font-mono font-bold text-2xl px-3 py-1 rounded",
+            "transition-all duration-300",
+            "border border-white/5",
+            "bg-black/40",
+            bgGlow,
             pulsing && "animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite]"
           )}
-          viewBox="0 0 400 100" 
-          preserveAspectRatio="none"
           style={{ color }}
         >
-          <path
-            d="M0,50 L60,50 L80,20 L100,80 L120,50 L180,50 L200,20 L220,80 L240,50 L300,50 L320,20 L340,80 L360,50 L400,50"
-            className="stroke-current fill-none stroke-[1.5]"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          {score.toFixed(1)}
+        </div>
+        <div className="absolute -bottom-2 left-0 right-0">
+          <Progress 
+            value={Math.min((score / 200) * 100, 100)} 
+            className="h-1 bg-white/5"
+            indicatorClassName={cn(bgColor, "transition-all duration-300")}
           />
-        </svg>
-      </div>
-
-      <div 
-        className={cn(
-          "font-mono font-bold text-2xl px-3 py-1 rounded",
-          "transition-all duration-300",
-          "border border-white/5",
-          bgColor,
-          bgGlow,
-          pulsing && "animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite]"
-        )}
-        style={{ color }}
-      >
-        {score.toFixed(1)}
+        </div>
       </div>
     </div>
   );
