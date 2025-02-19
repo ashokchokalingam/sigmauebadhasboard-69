@@ -121,14 +121,17 @@ const Index = () => {
 
   if (initialQuery.isError || remainingQuery.isError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#1a1f2c] p-4">
-        <div className="text-red-500 text-xl mb-4">Error loading dashboard data</div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#1a1f2c] p-4 sm:p-6 md:p-8">
+        <div className="text-red-500 text-base sm:text-lg md:text-xl mb-4 text-center">
+          Error loading dashboard data
+        </div>
         <button 
           onClick={() => {
             initialQuery.refetch();
             remainingQuery.refetch();
           }}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          className="px-4 py-2 bg-blue-500 text-white text-sm sm:text-base rounded-lg 
+            hover:bg-blue-600 transition-colors shadow-lg hover:shadow-xl"
         >
           Retry
         </button>
@@ -137,20 +140,30 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#1a1f2c]">
-      <DashboardLayout
-        alerts={currentAlerts}
-        allAlerts={allAlerts}
-        totalRecords={initialQuery.data?.total_count || 0}
-        isLoading={initialQuery.isLoading || remainingQuery.isLoading}
-        onEntitySelect={handleEntitySelect}
-        selectedEntity={selectedEntity}
-        onLoadMore={handleLoadMore}
-        hasMore={currentAlerts.length < (initialQuery.data?.total_count || 0)}
-      />
+    <div className="min-h-screen bg-[#1a1f2c] font-sans antialiased">
+      <div className="max-w-[2560px] mx-auto">
+        <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-clip-text text-transparent 
+            bg-gradient-to-r from-[#60A5FA] to-[#3B82F6] mb-6 md:mb-8 tracking-tight">
+            ATT&CK User Behavior Analytics
+          </h1>
+          
+          <DashboardLayout
+            alerts={currentAlerts}
+            allAlerts={allAlerts}
+            totalRecords={initialQuery.data?.total_count || 0}
+            isLoading={initialQuery.isLoading || remainingQuery.isLoading}
+            onEntitySelect={handleEntitySelect}
+            selectedEntity={selectedEntity}
+            onLoadMore={handleLoadMore}
+            hasMore={currentAlerts.length < (initialQuery.data?.total_count || 0)}
+          />
+        </div>
+      </div>
       
       {(initialQuery.isLoading || remainingQuery.isLoading) && currentAlerts.length > 0 && (
-        <div className="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg">
+        <div className="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg
+          text-sm sm:text-base backdrop-blur-sm">
           Loading data... ({currentAlerts.length} / {initialQuery.data?.total_count || 0})
         </div>
       )}
