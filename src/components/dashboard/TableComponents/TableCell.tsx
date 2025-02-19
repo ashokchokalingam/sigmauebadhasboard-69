@@ -1,5 +1,5 @@
 
-import { Monitor, FileText, AlignLeft } from "lucide-react";
+import { Monitor, FileText, AlignLeft, User } from "lucide-react";
 import { format } from "date-fns";
 import { Alert } from "../types";
 
@@ -20,16 +20,30 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
     case 'user_id':
       return (
         <div className="flex items-center">
-          <span className="truncate font-medium">
-            {alert.user_id || '-'}
+          <User className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span 
+            className="hover:text-blue-400 cursor-pointer truncate font-medium"
+            onClick={(e) => {
+              e.stopPropagation();
+              onTimelineView("user", alert.user_origin || alert.user_id || '');
+            }}
+          >
+            {alert.user_origin || alert.user_id || '-'}
           </span>
         </div>
       );
     case 'target_user_name':
       return (
         <div className="flex items-center">
-          <span className="truncate font-medium">
-            {alert.target_user_name || '-'}
+          <User className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span 
+            className="hover:text-blue-400 cursor-pointer truncate font-medium"
+            onClick={(e) => {
+              e.stopPropagation();
+              onTimelineView("user", alert.user_impacted || alert.target_user_name || '');
+            }}
+          >
+            {alert.user_impacted || alert.target_user_name || '-'}
           </span>
         </div>
       );
