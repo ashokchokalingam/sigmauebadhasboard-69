@@ -80,7 +80,7 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
           <Progress 
             value={Math.min((score / 200) * 100, 100)} 
             className="h-1 bg-white/5"
-            indicatorClassName={cn(bgColor, "transition-all duration-300")}
+            indicatorClassName={bgColor}
           />
         </div>
       </div>
