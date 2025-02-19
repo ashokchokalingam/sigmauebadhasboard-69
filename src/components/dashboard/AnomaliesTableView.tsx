@@ -31,26 +31,18 @@ const AnomaliesTableView = ({
   const TableContent = (
     <div className="h-full flex flex-col">
       {/* Fixed Header */}
-      <div className="sticky top-0 z-50 bg-[#0A0D14] border-b border-blue-500/10">
+      <div className="sticky top-0 z-50 bg-[#0A0D14]">
         <div className="grid" style={{ 
-          gridTemplateColumns: `140px ${visibleColumns.slice(1).map(col => 
-            col === 'description' ? 'minmax(280px, 1fr)' :
-            col === 'title' ? 'minmax(220px, 1fr)' :
-            col === 'computer_name' ? 'minmax(160px, 1fr)' :
-            col === 'provider_name' ? 'minmax(160px, 1fr)' :
-            col === 'ip_address' ? 'minmax(130px, 1fr)' :
-            'minmax(100px, 1fr)'
-          ).join(' ')} 40px` 
+          gridTemplateColumns: `160px 140px 140px minmax(200px, 1fr) minmax(300px, 1.5fr) minmax(140px, 1fr) 100px 100px` 
         }}>
           {visibleColumns.map((columnKey) => (
             <div 
               key={columnKey}
-              className="px-3 py-2.5 text-xs font-medium tracking-wide text-slate-400 bg-slate-950/40"
+              className="px-2 py-2 text-xs font-medium text-slate-400"
             >
-              <span>{getColumnLabel(columnKey)}</span>
+              {getColumnLabel(columnKey)}
             </div>
           ))}
-          <div className="w-[40px] bg-slate-950/40" />
         </div>
       </div>
 
@@ -60,32 +52,21 @@ const AnomaliesTableView = ({
           {filteredAlerts.map((alert, index) => (
             <div
               key={alert.id}
-              className={`grid cursor-pointer transition-colors duration-150 
-                ${selectedAlert?.id === alert.id ? 'bg-blue-500/10 hover:bg-blue-500/15' : 
-                  index % 2 === 0 ? 'bg-slate-950/20 hover:bg-slate-900/30' : 'hover:bg-slate-900/30'}`}
+              className={`grid cursor-pointer ${
+                index % 2 === 0 ? 'bg-slate-950/20' : ''
+              }`}
               style={{ 
-                gridTemplateColumns: `140px ${visibleColumns.slice(1).map(col => 
-                  col === 'description' ? 'minmax(280px, 1fr)' :
-                  col === 'title' ? 'minmax(220px, 1fr)' :
-                  col === 'computer_name' ? 'minmax(160px, 1fr)' :
-                  col === 'provider_name' ? 'minmax(160px, 1fr)' :
-                  col === 'ip_address' ? 'minmax(130px, 1fr)' :
-                  'minmax(100px, 1fr)'
-                ).join(' ')} 40px` 
+                gridTemplateColumns: `160px 140px 140px minmax(200px, 1fr) minmax(300px, 1.5fr) minmax(140px, 1fr) 100px 100px`
               }}
               onClick={() => onAlertSelect(alert)}
             >
               {visibleColumns.map((columnKey) => (
                 <div key={columnKey} 
-                  className={`px-3 py-2 text-xs border-b border-blue-500/5 
-                    ${selectedAlert?.id === alert.id ? 'text-blue-100' : 'text-slate-300'}`}
+                  className="px-2 py-1.5 text-xs text-slate-300"
                 >
                   {renderCellContent(alert, columnKey, onTimelineView)}
                 </div>
               ))}
-              <div className="w-[40px] flex items-center justify-center border-b border-blue-500/5">
-                <ChevronRight className={`h-3 w-3 ${selectedAlert?.id === alert.id ? 'text-blue-400' : 'text-slate-600'}`} />
-              </div>
             </div>
           ))}
         </div>
@@ -97,13 +78,13 @@ const AnomaliesTableView = ({
     return (
       <ResizablePanelGroup 
         direction="horizontal" 
-        className="min-h-[800px] rounded-lg border border-blue-500/10 bg-slate-950/50"
+        className="min-h-[800px] rounded-lg border border-slate-800"
       >
         <ResizablePanel defaultSize={70} minSize={30} maxSize={85}>
           {TableContent}
         </ResizablePanel>
         
-        <ResizableHandle withHandle className="bg-blue-500/10 hover:bg-blue-500/20 transition-colors" />
+        <ResizableHandle withHandle />
         
         <ResizablePanel defaultSize={30} minSize={15} maxSize={70}>
           <div className="h-full overflow-auto">
@@ -118,7 +99,7 @@ const AnomaliesTableView = ({
   }
 
   return (
-    <div className="border border-blue-500/10 bg-slate-950/50 rounded-lg">
+    <div className="border border-slate-800 rounded-lg">
       {TableContent}
     </div>
   );
@@ -133,11 +114,7 @@ const getColumnLabel = (key: string): string => {
     title: 'Title',
     description: 'Description',
     ml_cluster: 'ML Cluster',
-    risk: 'Risk Score',
-    event_id: 'Event ID',
-    provider_name: 'Provider',
-    ip_address: 'IP Address',
-    ruleid: 'Rule ID'
+    risk: 'Risk Score'
   };
   return labels[key] || key;
 };
@@ -145,32 +122,29 @@ const getColumnLabel = (key: string): string => {
 const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (type: "user" | "computer", id: string) => void) => {
   switch (columnKey) {
     case 'system_time':
-      return (
-        <div className="font-medium">
-          {format(new Date(alert.system_time), "MMM dd, yyyy, HH:mm:ss")}
-        </div>
-      );
+      return format(new Date(alert.system_time), "MMM dd, yyyy, HH:mm:ss");
     case 'user_id':
       return (
-        <div className="flex items-center gap-1.5">
-          <User className="h-3.5 w-3.5 text-blue-400/80 flex-shrink-0" />
-          <span 
-            className="hover:text-blue-400 cursor-pointer truncate font-medium"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTimelineView("user", alert.user_id || '');
-            }}
-          >
+        <div className="flex items-center">
+          <span className="truncate">
             {alert.user_id || '-'}
+          </span>
+        </div>
+      );
+    case 'target_user_name':
+      return (
+        <div className="flex items-center">
+          <span className="truncate">
+            {alert.target_user_name || '-'}
           </span>
         </div>
       );
     case 'computer_name':
       return (
-        <div className="flex items-center gap-1.5">
-          <Monitor className="h-3.5 w-3.5 text-blue-400/80 flex-shrink-0" />
+        <div className="flex items-center">
+          <Monitor className="h-3.5 w-3.5 text-blue-400/80 mr-1.5 flex-shrink-0" />
           <span 
-            className="hover:text-blue-400 cursor-pointer truncate font-medium"
+            className="hover:text-blue-400 cursor-pointer truncate"
             onClick={(e) => {
               e.stopPropagation();
               onTimelineView("computer", alert.computer_name || '');
@@ -182,15 +156,15 @@ const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (typ
       );
     case 'title':
       return (
-        <div className="flex items-center gap-1.5">
-          <FileText className="h-3.5 w-3.5 text-blue-400/80 flex-shrink-0" />
+        <div className="flex items-center">
+          <FileText className="h-3.5 w-3.5 text-blue-400/80 mr-1.5 flex-shrink-0" />
           <span className="truncate">{alert.title}</span>
         </div>
       );
     case 'description':
       return (
-        <div className="flex items-center gap-1.5">
-          <AlignLeft className="h-3.5 w-3.5 text-blue-400/80 flex-shrink-0" />
+        <div className="flex items-center">
+          <AlignLeft className="h-3.5 w-3.5 text-blue-400/80 mr-1.5 flex-shrink-0" />
           <span className="truncate">{alert.description}</span>
         </div>
       );
