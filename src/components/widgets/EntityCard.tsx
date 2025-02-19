@@ -13,93 +13,77 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
   const Icon = isComputer ? Monitor : User;
   const entityName = isComputer ? entity.computer : entity.user;
 
-  const getRiskLevel = (score: number): { level: string; color: string; bgColor: string; glowColor: string } => {
+  const getRiskLevel = (score: number): { level: string; color: string; textColor: string } => {
     if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "text-[#ea384c]",
-      bgColor: "bg-[#ea384c]/10",
-      glowColor: "shadow-[0_0_15px_rgba(234,56,76,0.2)]"
+      color: "bg-gradient-to-r from-[#ea384c]/10 to-transparent",
+      textColor: "text-[#ea384c]"
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "text-[#ea384c]",
-      bgColor: "bg-[#ea384c]/10",
-      glowColor: "shadow-[0_0_15px_rgba(234,56,76,0.2)]"
+      color: "bg-gradient-to-r from-[#F97316]/10 to-transparent",
+      textColor: "text-[#F97316]"
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "text-[#ea384c]",
-      bgColor: "bg-[#ea384c]/10",
-      glowColor: "shadow-[0_0_15px_rgba(234,56,76,0.2)]"
+      color: "bg-gradient-to-r from-[#FEC6A1]/10 to-transparent",
+      textColor: "text-[#FEC6A1]"
     };
     return { 
       level: "LOW", 
-      color: "text-[#98FB98]",
-      bgColor: "bg-[#98FB98]/10",
-      glowColor: "shadow-[0_0_15px_rgba(152,251,152,0.2)]"
+      color: "bg-gradient-to-r from-[#4ADE80]/10 to-transparent",
+      textColor: "text-[#4ADE80]"
     };
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, color, bgColor, glowColor } = getRiskLevel(riskScore);
+  const { level, color, textColor } = getRiskLevel(riskScore);
 
   return (
     <div
       onClick={onClick}
-      className={`group relative p-4 rounded-lg
-        bg-[#0A0B0F]/90 hover:bg-[#12131A]
-        border border-[#5856D6]/20 hover:border-[#5856D6]/40
-        transition-all duration-300 cursor-pointer
-        backdrop-blur-sm ${glowColor}
-        hover:shadow-lg hover:-translate-y-0.5`}
+      className="group relative p-4 rounded-lg cursor-pointer
+        transition-all duration-300 ease-in-out
+        bg-black/40 hover:bg-black/50
+        border border-[#5856D6]/20 hover:border-[#5856D6]/30"
     >
-      <div className="flex items-center justify-between">
+      {/* Background gradient */}
+      <div className={`absolute inset-0 ${color} opacity-20 rounded-lg transition-opacity duration-300 group-hover:opacity-30`} />
+
+      <div className="relative flex items-center justify-between z-10">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className={`absolute -inset-1 rounded-full blur opacity-25 group-hover:opacity-40 transition-opacity duration-300 ${color}`}></div>
-            <Icon className={`relative h-5 w-5 ${color}`} />
+            <div className="w-8 h-8 rounded-full bg-[#5856D6]/10 border border-[#5856D6]/20 
+              flex items-center justify-center">
+              <Icon className={`w-4 h-4 ${textColor}`} />
+            </div>
           </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-200 group-hover:text-white">
+
+          <div className="flex flex-col">
+            <span className="text-sm text-gray-200 font-medium">
               {entityName}
-            </h3>
-            <p className={`text-xs ${color} opacity-70 group-hover:opacity-90`}>
+            </span>
+            <span className={`text-xs ${textColor}`}>
               {entity.unique_title_count} unique anomalies
-            </p>
+            </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <span className={`block text-sm font-medium ${color}`}>
-              Risk Level
-            </span>
-            <span className={`block text-xs ${color} uppercase tracking-wide`}>
-              {level}
-            </span>
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col items-end">
+            <span className={`text-xs ${textColor}`}>Risk Level</span>
+            <span className={`text-xs font-medium ${textColor}`}>{level}</span>
           </div>
-          
-          <div className="relative w-24 h-8 overflow-hidden">
-            <svg 
-              className={`w-[200%] h-full animate-cardiogram ${color}`}
-              viewBox="0 0 600 100" 
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M0,50 L100,50 L120,20 L140,80 L160,50 L300,50 L320,20 L340,80 L360,50 L500,50 L520,20 L540,80 L560,50 L600,50"
-                className="stroke-current fill-none stroke-[4]"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-          
-          <div className={`relative px-4 py-2 rounded-lg ${bgColor} backdrop-blur-sm`}>
-            <span className={`font-mono font-bold text-2xl ${color} ${
-              riskScore >= 150 ? 'animate-pulse' : ''
-            }`}>
+
+          {/* Risk Score */}
+          <div className="relative">
+            <div className={`
+              font-mono font-bold text-2xl px-3 py-1 rounded
+              bg-black/40 border border-[#5856D6]/20
+              ${textColor} ${riskScore >= 150 ? 'animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite]' : ''}
+            `}>
               {riskScore.toFixed(1)}
-            </span>
+            </div>
           </div>
         </div>
       </div>
