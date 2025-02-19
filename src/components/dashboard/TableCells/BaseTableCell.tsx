@@ -1,3 +1,4 @@
+
 import { TableCell } from "@/components/ui/table";
 import {
   Tooltip,
@@ -34,7 +35,7 @@ const BaseTableCell = ({
       align === "right" ? "justify-end" : "justify-start"
     }`}>
       {Icon && <Icon className="h-4 w-4 text-blue-400/70 flex-shrink-0" />}
-      <span className="text-[14px] font-medium text-slate-200/90">{value}</span>
+      <span className="text-[14px] font-medium text-slate-200/90 whitespace-nowrap">{value}</span>
     </div>
   );
 
@@ -43,13 +44,7 @@ const BaseTableCell = ({
       className={`px-4 py-2.5 border-b border-blue-900/10 ${width} ${className} 
       ${onClick ? 'cursor-pointer hover:bg-blue-950/30 transition-colors' : ''}`}
       onClick={onClick}
-      style={{
-        ...style,
-        maxWidth: width,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap'
-      }}
+      style={style}
     >
       {content}
     </TableCell>

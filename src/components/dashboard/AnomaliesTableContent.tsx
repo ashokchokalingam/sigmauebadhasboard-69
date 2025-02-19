@@ -40,27 +40,27 @@ const AnomaliesTableContent = ({
         return <DescriptionCell description={alert.description} />;
       case 'ml_cluster':
         return (
-          <TableCell className="px-4 py-2 text-center">
-            <span className="text-[14px] font-medium text-slate-200/90">
-              {alert.ml_cluster || '-'}
-            </span>
-          </TableCell>
+          <BaseTableCell 
+            value={alert.ml_cluster || '-'}
+            width="w-[120px]"
+            align="center"
+          />
         );
       case 'risk':
         return (
-          <TableCell className="px-4 py-2 text-center">
-            <span className="text-[14px] font-medium text-slate-200/90">
-              {alert.risk || '-'}
-            </span>
-          </TableCell>
+          <BaseTableCell 
+            value={alert.risk || '-'}
+            width="w-[100px]"
+            align="center"
+          />
         );
       default:
         return (
-          <TableCell className="px-4 py-2 text-center">
-            <span className="text-[14px] font-medium text-slate-200/90">
-              {String(alert[columnKey as keyof Alert] || '-')}
-            </span>
-          </TableCell>
+          <BaseTableCell 
+            value={String(alert[columnKey as keyof Alert] || '-')}
+            width="w-[150px]"
+            align="center"
+          />
         );
     }
   };

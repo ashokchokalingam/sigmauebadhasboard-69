@@ -1,3 +1,4 @@
+
 import { Monitor } from "lucide-react";
 import BaseTableCell from "./BaseTableCell";
 
@@ -17,6 +18,7 @@ const ComputerCell = ({ computerName, onTimelineView }: ComputerCellProps) => {
         onTimelineView("computer", computerName);
       }}
       tooltipContent={computerName}
+      align="center"
     />
   );
 };
