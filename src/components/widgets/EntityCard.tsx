@@ -76,13 +76,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         </span>
 
         <div className="relative">
-          <div 
-            className={`font-mono font-bold text-2xl ${textColor}`}
-            style={{
-              animation: riskScore >= 150 ? 'pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none',
-              willChange: riskScore >= 150 ? 'opacity' : 'auto'
-            }}
-          >
+          <div className={`font-mono font-bold text-2xl ${textColor}`}>
             {riskScore.toFixed(1)}
           </div>
           <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#5856D6]/10 rounded-full overflow-hidden">
