@@ -1,6 +1,5 @@
 
 import React from "react";
-import { AlertTriangle, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface EntityCardRiskGaugeProps {
@@ -15,68 +14,60 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
       level: "HIGH", 
       color: "#ea384c",
       bgColor: "bg-gradient-to-r from-[#ea384c]/20 to-[#ea384c]/10",
-      icon: AlertTriangle
     };
     if (score >= 80) return { 
       level: "MEDIUM", 
       color: "#F97316",
       bgColor: "bg-gradient-to-r from-[#F97316]/20 to-[#F97316]/10",
-      icon: AlertTriangle
     };
     return { 
       level: "LOW", 
       color: "#28c76f",
       bgColor: "bg-gradient-to-r from-[#28c76f]/20 to-[#28c76f]/10",
-      icon: Shield
     };
   };
 
-  const { level, color, bgColor, icon: Icon } = getRiskLevel(score);
+  const { level, color } = getRiskLevel(score);
 
   return (
-    <div className={cn(
-      "flex flex-col gap-1 min-w-[140px] rounded-lg px-3 py-2",
-      bgColor
-    )}>
-      <div className="flex items-center gap-2">
+    <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-0.5">
         <span 
-          className="text-xs font-medium uppercase tracking-wide"
+          className="text-xs tracking-wide"
           style={{ color }}
         >
           Risk Level
         </span>
         <span 
-          className="text-xs font-bold uppercase"
+          className="text-xs font-medium tracking-wide"
           style={{ color }}
         >
           {level}
         </span>
       </div>
 
-      <div className="flex items-center gap-2">
-        {/* Cardiogram SVG */}
-        <div className="relative w-16 h-3 overflow-hidden opacity-40">
-          <svg 
-            className="w-[200%] h-full animate-cardiogram"
-            viewBox="0 0 400 100" 
-            preserveAspectRatio="none"
-            style={{ color }}
-          >
-            <path
-              d="M0,50 L60,50 L80,20 L100,80 L120,50 L180,50 L200,20 L220,80 L240,50 L300,50 L320,20 L340,80 L360,50 L400,50"
-              className="stroke-current fill-none stroke-[2]"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
-
-        <div 
-          className="font-mono font-bold text-xl ml-1"
+      {/* Cardiogram SVG */}
+      <div className="relative w-12 h-5 overflow-hidden opacity-40">
+        <svg 
+          className="w-[200%] h-full animate-cardiogram"
+          viewBox="0 0 400 100" 
+          preserveAspectRatio="none"
           style={{ color }}
         >
-          {score.toFixed(1)}
-        </div>
+          <path
+            d="M0,50 L60,50 L80,20 L100,80 L120,50 L180,50 L200,20 L220,80 L240,50 L300,50 L320,20 L340,80 L360,50 L400,50"
+            className="stroke-current fill-none stroke-[2]"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+
+      <div 
+        className="font-mono font-bold text-2xl px-3 py-1 rounded bg-black/25"
+        style={{ color }}
+      >
+        {score.toFixed(1)}
       </div>
     </div>
   );
