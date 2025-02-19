@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 
 interface AlertTacticsSectionProps {
@@ -7,9 +8,9 @@ interface AlertTacticsSectionProps {
 const AlertTacticsSection = ({ tags }: AlertTacticsSectionProps) => {
   if (!tags) {
     return (
-      <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
-        <h3 className="text-lg font-semibold text-[#7B68EE] mb-3">MITRE ATT&CK</h3>
-        <p className="text-sm text-[#A9A9A9]">No tactics or techniques available</p>
+      <Card className="bg-[#1E1E2F] border-[#7B68EE]/30 p-6">
+        <h3 className="text-2xl font-bold text-[#8B5CF6] mb-4">MITRE ATT&CK</h3>
+        <p className="text-base text-[#E2E8F0]">No tactics or techniques available</p>
       </Card>
     );
   }
@@ -26,36 +27,38 @@ const AlertTacticsSection = ({ tags }: AlertTacticsSectionProps) => {
     .map(tag => tag.trim().toUpperCase());
 
   return (
-    <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
-      <h3 className="text-lg font-semibold text-[#7B68EE] mb-3">MITRE ATT&CK</h3>
-      <div className="space-y-4">
+    <Card className="bg-[#1E1E2F] border-[#8B5CF6]/30 p-6">
+      <h3 className="text-2xl font-bold text-[#8B5CF6] mb-6">MITRE ATT&CK</h3>
+      <div className="space-y-6">
         <div>
-          <h4 className="text-sm font-medium text-[#A9A9A9] mb-2">Tactics</h4>
-          <div className="flex flex-wrap gap-2">
+          <h4 className="text-lg font-semibold text-[#E2E8F0] mb-3">Tactics</h4>
+          <div className="flex flex-wrap gap-3">
             {tactics.length > 0 ? tactics.map((tactic, index) => (
               <span 
                 key={index}
-                className="px-2 py-1 bg-[#7B68EE]/10 text-[#7B68EE] text-xs rounded-full border border-[#7B68EE]/20"
+                className="px-4 py-2 bg-[#8B5CF6]/15 text-[#A78BFA] text-base font-medium rounded-lg 
+                  border border-[#8B5CF6]/30 hover:bg-[#8B5CF6]/20 transition-colors"
               >
                 {tactic}
               </span>
             )) : (
-              <span className="text-sm text-[#A9A9A9]">No tactics found</span>
+              <span className="text-base text-[#E2E8F0]">No tactics found</span>
             )}
           </div>
         </div>
         <div>
-          <h4 className="text-sm font-medium text-[#A9A9A9] mb-2">Techniques</h4>
-          <div className="flex flex-wrap gap-2">
+          <h4 className="text-lg font-semibold text-[#E2E8F0] mb-3">Techniques</h4>
+          <div className="flex flex-wrap gap-3">
             {techniques.length > 0 ? techniques.map((technique, index) => (
               <span 
                 key={index}
-                className="px-2 py-1 bg-[#7B68EE]/10 text-[#7B68EE] text-xs rounded-full border border-[#7B68EE]/20"
+                className="px-4 py-2 bg-[#8B5CF6]/15 text-[#A78BFA] text-base font-medium rounded-lg 
+                  border border-[#8B5CF6]/30 hover:bg-[#8B5CF6]/20 transition-colors"
               >
                 {technique}
               </span>
             )) : (
-              <span className="text-sm text-[#A9A9A9]">No techniques found</span>
+              <span className="text-base text-[#E2E8F0]">No techniques found</span>
             )}
           </div>
         </div>
