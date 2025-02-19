@@ -10,8 +10,6 @@ interface ResizableHeaderProps {
   onFilterChange: (column: string, value: string) => void;
   selectedValue: string;
   alerts: Alert[];
-  defaultSize?: number;
-  minSize?: number;
 }
 
 const ResizableHeader = ({
@@ -20,13 +18,7 @@ const ResizableHeader = ({
   onFilterChange,
   selectedValue,
   alerts,
-  defaultSize = 200,
-  minSize = 100
 }: ResizableHeaderProps) => {
-  const [width, setWidth] = useState(defaultSize);
-  const [isResizing, setIsResizing] = useState(false);
-  const headerRef = useRef<HTMLTableCellElement>(null);
-
   const getUniqueValues = (key: keyof Alert) => {
     const values = alerts.map(alert => {
       const value = alert[key];
@@ -53,19 +45,14 @@ const ResizableHeader = ({
   };
 
   return (
-    <TableHead 
-      ref={headerRef}
-      className="h-14 px-0 bg-[#1A1F2C] border-b border-blue-900/20"
-    >
-      <div className="flex items-center gap-2 px-4 py-3">
-        <ColumnFilter
-          title={title}
-          options={getUniqueValues(columnKey as keyof Alert)}
-          onSelect={(value) => onFilterChange(columnKey, value)}
-          selectedValue={selectedValue}
-        />
-      </div>
-    </TableHead>
+    <div className="w-full">
+      <ColumnFilter
+        title={title}
+        options={getUniqueValues(columnKey as keyof Alert)}
+        onSelect={(value) => onFilterChange(columnKey, value)}
+        selectedValue={selectedValue}
+      />
+    </div>
   );
 };
 
