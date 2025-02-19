@@ -1,27 +1,23 @@
-import { AlertTriangle } from "lucide-react";
+
+import { Alert } from "../types";
 import BaseTableCell from "./BaseTableCell";
+import { getRiskScoreColor } from "../utils/colorUtils";
+import { cn } from "@/lib/utils";
 
 interface RiskScoreCellProps {
-  risk: number | null;
+  alert: Alert;
 }
 
-const RiskScoreCell = ({ risk }: RiskScoreCellProps) => {
-  const getRiskColor = (risk: number | null) => {
-    if (!risk) return "text-slate-400";
-    if (risk >= 80) return "text-red-400";
-    if (risk >= 50) return "text-yellow-400";
-    return "text-green-400";
-  };
-
+const RiskScoreCell = ({ alert }: RiskScoreCellProps) => {
   return (
-    <BaseTableCell 
-      value={risk || 'N/A'}
-      icon={AlertTriangle}
-      width="w-[70px]"
-      tooltipContent={`Risk Score: ${risk || 'N/A'}`}
-      className={`font-medium ${getRiskColor(risk)}`}
-      align="center"
-    />
+    <BaseTableCell>
+      <span className={cn(
+        "font-mono font-bold",
+        getRiskScoreColor(alert.risk)
+      )}>
+        {alert.risk || '-'}
+      </span>
+    </BaseTableCell>
   );
 };
 

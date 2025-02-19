@@ -12,8 +12,7 @@ const EntityCardCardiogram = ({ isHighRisk }: EntityCardCardiogramProps) => {
       <svg 
         className={cn(
           "w-[200%] h-full animate-cardiogram",
-          "stroke-[#9b87f5]",
-          isHighRisk && "stroke-[#ea384c]"
+          isHighRisk ? "stroke-[#ea384c]" : "stroke-[#28c76f]"
         )} 
         viewBox="0 0 600 100" 
         preserveAspectRatio="none"
