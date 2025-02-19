@@ -26,8 +26,8 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
       const key = Object.keys(data)[0];
       return data[key] || [];
     },
-    staleTime: 30000, // Consider data fresh for 30 seconds
-    gcTime: 5 * 60 * 1000, // Cache for 5 minutes (formerly cacheTime)
+    staleTime: 30000,
+    gcTime: 5 * 60 * 1000,
   });
 
   const filteredEntities = useMemo(() => {
@@ -60,50 +60,54 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
   }
 
   return (
-    <Card className="bg-[#0A0B0F]/40 border-[#5856D6]/20 hover:bg-[#0A0B0F]/60 
-                    transition-all duration-300 h-[500px] backdrop-blur-sm">
-      <CardHeader className="p-6 border-b border-[#5856D6]/20">
-        <CardTitle className="flex items-center gap-3 text-[#D6BCFA]">
+    <div className="bg-[#0A0B0F] border border-[#5856D6]/20 rounded-xl overflow-hidden">
+      <div className="p-4 flex items-center justify-between border-b border-[#5856D6]/20">
+        <div className="flex items-center gap-2 text-sm font-medium text-[#D6BCFA]">
           <Shield className="h-5 w-5 text-[#9b87f5]" />
           {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6 pt-4">
-        <div className="space-y-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9b87f5]/50" />
-            <input
-              type="text"
-              placeholder={searchPlaceholder}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 
-                       bg-[#0A0B0F]/40 border border-[#5856D6]/30 
-                       rounded-lg text-[#D6BCFA] placeholder:text-[#9b87f5]/50
-                       focus:outline-none focus:ring-1 focus:ring-[#5856D6]/30
-                       transition-all duration-200 backdrop-blur-sm"
-            />
-          </div>
-          
-          <div className="space-y-3 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-[#5856D6]/20 
-                        scrollbar-track-transparent" style={{ height: 'calc(500px - 140px)' }}>
-            {filteredEntities.map((entity: any) => (
-              <EntityCard
-                key={entityType === 'computer' ? entity.computer : entity.user}
-                entity={entity}
-                entityType={entityType.toLowerCase() as 'computer' | 'userOrigin' | 'userImpacted'}
-                onClick={() => handleEntityClick(entityType === 'computer' ? entity.computer : entity.user)}
-              />
-            ))}
-            {filteredEntities.length === 0 && (
-              <div className="text-center text-[#9b87f5]/60 py-4">
-                No high risk entities found
-              </div>
-            )}
-          </div>
         </div>
-      </CardContent>
-    </Card>
+        <div className="text-xs font-medium text-[#9b87f5] px-2 py-1 rounded-full 
+          bg-[#5856D6]/10 border border-[#5856D6]/20">
+          {filteredEntities.length} active
+        </div>
+      </div>
+
+      <div className="p-3 border-b border-[#5856D6]/20">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9b87f5]/50" />
+          <input
+            type="text"
+            placeholder={searchPlaceholder}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-4 py-2.5
+              bg-[#0A0B0F] hover:bg-[#12131A]
+              border border-[#5856D6]/30 hover:border-[#5856D6]/50 
+              rounded-lg text-xs text-[#D6BCFA] 
+              placeholder:text-[#9b87f5]/50
+              transition-colors duration-200
+              focus:outline-none focus:ring-1 focus:ring-[#5856D6]/30"
+          />
+        </div>
+      </div>
+      
+      <div className="px-4 pb-4 space-y-2 overflow-y-auto h-[calc(100%-120px)]
+        scrollbar-thin scrollbar-thumb-[#5856D6]/20 scrollbar-track-transparent">
+        {filteredEntities.map((entity: any) => (
+          <EntityCard
+            key={entityType === 'computer' ? entity.computer : entity.user}
+            entity={entity}
+            entityType={entityType.toLowerCase() as 'computer' | 'userOrigin' | 'userImpacted'}
+            onClick={() => handleEntityClick(entityType === 'computer' ? entity.computer : entity.user)}
+          />
+        ))}
+        {filteredEntities.length === 0 && (
+          <div className="text-center text-[#9b87f5]/60 py-4">
+            No high risk entities found
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

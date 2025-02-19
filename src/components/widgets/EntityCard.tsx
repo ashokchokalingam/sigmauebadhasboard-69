@@ -14,83 +14,82 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
   const Icon = isComputer ? Monitor : User;
   const entityName = isComputer ? entity.computer : entity.user;
 
-  const getRiskLevel = (score: number): { level: string; color: string; textColor: string } => {
+  const getRiskLevel = (score: number): { level: string; color: string; textColor: string; progressColor: string } => {
     if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "bg-gradient-to-r from-[#ea384c]/10 to-transparent",
-      textColor: "text-[#ea384c]"
+      color: "bg-[#ea384c]/10",
+      textColor: "text-[#ea384c]",
+      progressColor: "bg-[#ea384c]"
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "bg-gradient-to-r from-[#F97316]/10 to-transparent",
-      textColor: "text-[#F97316]"
+      color: "bg-[#F97316]/10",
+      textColor: "text-[#F97316]",
+      progressColor: "bg-[#F97316]"
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "bg-gradient-to-r from-[#FEC6A1]/10 to-transparent",
-      textColor: "text-[#FEC6A1]"
+      color: "bg-[#FEC6A1]/10",
+      textColor: "text-[#FEC6A1]",
+      progressColor: "bg-[#FEC6A1]"
     };
     return { 
       level: "LOW", 
-      color: "bg-gradient-to-r from-[#4ADE80]/10 to-transparent",
-      textColor: "text-[#4ADE80]"
+      color: "bg-[#4ADE80]/10",
+      textColor: "text-[#4ADE80]",
+      progressColor: "bg-[#4ADE80]"
     };
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, color, textColor } = getRiskLevel(riskScore);
+  const { level, color, textColor, progressColor } = getRiskLevel(riskScore);
+  const progressWidth = Math.min((riskScore / 200) * 100, 100);
 
   return (
     <div
       onClick={onClick}
-      className="group relative p-4 rounded-lg cursor-pointer
-        transition-all duration-300 ease-in-out
-        bg-black/40 hover:bg-black/50
-        border border-[#5856D6]/20 hover:border-[#5856D6]/30"
+      className="flex items-center justify-between p-4 rounded-lg 
+        bg-[#0A0B0F] hover:bg-[#12131A]
+        border border-[#5856D6]/30 hover:border-[#5856D6]/50
+        transition-all duration-300 cursor-pointer
+        shadow-sm hover:shadow-md hover:shadow-[#5856D6]/10"
     >
-      {/* Background gradient */}
-      <div className={`absolute inset-0 ${color} opacity-20 rounded-lg transition-opacity duration-300 group-hover:opacity-30`} />
-
-      <div className="relative flex items-center justify-between z-10">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="w-8 h-8 rounded-full bg-[#5856D6]/10 border border-[#5856D6]/20 
-              flex items-center justify-center">
-              <Icon className={`w-4 h-4 ${textColor}`} />
-            </div>
-          </div>
-
-          <div className="flex flex-col">
-            <span className="text-sm text-gray-200 font-medium">
-              {entityName}
-            </span>
-            <span className={`text-xs ${textColor}`}>
-              {entity.unique_title_count} unique anomalies
-            </span>
-          </div>
+      <div className="flex items-center gap-3 flex-[0_0_50%]">
+        <div className="w-8 h-8 rounded-full bg-[#5856D6]/10 flex items-center justify-center
+          border border-[#5856D6]/20">
+          <Icon className={`w-4 h-4 ${textColor}`} />
         </div>
+        
+        <div className="flex flex-col min-w-[120px] gap-1">
+          <span className="font-mono text-sm text-[#D6BCFA] font-medium hover:text-white truncate max-w-[200px]">
+            {entityName}
+          </span>
+          <span className="text-xs text-[#9b87f5]/70">
+            {entity.unique_title_count} unique anomalies
+          </span>
+        </div>
+      </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex flex-col items-end">
-            <span className={`text-xs ${textColor}`}>Risk Level</span>
-            <span className={`text-xs font-medium ${textColor}`}>{level}</span>
+      <div className="flex-1 flex items-center justify-end gap-4">
+        <span className={`text-sm font-medium ${textColor}`}>
+          {level}
+        </span>
+
+        <div className="relative">
+          <div 
+            className={`font-mono font-bold text-2xl ${textColor}`}
+            style={{
+              animation: riskScore >= 150 ? 'pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none',
+              willChange: riskScore >= 150 ? 'opacity' : 'auto'
+            }}
+          >
+            {riskScore.toFixed(1)}
           </div>
-
-          {/* Risk Score */}
-          <div className="relative">
+          <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#5856D6]/10 rounded-full overflow-hidden">
             <div 
-              className={`
-                font-mono font-bold text-2xl px-3 py-1 rounded
-                bg-black/40 border border-[#5856D6]/20
-                ${textColor}
-              `}
-              style={{
-                animation: riskScore >= 150 ? 'pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none',
-                willChange: riskScore >= 150 ? 'opacity' : 'auto'
-              }}
-            >
-              {riskScore.toFixed(1)}
-            </div>
+              className={`h-full ${progressColor} transition-all duration-300`}
+              style={{ width: `${progressWidth}%` }}
+            />
           </div>
         </div>
       </div>
