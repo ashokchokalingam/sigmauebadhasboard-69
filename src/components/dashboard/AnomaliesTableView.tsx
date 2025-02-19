@@ -3,7 +3,11 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 import { Alert } from "./types";
 import AlertDetailsView from "./AlertDetailsView";
 import { format } from "date-fns";
-import { ChevronRight, User, Monitor, FileText, AlignLeft } from "lucide-react";
+import { ChevronRight, User, Monitor, FileText, AlignLeft, GripHorizontal } from "lucide-react";
+import { DndContext, closestCenter, DragEndEvent, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
+import { SortableContext, horizontalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { useState, useEffect } from 'react';
 
 interface AnomaliesTableViewProps {
   alerts: Alert[];
@@ -17,34 +21,109 @@ interface AnomaliesTableViewProps {
   onClose: () => void;
 }
 
+const DraggableHeader = ({ id, children }: { id: string; children: React.ReactNode }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 1 : 0,
+    position: 'relative' as const,
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center'
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} className="group">
+      <div className="flex items-center gap-2 w-full">
+        {children}
+        <GripHorizontal 
+          className="h-3.5 w-3.5 text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab" 
+          {...listeners}
+        />
+      </div>
+    </div>
+  );
+};
+
 const AnomaliesTableView = ({
   alerts,
   selectedAlert,
   onFilterChange,
   filters,
-  visibleColumns,
+  visibleColumns: initialVisibleColumns,
   onAlertSelect,
   onTimelineView,
   filteredAlerts,
   onClose
 }: AnomaliesTableViewProps) => {
+  const [columnOrder, setColumnOrder] = useState(initialVisibleColumns);
+  const sensors = useSensors(useSensor(PointerSensor, {
+    activationConstraint: { distance: 5 }
+  }));
+
+  useEffect(() => {
+    setColumnOrder(initialVisibleColumns);
+  }, [initialVisibleColumns]);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = columnOrder.indexOf(String(active.id));
+    const newIndex = columnOrder.indexOf(String(over.id));
+    
+    const newOrder = [...columnOrder];
+    newOrder.splice(oldIndex, 1);
+    newOrder.splice(newIndex, 0, String(active.id));
+    setColumnOrder(newOrder);
+  };
+
+  const getColumnWidth = (columnKey: string) => {
+    switch (columnKey) {
+      case 'system_time': return '180px';
+      case 'user_id': return '140px';
+      case 'target_user_name': return '140px';
+      case 'title': return 'minmax(200px, 1fr)';
+      case 'description': return 'minmax(300px, 1.5fr)';
+      case 'computer_name': return '140px';
+      case 'ml_cluster': return '100px';
+      case 'risk': return '100px';
+      default: return '140px';
+    }
+  };
+
   const TableContent = (
     <div className="h-full flex flex-col">
       {/* Fixed Header */}
-      <div className="sticky top-0 z-50 bg-[#0A0D14]">
-        <div className="grid" style={{ 
-          gridTemplateColumns: `160px 140px 140px minmax(200px, 1fr) minmax(300px, 1.5fr) minmax(140px, 1fr) 100px 100px` 
-        }}>
-          {visibleColumns.map((columnKey) => (
-            <div 
-              key={columnKey}
-              className="px-2 py-2 text-xs font-medium text-slate-400"
-            >
-              {getColumnLabel(columnKey)}
-            </div>
-          ))}
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <div className="sticky top-0 z-50 bg-[#0A0D14] border-b border-slate-800">
+          <div className="grid" style={{ 
+            gridTemplateColumns: columnOrder.map(col => getColumnWidth(col)).join(' ')
+          }}>
+            <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
+              {columnOrder.map((columnKey) => (
+                <div 
+                  key={columnKey}
+                  className="px-2 py-2 text-xs font-medium text-slate-400"
+                >
+                  <DraggableHeader id={columnKey}>
+                    {getColumnLabel(columnKey)}
+                  </DraggableHeader>
+                </div>
+              ))}
+            </SortableContext>
+          </div>
         </div>
-      </div>
+      </DndContext>
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-auto">
@@ -56,11 +135,11 @@ const AnomaliesTableView = ({
                 index % 2 === 0 ? 'bg-slate-950/20' : ''
               }`}
               style={{ 
-                gridTemplateColumns: `160px 140px 140px minmax(200px, 1fr) minmax(300px, 1.5fr) minmax(140px, 1fr) 100px 100px`
+                gridTemplateColumns: columnOrder.map(col => getColumnWidth(col)).join(' ')
               }}
               onClick={() => onAlertSelect(alert)}
             >
-              {visibleColumns.map((columnKey) => (
+              {columnOrder.map((columnKey) => (
                 <div key={columnKey} 
                   className="px-2 py-1.5 text-xs text-slate-300"
                 >
