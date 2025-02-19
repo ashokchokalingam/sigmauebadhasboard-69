@@ -1,7 +1,6 @@
 
 import { Table } from "@/components/ui/table";
 import { Alert } from "./types";
-import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import AnomaliesTableContent from "./AnomaliesTableContent";
 import ResizableHeader from "./ResizableHeader";
 
@@ -26,27 +25,30 @@ const AnomaliesMainView = ({
   onTimelineView,
   filteredAlerts
 }: AnomaliesMainViewProps) => {
+  const getColumnWidth = (columnKey: string): string => {
+    switch (columnKey) {
+      case 'system_time': return 'w-[180px]';
+      case 'user_id': return 'w-[140px]';
+      case 'target_user_name': return 'w-[140px]';
+      case 'computer_name': return 'w-[160px]';
+      case 'title': return 'w-[200px]';
+      case 'description': return 'w-[400px]';
+      case 'ml_cluster': return 'w-[120px]';
+      case 'risk': return 'w-[100px]';
+      default: return 'w-[150px]';
+    }
+  };
+
   return (
     <div className="border border-blue-900/20 rounded-md bg-[#0A0D14]">
       <div className="h-[800px] overflow-auto">
         <table className="w-full border-collapse [&_tr:hover]:bg-blue-950/30 [&_tr]:border-b [&_tr]:border-blue-900/10">
-          <colgroup>
-            <col className="w-[180px]" /> {/* Time */}
-            <col className="w-[140px]" /> {/* User Origin */}
-            <col className="w-[140px]" /> {/* User Impacted */}
-            <col className="w-[160px]" /> {/* Computer */}
-            <col className="w-[200px]" /> {/* Title */}
-            <col className="w-[400px]" /> {/* Description */}
-            <col className="w-[120px]" /> {/* ML Cluster */}
-            <col className="w-[100px]" /> {/* Risk */}
-            <col className="w-[40px]" /> {/* Arrow */}
-          </colgroup>
           <thead className="sticky top-0 bg-[#0A0D14] z-50">
             <tr>
               {visibleColumns.map((columnKey) => (
                 <th 
                   key={columnKey}
-                  className="px-4 py-2 text-left bg-[#1A1F2C] border-b border-blue-900/20"
+                  className={`${getColumnWidth(columnKey)} px-4 py-2 text-left bg-[#1A1F2C] border-b border-blue-900/20`}
                 >
                   <ResizableHeader
                     title={getColumnLabel(columnKey)}
