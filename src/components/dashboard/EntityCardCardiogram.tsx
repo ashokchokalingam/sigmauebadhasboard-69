@@ -1,3 +1,4 @@
+
 import React from "react";
 import { cn } from "@/lib/utils";
 
@@ -7,11 +8,12 @@ interface EntityCardCardiogramProps {
 
 const EntityCardCardiogram = ({ isHighRisk }: EntityCardCardiogramProps) => {
   return (
-    <div className="relative w-24 h-8 overflow-hidden">
+    <div className="relative w-24 h-8 overflow-hidden opacity-70">
       <svg 
         className={cn(
           "w-[200%] h-full animate-cardiogram",
-          "stroke-[#9b87f5]"
+          "stroke-[#9b87f5]",
+          isHighRisk && "stroke-[#ea384c]"
         )} 
         viewBox="0 0 600 100" 
         preserveAspectRatio="none"
