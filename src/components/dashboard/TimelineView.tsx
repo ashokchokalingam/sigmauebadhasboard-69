@@ -1,3 +1,4 @@
+
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Alert } from "./types";
 import { useInView } from "react-intersection-observer";
@@ -28,11 +29,17 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     queryKey: ["timeline", entityType, entityId],
     queryFn: async ({ pageParam = 1 }) => {
       const endpoint = getTimelineEndpoint(entityType);
-      const queryParam = `${entityType.includes('user') ? 
-        (entityType === 'userorigin' ? 'user_origin' : 'user_impacted') : 
-        'computer_name'}=${entityId}`;
+      const queryParam = entityType === 'userorigin' ? 'user_origin' : 
+                        entityType === 'userimpacted' ? 'user_impacted' : 
+                        'computer_name';
+      console.log('Fetching timeline data:', {
+        endpoint,
+        queryParam,
+        entityId,
+        entityType
+      });
       
-      const response = await fetch(`${endpoint}?${queryParam}`);
+      const response = await fetch(`${endpoint}?${queryParam}=${encodeURIComponent(entityId)}`);
       if (!response.ok) {
         throw new Error('Failed to fetch timeline data');
       }
