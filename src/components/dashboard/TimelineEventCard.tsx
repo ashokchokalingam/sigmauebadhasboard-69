@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Alert } from "./types";
 import { useState } from "react";
@@ -12,9 +13,17 @@ interface TimelineEventCardProps {
   event: Alert;
   isLast?: boolean;
   entityType: "userorigin" | "userimpacted" | "computersimpacted";
+  onSelect?: () => void;
+  detailedLogs?: any;
 }
 
-const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps) => {
+const TimelineEventCard = ({ 
+  event, 
+  isLast, 
+  entityType,
+  onSelect,
+  detailedLogs 
+}: TimelineEventCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const getRiskColor = (risk: number | null) => {
@@ -25,59 +34,12 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
     return "text-green-400";
   };
 
-  const { data: detailedLogs, isLoading } = useQuery({
-    queryKey: ['detailed-logs', entityType, event.computer_name || event.user_impacted || event.user_origin, event.title, isExpanded],
-    queryFn: async () => {
-      if (!isExpanded) return null;
-      
-      const identifier = entityType === "computersimpacted" ? event.computer_name : 
-                        entityType === "userorigin" ? event.user_origin :
-                        event.user_impacted;
-      
-      if (!identifier) {
-        console.error('No identifier provided for detailed logs query');
-        return null;
-      }
-
-      try {
-        const baseUrl = entityType === "computersimpacted" ? '/api/computer_impacted_logs' :
-                       entityType === "userorigin" ? '/api/user_origin_logs' :
-                       '/api/user_impacted_logs';
-        const params = new URLSearchParams();
-        
-        if (entityType === "computersimpacted") {
-          params.append('computer_name', identifier);
-        } else if (entityType === "userorigin") {
-          params.append('user_origin', identifier);
-        } else {
-          params.append('user_impacted', identifier);
-        }
-        
-        params.append('title', event.title);
-        params.append('page', '1');
-        params.append('per_page', '500');
-
-        console.log('Fetching logs with params:', baseUrl + '?' + params.toString());
-
-        const response = await fetch(`${baseUrl}?${params.toString()}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch logs');
-        }
-        
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error('Error fetching detailed logs:', error);
-        return null;
-      }
-    },
-    enabled: isExpanded && !!(event.computer_name || event.user_impacted || event.user_origin)
-  });
-
   const handleCardClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded((prev) => !prev);
+    if (onSelect) {
+      onSelect();
+    }
   };
 
   const mappedEntityType = 
@@ -161,12 +123,12 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
 
           <TimelineMitreSection alert={event} />
 
-          {isExpanded && (
+          {isExpanded && detailedLogs && (
             <TimelineDetailedLogs
               logs={entityType === "computersimpacted" ? detailedLogs?.computer_impacted_logs || [] :
                    entityType === "userorigin" ? detailedLogs?.user_origin_logs || [] :
                    detailedLogs?.user_impacted_logs || []}
-              isLoading={isLoading}
+              isLoading={false}
               totalRecords={detailedLogs?.pagination?.total_records || 0}
               entityType={mappedEntityType}
             />
