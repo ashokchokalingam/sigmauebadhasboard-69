@@ -46,7 +46,7 @@ const DraggableHeader = ({ id, children }: { id: string; children: React.ReactNo
       <div className="flex items-center gap-2 w-full">
         {children}
         <GripHorizontal 
-          className="h-3.5 w-3.5 text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab" 
+          className="h-4 w-4 text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab" 
           {...listeners}
         />
       </div>
@@ -89,21 +89,20 @@ const AnomaliesTableView = ({
 
   const getColumnWidth = (columnKey: string) => {
     switch (columnKey) {
-      case 'system_time': return '180px';
-      case 'user_id': return '140px';
-      case 'target_user_name': return '140px';
-      case 'title': return 'minmax(200px, 1fr)';
-      case 'description': return 'minmax(300px, 1.5fr)';
-      case 'computer_name': return '140px';
-      case 'ml_cluster': return '100px';
-      case 'risk': return '100px';
-      default: return '140px';
+      case 'system_time': return '200px';
+      case 'user_id': return '160px';
+      case 'target_user_name': return '160px';
+      case 'title': return 'minmax(250px, 1fr)';
+      case 'description': return 'minmax(350px, 1.5fr)';
+      case 'computer_name': return '160px';
+      case 'ml_cluster': return '120px';
+      case 'risk': return '120px';
+      default: return '160px';
     }
   };
 
   const TableContent = (
     <div className="h-full flex flex-col">
-      {/* Fixed Header */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <div className="sticky top-0 z-50 bg-[#0A0D14] border-b border-slate-800">
           <div className="grid" style={{ 
@@ -113,7 +112,7 @@ const AnomaliesTableView = ({
               {columnOrder.map((columnKey) => (
                 <div 
                   key={columnKey}
-                  className="px-2 py-2 text-xs font-medium text-slate-400"
+                  className="px-3 py-3 text-sm font-medium text-slate-300"
                 >
                   <DraggableHeader id={columnKey}>
                     {getColumnLabel(columnKey)}
@@ -125,7 +124,6 @@ const AnomaliesTableView = ({
         </div>
       </DndContext>
 
-      {/* Scrollable Content */}
       <div className="flex-1 overflow-auto">
         <div className="grid">
           {filteredAlerts.map((alert, index) => (
@@ -133,7 +131,7 @@ const AnomaliesTableView = ({
               key={alert.id}
               className={`grid cursor-pointer ${
                 index % 2 === 0 ? 'bg-slate-950/20' : ''
-              }`}
+              } hover:bg-slate-800/20`}
               style={{ 
                 gridTemplateColumns: columnOrder.map(col => getColumnWidth(col)).join(' ')
               }}
@@ -141,7 +139,7 @@ const AnomaliesTableView = ({
             >
               {columnOrder.map((columnKey) => (
                 <div key={columnKey} 
-                  className="px-2 py-1.5 text-xs text-slate-300"
+                  className="px-3 py-2.5 text-sm text-slate-300"
                 >
                   {renderCellContent(alert, columnKey, onTimelineView)}
                 </div>
@@ -201,11 +199,15 @@ const getColumnLabel = (key: string): string => {
 const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (type: "user" | "computer", id: string) => void) => {
   switch (columnKey) {
     case 'system_time':
-      return format(new Date(alert.system_time), "MMM dd, yyyy, HH:mm:ss");
+      return (
+        <span className="font-medium">
+          {format(new Date(alert.system_time), "MMM dd, yyyy, HH:mm:ss")}
+        </span>
+      );
     case 'user_id':
       return (
         <div className="flex items-center">
-          <span className="truncate">
+          <span className="truncate font-medium">
             {alert.user_id || '-'}
           </span>
         </div>
@@ -213,7 +215,7 @@ const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (typ
     case 'target_user_name':
       return (
         <div className="flex items-center">
-          <span className="truncate">
+          <span className="truncate font-medium">
             {alert.target_user_name || '-'}
           </span>
         </div>
@@ -221,9 +223,9 @@ const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (typ
     case 'computer_name':
       return (
         <div className="flex items-center">
-          <Monitor className="h-3.5 w-3.5 text-blue-400/80 mr-1.5 flex-shrink-0" />
+          <Monitor className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
           <span 
-            className="hover:text-blue-400 cursor-pointer truncate"
+            className="hover:text-blue-400 cursor-pointer truncate font-medium"
             onClick={(e) => {
               e.stopPropagation();
               onTimelineView("computer", alert.computer_name || '');
@@ -236,19 +238,23 @@ const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (typ
     case 'title':
       return (
         <div className="flex items-center">
-          <FileText className="h-3.5 w-3.5 text-blue-400/80 mr-1.5 flex-shrink-0" />
-          <span className="truncate">{alert.title}</span>
+          <FileText className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="truncate font-medium">{alert.title}</span>
         </div>
       );
     case 'description':
       return (
         <div className="flex items-center">
-          <AlignLeft className="h-3.5 w-3.5 text-blue-400/80 mr-1.5 flex-shrink-0" />
+          <AlignLeft className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
           <span className="truncate">{alert.description}</span>
         </div>
       );
     default:
-      return String(alert[columnKey as keyof Alert] || '-');
+      return (
+        <span className="font-medium">
+          {String(alert[columnKey as keyof Alert] || '-')}
+        </span>
+      );
   }
 };
 
