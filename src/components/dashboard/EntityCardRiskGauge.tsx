@@ -17,7 +17,7 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
       textGlow: "text-shadow-[0_0_10px_rgba(234,56,76,0.3)]",
       bgGlow: "shadow-[0_0_15px_rgba(234,56,76,0.1)]",
       bgColor: "bg-[#ea384c]",
-      pulsing: true
+      pulsing: false
     };
     if (score >= 80) return { 
       level: "MEDIUM", 
@@ -44,7 +44,7 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
       <div className="flex flex-col gap-0.5 items-end">
         <span 
           className={cn(
-            "text-xs tracking-wide transition-colors duration-300",
+            "text-xs tracking-wide",
             textGlow
           )}
           style={{ color }}
@@ -53,7 +53,7 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
         </span>
         <span 
           className={cn(
-            "text-xs font-medium tracking-wide transition-colors duration-300",
+            "text-xs font-medium tracking-wide",
             textGlow
           )}
           style={{ color }}
@@ -66,11 +66,9 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
         <div 
           className={cn(
             "font-mono font-bold text-2xl px-3 py-1 rounded",
-            "transition-all duration-300",
             "border border-white/5",
             "bg-black/40",
-            bgGlow,
-            pulsing && "animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite]"
+            bgGlow
           )}
           style={{ color }}
         >
