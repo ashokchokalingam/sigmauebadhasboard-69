@@ -8,112 +8,55 @@ interface EntityCardRiskGaugeProps {
 
 const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
   const score = riskScore ? parseInt(riskScore) : 0;
-  const rotation = Math.min((score / 200) * 180, 180); // Map 0-200 to 0-180 degrees
+  const progress = Math.min((score / 200) * 100, 100); // Convert to percentage
 
-  const getGradientColors = (score: number) => {
-    if (score >= 200) return ["#28c76f", "#F97316", "#ea384c"];
-    if (score >= 100) return ["#28c76f", "#F97316", "#ea384c"];
-    if (score >= 50) return ["#28c76f", "#F97316"];
-    return ["#28c76f"];
+  const getRiskLevel = (score: number) => {
+    if (score >= 200) return { level: "HIGH", color: "#ea384c" };
+    if (score >= 100) return { level: "MEDIUM", color: "#F97316" };
+    if (score >= 50) return { level: "LOW", color: "#28c76f" };
+    return { level: "LOW", color: "#28c76f" };
   };
 
-  const getRiskColor = (score: number) => {
-    if (score >= 200) return "#ea384c";
-    if (score >= 100) return "#ea384c";
-    if (score >= 50) return "#F97316";
-    return "#28c76f";
-  };
+  const { color } = getRiskLevel(score);
 
   return (
-    <div className="relative w-20 h-20">
-      {/* Background Circle */}
-      <svg 
-        className="w-full h-full -rotate-90 transform"
-        viewBox="0 0 100 100"
-      >
-        {/* Gradient Definition */}
-        <defs>
-          <linearGradient id="riskGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            {getGradientColors(score).map((color, index, array) => (
-              <stop 
-                key={index}
-                offset={`${(index / (array.length - 1)) * 100}%`}
-                stopColor={color}
-              />
-            ))}
-          </linearGradient>
-        </defs>
+    <div className="relative">
+      <div className="flex items-center justify-between">
+        <div className="flex-1 h-20 relative">
+          {/* Arc Container */}
+          <svg 
+            className="w-20 h-20 transform -rotate-90"
+            viewBox="0 0 100 100"
+          >
+            {/* Background Arc */}
+            <path
+              d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,-45 0 1 1 0,-90"
+              fill="none"
+              stroke="#1a1a1a"
+              strokeWidth="4"
+              className="opacity-20"
+            />
+            
+            {/* Colored Progress Arc */}
+            <path
+              d="M 50,50 m 0,-45 a 45,45 0 1 1 0,90 a 45,-45 0 1 1 0,-90"
+              fill="none"
+              stroke={color}
+              strokeWidth="4"
+              strokeLinecap="round"
+              style={{
+                strokeDasharray: "282.7",
+                strokeDashoffset: `${282.7 - (progress / 100) * 282.7}`,
+                transition: "stroke-dashoffset 0.5s ease-in-out, stroke 0.5s ease-in-out"
+              }}
+            />
+          </svg>
 
-        {/* Background Track */}
-        <circle
-          cx="50"
-          cy="50"
-          r="45"
-          fill="none"
-          stroke="#1a1a1a"
-          strokeWidth="8"
-          className="opacity-20"
-        />
-
-        {/* Colored Progress */}
-        <circle
-          cx="50"
-          cy="50"
-          r="45"
-          fill="none"
-          stroke="url(#riskGradient)"
-          strokeWidth="8"
-          strokeLinecap="round"
-          strokeDasharray={`${(rotation / 180) * 282.7} 282.7`}
-          className="transition-all duration-500"
-        />
-
-        {/* Center Point */}
-        <circle
-          cx="50"
-          cy="50"
-          r="3"
-          fill={getRiskColor(score)}
-          className="transition-colors duration-500"
-        />
-
-        {/* Needle */}
-        <line
-          x1="50"
-          y1="50"
-          x2="50"
-          y2="10"
-          stroke={getRiskColor(score)}
-          strokeWidth="2"
-          className="transition-all duration-500 origin-center"
-          transform={`rotate(${rotation} 50 50)`}
-        />
-
-        {/* Tick Marks */}
-        {[...Array(9)].map((_, i) => (
-          <line
-            key={i}
-            x1="50"
-            y1="5"
-            x2="50"
-            y2="10"
-            stroke="#2a2a2a"
-            strokeWidth="1"
-            transform={`rotate(${i * 22.5} 50 50)`}
-            className="opacity-50"
-          />
-        ))}
-      </svg>
-
-      {/* Risk Score Text */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className={cn(
-          "text-2xl font-mono font-bold",
-          getRiskColor(score),
-          score >= 100 ? "text-xl" : "text-2xl" // Slightly smaller text for 3-digit numbers
-        )}>
-          {riskScore || '0'}
-        </span>
+          {/* Risk Score */}
+          <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold font-mono" style={{ color }}>
+            {score}
+          </div>
+        </div>
       </div>
     </div>
   );
