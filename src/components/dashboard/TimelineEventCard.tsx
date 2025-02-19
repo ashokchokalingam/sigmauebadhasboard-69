@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Alert } from "./types";
 import { useState } from "react";
@@ -6,6 +7,8 @@ import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineDetailedLogs from "./TimelineDetailedLogs";
+import AlertDetailsView from "./AlertDetailsView";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { User, Monitor, Shield, AlertTriangle } from "lucide-react";
 
 interface TimelineEventCardProps {
@@ -16,6 +19,7 @@ interface TimelineEventCardProps {
 
 const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   const getRiskColor = (risk: number | null) => {
     if (risk === null) return "text-gray-400";
@@ -57,8 +61,6 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
         params.append('page', '1');
         params.append('per_page', '500');
 
-        console.log('Fetching logs with params:', baseUrl + '?' + params.toString());
-
         const response = await fetch(`${baseUrl}?${params.toString()}`);
         
         if (!response.ok) {
@@ -80,10 +82,106 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
     setIsExpanded((prev) => !prev);
   };
 
+  const handleViewDetails = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowDetails(true);
+  };
+
   const mappedEntityType = 
     entityType === "userorigin" ? "user" :
     entityType === "userimpacted" ? "user" :
     "computer";
+
+  const cardContent = (
+    <div 
+      onClick={handleCardClick}
+      className={cn(
+        "p-6 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer w-full",
+        isExpanded && "border-blue-500/30"
+      )}
+    >
+      <TimelineEventHeader
+        ruleLevel={event.rule_level}
+        totalRecords={event.total_events || 0}
+        title={event.title}
+        description={event.description}
+      />
+
+      <div className="grid grid-cols-2 gap-4 mt-4 mb-3">
+        <div>
+          <h4 className="text-sm font-medium text-blue-400">Risk Score</h4>
+          <p className={`text-lg font-medium ${getRiskColor(event.risk)}`}>
+            {event.risk === null ? 'N/A' : `${event.risk}%`}
+          </p>
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-blue-400">ML Cluster</h4>
+          <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20">
+            {event.ml_cluster === null ? 'N/A' : `Cluster ${event.ml_cluster}`}
+          </span>
+        </div>
+      </div>
+
+      {event.ml_description && (
+        <div className="mt-3 mb-4">
+          <h4 className="text-sm font-medium text-blue-400">ML Description</h4>
+          <p className="text-sm text-blue-300/70 mt-1">{event.ml_description}</p>
+        </div>
+      )}
+
+      <div className="flex items-center gap-2 mt-2 mb-3">
+        {entityType === "computersimpacted" ? (
+          <>
+            <Monitor className="h-4 w-4 text-blue-400" />
+            <span className="text-sm text-blue-300">
+              Computer: <span className="font-mono text-blue-400">{event.computer_name}</span>
+            </span>
+          </>
+        ) : entityType === "userorigin" ? (
+          <>
+            <User className="h-4 w-4 text-blue-400" />
+            <span className="text-sm text-blue-300">
+              User Origin: <span className="font-mono text-blue-400">{event.user_origin}</span>
+            </span>
+          </>
+        ) : (
+          <>
+            <User className="h-4 w-4 text-blue-400" />
+            <span className="text-sm text-blue-300">
+              User Impacted: <span className="font-mono text-blue-400">{event.user_impacted}</span>
+            </span>
+          </>
+        )}
+      </div>
+
+      <TimelineEventTimestamps
+        firstTimeSeen={event.first_time_seen || ''}
+        lastTimeSeen={event.last_time_seen || ''}
+      />
+
+      <TimelineMitreSection alert={event} />
+
+      <div className="mt-4 flex justify-end">
+        <button
+          onClick={handleViewDetails}
+          className="px-4 py-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 transition-colors"
+        >
+          View Details
+        </button>
+      </div>
+
+      {isExpanded && (
+        <TimelineDetailedLogs
+          logs={entityType === "computersimpacted" ? detailedLogs?.computer_impacted_logs || [] :
+               entityType === "userorigin" ? detailedLogs?.user_origin_logs || [] :
+               detailedLogs?.user_impacted_logs || []}
+          isLoading={isLoading}
+          totalRecords={detailedLogs?.pagination?.total_records || 0}
+          entityType={mappedEntityType}
+        />
+      )}
+    </div>
+  );
 
   return (
     <div className="group relative pl-4 w-full">
@@ -93,85 +191,26 @@ const TimelineEventCard = ({ event, isLast, entityType }: TimelineEventCardProps
       )}
 
       <div className="relative ml-4 mb-6 w-full">
-        <div 
-          onClick={handleCardClick}
-          className={cn(
-            "p-6 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer w-full",
-            isExpanded && "border-blue-500/30"
-          )}
-        >
-          <TimelineEventHeader
-            ruleLevel={event.rule_level}
-            totalRecords={event.total_events || 0}
-            title={event.title}
-            description={event.description}
-          />
-
-          <div className="grid grid-cols-2 gap-4 mt-4 mb-3">
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Risk Score</h4>
-              <p className={`text-lg font-medium ${getRiskColor(event.risk)}`}>
-                {event.risk === null ? 'N/A' : `${event.risk}%`}
-              </p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">ML Cluster</h4>
-              <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20">
-                {event.ml_cluster === null ? 'N/A' : `Cluster ${event.ml_cluster}`}
-              </span>
-            </div>
-          </div>
-
-          {event.ml_description && (
-            <div className="mt-3 mb-4">
-              <h4 className="text-sm font-medium text-blue-400">ML Description</h4>
-              <p className="text-sm text-blue-300/70 mt-1">{event.ml_description}</p>
-            </div>
-          )}
-
-          <div className="flex items-center gap-2 mt-2 mb-3">
-            {entityType === "computersimpacted" ? (
-              <>
-                <Monitor className="h-4 w-4 text-blue-400" />
-                <span className="text-sm text-blue-300">
-                  Computer: <span className="font-mono text-blue-400">{event.computer_name}</span>
-                </span>
-              </>
-            ) : entityType === "userorigin" ? (
-              <>
-                <User className="h-4 w-4 text-blue-400" />
-                <span className="text-sm text-blue-300">
-                  User Origin: <span className="font-mono text-blue-400">{event.user_origin}</span>
-                </span>
-              </>
-            ) : (
-              <>
-                <User className="h-4 w-4 text-blue-400" />
-                <span className="text-sm text-blue-300">
-                  User Impacted: <span className="font-mono text-blue-400">{event.user_impacted}</span>
-                </span>
-              </>
-            )}
-          </div>
-
-          <TimelineEventTimestamps
-            firstTimeSeen={event.first_time_seen || ''}
-            lastTimeSeen={event.last_time_seen || ''}
-          />
-
-          <TimelineMitreSection alert={event} />
-
-          {isExpanded && (
-            <TimelineDetailedLogs
-              logs={entityType === "computersimpacted" ? detailedLogs?.computer_impacted_logs || [] :
-                   entityType === "userorigin" ? detailedLogs?.user_origin_logs || [] :
-                   detailedLogs?.user_impacted_logs || []}
-              isLoading={isLoading}
-              totalRecords={detailedLogs?.pagination?.total_records || 0}
-              entityType={mappedEntityType}
-            />
-          )}
-        </div>
+        {showDetails ? (
+          <ResizablePanelGroup direction="horizontal" className="rounded-lg border border-slate-800">
+            <ResizablePanel defaultSize={70} minSize={30} maxSize={85}>
+              {cardContent}
+            </ResizablePanel>
+            
+            <ResizableHandle withHandle />
+            
+            <ResizablePanel defaultSize={30} minSize={15} maxSize={70}>
+              <div className="h-full overflow-auto">
+                <AlertDetailsView
+                  alert={event}
+                  onClose={() => setShowDetails(false)}
+                />
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        ) : (
+          cardContent
+        )}
       </div>
     </div>
   );
