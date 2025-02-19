@@ -1,3 +1,4 @@
+
 import { TableHead } from "@/components/ui/table";
 import { useState, useRef } from "react";
 import ColumnFilter from "./ColumnFilter";
@@ -51,34 +52,12 @@ const ResizableHeader = ({
       });
   };
 
-  const startResizing = (e: React.MouseEvent) => {
-    setIsResizing(true);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', stopResizing);
-    e.preventDefault();
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isResizing || !headerRef.current) return;
-    
-    const headerRect = headerRef.current.getBoundingClientRect();
-    const newWidth = Math.max(minSize, e.clientX - headerRect.left);
-    setWidth(newWidth);
-  };
-
-  const stopResizing = () => {
-    setIsResizing(false);
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', stopResizing);
-  };
-
   return (
     <TableHead 
       ref={headerRef}
-      className="group relative select-none bg-[#1A1F2C] border-b border-blue-900/20"
-      style={{ width: `${width}px`, minWidth: `${minSize}px` }}
+      className="h-14 px-0 bg-[#1A1F2C] border-b border-blue-900/20"
     >
-      <div className="flex items-center gap-2 px-3 py-3">
+      <div className="flex items-center gap-2 px-4 py-3">
         <ColumnFilter
           title={title}
           options={getUniqueValues(columnKey as keyof Alert)}
@@ -86,10 +65,6 @@ const ResizableHeader = ({
           selectedValue={selectedValue}
         />
       </div>
-      <div
-        className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity"
-        onMouseDown={startResizing}
-      />
     </TableHead>
   );
 };
