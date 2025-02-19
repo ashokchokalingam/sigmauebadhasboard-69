@@ -1,3 +1,4 @@
+
 import { UserCheck } from "lucide-react";
 import BaseTableCell from "./BaseTableCell";
 
@@ -10,8 +11,9 @@ const UserImpactedCell = ({ userName }: UserImpactedCellProps) => {
     <BaseTableCell 
       value={userName || '-'}
       icon={UserCheck}
-      width="w-[120px]"
+      width="w-[140px]"
       tooltipContent={userName}
+      align="center"
     />
   );
 };

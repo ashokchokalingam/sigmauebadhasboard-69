@@ -1,3 +1,4 @@
+
 import { User } from "lucide-react";
 import BaseTableCell from "./BaseTableCell";
 
@@ -11,12 +12,13 @@ const UserOriginCell = ({ userId, onTimelineView }: UserOriginCellProps) => {
     <BaseTableCell 
       value={userId || '-'}
       icon={User}
-      width="w-[100px]"
+      width="w-[140px]"
       onClick={(e) => {
         e.stopPropagation();
         onTimelineView("user", userId);
       }}
       tooltipContent={userId}
+      align="center"
     />
   );
 };
