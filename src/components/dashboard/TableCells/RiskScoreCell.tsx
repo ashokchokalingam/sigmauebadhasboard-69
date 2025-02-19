@@ -10,7 +10,7 @@ interface RiskScoreCellProps {
 
 const RiskScoreCell = ({ alert }: RiskScoreCellProps) => {
   return (
-    <BaseTableCell>
+    <BaseTableCell value={alert.risk?.toString() || '-'}>
       <span className={cn(
         "font-mono font-bold",
         getRiskScoreColor(alert.risk)

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { TableRow, TableCell } from "@/components/ui/table";
 import { ChevronRight } from "lucide-react";
@@ -54,36 +55,10 @@ const AlertTableRow = ({
         return <TitleCell title={alert.title} />;
       case "description":
         return <DescriptionCell description={alert.description} />;
-      case "event_id":
-        return <BasicCell value={alert.event_id} />;
-      case "provider_name":
-        return <BasicCell value={alert.provider_name} />;
-      case "ml_cluster":
-        return <BasicCell value={alert.ml_cluster === null ? '—' : alert.ml_cluster} />;
-      case "ip_address":
-        return <BasicCell value={alert.ip_address} />;
-      case "ruleid":
-        return <BasicCell value={alert.ruleid} />;
-      case "rule_level":
-        return <BasicCell value={alert.rule_level} />;
-      case "task":
-        return <BasicCell value={alert.task} />;
-      case "target_domain_name":
-        return <BasicCell value={alert.target_domain_name} />;
-      case "tactics":
-        return <BasicCell value={alert.tactics} />;
-      case "techniques":
-        return <BasicCell value={alert.techniques} />;
-      case "ml_description":
-        return <BasicCell value={alert.ml_description} />;
       case "risk":
-        return <RiskScoreCell risk={alert.risk} />;
-      case "tags":
-        return <BasicCell value={alert.tags} />;
-      case "raw":
-        return <BasicCell value={alert.raw} />;
+        return <RiskScoreCell alert={alert} />;
       default:
-        return <BasicCell value={alert[columnKey as keyof Alert]} />;
+        return <BasicCell value={alert[columnKey as keyof Alert]?.toString() || '-'} />;
     }
   };
   

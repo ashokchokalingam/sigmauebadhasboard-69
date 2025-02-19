@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -31,15 +32,22 @@ const SeverityChart = ({ data }: SeverityChartProps) => {
           labelStyle={{ color: '#fff' }}
           itemStyle={{ color: '#fff' }}
         />
-        <Bar dataKey="count" fill="#8884d8"
-          label={{ position: 'top', fill: '#fff' }}
-          formatter={(value) => new Intl.NumberFormat().format(value)}
+        <Bar 
+          dataKey="count" 
+          fill="#8884d8"
+          label={{ 
+            position: 'top', 
+            fill: '#fff',
+            formatter: (value: number) => value.toString()
+          }}
         >
-          {
-            data.map((entry, index) => (
-              <Bar key={`bar-${index}`} dataKey="count" fill={getBarColor(entry.severity)} />
-            ))
-          }
+          {data.map((entry, index) => (
+            <Bar 
+              key={`bar-${index}`} 
+              dataKey="count" 
+              fill={getBarColor(entry.severity)} 
+            />
+          ))}
         </Bar>
       </BarChart>
     </ResponsiveContainer>
