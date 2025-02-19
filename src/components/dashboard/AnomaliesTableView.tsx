@@ -2,12 +2,11 @@
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { Alert } from "./types";
 import AlertDetailsView from "./AlertDetailsView";
-import { format } from "date-fns";
-import { ChevronRight, User, Monitor, FileText, AlignLeft, GripHorizontal } from "lucide-react";
 import { DndContext, closestCenter, DragEndEvent, useSensor, useSensors, PointerSensor } from '@dnd-kit/core';
-import { SortableContext, horizontalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import { useState, useEffect } from 'react';
+import TableHeader from "./TableComponents/TableHeader";
+import TableRow from "./TableComponents/TableRow";
 
 interface AnomaliesTableViewProps {
   alerts: Alert[];
@@ -21,37 +20,32 @@ interface AnomaliesTableViewProps {
   onClose: () => void;
 }
 
-const DraggableHeader = ({ id, children }: { id: string; children: React.ReactNode }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id });
+const getColumnWidth = (columnKey: string) => {
+  switch (columnKey) {
+    case 'system_time': return '200px';
+    case 'user_id': return '160px';
+    case 'target_user_name': return '160px';
+    case 'title': return 'minmax(250px, 1fr)';
+    case 'description': return 'minmax(350px, 1.5fr)';
+    case 'computer_name': return '160px';
+    case 'ml_cluster': return '120px';
+    case 'risk': return '120px';
+    default: return '160px';
+  }
+};
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    zIndex: isDragging ? 1 : 0,
-    position: 'relative' as const,
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center'
+const getColumnLabel = (key: string): string => {
+  const labels: Record<string, string> = {
+    system_time: 'Time',
+    user_id: 'User Origin',
+    target_user_name: 'User Impacted',
+    computer_name: 'Computer',
+    title: 'Title',
+    description: 'Description',
+    ml_cluster: 'ML Cluster',
+    risk: 'Risk Score'
   };
-
-  return (
-    <div ref={setNodeRef} style={style} {...attributes} className="group">
-      <div className="flex items-center gap-2 w-full">
-        {children}
-        <GripHorizontal 
-          className="h-4 w-4 text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab" 
-          {...listeners}
-        />
-      </div>
-    </div>
-  );
+  return labels[key] || key;
 };
 
 const AnomaliesTableView = ({
@@ -87,64 +81,30 @@ const AnomaliesTableView = ({
     setColumnOrder(newOrder);
   };
 
-  const getColumnWidth = (columnKey: string) => {
-    switch (columnKey) {
-      case 'system_time': return '200px';
-      case 'user_id': return '160px';
-      case 'target_user_name': return '160px';
-      case 'title': return 'minmax(250px, 1fr)';
-      case 'description': return 'minmax(350px, 1.5fr)';
-      case 'computer_name': return '160px';
-      case 'ml_cluster': return '120px';
-      case 'risk': return '120px';
-      default: return '160px';
-    }
-  };
-
   const TableContent = (
     <div className="h-full flex flex-col">
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <div className="sticky top-0 z-50 bg-[#0A0D14] border-b border-slate-800">
-          <div className="grid" style={{ 
-            gridTemplateColumns: columnOrder.map(col => getColumnWidth(col)).join(' ')
-          }}>
-            <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
-              {columnOrder.map((columnKey) => (
-                <div 
-                  key={columnKey}
-                  className="px-3 py-3 text-sm font-medium text-slate-300"
-                >
-                  <DraggableHeader id={columnKey}>
-                    {getColumnLabel(columnKey)}
-                  </DraggableHeader>
-                </div>
-              ))}
-            </SortableContext>
-          </div>
-        </div>
+        <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
+          <TableHeader 
+            columnOrder={columnOrder}
+            getColumnWidth={getColumnWidth}
+            getColumnLabel={getColumnLabel}
+          />
+        </SortableContext>
       </DndContext>
 
       <div className="flex-1 overflow-auto">
         <div className="grid">
           {filteredAlerts.map((alert, index) => (
-            <div
+            <TableRow
               key={alert.id}
-              className={`grid cursor-pointer ${
-                index % 2 === 0 ? 'bg-slate-950/20' : ''
-              } hover:bg-slate-800/20`}
-              style={{ 
-                gridTemplateColumns: columnOrder.map(col => getColumnWidth(col)).join(' ')
-              }}
-              onClick={() => onAlertSelect(alert)}
-            >
-              {columnOrder.map((columnKey) => (
-                <div key={columnKey} 
-                  className="px-3 py-2.5 text-sm text-slate-300"
-                >
-                  {renderCellContent(alert, columnKey, onTimelineView)}
-                </div>
-              ))}
-            </div>
+              alert={alert}
+              index={index}
+              columnOrder={columnOrder}
+              getColumnWidth={getColumnWidth}
+              onTimelineView={onTimelineView}
+              onAlertSelect={onAlertSelect}
+            />
           ))}
         </div>
       </div>
@@ -180,82 +140,6 @@ const AnomaliesTableView = ({
       {TableContent}
     </div>
   );
-};
-
-const getColumnLabel = (key: string): string => {
-  const labels: Record<string, string> = {
-    system_time: 'Time',
-    user_id: 'User Origin',
-    target_user_name: 'User Impacted',
-    computer_name: 'Computer',
-    title: 'Title',
-    description: 'Description',
-    ml_cluster: 'ML Cluster',
-    risk: 'Risk Score'
-  };
-  return labels[key] || key;
-};
-
-const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (type: "user" | "computer", id: string) => void) => {
-  switch (columnKey) {
-    case 'system_time':
-      return (
-        <span className="font-medium">
-          {format(new Date(alert.system_time), "MMM dd, yyyy, HH:mm:ss")}
-        </span>
-      );
-    case 'user_id':
-      return (
-        <div className="flex items-center">
-          <span className="truncate font-medium">
-            {alert.user_id || '-'}
-          </span>
-        </div>
-      );
-    case 'target_user_name':
-      return (
-        <div className="flex items-center">
-          <span className="truncate font-medium">
-            {alert.target_user_name || '-'}
-          </span>
-        </div>
-      );
-    case 'computer_name':
-      return (
-        <div className="flex items-center">
-          <Monitor className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span 
-            className="hover:text-blue-400 cursor-pointer truncate font-medium"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTimelineView("computer", alert.computer_name || '');
-            }}
-          >
-            {alert.computer_name || '-'}
-          </span>
-        </div>
-      );
-    case 'title':
-      return (
-        <div className="flex items-center">
-          <FileText className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate font-medium">{alert.title}</span>
-        </div>
-      );
-    case 'description':
-      return (
-        <div className="flex items-center">
-          <AlignLeft className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate">{alert.description}</span>
-        </div>
-      );
-    default:
-      return (
-        <span className="font-medium">
-          {String(alert[columnKey as keyof Alert] || '-')}
-        </span>
-      );
-  }
 };
 
 export default AnomaliesTableView;
