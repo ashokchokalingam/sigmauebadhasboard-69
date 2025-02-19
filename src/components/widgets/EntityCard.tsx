@@ -1,5 +1,6 @@
 
 import { Monitor, User } from "lucide-react";
+import { memo } from "react";
 import { RiskyEntity } from "./types";
 
 interface EntityCardProps {
@@ -8,7 +9,7 @@ interface EntityCardProps {
   onClick: () => void;
 }
 
-const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
+const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
   const isComputer = entityType === 'computer';
   const Icon = isComputer ? Monitor : User;
   const entityName = isComputer ? entity.computer : entity.user;
@@ -77,11 +78,16 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
 
           {/* Risk Score */}
           <div className="relative">
-            <div className={`
-              font-mono font-bold text-2xl px-3 py-1 rounded
-              bg-black/40 border border-[#5856D6]/20
-              ${textColor} ${riskScore >= 150 ? 'animate-[pulse_5s_cubic-bezier(0.4,0,0.6,1)_infinite]' : ''}
-            `}>
+            <div 
+              className={`
+                font-mono font-bold text-2xl px-3 py-1 rounded
+                bg-black/40 border border-[#5856D6]/20
+                ${textColor}
+              `}
+              style={{
+                animation: riskScore >= 150 ? 'pulse 5s cubic-bezier(0.4, 0, 0.6, 1) infinite' : 'none'
+              }}
+            >
               {riskScore.toFixed(1)}
             </div>
           </div>
@@ -89,6 +95,8 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
       </div>
     </div>
   );
-};
+});
+
+EntityCard.displayName = 'EntityCard';
 
 export default EntityCard;

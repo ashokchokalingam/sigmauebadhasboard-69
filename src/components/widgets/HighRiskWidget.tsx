@@ -1,7 +1,7 @@
 
 import { Shield, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import TimelineView from "../dashboard/TimelineView";
 import EntityCard from "./EntityCard";
@@ -25,15 +25,23 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
       const data = await response.json();
       const key = Object.keys(data)[0];
       return data[key] || [];
-    }
+    },
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    cacheTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  const filteredEntities = (entities as any[])
-    .filter((entity: any) => {
-      const entityName = entityType === 'computer' ? entity.computer : entity.user;
-      return entityName?.toLowerCase().includes(searchQuery.toLowerCase());
-    })
-    .sort((a: any, b: any) => parseFloat(b.cumulative_risk_score) - parseFloat(a.cumulative_risk_score));
+  const filteredEntities = useMemo(() => {
+    return (entities as any[])
+      .filter((entity: any) => {
+        const entityName = entityType === 'computer' ? entity.computer : entity.user;
+        return entityName?.toLowerCase().includes(searchQuery.toLowerCase());
+      })
+      .sort((a: any, b: any) => parseFloat(b.cumulative_risk_score) - parseFloat(a.cumulative_risk_score));
+  }, [entities, entityType, searchQuery]);
+
+  const handleEntityClick = useCallback((entityId: string) => {
+    setSelectedEntity(entityId);
+  }, []);
 
   if (selectedEntity) {
     const timelineEntityType = entityType === 'userOrigin' ? 'userorigin' :
@@ -79,12 +87,12 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
           
           <div className="space-y-3 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-[#5856D6]/20 
                         scrollbar-track-transparent" style={{ height: 'calc(500px - 140px)' }}>
-            {filteredEntities.map((entity: any, index: number) => (
+            {filteredEntities.map((entity: any) => (
               <EntityCard
-                key={index}
+                key={entityType === 'computer' ? entity.computer : entity.user}
                 entity={entity}
                 entityType={entityType.toLowerCase() as 'computer' | 'userOrigin' | 'userImpacted'}
-                onClick={() => setSelectedEntity(entityType === 'computer' ? entity.computer : entity.user)}
+                onClick={() => handleEntityClick(entityType === 'computer' ? entity.computer : entity.user)}
               />
             ))}
             {filteredEntities.length === 0 && (
