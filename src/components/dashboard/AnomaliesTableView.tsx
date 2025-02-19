@@ -36,7 +36,7 @@ const AnomaliesTableView = ({
           {visibleColumns.map((columnKey) => (
             <div 
               key={columnKey}
-              className="px-4 py-3 text-sm font-medium text-slate-200"
+              className="px-4 py-3 text-sm font-medium text-slate-200 text-center"
             >
               <span>{getColumnLabel(columnKey)}</span>
             </div>
@@ -58,7 +58,7 @@ const AnomaliesTableView = ({
               onClick={() => onAlertSelect(alert)}
             >
               {visibleColumns.map((columnKey) => (
-                <div key={columnKey} className="px-4 py-2 text-sm text-slate-300 border-b border-blue-500/10 whitespace-nowrap overflow-hidden text-ellipsis">
+                <div key={columnKey} className="px-4 py-2 text-sm text-slate-300 border-b border-blue-500/10 whitespace-nowrap overflow-hidden text-ellipsis text-center">
                   {renderCellContent(alert, columnKey, onTimelineView)}
                 </div>
               ))}
@@ -119,7 +119,7 @@ const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (typ
       return format(new Date(alert.system_time), "MMM dd, yyyy, HH:mm:ss");
     case 'user_id':
       return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <User className="h-4 w-4 text-blue-400/70" />
           <span 
             className="hover:text-blue-400 cursor-pointer"
@@ -134,7 +134,7 @@ const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (typ
       );
     case 'computer_name':
       return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Monitor className="h-4 w-4 text-blue-400/70" />
           <span 
             className="hover:text-blue-400 cursor-pointer"
@@ -149,14 +149,14 @@ const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (typ
       );
     case 'title':
       return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <FileText className="h-4 w-4 text-blue-400/70" />
           <span>{alert.title}</span>
         </div>
       );
     case 'description':
       return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <AlignLeft className="h-4 w-4 text-blue-400/70" />
           <span className="truncate">{alert.description}</span>
         </div>
