@@ -25,16 +25,30 @@ const AnomaliesMainView = ({
   onTimelineView,
   filteredAlerts
 }: AnomaliesMainViewProps) => {
+  const getColumnWidth = (columnKey: string): string => {
+    switch (columnKey) {
+      case 'system_time': return 'w-[180px]';
+      case 'user_id': return 'w-[140px]';
+      case 'target_user_name': return 'w-[140px]';
+      case 'computer_name': return 'w-[160px]';
+      case 'title': return 'w-[200px]';
+      case 'description': return 'w-[400px]';
+      case 'ml_cluster': return 'w-[120px]';
+      case 'risk': return 'w-[100px]';
+      default: return 'w-[150px]';
+    }
+  };
+
   return (
-    <div className="border border-blue-900/20 rounded-md bg-[#0A0D14] h-[800px] flex flex-col">
-      <div className="sticky top-0 z-50 bg-[#0A0D14]">
-        <table className="w-full border-collapse">
-          <thead>
+    <div className="border border-blue-900/20 rounded-md bg-[#0A0D14]">
+      <div className="h-[800px] overflow-auto">
+        <table className="w-full border-collapse [&_tr:hover]:bg-blue-950/30 [&_tr]:border-b [&_tr]:border-blue-900/10">
+          <thead className="sticky top-0 bg-[#0A0D14] z-50">
             <tr>
               {visibleColumns.map((columnKey) => (
                 <th 
                   key={columnKey}
-                  className="px-4 py-2 text-center bg-[#1A1F2C] border-b border-blue-900/20"
+                  className={`${getColumnWidth(columnKey)} px-4 py-2 text-center bg-[#1A1F2C] border-b border-blue-900/20`}
                 >
                   <ResizableHeader
                     title={getColumnLabel(columnKey)}
@@ -45,13 +59,9 @@ const AnomaliesMainView = ({
                   />
                 </th>
               ))}
-              <th className="w-[40px] bg-[#1A1F2C] border-b border-blue-900/20" />
+              <th className="w-[40px]" /> {/* Arrow column */}
             </tr>
           </thead>
-        </table>
-      </div>
-      <div className="flex-1 overflow-auto">
-        <table className="w-full border-collapse">
           <tbody>
             <AnomaliesTableContent
               alerts={filteredAlerts}
