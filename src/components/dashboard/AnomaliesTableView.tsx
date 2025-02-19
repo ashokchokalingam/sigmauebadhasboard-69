@@ -32,16 +32,23 @@ const AnomaliesTableView = ({
     <div className="h-full flex flex-col">
       {/* Fixed Header */}
       <div className="sticky top-0 z-50 bg-[#0A0D14] border-b border-blue-500/10">
-        <div className="grid" style={{ gridTemplateColumns: `160px repeat(${visibleColumns.length - 1}, minmax(100px, 1fr)) 40px` }}>
+        <div className="grid" style={{ 
+          gridTemplateColumns: `200px ${visibleColumns.slice(1).map(col => 
+            col === 'description' ? 'minmax(300px, 1fr)' :
+            col === 'title' ? 'minmax(250px, 1fr)' :
+            col === 'computer_name' ? 'minmax(180px, 1fr)' :
+            'minmax(140px, 1fr)'
+          ).join(' ')} 40px` 
+        }}>
           {visibleColumns.map((columnKey) => (
             <div 
               key={columnKey}
-              className="px-4 py-3 text-sm font-medium text-slate-200 text-center"
+              className="px-4 py-3 text-sm font-medium text-slate-200"
             >
               <span>{getColumnLabel(columnKey)}</span>
             </div>
           ))}
-          <div className="w-[40px]" /> {/* Space for the chevron */}
+          <div className="w-[40px]" />
         </div>
       </div>
 
@@ -54,11 +61,18 @@ const AnomaliesTableView = ({
               className={`grid cursor-pointer hover:bg-blue-950/30 ${
                 selectedAlert?.id === alert.id ? 'bg-blue-950/50' : ''
               }`}
-              style={{ gridTemplateColumns: `160px repeat(${visibleColumns.length - 1}, minmax(100px, 1fr)) 40px` }}
+              style={{ 
+                gridTemplateColumns: `200px ${visibleColumns.slice(1).map(col => 
+                  col === 'description' ? 'minmax(300px, 1fr)' :
+                  col === 'title' ? 'minmax(250px, 1fr)' :
+                  col === 'computer_name' ? 'minmax(180px, 1fr)' :
+                  'minmax(140px, 1fr)'
+                ).join(' ')} 40px` 
+              }}
               onClick={() => onAlertSelect(alert)}
             >
               {visibleColumns.map((columnKey) => (
-                <div key={columnKey} className="px-4 py-2 text-sm text-slate-300 border-b border-blue-500/10 whitespace-nowrap overflow-hidden text-ellipsis text-center">
+                <div key={columnKey} className="px-4 py-2 text-sm text-slate-300 border-b border-blue-500/10">
                   {renderCellContent(alert, columnKey, onTimelineView)}
                 </div>
               ))}
@@ -119,10 +133,10 @@ const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (typ
       return format(new Date(alert.system_time), "MMM dd, yyyy, HH:mm:ss");
     case 'user_id':
       return (
-        <div className="flex items-center justify-center gap-2">
-          <User className="h-4 w-4 text-blue-400/70" />
+        <div className="flex items-center gap-2">
+          <User className="h-4 w-4 text-blue-400/70 flex-shrink-0" />
           <span 
-            className="hover:text-blue-400 cursor-pointer"
+            className="hover:text-blue-400 cursor-pointer truncate"
             onClick={(e) => {
               e.stopPropagation();
               onTimelineView("user", alert.user_id || '');
@@ -134,10 +148,10 @@ const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (typ
       );
     case 'computer_name':
       return (
-        <div className="flex items-center justify-center gap-2">
-          <Monitor className="h-4 w-4 text-blue-400/70" />
+        <div className="flex items-center gap-2">
+          <Monitor className="h-4 w-4 text-blue-400/70 flex-shrink-0" />
           <span 
-            className="hover:text-blue-400 cursor-pointer"
+            className="hover:text-blue-400 cursor-pointer truncate"
             onClick={(e) => {
               e.stopPropagation();
               onTimelineView("computer", alert.computer_name || '');
@@ -149,15 +163,15 @@ const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (typ
       );
     case 'title':
       return (
-        <div className="flex items-center justify-center gap-2">
-          <FileText className="h-4 w-4 text-blue-400/70" />
-          <span>{alert.title}</span>
+        <div className="flex items-center gap-2">
+          <FileText className="h-4 w-4 text-blue-400/70 flex-shrink-0" />
+          <span className="truncate">{alert.title}</span>
         </div>
       );
     case 'description':
       return (
-        <div className="flex items-center justify-center gap-2">
-          <AlignLeft className="h-4 w-4 text-blue-400/70" />
+        <div className="flex items-center gap-2">
+          <AlignLeft className="h-4 w-4 text-blue-400/70 flex-shrink-0" />
           <span className="truncate">{alert.description}</span>
         </div>
       );
