@@ -2,22 +2,20 @@
 import { Alert } from "../types";
 import BaseTableCell from "./BaseTableCell";
 import { getRiskScoreColor } from "../utils/colorUtils";
-import { cn } from "@/lib/utils";
 
 interface RiskScoreCellProps {
   alert: Alert;
 }
 
 const RiskScoreCell = ({ alert }: RiskScoreCellProps) => {
+  const value = alert.risk?.toString() || '-';
+  const colorClass = getRiskScoreColor(alert.risk);
+  
   return (
-    <BaseTableCell value={alert.risk?.toString() || '-'}>
-      <span className={cn(
-        "font-mono font-bold",
-        getRiskScoreColor(alert.risk)
-      )}>
-        {alert.risk || '-'}
-      </span>
-    </BaseTableCell>
+    <BaseTableCell 
+      value={value} 
+      className={`font-mono font-bold ${colorClass}`}
+    />
   );
 };
 
