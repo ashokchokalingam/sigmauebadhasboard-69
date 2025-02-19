@@ -45,7 +45,7 @@ const ResizableHeader = ({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full flex justify-center items-center">
       <ColumnFilter
         title={title}
         options={getUniqueValues(columnKey as keyof Alert)}

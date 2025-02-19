@@ -48,7 +48,7 @@ const AnomaliesMainView = ({
               {visibleColumns.map((columnKey) => (
                 <th 
                   key={columnKey}
-                  className={`${getColumnWidth(columnKey)} px-4 py-2 text-left bg-[#1A1F2C] border-b border-blue-900/20`}
+                  className={`${getColumnWidth(columnKey)} px-4 py-2 text-center bg-[#1A1F2C] border-b border-blue-900/20`}
                 >
                   <ResizableHeader
                     title={getColumnLabel(columnKey)}
