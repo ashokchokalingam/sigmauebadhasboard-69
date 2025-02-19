@@ -7,6 +7,7 @@ import UserImpactedCell from "./TableCells/UserImpactedCell";
 import ComputerCell from "./TableCells/ComputerCell";
 import TitleCell from "./TableCells/TitleCell";
 import DescriptionCell from "./TableCells/DescriptionCell";
+import BaseTableCell from "./TableCells/BaseTableCell";
 import { ChevronRight } from "lucide-react";
 
 interface AnomaliesTableContentProps {
