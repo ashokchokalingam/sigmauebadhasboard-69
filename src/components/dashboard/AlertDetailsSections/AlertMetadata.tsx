@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Alert } from "../types";
 import { getSeverityColor } from "../utils";
@@ -45,6 +46,14 @@ const AlertMetadata = ({ alert, browserTime }: AlertMetadataProps) => {
         <div>
           <h4 className="text-sm font-medium text-[#A9A9A9]">System Time</h4>
           <p className="text-sm text-[#E0E0E0] font-mono">{browserTime}</p>
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">IP Address</h4>
+          <p className="text-sm text-[#E0E0E0] font-mono">{alert.ip_address || 'N/A'}</p>
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-[#A9A9A9]">Target Domain</h4>
+          <p className="text-sm text-[#E0E0E0] font-mono">{alert.target_domain_name || 'N/A'}</p>
         </div>
       </div>
     </Card>

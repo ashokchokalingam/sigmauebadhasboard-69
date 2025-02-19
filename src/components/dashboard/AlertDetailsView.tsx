@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Alert } from "./types";
 import TimelineRawLog from "./TimelineRawLog";
@@ -74,7 +75,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
                   <div className="flex items-center gap-2">
                     <Brain className="h-5 w-5 text-blue-400" />
                     <span className="px-3 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20 font-medium">
-                      {alert.ml_cluster === null ? 'N/A' : `Cluster ${alert.ml_cluster}`}
+                      {alert.ml_cluster === -1 ? 'Noise' : `Cluster ${alert.ml_cluster}`}
                     </span>
                   </div>
                 </div>
@@ -116,9 +117,12 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
 
             <Card className="bg-[#2B2B3B] border-[#7B68EE]/20 p-4">
               <h4 className="text-sm font-medium text-[#A9A9A9] mb-2">Task</h4>
-              <p className="text-sm text-[#E0E0E0]">
-                {alert.task || 'N/A'}
-              </p>
+              <div className="flex items-center gap-2">
+                <Activity className="h-5 w-5 text-[#7B68EE]" />
+                <p className="text-sm text-[#E0E0E0]">
+                  {alert.task || 'N/A'}
+                </p>
+              </div>
             </Card>
           </div>
 
