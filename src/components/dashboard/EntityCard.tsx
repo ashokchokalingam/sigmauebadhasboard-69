@@ -2,7 +2,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import EntityCardIcon from "./EntityCardIcon";
-import EntityCardRiskLevel from "./EntityCardRiskLevel";
 import EntityCardRiskGauge from "./EntityCardRiskGauge";
 
 interface EntityCardProps {
@@ -16,11 +15,6 @@ interface EntityCardProps {
 const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProps) => {
   const isComputer = id?.endsWith('$') ?? false;
   const safeUniqueTitles = typeof uniqueTitles === 'number' ? uniqueTitles : 0;
-
-  const isHighRisk = (score: string | null) => {
-    if (!score) return false;
-    return parseInt(score) >= 200;
-  };
 
   return (
     <div 
@@ -48,11 +42,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
         </div>
 
         {riskScore && (
-          <div className="flex items-center gap-4 shrink-0">
-            <EntityCardRiskLevel 
-              riskScore={riskScore} 
-              isHighRisk={isHighRisk(riskScore)} 
-            />
+          <div className="shrink-0">
             <EntityCardRiskGauge riskScore={riskScore} />
           </div>
         )}
