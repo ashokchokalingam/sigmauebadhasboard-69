@@ -1,5 +1,5 @@
 
-import { Monitor, FileText, AlignLeft, User } from "lucide-react";
+import { Monitor, FileText, AlignLeft, User, Hash, Server, Activity, Shield, Tag, Network, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
 import { Alert } from "../types";
 
@@ -25,10 +25,10 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
             className="hover:text-blue-400 cursor-pointer truncate font-medium"
             onClick={(e) => {
               e.stopPropagation();
-              onTimelineView("user", alert.user_origin || alert.user_id || '');
+              onTimelineView("user", alert.user_id || '');
             }}
           >
-            {alert.user_origin || alert.user_id || '-'}
+            {alert.user_id || '-'}
           </span>
         </div>
       );
@@ -40,10 +40,10 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
             className="hover:text-blue-400 cursor-pointer truncate font-medium"
             onClick={(e) => {
               e.stopPropagation();
-              onTimelineView("user", alert.user_impacted || alert.target_user_name || '');
+              onTimelineView("user", alert.target_user_name || '');
             }}
           >
-            {alert.user_impacted || alert.target_user_name || '-'}
+            {alert.target_user_name || '-'}
           </span>
         </div>
       );
@@ -74,6 +74,99 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
         <div className="flex items-center">
           <AlignLeft className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
           <span className="truncate">{alert.description}</span>
+        </div>
+      );
+    case 'event_id':
+      return (
+        <div className="flex items-center">
+          <Hash className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="font-medium">{alert.event_id || '-'}</span>
+        </div>
+      );
+    case 'provider_name':
+      return (
+        <div className="flex items-center">
+          <Server className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="truncate">{alert.provider_name || '-'}</span>
+        </div>
+      );
+    case 'ip_address':
+      return (
+        <div className="flex items-center">
+          <Network className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="font-medium">{alert.ip_address || '-'}</span>
+        </div>
+      );
+    case 'ruleid':
+      return (
+        <div className="flex items-center">
+          <Shield className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="truncate font-medium">{alert.ruleid || '-'}</span>
+        </div>
+      );
+    case 'rule_level':
+      return (
+        <div className="flex items-center">
+          <AlertTriangle className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="font-medium capitalize">{alert.rule_level || '-'}</span>
+        </div>
+      );
+    case 'task':
+      return (
+        <div className="flex items-center">
+          <Activity className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="truncate">{alert.task || '-'}</span>
+        </div>
+      );
+    case 'target_domain_name':
+      return (
+        <div className="flex items-center">
+          <Server className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="truncate">{alert.target_domain_name || '-'}</span>
+        </div>
+      );
+    case 'tactics':
+      return (
+        <div className="flex items-center">
+          <Shield className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="truncate">{alert.tactics || '-'}</span>
+        </div>
+      );
+    case 'techniques':
+      return (
+        <div className="flex items-center">
+          <Shield className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="truncate">{alert.techniques || '-'}</span>
+        </div>
+      );
+    case 'ml_description':
+      return (
+        <div className="flex items-center">
+          <AlignLeft className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="truncate">{alert.ml_description || '-'}</span>
+        </div>
+      );
+    case 'ml_cluster':
+      return (
+        <div className="flex items-center">
+          <Activity className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="font-medium">
+            {alert.ml_cluster === -1 ? "Noise" : `Cluster ${alert.ml_cluster}`}
+          </span>
+        </div>
+      );
+    case 'risk':
+      return (
+        <div className="flex items-center">
+          <AlertTriangle className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="font-medium">{alert.risk || '-'}</span>
+        </div>
+      );
+    case 'tags':
+      return (
+        <div className="flex items-center">
+          <Tag className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <span className="truncate">{alert.tags || '-'}</span>
         </div>
       );
     default:
