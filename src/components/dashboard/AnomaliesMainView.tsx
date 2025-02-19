@@ -3,6 +3,7 @@ import { Table } from "@/components/ui/table";
 import { Alert } from "./types";
 import AnomaliesTableHeader from "./AnomaliesTableHeader";
 import AnomaliesTableContent from "./AnomaliesTableContent";
+import ResizableHeader from "./ResizableHeader";
 
 interface AnomaliesMainViewProps {
   alerts: Alert[];
