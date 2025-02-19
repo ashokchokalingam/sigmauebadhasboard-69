@@ -20,7 +20,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
     <div 
       onClick={onClick}
       className={cn(
-        "group relative flex items-center p-4 rounded-xl h-[80px]",
+        "group relative flex items-center p-3 rounded-xl",
         "transition-all duration-300 cursor-pointer",
         "bg-[#0A0B0F] hover:bg-[#12131A]",
         "border border-[#9b87f5]/20 hover:border-[#9b87f5]/40",
