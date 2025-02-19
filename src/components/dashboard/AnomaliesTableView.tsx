@@ -1,3 +1,4 @@
+
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { Alert } from "./types";
 import AlertDetailsView from "./AlertDetailsView";
@@ -35,19 +36,9 @@ const AnomaliesTableView = ({
           {visibleColumns.map((columnKey) => (
             <div 
               key={columnKey}
-              className="px-4 py-3 text-sm font-medium text-slate-200 hover:bg-blue-500/5 cursor-pointer transition-colors"
+              className="px-4 py-3 text-sm font-medium text-slate-200"
             >
-              <div className="flex items-center justify-between">
-                <span>{getColumnLabel(columnKey)}</span>
-                <input
-                  type="text"
-                  value={filters[columnKey] || ''}
-                  onChange={(e) => onFilterChange(columnKey, e.target.value)}
-                  className="ml-2 px-2 py-1 bg-[#1A1F2C] border border-blue-500/10 rounded text-xs"
-                  placeholder="Filter..."
-                  onClick={(e) => e.stopPropagation()}
-                />
-              </div>
+              <span>{getColumnLabel(columnKey)}</span>
             </div>
           ))}
           <div className="w-[40px]" /> {/* Space for the chevron */}
