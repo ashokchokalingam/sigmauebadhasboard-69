@@ -88,6 +88,21 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
           className="transition-all duration-500 origin-center"
           transform={`rotate(${rotation} 50 50)`}
         />
+
+        {/* Tick Marks */}
+        {[...Array(9)].map((_, i) => (
+          <line
+            key={i}
+            x1="50"
+            y1="5"
+            x2="50"
+            y2="10"
+            stroke="#2a2a2a"
+            strokeWidth="1"
+            transform={`rotate(${i * 22.5} 50 50)`}
+            className="opacity-50"
+          />
+        ))}
       </svg>
 
       {/* Risk Score Text */}
