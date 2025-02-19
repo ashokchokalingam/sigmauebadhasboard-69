@@ -3,7 +3,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import EntityCardIcon from "./EntityCardIcon";
 import EntityCardRiskLevel from "./EntityCardRiskLevel";
-import EntityCardCardiogram from "./EntityCardCardiogram";
+import EntityCardRiskGauge from "./EntityCardRiskGauge";
 
 interface EntityCardProps {
   id: string | null;
@@ -54,7 +54,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
               isHighRisk={isHighRisk(riskScore)} 
             />
             
-            <EntityCardCardiogram isHighRisk={isHighRisk(riskScore)} />
+            <EntityCardRiskGauge riskScore={riskScore} />
 
             <span className={cn(
               "font-mono font-bold text-2xl min-w-[60px] text-right",
