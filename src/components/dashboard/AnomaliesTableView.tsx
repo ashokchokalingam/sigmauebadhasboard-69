@@ -32,7 +32,7 @@ const AnomaliesTableView = ({
     <div className="h-full flex flex-col">
       {/* Fixed Header */}
       <div className="sticky top-0 z-50 bg-[#0A0D14] border-b border-blue-500/10">
-        <div className="grid" style={{ gridTemplateColumns: `repeat(${visibleColumns.length + 1}, minmax(100px, 1fr))` }}>
+        <div className="grid" style={{ gridTemplateColumns: `160px repeat(${visibleColumns.length - 1}, minmax(100px, 1fr)) 40px` }}>
           {visibleColumns.map((columnKey) => (
             <div 
               key={columnKey}
@@ -54,11 +54,11 @@ const AnomaliesTableView = ({
               className={`grid cursor-pointer hover:bg-blue-950/30 ${
                 selectedAlert?.id === alert.id ? 'bg-blue-950/50' : ''
               }`}
-              style={{ gridTemplateColumns: `repeat(${visibleColumns.length + 1}, minmax(100px, 1fr))` }}
+              style={{ gridTemplateColumns: `160px repeat(${visibleColumns.length - 1}, minmax(100px, 1fr)) 40px` }}
               onClick={() => onAlertSelect(alert)}
             >
               {visibleColumns.map((columnKey) => (
-                <div key={columnKey} className="px-4 py-2 text-sm text-slate-300 border-b border-blue-500/10">
+                <div key={columnKey} className="px-4 py-2 text-sm text-slate-300 border-b border-blue-500/10 whitespace-nowrap overflow-hidden text-ellipsis">
                   {renderCellContent(alert, columnKey, onTimelineView)}
                 </div>
               ))}
@@ -116,7 +116,7 @@ const getColumnLabel = (key: string): string => {
 const renderCellContent = (alert: Alert, columnKey: string, onTimelineView: (type: "user" | "computer", id: string) => void) => {
   switch (columnKey) {
     case 'system_time':
-      return format(new Date(alert.system_time), "MMM dd, yyyy, hh:mm:ss aa");
+      return format(new Date(alert.system_time), "MMM dd, yyyy, HH:mm:ss");
     case 'user_id':
       return (
         <div className="flex items-center gap-2">
