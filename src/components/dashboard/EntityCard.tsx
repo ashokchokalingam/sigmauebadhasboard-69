@@ -53,17 +53,7 @@ const EntityCard = ({ id, uniqueTitles = 0, onClick, riskScore }: EntityCardProp
               riskScore={riskScore} 
               isHighRisk={isHighRisk(riskScore)} 
             />
-            
             <EntityCardRiskGauge riskScore={riskScore} />
-
-            <span className={cn(
-              "font-mono font-bold text-2xl min-w-[60px] text-right",
-              "text-[#D6BCFA]",
-              "tracking-tight",
-              isHighRisk(riskScore) && "text-[#ea384c] animate-pulse"
-            )}>
-              {riskScore}
-            </span>
           </div>
         )}
       </div>

@@ -25,7 +25,7 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
   };
 
   return (
-    <div className="relative w-16 h-16">
+    <div className="relative w-20 h-20">
       {/* Background Circle */}
       <svg 
         className="w-full h-full -rotate-90 transform"
@@ -93,8 +93,9 @@ const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
       {/* Risk Score Text */}
       <div className="absolute inset-0 flex items-center justify-center">
         <span className={cn(
-          "text-xs font-mono font-bold",
-          getRiskColor(score)
+          "text-2xl font-mono font-bold",
+          getRiskColor(score),
+          score >= 100 ? "text-xl" : "text-2xl" // Slightly smaller text for 3-digit numbers
         )}>
           {riskScore || '0'}
         </span>
