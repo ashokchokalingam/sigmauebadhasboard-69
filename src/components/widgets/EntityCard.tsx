@@ -28,9 +28,9 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "text-[#FFD700]",
-      bgColor: "bg-[#FFD700]/10",
-      glowColor: "shadow-[0_0_15px_rgba(255,215,0,0.2)]"
+      color: "text-[#ea384c]",
+      bgColor: "bg-[#ea384c]/10",
+      glowColor: "shadow-[0_0_15px_rgba(234,56,76,0.2)]"
     };
     return { 
       level: "LOW", 
