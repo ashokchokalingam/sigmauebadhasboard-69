@@ -1,3 +1,4 @@
+
 import { Monitor, User } from "lucide-react";
 import { RiskyEntity } from "./types";
 
@@ -13,29 +14,29 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
   const entityName = isComputer ? entity.computer : entity.user;
 
   const getRiskLevel = (score: number): { level: string; color: string; bgColor: string; glowColor: string } => {
-    if (score >= 200) return { 
+    if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "text-risk-critical",
-      bgColor: "bg-risk-critical/10",
-      glowColor: "shadow-risk-critical-glow"
+      color: "text-[#FF6B6B]",
+      bgColor: "bg-[#FF6B6B]/10",
+      glowColor: "shadow-[0_0_15px_rgba(255,107,107,0.2)]"
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "text-risk-high",
-      bgColor: "bg-risk-high/10",
-      glowColor: "shadow-risk-high-glow"
+      color: "text-[#FFA500]",
+      bgColor: "bg-[#FFA500]/10",
+      glowColor: "shadow-[0_0_15px_rgba(255,165,0,0.2)]"
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "text-risk-medium",
-      bgColor: "bg-risk-medium/10",
-      glowColor: "shadow-risk-medium-glow"
+      color: "text-[#FFD700]",
+      bgColor: "bg-[#FFD700]/10",
+      glowColor: "shadow-[0_0_15px_rgba(255,215,0,0.2)]"
     };
     return { 
       level: "LOW", 
-      color: "text-risk-low",
-      bgColor: "bg-risk-low/10",
-      glowColor: "shadow-risk-low-glow"
+      color: "text-[#98FB98]",
+      bgColor: "bg-[#98FB98]/10",
+      glowColor: "shadow-[0_0_15px_rgba(152,251,152,0.2)]"
     };
   };
 
@@ -46,8 +47,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     <div
       onClick={onClick}
       className={`group relative p-4 rounded-lg
-        bg-gradient-to-r from-[#0A0B0F] to-[#12131A]
-        hover:from-[#12131A] hover:to-[#1A1F2C]
+        bg-[#0A0B0F]/90 hover:bg-[#12131A]
         border border-[#5856D6]/20 hover:border-[#5856D6]/40
         transition-all duration-300 cursor-pointer
         backdrop-blur-sm ${glowColor}
@@ -96,7 +96,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
           
           <div className={`relative px-4 py-2 rounded-lg ${bgColor} backdrop-blur-sm`}>
             <span className={`font-mono font-bold text-2xl ${color} ${
-              riskScore >= 200 ? 'animate-pulse' : ''
+              riskScore >= 150 ? 'animate-pulse' : ''
             }`}>
               {riskScore.toFixed(1)}
             </span>
