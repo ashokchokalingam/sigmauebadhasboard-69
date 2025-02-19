@@ -29,9 +29,9 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "bg-[#FEC6A1]/10",
-      textColor: "text-[#FEC6A1]",
-      progressColor: "bg-[#FEC6A1]"
+      color: "bg-[#F97316]/10",
+      textColor: "text-[#F97316]",
+      progressColor: "bg-[#F97316]"
     };
     return { 
       level: "LOW", 
