@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Circle, Shield, Flame, Skull, Activity, Monitor, User } from "lucide-react";
+import { Circle, Shield, Flame, Skull, Activity } from "lucide-react";
 import {
   HoverCard,
   HoverCardContent,
@@ -106,11 +106,13 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
             </div>
 
             <div className="flex items-center gap-8">
-              <div className="flex flex-col items-end">
+              <div className="flex flex-col items-end min-w-[100px]">
                 <span className="text-xs uppercase text-[#9b87f5]/70 mb-2">Risk Level</span>
-                <span className={`text-sm font-medium tracking-wider uppercase ${textColor} w-[80px] text-right`}>
-                  {level}
-                </span>
+                <div className="flex items-center justify-end w-full">
+                  <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
+                    {level}
+                  </span>
+                </div>
               </div>
 
               <div className="flex items-center gap-4">
