@@ -78,7 +78,7 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
       for (let i = 0; i <= segments; i++) {
         const x = i * step;
         const phase = (progress / 1000) * Math.PI * 2;
-        const y = 10 + Math.sin(i * config.frequency + phase) * config.amplitude;
+        let y = 10 + Math.sin(i * config.frequency + phase) * config.amplitude; // Changed to let
         
         // Add some randomness for HIGH and CRITICAL risk levels
         if (riskLevel === 'HIGH' || riskLevel === 'CRITICAL') {
