@@ -24,9 +24,12 @@ interface ComputerCountResponse {
   computer_count: number;
 }
 
+interface RiskyEntitiesResponse {
+  risky_users_count: number;
+  risky_computers_count: number;
+}
+
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
-  const highRiskUsers = stats?.uniqueUsers?.users?.filter(user => (user?.risk_score ?? 0) > 80)?.length ?? 0;
-  
   const { data: totalCountData, error } = useQuery({
     queryKey: ["total-count"],
     queryFn: async () => {
@@ -37,7 +40,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
       const data = await response.json();
       return data as TotalCountResponse;
     },
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 30000,
   });
 
   const { data: userCountsData } = useQuery({
@@ -50,7 +53,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
       const data = await response.json();
       return data as UserCountsResponse;
     },
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 30000,
   });
 
   const { data: computerCountData } = useQuery({
@@ -61,10 +64,24 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         throw new Error("Failed to fetch computer count");
       }
       const data = await response.json();
-      console.log('Computer count data:', data); // Add logging to debug
+      console.log('Computer count data:', data);
       return data as ComputerCountResponse;
     },
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 30000,
+  });
+
+  const { data: riskyEntitiesData } = useQuery({
+    queryKey: ["risky-entities"],
+    queryFn: async () => {
+      const response = await fetch("/api/risky_entities_count");
+      if (!response.ok) {
+        throw new Error("Failed to fetch risky entities count");
+      }
+      const data = await response.json();
+      console.log('Risky entities data:', data);
+      return data as RiskyEntitiesResponse;
+    },
+    refetchInterval: 30000,
   });
 
   // Parse string values to numbers and use safe defaults
@@ -74,6 +91,8 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
 
   const totalUsers = (userCountsData?.user_impacted_count ?? 0) + (userCountsData?.user_origin_count ?? 0);
   const computerCount = computerCountData?.computer_count ?? 0;
+  const riskyUsersCount = riskyEntitiesData?.risky_users_count ?? 0;
+  const riskyComputersCount = riskyEntitiesData?.risky_computers_count ?? 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
@@ -120,10 +139,14 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
       />
       <StatsCard
         title="Risky Users (24h)"
-        value={highRiskUsers}
+        value={riskyUsersCount}
         icon={UserCog}
         subtitle="High risk users detected"
         subtitleIcon={AlertTriangle}
+        breakdown={[
+          { rule_level: "Users", event_count: riskyUsersCount },
+          { rule_level: "Systems", event_count: riskyComputersCount },
+        ]}
       />
     </div>
   );
