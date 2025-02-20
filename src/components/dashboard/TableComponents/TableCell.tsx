@@ -73,7 +73,7 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
       return (
         <BaseIconCell 
           icon={Activity} 
-          text={`${alert.ml_cluster}`}
+          text={alert.ml_cluster !== undefined && alert.ml_cluster !== null ? `${alert.ml_cluster}` : 'No Cluster'}
           isBold={true}
         />
       );
