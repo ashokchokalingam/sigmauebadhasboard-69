@@ -1,7 +1,10 @@
-
 import { Monitor, FileText, AlignLeft, User, Hash, Server, Activity, Shield, Tag, Network, AlertTriangle } from "lucide-react";
 import { format } from "date-fns";
 import { Alert } from "../types";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Copy } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface TableCellProps {
   alert: Alert;
@@ -10,6 +13,33 @@ interface TableCellProps {
 }
 
 const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
+  const { toast } = useToast();
+
+  const getRiskBadgeColor = (risk: number | null) => {
+    if (!risk) return "bg-purple-500/10 text-purple-400";
+    if (risk >= 80) return "bg-[#D32F2F]/10 text-[#D32F2F]";
+    if (risk >= 60) return "bg-[#FF6F00]/10 text-[#FF6F00]";
+    if (risk >= 40) return "bg-[#FFC107]/10 text-[#FFC107]";
+    return "bg-[#4CAF50]/10 text-[#4CAF50]";
+  };
+
+  const getRiskLabel = (risk: number | null) => {
+    if (!risk) return "Unknown";
+    if (risk >= 80) return "Critical";
+    if (risk >= 60) return "High";
+    if (risk >= 40) return "Medium";
+    return "Low";
+  };
+
+  const handleCopyIP = (ip: string) => {
+    navigator.clipboard.writeText(ip);
+    toast({
+      title: "IP Address copied",
+      description: `${ip} has been copied to clipboard`,
+      duration: 2000,
+    });
+  };
+
   switch (columnKey) {
     case 'system_time':
       return (
@@ -62,6 +92,37 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
           </span>
         </div>
       );
+    case 'ip_address':
+      return (
+        <div className="flex items-center gap-2 group">
+          <Network className="h-4 w-4 text-blue-400/80 flex-shrink-0" />
+          <code className="font-mono text-sm bg-slate-900/50 px-2 py-1 rounded">
+            {alert.ip_address || '-'}
+          </code>
+          {alert.ip_address && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCopyIP(alert.ip_address || '');
+              }}
+            >
+              <Copy className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      );
+    case 'risk':
+      return (
+        <Badge 
+          variant="outline" 
+          className={`${getRiskBadgeColor(alert.risk)} border-none px-4 py-1`}
+        >
+          {getRiskLabel(alert.risk)}
+        </Badge>
+      );
     case 'title':
       return (
         <div className="flex items-center min-w-0">
@@ -88,13 +149,6 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
         <div className="flex items-center min-w-0">
           <Server className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
           <span className="truncate text-base whitespace-nowrap">{alert.provider_name || '-'}</span>
-        </div>
-      );
-    case 'ip_address':
-      return (
-        <div className="flex items-center min-w-0">
-          <Network className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="text-base font-medium whitespace-nowrap">{alert.ip_address || '-'}</span>
         </div>
       );
     case 'ruleid':
@@ -153,13 +207,6 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
           <span className="text-base font-medium whitespace-nowrap">
             {alert.ml_cluster === -1 ? "Noise" : `Cluster ${alert.ml_cluster}`}
           </span>
-        </div>
-      );
-    case 'risk':
-      return (
-        <div className="flex items-center min-w-0">
-          <AlertTriangle className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="text-base font-medium whitespace-nowrap">{alert.risk || '-'}</span>
         </div>
       );
     case 'tags':

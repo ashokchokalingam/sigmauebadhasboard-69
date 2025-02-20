@@ -27,9 +27,10 @@ const getColumnWidth = (columnKey: string) => {
     case 'target_user_name': return '160px';
     case 'title': return 'minmax(250px, 1fr)';
     case 'description': return 'minmax(350px, 1.5fr)';
-    case 'computer_name': return '160px';
+    case 'computer_name': return '200px'; // Increased width
+    case 'ip_address': return '200px'; // Increased width
     case 'ml_cluster': return '120px';
-    case 'risk': return '120px';
+    case 'risk': return '140px'; // Increased for badge
     default: return '160px';
   }
 };
