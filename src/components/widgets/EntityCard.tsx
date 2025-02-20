@@ -1,7 +1,12 @@
-
 import { Monitor, User, ArrowUp, ArrowDown } from "lucide-react";
 import { memo } from "react";
 import { RiskyEntity } from "./types";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface EntityCardProps {
   entity: RiskyEntity;
@@ -70,6 +75,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
   // For demo purposes, determine trend based on score value
   // In real implementation, this should come from historical data
   const riskIncreasing = riskScore > 100;
+  const riskChangePercent = ((riskScore - 50) / 50 * 100).toFixed(1);
 
   return (
     <div
@@ -107,16 +113,32 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
 
         <div className="relative min-w-[140px]">
-          <div className="flex items-center justify-end gap-2 mb-1">
-            {riskIncreasing ? (
-              <ArrowUp className={`w-4 h-4 ${textColor}`} />
-            ) : (
-              <ArrowDown className={`w-4 h-4 ${textColor}`} />
-            )}
-            <div className={`font-mono font-bold text-2xl tabular-nums ${textColor}`}>
-              {riskScore.toFixed(1)}
-            </div>
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center justify-end gap-3 mb-1">
+                  {riskIncreasing ? (
+                    <ArrowUp className={`w-4 h-4 ${textColor}`} />
+                  ) : (
+                    <ArrowDown className={`w-4 h-4 ${textColor}`} />
+                  )}
+                  <div className={`font-mono font-bold text-2xl tabular-nums ${textColor}`}>
+                    {riskScore.toFixed(1)}
+                  </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent
+                className="bg-[#0A0B0F]/90 border border-[#5856D6]/20 backdrop-blur-xl"
+              >
+                <p className="text-xs text-[#D6BCFA]">
+                  {riskIncreasing 
+                    ? `Risk increased by ${riskChangePercent}% over the last 24 hours`
+                    : `Risk decreased by ${Math.abs(Number(riskChangePercent))}% due to reduced anomalies`
+                  }
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           
           <div className="relative h-2 bg-[#5856D6]/10 rounded-full overflow-hidden">
             {/* Background segments for risk levels */}
