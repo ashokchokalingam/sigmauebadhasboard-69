@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Clock } from "lucide-react";
 import RiskLevelIndicator from "./RiskLevelIndicator";
@@ -35,7 +36,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
       return (score / 50) * 25; // LOW
     };
 
-    const trend = entity.risk_trend 
+    const trend = typeof entity.risk_trend === 'number'
       ? entity.risk_trend > 0 
         ? 'up' 
         : 'down'
@@ -53,7 +54,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "#FF9500", // Warmer orange for high
+      color: "#FF9500",
       textColor: "text-[#FF9500]",
       bgColor: "bg-[#FF9500]/10",
       lineColor: "bg-[#FF9500]",
@@ -63,7 +64,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "#FFB340", // More distinct amber for medium
+      color: "#FFB340",
       textColor: "text-[#FFB340]",
       bgColor: "bg-[#FFB340]/10",
       lineColor: "bg-[#FFB340]",
@@ -73,7 +74,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     };
     return { 
       level: "LOW", 
-      color: "#34C759", // Brighter green for low
+      color: "#34C759",
       textColor: "text-[#34C759]",
       bgColor: "bg-[#34C759]/10",
       lineColor: "bg-[#34C759]",
@@ -121,10 +122,12 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
               </div>
             )}
           </div>
-          <div className="flex items-center gap-1 text-xs text-[#9b87f5]/60">
-            <Clock className="h-3 w-3" />
-            <span>Last seen: {formatDateTime(entity.last_seen || '', true)}</span>
-          </div>
+          {entity.last_seen && (
+            <div className="flex items-center gap-1 text-xs text-[#9b87f5]/60">
+              <Clock className="h-3 w-3" />
+              <span>Last seen: {formatDateTime(entity.last_seen, true)}</span>
+            </div>
+          )}
         </div>
       </div>
 
