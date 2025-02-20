@@ -1,7 +1,7 @@
 
-import { format, parseISO } from "date-fns";
 import { Shield, Activity, CircleDot } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { formatDateTime } from "@/utils/dateTimeUtils";
 
 interface TooltipProps {
   active?: boolean;
@@ -18,7 +18,6 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
   const data = payload[0].payload;
   
-  // Early return if we don't have the required data
   if (!data) return null;
 
   useEffect(() => {
@@ -60,32 +59,32 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     }
   };
 
-  const formatDateTime = (date: string) => {
-    try {
-      // Create a new Date object from the GMT string
-      const dateObj = new Date(date);
-      return format(dateObj, "MMM d, hh:mm:ss aa");
-    } catch (error) {
-      console.error("Date parsing error:", error);
-      return date; // Return original string if parsing fails
-    }
-  };
-
   // Safely split comma-separated strings
   const safeSplit = (value: string | null | undefined): string[] => {
     if (!value || typeof value !== 'string') return [];
     return value.split(',').map(item => item.trim()).filter(Boolean);
   };
 
-  // Safely get arrays from data
   const tactics = safeSplit(data.tactics);
   const techniques = safeSplit(data.techniques);
+
+  const formatTimestamps = (date: string) => {
+    const times = formatDateTime(date);
+    if (typeof times === 'string') return times;
+    
+    return (
+      <div className="space-y-0.5">
+        <div className="text-purple-200/90">{times.utc}</div>
+        <div className="text-purple-300/70">{times.local}</div>
+      </div>
+    );
+  };
 
   return (
     <div 
       ref={tooltipRef}
       className="absolute bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
-        shadow-xl w-[340px] pointer-events-none"
+        shadow-xl w-[400px] pointer-events-none"
       style={{
         left: position.x,
         top: '50%',
@@ -114,12 +113,12 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
             {data.risk || 'N/A'}
           </div>
           <div className="text-purple-300/80">First seen:</div>
-          <div className="text-right text-white/90">
-            {formatDateTime(data.first_seen || data.firstSeen)}
+          <div className="text-right">
+            {formatTimestamps(data.first_seen || data.firstSeen)}
           </div>
           <div className="text-purple-300/80">Last seen:</div>
-          <div className="text-right text-white/90">
-            {formatDateTime(data.last_seen || data.lastSeen)}
+          <div className="text-right">
+            {formatTimestamps(data.last_seen || data.lastSeen)}
           </div>
         </div>
 

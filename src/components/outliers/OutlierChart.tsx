@@ -1,10 +1,10 @@
 
 import React from 'react';
 import { Bar, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
-import { format } from "date-fns";
 import { ChartDataPoint } from "./types";
 import { OutlierTooltip } from "./OutlierTooltip";
 import { Toggle } from "@/components/ui/toggle";
+import { formatDateTime } from "@/utils/dateTimeUtils";
 
 interface OutlierChartProps {
   data: ChartDataPoint[];
@@ -100,7 +100,10 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
             <XAxis 
               dataKey="timestamp"
               stroke="#D8B4FE"
-              tickFormatter={(timestamp) => format(new Date(timestamp), "MMM d, hh:mm:ss aa")}
+              tickFormatter={(timestamp) => {
+                const formatted = formatDateTime(timestamp, false);
+                return typeof formatted === 'string' ? formatted : formatted.local;
+              }}
               tick={{ 
                 fill: '#D8B4FE', 
                 fontSize: 12 
