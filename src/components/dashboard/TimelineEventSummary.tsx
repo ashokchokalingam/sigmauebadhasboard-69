@@ -11,6 +11,11 @@ interface TimelineEventSummaryProps {
   entityType: "userorigin" | "userimpacted" | "computersimpacted";
 }
 
+const generateEventId = (event: EventSummary): string => {
+  const identifier = `${event.title}-${event.system_time}-${event.description?.slice(0, 20)}`;
+  return btoa(identifier).replace(/[^a-zA-Z0-9]/g, '');
+};
+
 const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventSummaryProps) => {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
@@ -38,18 +43,21 @@ const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventS
       
       <ScrollArea className="h-[600px] pr-4">
         <div className="relative max-w-3xl mx-auto">
-          {summary.map((event, index) => (
-            <TimelineEventCard 
-              key={`${event.id}-${index}`}
-              event={event} 
-              isLast={index === summary.length - 1}
-              entityType={entityType}
-              onSelect={handleEventSelect}
-              selectedEventId={selectedEventId}
-              instances={[]}
-              isLoadingLogs={false}
-            />
-          ))}
+          {summary.map((event, index) => {
+            const eventId = event.id || generateEventId(event);
+            return (
+              <TimelineEventCard 
+                key={eventId}
+                event={event} 
+                isLast={index === summary.length - 1}
+                entityType={entityType}
+                onSelect={handleEventSelect}
+                selectedEventId={selectedEventId}
+                instances={[]}
+                isLoadingLogs={false}
+              />
+            );
+          })}
           
           {summary.length === 0 && (
             <div className="text-center text-blue-300/70 py-8">

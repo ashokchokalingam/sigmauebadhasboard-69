@@ -23,6 +23,12 @@ interface TimelineEventCardProps {
   selectedEventId: string | null;
 }
 
+const generateEventId = (event: Alert): string => {
+  // Generate a stable ID based on event properties
+  const identifier = `${event.title}-${event.system_time}-${event.description?.slice(0, 20)}`;
+  return btoa(identifier).replace(/[^a-zA-Z0-9]/g, '');
+};
+
 const TimelineEventCard = ({ 
   event, 
   isLast, 
@@ -36,23 +42,21 @@ const TimelineEventCard = ({
   isLoadingLogs = false,
   selectedEventId
 }: TimelineEventCardProps) => {
-  const isSelected = selectedEventId === event.id;
+  // Generate a stable ID if one isn't provided
+  const eventId = event.id || generateEventId(event);
+  const isSelected = selectedEventId === eventId;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
   const handleCardClick = () => {
     console.log('Card clicked:', {
-      eventId: event.id,
+      eventId,
       isCurrentlySelected: isSelected,
       entityType,
-      title: event.title
+      title: event.title,
+      systemTime: event.system_time
     });
 
-    if (!event.id) {
-      console.error('No event ID found:', event);
-      return;
-    }
-
-    onSelect(isSelected ? null : event.id);
+    onSelect(isSelected ? null : eventId);
   };
 
   // Map the entityType to the expected type for TimelineDetailedLogs
