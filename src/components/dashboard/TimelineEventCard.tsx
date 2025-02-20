@@ -5,12 +5,12 @@ import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineInstanceList from "./TimelineInstanceList";
-import TimelineDetailedLogs from "./TimelineDetailedLogs";
-import TimelineRawLog from "./TimelineRawLog";
+import TimelineConnector from "./TimelineConnector";
+import TimelineEventDetails from "./TimelineEventDetails";
 import { getRiskLevel } from "./utils";
-import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { useTimelineLogs } from "./hooks/useTimelineLogs";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -43,69 +43,19 @@ const TimelineEventCard = ({
   const isSelected = selectedEventId === event.id;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
-  const getApiEndpoint = () => {
-    switch (entityType) {
-      case "userorigin":
-        return `/api/user_origin_logs?user_origin=${encodeURIComponent(event.user_origin || '')}&title=${encodeURIComponent(event.title || '')}`;
-      case "userimpacted":
-        return "/api/user_impacted_logs";
-      case "computersimpacted":
-        return "/api/computer_impacted_logs";
-      default:
-        return "/api/user_origin_logs";
-    }
-  };
-
-  const fetchLogs = async () => {
-    const endpoint = getApiEndpoint();
-    if (entityType === "userorigin") {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`);
-      return response.json();
-    } else {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          user_origin: event.user_origin,
-          title: event.title
-        })
-      });
-      return response.json();
-    }
-  };
-
-  const { data: logsData, isLoading } = useQuery({
-    queryKey: ['logs', entityType, event.id],
-    queryFn: fetchLogs,
-    enabled: isDetailsExpanded
-  });
+  const { data: logsData, isLoading } = useTimelineLogs(
+    entityType,
+    event,
+    isDetailsExpanded
+  );
 
   const handleCardClick = () => {
     setIsDetailsExpanded(!isDetailsExpanded);
-    if (!isDetailsExpanded) {
-      console.log('Fetching logs from:', getApiEndpoint(), {
-        user_origin: event.user_origin,
-        title: event.title
-      });
-    }
   };
 
   return (
     <div className="group relative pl-4 w-full">
-      <div className={cn(
-        "absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2",
-        color,
-        "bg-background"
-      )} />
-      {!isLast && (
-        <div className={cn(
-          "absolute left-0 top-8 -ml-[1px] h-full w-[2px]",
-          "bg-gradient-to-b from-current to-transparent",
-          color
-        )} />
-      )}
+      <TimelineConnector color={color} isLast={isLast} />
 
       <div className="relative ml-4 mb-2">
         <div 
@@ -146,57 +96,11 @@ const TimelineEventCard = ({
             {event.tags && <TimelineMitreSection tags={event.tags} />}
           </div>
 
-          <div className={cn(
-            "overflow-hidden transition-all duration-300",
-            isDetailsExpanded ? "max-h-[2000px]" : "max-h-0"
-          )}>
-            <div className="border-t border-purple-500/20 p-4 space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="space-y-2">
-                  <div>
-                    <span className="text-purple-400">Event ID:</span>
-                    <span className="ml-2 text-gray-300">{event.event_id}</span>
-                  </div>
-                  <div>
-                    <span className="text-purple-400">Provider Name:</span>
-                    <span className="ml-2 text-gray-300">{event.provider_name}</span>
-                  </div>
-                  <div>
-                    <span className="text-purple-400">Computer Name:</span>
-                    <span className="ml-2 text-gray-300">{event.computer_name}</span>
-                  </div>
-                  <div>
-                    <span className="text-purple-400">Task:</span>
-                    <span className="ml-2 text-gray-300">{event.task}</span>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <div>
-                    <span className="text-purple-400">User ID:</span>
-                    <span className="ml-2 text-gray-300">{event.user_id}</span>
-                  </div>
-                  <div>
-                    <span className="text-purple-400">IP Address:</span>
-                    <span className="ml-2 text-gray-300">{event.ip_address || 'N/A'}</span>
-                  </div>
-                  <div>
-                    <span className="text-purple-400">Risk Level:</span>
-                    <span className="ml-2 text-gray-300">{event.rule_level}</span>
-                  </div>
-                  <div>
-                    <span className="text-purple-400">Risk Score:</span>
-                    <span className="ml-2 text-gray-300">{event.risk}</span>
-                  </div>
-                </div>
-              </div>
-
-              {isLoading ? (
-                <div className="text-center text-purple-400">Loading logs...</div>
-              ) : (
-                <TimelineRawLog alert={event} />
-              )}
-            </div>
-          </div>
+          <TimelineEventDetails 
+            isExpanded={isDetailsExpanded}
+            event={event}
+            isLoading={isLoading}
+          />
 
           <TimelineInstanceList
             instances={instances}
