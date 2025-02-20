@@ -1,3 +1,4 @@
+
 import { Tag, Activity } from "lucide-react";
 import { Alert } from "../types";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +37,7 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
     case 'computer_name':
       return <ComputerCell computerName={alert.computer_name || ''} onTimelineView={onTimelineView} />;
     case 'ip_address':
-      return <IPAddressCell ipAddress={alert.ip_address || ''} />;
+      return <IPAddressCell ipAddress={alert.ip_address || 'none'} />;
     case 'risk':
       return (
         <Badge 
@@ -72,7 +73,7 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
       return (
         <BaseIconCell 
           icon={Activity} 
-          text={alert.ml_cluster === -1 ? "Noise" : `Cluster ${alert.ml_cluster}`}
+          text={typeof alert.ml_cluster === 'number' && alert.ml_cluster === -1 ? "Noise" : `Cluster ${alert.ml_cluster}`}
           isBold={true}
         />
       );

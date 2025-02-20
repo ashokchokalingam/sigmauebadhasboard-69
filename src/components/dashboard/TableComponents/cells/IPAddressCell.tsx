@@ -19,13 +19,15 @@ export const IPAddressCell = ({ ipAddress }: IPAddressCellProps) => {
     });
   };
 
+  const displayValue = ipAddress === '-' ? 'none' : ipAddress;
+
   return (
     <div className="flex items-center gap-2 group">
       <Network className="h-4 w-4 text-blue-400/80 flex-shrink-0" />
       <code className="font-mono text-sm bg-slate-900/50 px-2 py-1 rounded">
-        {ipAddress || '-'}
+        {displayValue}
       </code>
-      {ipAddress && (
+      {ipAddress && ipAddress !== '-' && ipAddress !== 'none' && (
         <Button
           variant="ghost"
           size="icon"
