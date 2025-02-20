@@ -13,12 +13,12 @@ interface EventDetailsModalProps {
 }
 
 interface LogsResponse {
-  alerts: Alert[];
+  user_origin_logs: Alert[];
   pagination: {
     current_page: number;
     per_page: number;
+    total_pages: number;
     total_records: number;
-    has_more: boolean;
   };
 }
 
@@ -31,7 +31,7 @@ const EventDetailsModal = ({ isOpen, onClose, event }: EventDetailsModalProps) =
         title: event.title || ''
       });
       
-      const response = await fetch(`/api/alerts?${params}`);
+      const response = await fetch(`/api/user_origin_logs?${params}`);
       if (!response.ok) {
         throw new Error('Failed to fetch logs');
       }
@@ -49,7 +49,9 @@ const EventDetailsModal = ({ isOpen, onClose, event }: EventDetailsModalProps) =
           <ChronoAnalyzerHeader />
           <ChronoAnalyzerTableHeader />
           <div className="flex-1 overflow-auto">
-            <ChronoAnalyzerTableRow event={event} />
+            {logsData?.user_origin_logs.map((logEvent, index) => (
+              <ChronoAnalyzerTableRow key={logEvent.id || index} event={logEvent} />
+            ))}
           </div>
         </div>
       </DialogContent>
