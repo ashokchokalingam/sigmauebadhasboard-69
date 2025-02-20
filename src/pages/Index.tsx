@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import EventsCountWidget from "@/components/dashboard/EventsCountWidget";
 import { Alert } from "@/components/dashboard/types";
 import { useQuery } from "@tanstack/react-query";
 
@@ -142,6 +144,9 @@ const Index = () => {
     <div className="min-h-screen bg-[#1a1f2c] font-sans antialiased">
       <div className="max-w-[2560px] mx-auto">
         <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+          <div className="mb-6">
+            <EventsCountWidget />
+          </div>
           
           <DashboardLayout
             alerts={currentAlerts}
