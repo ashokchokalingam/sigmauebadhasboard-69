@@ -8,6 +8,7 @@ import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineInstanceList from "./TimelineInstanceList";
 import { getRiskLevel } from "./utils";
+import { toast } from "sonner";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -55,7 +56,6 @@ const TimelineEventCard = ({
   isLoadingLogs = false,
   selectedEventId
 }: TimelineEventCardProps) => {
-  // Generate a stable ID if one isn't provided
   const eventId = generateEventId(event);
   const isSelected = selectedEventId === eventId;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
@@ -67,8 +67,16 @@ const TimelineEventCard = ({
       entityType,
       title: event.title,
       systemTime: event.system_time,
-      ruleLevel: event.rule_level
+      ruleLevel: event.rule_level,
+      userOrigin: event.user_origin,
+      userImpacted: event.user_impacted,
+      computerName: event.computer_name
     });
+
+    if (!event.title) {
+      toast.error("Event data is incomplete");
+      return;
+    }
 
     onSelect(isSelected ? null : eventId);
   };
