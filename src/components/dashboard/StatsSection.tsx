@@ -78,8 +78,8 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         subtitle="Total active users"
         subtitleIcon={Users}
         breakdown={[
-          { rule_level: "Impacted", event_count: userCountsData?.user_impacted_count ?? 0 },
           { rule_level: "Origin", event_count: userCountsData?.user_origin_count ?? 0 },
+          { rule_level: "Impacted", event_count: userCountsData?.user_impacted_count ?? 0 },
         ]}
       />
       <StatsCard
