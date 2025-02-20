@@ -40,7 +40,7 @@ const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventS
         <div className="relative max-w-3xl mx-auto">
           {summary.map((event, index) => (
             <TimelineEventCard 
-              key={`${event.id || event._id}-${index}`}
+              key={`${event.id}-${index}`}
               event={event} 
               isLast={index === summary.length - 1}
               entityType={entityType}
