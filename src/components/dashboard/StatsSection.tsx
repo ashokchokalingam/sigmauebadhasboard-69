@@ -55,7 +55,6 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const totalCount = totalCountData?.total_count ?? totalAlerts;
 
   const totalUsers = (userCountsData?.user_impacted_count ?? 0) + (userCountsData?.user_origin_count ?? 0);
-  const breakdownText = `${userCountsData?.user_impacted_count ?? 0} impacted, ${userCountsData?.user_origin_count ?? 0} origin`;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
@@ -76,8 +75,12 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         title="Active Users (24h)"
         value={totalUsers}
         icon={Users}
-        subtitle={breakdownText}
+        subtitle="Total active users"
         subtitleIcon={Users}
+        breakdown={[
+          { rule_level: "Impacted", event_count: userCountsData?.user_impacted_count ?? 0 },
+          { rule_level: "Origin", event_count: userCountsData?.user_origin_count ?? 0 },
+        ]}
       />
       <StatsCard
         title="Active Computers (24h)"
