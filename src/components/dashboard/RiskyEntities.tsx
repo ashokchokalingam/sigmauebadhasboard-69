@@ -1,3 +1,4 @@
+
 import { Alert } from "./types";
 import EntityHeader from "./EntityHeader";
 import EntitySearchInput from "./EntitySearchInput";
@@ -37,6 +38,7 @@ const RiskyEntities = ({ alerts, type, onEntitySelect }: RiskyEntitiesProps) => 
 
   const handleEntityClick = (entityId: string) => {
     if (type === "users-impacted" || type === "users-origin") {
+      console.log('Selected user:', entityId);
       setSelectedUser(entityId);
     }
     onEntitySelect(entityId);
