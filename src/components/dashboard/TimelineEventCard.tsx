@@ -7,6 +7,7 @@ import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineInstanceList from "./TimelineInstanceList";
 import TimelineDetailedLogs from "./TimelineDetailedLogs";
 import { getRiskLevel } from "./utils";
+import { useQuery } from "@tanstack/react-query";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -38,7 +39,32 @@ const TimelineEventCard = ({
   const isSelected = selectedEventId === event.id;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
+  const { data: logsData, isLoading } = useQuery({
+    queryKey: ['logs', event.user_origin, event.title],
+    queryFn: async () => {
+      if (!event.user_origin || !event.title) return null;
+      
+      const params = new URLSearchParams({
+        user_origin: event.user_origin,
+        title: event.title
+      });
+      
+      console.log('Fetching logs with params:', params.toString());
+      
+      const response = await fetch(`/api/user_origin_logs?${params}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch logs');
+      }
+      return response.json();
+    },
+    enabled: isSelected && !!event.user_origin && !!event.title
+  });
+
   const handleCardClick = () => {
+    console.log('Card clicked:', {
+      user_origin: event.user_origin,
+      title: event.title
+    });
     onSelect(isSelected ? null : event.id);
   };
 
@@ -97,15 +123,15 @@ const TimelineEventCard = ({
 
           {isSelected && (
             <div className="border-t border-blue-500/10">
-              {isLoadingLogs ? (
+              {isLoading ? (
                 <div className="flex items-center justify-center p-4">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
                 </div>
-              ) : detailedLogs ? (
+              ) : logsData ? (
                 <TimelineDetailedLogs
-                  logs={detailedLogs?.user_origin_logs || detailedLogs?.computer_impacted_logs || []}
+                  logs={logsData?.user_origin_logs || []}
                   isLoading={false}
-                  totalRecords={detailedLogs?.pagination?.total_records || 0}
+                  totalRecords={logsData?.pagination?.total_records || 0}
                   entityType={mappedEntityType}
                 />
               ) : null}
