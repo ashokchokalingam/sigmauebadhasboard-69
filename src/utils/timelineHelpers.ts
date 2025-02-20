@@ -1,3 +1,4 @@
+
 import { Alert, EventSummary } from "@/components/dashboard/types";
 
 export const getTimelineEntityType = (entityType: string) => {
