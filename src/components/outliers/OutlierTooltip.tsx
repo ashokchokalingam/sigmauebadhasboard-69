@@ -57,6 +57,10 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     }
   };
 
+  const formatDateTime = (date: string) => {
+    return format(new Date(date), "MMM d, h:mm a");
+  };
+
   return (
     <div 
       ref={tooltipRef}
@@ -83,11 +87,11 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
         <div className="grid grid-cols-2 gap-2 text-xs">
           <div className="text-purple-300/80">First seen:</div>
           <div className="text-right text-white/90">
-            {format(new Date(data.firstSeen), "MMM d, HH:mm")}
+            {formatDateTime(data.firstSeen)}
           </div>
           <div className="text-purple-300/80">Last seen:</div>
           <div className="text-right text-white/90">
-            {format(new Date(data.lastSeen), "MMM d, HH:mm")}
+            {formatDateTime(data.lastSeen)}
           </div>
         </div>
 
