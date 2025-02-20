@@ -53,15 +53,16 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
 
   return (
     <Card className="bg-[#15161E]/60 border border-[#5856D6]/20 hover:border-[#5856D6]/40 
-    transition-all duration-300 group backdrop-blur-sm relative overflow-hidden
-    shadow-lg shadow-[#5856D6]/5 hover:shadow-[#5856D6]/10">
+      transition-all duration-300 group backdrop-blur-sm relative overflow-hidden
+      shadow-lg shadow-[#5856D6]/5 hover:shadow-[#5856D6]/10">
       <div className="absolute inset-0 bg-gradient-to-br from-[#5856D6]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-base font-medium text-white/90 group-hover:text-white transition-colors">
           {title}
         </CardTitle>
-        <Icon className="h-6 w-6 text-[#5856D6] group-hover:text-[#5856D6] transition-colors" />
+        <Icon className="h-6 w-6 text-[#5856D6] group-hover:text-[#5856D6] transition-colors 
+          animate-[pulse_4s_ease-in-out_infinite]" />
       </CardHeader>
       
       <CardContent>
@@ -80,7 +81,8 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
               const colors = getRiskColors(item.rule_level);
               return (
                 <div key={item.rule_level} 
-                  className={`flex justify-between items-center p-2 rounded-lg border ${colors.border} ${colors.bg}`}
+                  className={`flex justify-between items-center p-2 rounded-lg border ${colors.border} ${colors.bg}
+                    transition-all duration-300 hover:scale-[1.02] transform`}
                 >
                   <div className="flex items-center gap-2">
                     {getRiskIcon(item.rule_level)}

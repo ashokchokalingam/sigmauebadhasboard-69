@@ -64,7 +64,6 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         throw new Error("Failed to fetch computer count");
       }
       const data = await response.json();
-      console.log('Computer count data:', data);
       return data as ComputerCountResponse;
     },
     refetchInterval: 30000,
@@ -78,13 +77,11 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         throw new Error("Failed to fetch risky entities count");
       }
       const data = await response.json();
-      console.log('Risky entities data:', data);
       return data as RiskyEntitiesResponse;
     },
     refetchInterval: 30000,
   });
 
-  // Parse string values to numbers and use safe defaults
   const criticalCount = totalCountData ? parseInt(totalCountData.critical_count) || 0 : 0;
   const highCount = totalCountData ? parseInt(totalCountData.high_count) || 0 : 0;
   const totalCount = totalCountData?.total_count ?? totalAlerts;
@@ -96,8 +93,10 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
-    bg-[#15161E] shadow-2xl border border-[#5856D6]/20 relative overflow-hidden">
+      bg-[#15161E] shadow-2xl border border-[#5856D6]/20 relative overflow-hidden
+      animate-[fadeIn_0.5s_ease-out]">
       <div className="absolute inset-0 bg-gradient-to-br from-[#5856D6]/10 via-[#5856D6]/5 to-transparent pointer-events-none" />
+      
       <StatsCard
         title="Total Events (24h)"
         value={totalCount}
@@ -109,6 +108,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
           { rule_level: "High", event_count: highCount },
         ]}
       />
+      
       <StatsCard
         title="Active Users (24h)"
         value={totalUsers}
@@ -120,6 +120,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
           { rule_level: "Impacted", event_count: userCountsData?.user_impacted_count ?? 0 },
         ]}
       />
+      
       <StatsCard
         title="Active Computers (24h)"
         value={computerCount}
@@ -130,6 +131,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
           { rule_level: "Systems", event_count: computerCount }
         ]}
       />
+      
       <StatsCard
         title="ML Outliers (24h)"
         value={stats?.anomalies?.current ?? 0}
@@ -137,6 +139,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         subtitle="Total outliers detected"
         subtitleIcon={AlertTriangle}
       />
+      
       <StatsCard
         title="Risky Users (24h)"
         value={riskyUsersCount}
