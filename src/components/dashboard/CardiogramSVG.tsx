@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface CardiogramSVGProps {
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -7,13 +7,88 @@ interface CardiogramSVGProps {
 }
 
 const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
-  // Define different paths for each risk level
-  const paths = {
-    LOW: "M 0 10 Q 5 10 10 10 T 20 10 T 30 10 T 40 8 T 50 10 T 60 10",
-    MEDIUM: "M 0 10 Q 5 8 10 12 T 20 8 T 30 12 T 40 8 T 50 12 T 60 10",
-    HIGH: "M 0 10 Q 5 5 10 15 T 20 5 T 30 15 T 40 5 T 50 15 T 60 10",
-    CRITICAL: "M 0 10 Q 5 2 10 18 T 20 2 T 30 18 T 40 2 T 50 18 T 60 10"
+  const canvasRef = useRef<SVGPathElement>(null);
+  
+  // Configure wave parameters based on risk level
+  const getWaveConfig = (level: string) => {
+    switch (level) {
+      case 'LOW':
+        return {
+          amplitude: 2,
+          frequency: 0.5,
+          segments: 2,
+          speed: 0.5
+        };
+      case 'MEDIUM':
+        return {
+          amplitude: 4,
+          frequency: 1,
+          segments: 3,
+          speed: 0.75
+        };
+      case 'HIGH':
+        return {
+          amplitude: 6,
+          frequency: 1.5,
+          segments: 3,
+          speed: 1
+        };
+      case 'CRITICAL':
+        return {
+          amplitude: 8,
+          frequency: 2,
+          segments: 4,
+          speed: 1.25
+        };
+      default:
+        return {
+          amplitude: 2,
+          frequency: 0.5,
+          segments: 2,
+          speed: 0.5
+        };
+    }
   };
+
+  useEffect(() => {
+    const path = canvasRef.current;
+    if (!path) return;
+
+    const config = getWaveConfig(riskLevel);
+    let frame: number;
+    let startTime: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = ((timestamp - startTime) * config.speed) % 1000;
+      
+      // Generate wave path
+      let d = `M 0 10`;
+      const width = 60;
+      const segments = config.segments * 2; // Double for complete waves
+      const step = width / segments;
+      
+      for (let i = 0; i <= segments; i++) {
+        const x = i * step;
+        const phase = (progress / 1000) * Math.PI * 2;
+        const y = 10 + Math.sin(i * config.frequency + phase) * config.amplitude;
+        
+        if (i === 0) {
+          d += ` L ${x} ${y}`;
+        } else {
+          const cpx1 = x - step / 2;
+          const cpy1 = y;
+          d += ` S ${cpx1} ${cpy1} ${x} ${y}`;
+        }
+      }
+
+      path.setAttribute('d', d);
+      frame = requestAnimationFrame(animate);
+    };
+
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [riskLevel]);
 
   return (
     <svg
@@ -22,16 +97,22 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
       viewBox="0 0 60 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="opacity-60"
+      className="opacity-60 hover:opacity-100 transition-opacity duration-300"
     >
       <path
-        d={paths[riskLevel]}
+        ref={canvasRef}
         stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="animate-cardiogram"
+        filter="url(#glow)"
       />
+      <defs>
+        <filter id="glow" x="-2" y="-2" width="64" height="24">
+          <feGaussianBlur stdDeviation="1" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
     </svg>
   );
 };
