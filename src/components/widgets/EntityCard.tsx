@@ -42,7 +42,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, color, textColor, progressColor } = getRiskLevel(riskScore);
+  const { level, textColor, progressColor } = getRiskLevel(riskScore);
   const progressWidth = Math.min((riskScore / 200) * 100, 100);
 
   return (
@@ -71,9 +71,12 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       </div>
 
       <div className="flex-1 flex items-center justify-end gap-4">
-        <span className={`text-sm font-medium ${textColor}`}>
-          {level}
-        </span>
+        <div className="flex flex-col items-end">
+          <span className={`text-xs ${textColor}`}>Risk Level</span>
+          <span className={`text-sm font-medium ${textColor}`}>
+            {level}
+          </span>
+        </div>
 
         <div className="relative">
           <div className={`font-mono font-bold text-2xl ${textColor} select-none`}>
