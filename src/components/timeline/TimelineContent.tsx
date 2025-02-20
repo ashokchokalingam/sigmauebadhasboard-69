@@ -37,19 +37,31 @@ const TimelineContent = ({
       if (!selectedEvent) return null;
 
       let identifier;
+      let title;
+      
       if (entityType === "userorigin") {
         identifier = selectedEvent.user_origin;
+        title = selectedEvent.title;
       } else if (entityType === "userimpacted") {
         identifier = selectedEvent.user_impacted;
+        title = selectedEvent.title;
       } else {
         identifier = selectedEvent.computer_name;
+        title = selectedEvent.title;
       }
 
       // Build the API URL with query parameters
-      const params = new URLSearchParams({
-        [`${entityType === "computersimpacted" ? "computer_name" : "user_origin"}`]: identifier || '',
-        title: selectedEvent.title
-      });
+      const params = new URLSearchParams();
+      
+      if (entityType === "computersimpacted") {
+        params.append("computer_name", identifier || '');
+      } else if (entityType === "userorigin") {
+        params.append("user_origin", identifier || '');
+      } else {
+        params.append("user_impacted", identifier || '');
+      }
+      
+      params.append("title", title || '');
 
       const endpoint = entityType === "computersimpacted" ? '/api/computer_impacted_logs' :
                       entityType === "userorigin" ? '/api/user_origin_logs' :
@@ -60,7 +72,7 @@ const TimelineContent = ({
         params: params.toString(),
         entityType,
         identifier,
-        title: selectedEvent.title
+        title
       });
 
       const response = await fetch(`${endpoint}?${params}`);
@@ -68,9 +80,18 @@ const TimelineContent = ({
         throw new Error('Failed to fetch logs');
       }
 
-      return response.json();
+      const data = await response.json();
+      console.log('Received logs:', data);
+      return data;
     },
-    enabled: !!selectedEventId
+    enabled: !!selectedEventId,
+    meta: {
+      onSettled: (data, error) => {
+        if (error) {
+          console.error('Error fetching logs:', error);
+        }
+      }
+    }
   });
 
   const handleToggleExpand = (eventId: string) => {
