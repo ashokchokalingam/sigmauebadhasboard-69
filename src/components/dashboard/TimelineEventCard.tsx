@@ -7,7 +7,7 @@ import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineDetailedLogs from "./TimelineDetailedLogs";
-import { User, Monitor, Shield, AlertTriangle } from "lucide-react";
+import { Shield } from "lucide-react";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -83,13 +83,6 @@ const TimelineEventCard = ({
             title={event.title}
             description={event.description}
           />
-
-          <div className="flex items-center gap-2 mt-4 mb-3">
-            <Monitor className="h-4 w-4 text-blue-400" />
-            <span className="text-sm text-blue-300">
-              Computer: <span className="font-mono text-blue-400">{event.computer_name}</span>
-            </span>
-          </div>
 
           <TimelineEventTimestamps
             firstTimeSeen={event.first_time_seen || ''}
