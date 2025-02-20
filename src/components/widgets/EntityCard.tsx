@@ -71,7 +71,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       </div>
 
       <div className="flex-1 flex items-center justify-end gap-4">
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex flex-col items-start">
           <span className={`text-xs ${textColor}`}>Risk Level</span>
           <div className="relative">
             <span className={`text-sm font-medium ${textColor}`}>
@@ -86,24 +86,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
           </div>
         </div>
 
-        <div className="relative flex items-center gap-2">
-          <div className="relative w-6 h-4 overflow-hidden opacity-60">
-            <svg 
-              className={`w-[200%] h-full animate-cardiogram ${textColor}`}
-              viewBox="0 0 120 24" 
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M0,12 L20,12 L24,4 L28,20 L32,12 L60,12 L64,4 L68,20 L72,12 L100,12 L104,4 L108,20 L112,12 L120,12"
-                fill="none"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                stroke="currentColor"
-              />
-            </svg>
-          </div>
-          
+        <div className="relative">
           <div className={`font-mono font-bold text-2xl ${textColor} select-none`}>
             {riskScore.toFixed(1)}
           </div>
