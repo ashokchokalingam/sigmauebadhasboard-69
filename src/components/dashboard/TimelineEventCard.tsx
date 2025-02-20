@@ -6,8 +6,11 @@ import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineInstanceList from "./TimelineInstanceList";
 import TimelineDetailedLogs from "./TimelineDetailedLogs";
+import TimelineRawLog from "./TimelineRawLog";
 import { getRiskLevel } from "./utils";
 import { useQuery } from "@tanstack/react-query";
+import { ChevronRight } from "lucide-react";
+import { useState } from "react";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -23,16 +26,6 @@ interface TimelineEventCardProps {
   selectedEventId: string | null;
 }
 
-interface LogsResponse {
-  user_origin_logs: Alert[];
-  pagination: {
-    current_page: number;
-    per_page: number;
-    total_records: number;
-    has_more: boolean;
-  };
-}
-
 const TimelineEventCard = ({ 
   event, 
   isLast, 
@@ -46,43 +39,13 @@ const TimelineEventCard = ({
   isLoadingLogs = false,
   selectedEventId
 }: TimelineEventCardProps) => {
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
   const isSelected = selectedEventId === event.id;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
-  // Generate a unique query key for this specific card
-  const queryKey = `logs-${event.id}`;
-
-  const { data: logsData, isLoading } = useQuery<LogsResponse>({
-    queryKey: [queryKey],
-    queryFn: async () => {
-      const params = new URLSearchParams({
-        user_origin: event.user_origin || '',
-        title: event.title || ''
-      });
-      
-      console.log(`Fetching logs for card ${event.id}:`, params.toString());
-      
-      const response = await fetch(`/api/user_origin_logs?${params}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch logs');
-      }
-      return response.json();
-    },
-    enabled: isSelected, // Only enable the query when this specific card is selected
-    staleTime: Infinity, // Keep the data fresh indefinitely once fetched
-    gcTime: 1000 * 60 * 5 // Cache the data for 5 minutes (renamed from cacheTime)
-  });
-
   const handleCardClick = () => {
-    console.log('Card clicked:', {
-      id: event.id,
-      user_origin: event.user_origin,
-      title: event.title
-    });
-    onSelect(isSelected ? null : event.id);
+    setIsDetailsExpanded(!isDetailsExpanded);
   };
-
-  const mappedEntityType = entityType === "computersimpacted" ? "computer" : "user";
 
   return (
     <div className="group relative pl-4 w-full">
@@ -106,20 +69,29 @@ const TimelineEventCard = ({
             cardBg,
             border,
             hover,
-            isLatest && "ring-1 ring-blue-500/50 bg-opacity-75",
-            isSelected && "ring-2 ring-purple-500/50"
+            isLatest && "ring-1 ring-blue-500/50 bg-opacity-75"
           )}
         >
           <div 
             onClick={handleCardClick}
             className="p-4 cursor-pointer hover:bg-slate-800/10 transition-colors"
           >
-            <TimelineEventHeader
-              ruleLevel={event.rule_level}
-              totalRecords={event.total_events || 0}
-              title={event.title}
-              description={event.description}
-            />
+            <div className="flex items-center gap-2">
+              <ChevronRight 
+                className={cn(
+                  "h-5 w-5 text-purple-400 transition-transform duration-200",
+                  isDetailsExpanded && "transform rotate-90"
+                )} 
+              />
+              <div className="flex-1">
+                <TimelineEventHeader
+                  ruleLevel={event.rule_level}
+                  totalRecords={event.total_events || 0}
+                  title={event.title}
+                  description={event.description}
+                />
+              </div>
+            </div>
 
             <TimelineEventTimestamps
               firstSeen={event.first_time_seen || event.system_time}
@@ -129,28 +101,59 @@ const TimelineEventCard = ({
             {event.tags && <TimelineMitreSection tags={event.tags} />}
           </div>
 
+          <div className={cn(
+            "overflow-hidden transition-all duration-300",
+            isDetailsExpanded ? "max-h-[2000px]" : "max-h-0"
+          )}>
+            <div className="border-t border-purple-500/20 p-4 space-y-4">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="space-y-2">
+                  <div>
+                    <span className="text-purple-400">Event ID:</span>
+                    <span className="ml-2 text-gray-300">{event.event_id}</span>
+                  </div>
+                  <div>
+                    <span className="text-purple-400">Provider Name:</span>
+                    <span className="ml-2 text-gray-300">{event.provider_name}</span>
+                  </div>
+                  <div>
+                    <span className="text-purple-400">Computer Name:</span>
+                    <span className="ml-2 text-gray-300">{event.computer_name}</span>
+                  </div>
+                  <div>
+                    <span className="text-purple-400">Task:</span>
+                    <span className="ml-2 text-gray-300">{event.task}</span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div>
+                    <span className="text-purple-400">User ID:</span>
+                    <span className="ml-2 text-gray-300">{event.user_id}</span>
+                  </div>
+                  <div>
+                    <span className="text-purple-400">IP Address:</span>
+                    <span className="ml-2 text-gray-300">{event.ip_address || 'N/A'}</span>
+                  </div>
+                  <div>
+                    <span className="text-purple-400">Risk Level:</span>
+                    <span className="ml-2 text-gray-300">{event.rule_level}</span>
+                  </div>
+                  <div>
+                    <span className="text-purple-400">Risk Score:</span>
+                    <span className="ml-2 text-gray-300">{event.risk}</span>
+                  </div>
+                </div>
+              </div>
+
+              <TimelineRawLog alert={event} />
+            </div>
+          </div>
+
           <TimelineInstanceList
             instances={instances}
             isExpanded={isExpanded || false}
             onToggle={() => onToggleExpand?.()}
           />
-
-          {isSelected && (
-            <div className="border-t border-blue-500/10">
-              {isLoading ? (
-                <div className="flex items-center justify-center p-4">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
-                </div>
-              ) : logsData ? (
-                <TimelineDetailedLogs
-                  logs={logsData.user_origin_logs}
-                  isLoading={false}
-                  totalRecords={logsData.pagination.total_records}
-                  entityType={mappedEntityType}
-                />
-              ) : null}
-            </div>
-          )}
         </div>
       </div>
     </div>
