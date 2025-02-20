@@ -1,5 +1,5 @@
 
-import { Monitor, User } from "lucide-react";
+import { Monitor, User, ArrowUp, ArrowDown } from "lucide-react";
 import { memo } from "react";
 import { RiskyEntity } from "./types";
 
@@ -20,15 +20,23 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
     textColor: string; 
     bgColor: string;
     lineColor: string;
-    nextThreshold?: number;
+    barWidth: number;
   } => {
+    // Calculate relative width based on risk level
+    const getBarWidth = (score: number): number => {
+      if (score >= 150) return Math.min((score / 200) * 100, 100); // CRITICAL
+      if (score >= 100) return (score / 150) * 75; // HIGH
+      if (score >= 50) return (score / 100) * 50; // MEDIUM
+      return (score / 50) * 25; // LOW
+    };
+
     if (score >= 150) return { 
       level: "CRITICAL", 
       color: "#FF1A1A",
       textColor: "text-[#FF1A1A]",
       bgColor: "bg-[#FF1A1A]/5",
       lineColor: "bg-[#FF1A1A]",
-      nextThreshold: 200  // Maximum score
+      barWidth: getBarWidth(score)
     };
     if (score >= 100) return { 
       level: "HIGH", 
@@ -36,7 +44,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       textColor: "text-[#FF3D00]",
       bgColor: "bg-[#FF3D00]/5",
       lineColor: "bg-[#FF3D00]",
-      nextThreshold: 150
+      barWidth: getBarWidth(score)
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
@@ -44,7 +52,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       textColor: "text-[#FFB100]",
       bgColor: "bg-[#FFB100]/5",
       lineColor: "bg-[#FFB100]",
-      nextThreshold: 100
+      barWidth: getBarWidth(score)
     };
     return { 
       level: "LOW", 
@@ -52,22 +60,16 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       textColor: "text-[#4ADE80]",
       bgColor: "bg-[#4ADE80]/5",
       lineColor: "bg-[#4ADE80]",
-      nextThreshold: 50
+      barWidth: getBarWidth(score)
     };
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, textColor, bgColor, lineColor, nextThreshold } = getRiskLevel(riskScore);
+  const { level, textColor, bgColor, lineColor, barWidth } = getRiskLevel(riskScore);
   
-  // Calculate progress within current risk level
-  const getProgressInLevel = () => {
-    if (level === "LOW") return (riskScore / 50) * 100;
-    if (level === "MEDIUM") return ((riskScore - 50) / 50) * 100;
-    if (level === "HIGH") return ((riskScore - 100) / 50) * 100;
-    return ((riskScore - 150) / 50) * 100;
-  };
-
-  const progress = Math.min(getProgressInLevel(), 100);
+  // For demo purposes, determine trend based on score value
+  // In real implementation, this should come from historical data
+  const riskIncreasing = riskScore > 100;
 
   return (
     <div
@@ -105,7 +107,12 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
 
         <div className="relative min-w-[140px]">
-          <div className="flex items-end justify-end mb-1">
+          <div className="flex items-center justify-end gap-2 mb-1">
+            {riskIncreasing ? (
+              <ArrowUp className={`w-4 h-4 ${textColor}`} />
+            ) : (
+              <ArrowDown className={`w-4 h-4 ${textColor}`} />
+            )}
             <div className={`font-mono font-bold text-2xl tabular-nums ${textColor}`}>
               {riskScore.toFixed(1)}
             </div>
@@ -124,19 +131,10 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
             <div 
               className={`h-full ${lineColor} transition-all duration-300`}
               style={{ 
-                width: `${progress}%`,
+                width: `${barWidth}%`,
                 boxShadow: `0 0 10px ${getRiskLevel(riskScore).color}`
               }}
             />
-          </div>
-          
-          {/* Progress markers */}
-          <div className="absolute -bottom-3 left-0 right-0 flex justify-between">
-            <div className="text-[10px] text-[#9b87f5]/50">0</div>
-            <div className="text-[10px] text-[#9b87f5]/50">50</div>
-            <div className="text-[10px] text-[#9b87f5]/50">100</div>
-            <div className="text-[10px] text-[#9b87f5]/50">150</div>
-            <div className="text-[10px] text-[#9b87f5]/50">200</div>
           </div>
         </div>
       </div>
