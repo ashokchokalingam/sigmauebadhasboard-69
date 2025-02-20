@@ -34,7 +34,7 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   }, [coordinate]);
 
   const getSeverityColor = (severity: string = 'medium') => {
-    switch (severity.toLowerCase()) {
+    switch (severity?.toLowerCase()) {
       case 'critical':
         return '#D32F2F';
       case 'high':
@@ -49,7 +49,7 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   };
 
   const getTacticIcon = (tactic: string) => {
-    switch (tactic.toLowerCase()) {
+    switch (tactic?.toLowerCase()) {
       case 'initial_access':
       case 'initial-access':
         return <Shield className="w-3 h-3" />;
@@ -70,10 +70,14 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   };
 
   // Safely split comma-separated strings
-  const safeSplit = (value: string | null | undefined) => {
-    if (!value) return [];
-    return value.split(',').filter(Boolean);
+  const safeSplit = (value: string | null | undefined): string[] => {
+    if (!value || typeof value !== 'string') return [];
+    return value.split(',').map(item => item.trim()).filter(Boolean);
   };
+
+  // Safely get arrays from data
+  const tactics = safeSplit(data.tactics);
+  const techniques = safeSplit(data.techniques);
 
   return (
     <div 
@@ -109,11 +113,11 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
           </div>
           <div className="text-purple-300/80">First seen:</div>
           <div className="text-right text-white/90">
-            {formatDateTime(data.firstSeen)}
+            {formatDateTime(data.first_seen || data.firstSeen)}
           </div>
           <div className="text-purple-300/80">Last seen:</div>
           <div className="text-right text-white/90">
-            {formatDateTime(data.lastSeen)}
+            {formatDateTime(data.last_seen || data.lastSeen)}
           </div>
         </div>
 
@@ -152,11 +156,11 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
           ) : null}
         </div>
 
-        {(data.tactics || data.tactics) && (
+        {tactics.length > 0 && (
           <div className="space-y-1.5">
             <div className="text-purple-200 text-xs font-medium">MITRE ATT&CK</div>
             <div className="flex flex-wrap gap-1">
-              {safeSplit(data.tactics).map((tactic: string, index: number) => (
+              {tactics.map((tactic: string, index: number) => (
                 <div 
                   key={index}
                   className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-500/10 
@@ -170,9 +174,9 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
           </div>
         )}
 
-        {(data.techniques || data.techniques) && (
+        {techniques.length > 0 && (
           <div className="flex flex-wrap gap-1">
-            {safeSplit(data.techniques).map((technique: string, index: number) => (
+            {techniques.map((technique: string, index: number) => (
               <div 
                 key={index}
                 className="px-1.5 py-0.5 rounded bg-purple-900/40 
