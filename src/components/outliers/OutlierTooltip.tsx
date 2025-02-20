@@ -62,7 +62,7 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
   const formatDateTime = (date: string) => {
     try {
-      return format(new Date(date), "MMM d, h:mm a");
+      return format(new Date(date), "MMM d, hh:mm:ss aa");
     } catch (error) {
       console.error("Date parsing error:", error);
       return date; // Return original string if parsing fails
