@@ -1,7 +1,9 @@
+
 import { Activity } from "lucide-react";
 import { EventSummary } from "./types";
 import TimelineEventCard from "./TimelineEventCard";
 import { ScrollArea } from "../ui/scroll-area";
+import { useState } from "react";
 
 interface TimelineEventSummaryProps {
   summary: EventSummary[];
@@ -10,6 +12,8 @@ interface TimelineEventSummaryProps {
 }
 
 const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventSummaryProps) => {
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+
   if (isLoading) {
     return (
       <div className="space-y-4 animate-pulse">
@@ -19,6 +23,10 @@ const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventS
       </div>
     );
   }
+
+  const handleEventSelect = (id: string | null) => {
+    setSelectedEventId(id);
+  };
 
   return (
     <div className="space-y-4">
@@ -35,6 +43,10 @@ const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventS
               event={event} 
               isLast={index === summary.length - 1}
               entityType={entityType}
+              onSelect={handleEventSelect}
+              selectedEventId={selectedEventId}
+              instances={[]}
+              isLoadingLogs={false}
             />
           ))}
           
