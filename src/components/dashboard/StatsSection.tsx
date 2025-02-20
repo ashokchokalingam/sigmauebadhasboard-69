@@ -20,6 +20,11 @@ interface UserCountsResponse {
   user_origin_count: number;
 }
 
+interface ComputerCountResponse {
+  computer_count: number;
+  unique_systems: number;
+}
+
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const highRiskUsers = stats?.uniqueUsers?.users?.filter(user => (user?.risk_score ?? 0) > 80)?.length ?? 0;
   
@@ -49,12 +54,27 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
     refetchInterval: 30000, // Refetch every 30 seconds
   });
 
+  const { data: computerCountData } = useQuery({
+    queryKey: ["computer-count"],
+    queryFn: async () => {
+      const response = await fetch("/api/computer_count");
+      if (!response.ok) {
+        throw new Error("Failed to fetch computer count");
+      }
+      const data = await response.json();
+      return data as ComputerCountResponse;
+    },
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
   // Parse string values to numbers and use safe defaults
   const criticalCount = totalCountData ? parseInt(totalCountData.critical_count) || 0 : 0;
   const highCount = totalCountData ? parseInt(totalCountData.high_count) || 0 : 0;
   const totalCount = totalCountData?.total_count ?? totalAlerts;
 
   const totalUsers = (userCountsData?.user_impacted_count ?? 0) + (userCountsData?.user_origin_count ?? 0);
+  const computerCount = computerCountData?.computer_count ?? 0;
+  const uniqueSystems = computerCountData?.unique_systems ?? 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
@@ -84,9 +104,9 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
       />
       <StatsCard
         title="Active Computers (24h)"
-        value={stats?.uniqueComputers?.current ?? 0}
+        value={computerCount}
         icon={Monitor}
-        subtitle={`${stats?.uniqueComputers?.computers?.length ?? 0} unique systems`}
+        subtitle={`${uniqueSystems} unique systems`}
         subtitleIcon={Monitor}
       />
       <StatsCard
