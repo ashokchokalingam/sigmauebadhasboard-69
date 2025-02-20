@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Monitor, User, ArrowUp, ArrowDown } from "lucide-react";
 import {
@@ -13,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import CardiogramSVG from "./CardiogramSVG";
+import Sparkline from "./Sparkline";
 
 interface EntityCardProps {
   id: string;
@@ -128,7 +127,7 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
 
               <div className="flex items-center gap-2">
                 <div className="opacity-70 hover:opacity-100 transition-opacity">
-                  <CardiogramSVG riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
+                  <Sparkline riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
                 </div>
               </div>
 

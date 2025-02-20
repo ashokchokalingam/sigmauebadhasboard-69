@@ -1,4 +1,3 @@
-
 import { Monitor, User, ArrowUp, ArrowDown } from "lucide-react";
 import { memo } from "react";
 import { RiskyEntity } from "./types";
@@ -8,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import CardiogramSVG from "../dashboard/CardiogramSVG";
+import Sparkline from "../dashboard/Sparkline";
 
 interface EntityCardProps {
   entity: RiskyEntity;
@@ -116,7 +115,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
 
         <div className="flex items-center gap-2">
           <div className="opacity-70 hover:opacity-100 transition-opacity">
-            <CardiogramSVG riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
+            <Sparkline riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
           </div>
         </div>
 
