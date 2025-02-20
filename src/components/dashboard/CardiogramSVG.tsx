@@ -26,7 +26,7 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
           frequency: 0.75,
           segments: 3,
           speed: 0.65,
-          smoothing: 0.4 // Increased smoothing for medium risk
+          smoothing: 0.4
         };
       case 'HIGH':
         return {
@@ -38,7 +38,7 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
         };
       case 'CRITICAL':
         return {
-          amplitude: 8.5, // Increased amplitude for critical
+          amplitude: 8.5,
           frequency: 1.75,
           segments: 4,
           speed: 1,
@@ -67,20 +67,17 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
       if (!startTime) startTime = timestamp;
       const progress = ((timestamp - startTime) * config.speed) % 1000;
       
-      // Generate wave path with improved smoothing
       let d = `M 0 10`;
       const width = 60;
-      const segments = config.segments * 2; // Double for complete waves
+      const segments = config.segments * 2;
       const step = width / segments;
       const points: [number, number][] = [];
       
-      // Generate points first
       for (let i = 0; i <= segments; i++) {
         const x = i * step;
         const phase = (progress / 1000) * Math.PI * 2;
-        let y = 10 + Math.sin(i * config.frequency + phase) * config.amplitude; // Changed to let
+        let y = 10 + Math.sin(i * config.frequency + phase) * config.amplitude;
         
-        // Add some randomness for HIGH and CRITICAL risk levels
         if (riskLevel === 'HIGH' || riskLevel === 'CRITICAL') {
           const noise = (Math.random() - 0.5) * (riskLevel === 'CRITICAL' ? 2 : 1);
           y += noise;
@@ -89,7 +86,6 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
         points.push([x, y]);
       }
       
-      // Create smooth curve through points
       points.forEach((point, i) => {
         if (i === 0) {
           d += ` L ${point[0]} ${point[1]}`;
@@ -98,10 +94,8 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
           const curr = point;
           
           if (riskLevel === 'HIGH' || riskLevel === 'CRITICAL') {
-            // Use more angular paths for high/critical risks
             d += ` L ${curr[0]} ${curr[1]}`;
           } else {
-            // Smooth curves for low/medium risks
             const smoothing = config.smoothing;
             const cpx1 = prev[0] + (curr[0] - prev[0]) * smoothing;
             const cpy1 = prev[1];
@@ -121,6 +115,19 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
     return () => cancelAnimationFrame(frame);
   }, [riskLevel]);
 
+  const getGlowOpacity = () => {
+    switch (riskLevel) {
+      case 'CRITICAL':
+        return '0.4';
+      case 'HIGH':
+        return '0.35';
+      case 'MEDIUM':
+        return '0.3';
+      default:
+        return '0.25';
+    }
+  };
+
   return (
     <svg
       width="60"
@@ -131,15 +138,12 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
       className={`opacity-60 hover:opacity-100 transition-opacity duration-300 
         ${riskLevel === 'CRITICAL' ? 'animate-[pulse_2s_ease-in-out_infinite]' : ''}`}
     >
-      <path
-        ref={canvasRef}
-        stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        filter="url(#glow)"
-      />
       <defs>
+        <linearGradient id={`line-gradient-${riskLevel}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor={color} stopOpacity="1" />
+          <stop offset="50%" stopColor={color} stopOpacity="0.8" />
+          <stop offset="100%" stopColor={color} stopOpacity="1" />
+        </linearGradient>
         <filter id="glow" x="-2" y="-2" width="64" height="24">
           <feGaussianBlur stdDeviation="1.5" result="blur" />
           <feComposite in="SourceGraphic" in2="blur" operator="over" />
@@ -148,10 +152,18 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
             dy="0" 
             stdDeviation="2" 
             floodColor={color} 
-            floodOpacity="0.3"
+            floodOpacity={getGlowOpacity()}
           />
         </filter>
       </defs>
+      <path
+        ref={canvasRef}
+        stroke={`url(#line-gradient-${riskLevel})`}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        filter="url(#glow)"
+      />
     </svg>
   );
 };

@@ -27,7 +27,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
     bgColor: string;
     lineColor: string;
     barWidth: number;
-    glowColor: string; // Added glowColor
+    glowColor: string;
   } => {
     // Calculate relative width based on risk level
     const getBarWidth = (score: number): number => {
@@ -39,39 +39,39 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
 
     if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "#FF1A1A",
-      textColor: "text-[#FF1A1A]",
-      bgColor: "bg-[#FF1A1A]/5",
-      lineColor: "bg-[#FF1A1A]",
+      color: "#D32F2F", // Updated to new red
+      textColor: "text-[#D32F2F]",
+      bgColor: "bg-[#D32F2F]/5",
+      lineColor: "bg-[#D32F2F]",
       barWidth: getBarWidth(score),
-      glowColor: "#FF3D00" // Slightly lighter red for glow
+      glowColor: "#FF5252" // Lighter red for glow
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "#FF3D00",
-      textColor: "text-[#FF3D00]",
-      bgColor: "bg-[#FF3D00]/5",
-      lineColor: "bg-[#FF3D00]",
+      color: "#FF6F00", // Updated to new orange
+      textColor: "text-[#FF6F00]",
+      bgColor: "bg-[#FF6F00]/5",
+      lineColor: "bg-[#FF6F00]",
       barWidth: getBarWidth(score),
-      glowColor: "#FF6B00" // Orange-tinted glow
+      glowColor: "#FFA040" // Lighter orange for glow
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "#FFB100",
-      textColor: "text-[#FFB100]",
-      bgColor: "bg-[#FFB100]/5",
-      lineColor: "bg-[#FFB100]",
+      color: "#FFC107", // Updated to new yellow
+      textColor: "text-[#FFC107]",
+      bgColor: "bg-[#FFC107]/5",
+      lineColor: "bg-[#FFC107]",
       barWidth: getBarWidth(score),
-      glowColor: "#FEC6A1" // Soft orange glow
+      glowColor: "#FFE57F" // Lighter yellow for glow
     };
     return { 
       level: "LOW", 
-      color: "#4ADE80",
-      textColor: "text-[#4ADE80]",
-      bgColor: "bg-[#4ADE80]/5",
-      lineColor: "bg-[#4ADE80]",
+      color: "#4CAF50", // Kept existing green
+      textColor: "text-[#4CAF50]",
+      bgColor: "bg-[#4CAF50]/5",
+      lineColor: "bg-[#4CAF50]",
       barWidth: getBarWidth(score),
-      glowColor: "#86EFAC" // Lighter green glow
+      glowColor: "#81C784" // Lighter green for glow
     };
   };
 
