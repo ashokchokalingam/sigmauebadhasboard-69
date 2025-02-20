@@ -57,7 +57,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const totalUsers = (userCountsData?.user_impacted_count ?? 0) + (userCountsData?.user_origin_count ?? 0);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 p-8 rounded-xl 
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
     bg-[#15161E] shadow-2xl border border-[#5856D6]/20 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-[#5856D6]/10 via-[#5856D6]/5 to-transparent pointer-events-none" />
       <StatsCard
@@ -108,4 +108,3 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
 };
 
 export default StatsSection;
-
