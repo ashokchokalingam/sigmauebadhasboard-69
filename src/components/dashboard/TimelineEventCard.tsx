@@ -5,7 +5,9 @@ import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineInstanceList from "./TimelineInstanceList";
+import TimelineDetailedLogs from "./TimelineDetailedLogs";
 import { getRiskLevel } from "./utils";
+import { useQuery } from "@tanstack/react-query";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -21,43 +23,63 @@ interface TimelineEventCardProps {
   selectedEventId: string | null;
 }
 
+interface LogsResponse {
+  user_origin_logs: Alert[];
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total_records: number;
+    has_more: boolean;
+  };
+}
+
 const TimelineEventCard = ({ 
   event, 
   isLast, 
   isLatest,
   entityType,
   onSelect,
+  detailedLogs,
   isExpanded,
   onToggleExpand,
   instances = [],
+  isLoadingLogs = false,
+  selectedEventId
 }: TimelineEventCardProps) => {
+  const isSelected = selectedEventId === event.id;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
+  // Generate a unique query key for this specific card
+  const queryKey = `logs-${event.id}`;
+
+  const { data: logsData, isLoading } = useQuery<LogsResponse>({
+    queryKey: [queryKey],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        user_origin: event.user_origin || '',
+        title: event.title || ''
+      });
+      
+      console.log(`Fetching logs for card ${event.id}:`, params.toString());
+      
+      const response = await fetch(`/api/user_origin_logs?${params}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch logs');
+      }
+      return response.json();
+    },
+    enabled: isSelected, // Only enable the query when this specific card is selected
+    staleTime: Infinity, // Keep the data fresh indefinitely once fetched
+    gcTime: 1000 * 60 * 5 // Cache the data for 5 minutes (renamed from cacheTime)
+  });
+
   const handleCardClick = () => {
-    // Create URL parameters for the new window
-    const params = new URLSearchParams({
-      user_origin: event.user_origin || '',
-      title: event.title || '',
-      id: event.id || '',
-      type: entityType
-    });
-    
-    // Open new window with alert details
-    const detailsWindow = window.open(
-      `/alert-details?${params.toString()}`,
-      `alert-${event.id}`,
-      'width=800,height=600,resizable=yes,scrollbars=yes'
-    );
-
-    if (detailsWindow) {
-      detailsWindow.focus();
-    }
-
-    console.log('Opening details in new window:', {
+    console.log('Card clicked:', {
       id: event.id,
       user_origin: event.user_origin,
       title: event.title
     });
+    onSelect(isSelected ? null : event.id);
   };
 
   const mappedEntityType = entityType === "computersimpacted" ? "computer" : "user";
@@ -84,7 +106,8 @@ const TimelineEventCard = ({
             cardBg,
             border,
             hover,
-            isLatest && "ring-1 ring-blue-500/50 bg-opacity-75"
+            isLatest && "ring-1 ring-blue-500/50 bg-opacity-75",
+            isSelected && "ring-2 ring-purple-500/50"
           )}
         >
           <div 
@@ -111,6 +134,23 @@ const TimelineEventCard = ({
             isExpanded={isExpanded || false}
             onToggle={() => onToggleExpand?.()}
           />
+
+          {isSelected && (
+            <div className="border-t border-blue-500/10">
+              {isLoading ? (
+                <div className="flex items-center justify-center p-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                </div>
+              ) : logsData ? (
+                <TimelineDetailedLogs
+                  logs={logsData.user_origin_logs}
+                  isLoading={false}
+                  totalRecords={logsData.pagination.total_records}
+                  entityType={mappedEntityType}
+                />
+              ) : null}
+            </div>
+          )}
         </div>
       </div>
     </div>
