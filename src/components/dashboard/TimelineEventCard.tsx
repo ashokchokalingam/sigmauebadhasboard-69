@@ -84,22 +84,7 @@ const TimelineEventCard = ({
             description={event.description}
           />
 
-          <div className="grid grid-cols-2 gap-4 mt-4 mb-3">
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Risk Score</h4>
-              <p className={`text-lg font-medium ${color}`}>
-                {event.risk === null ? 'undefined%' : `${event.risk}%`}
-              </p>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">ML Cluster</h4>
-              <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20">
-                {event.ml_cluster === null ? 'Cluster undefined' : `Cluster ${event.ml_cluster}`}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 mt-2 mb-3">
+          <div className="flex items-center gap-2 mt-4 mb-3">
             <Monitor className="h-4 w-4 text-blue-400" />
             <span className="text-sm text-blue-300">
               Computer: <span className="font-mono text-blue-400">{event.computer_name}</span>
