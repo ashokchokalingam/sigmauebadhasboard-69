@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import TimelineControls from "./components/TimelineControls";
 import TimelineEventList from "./components/TimelineEventList";
 import { useProcessedEvents, SortOption, FilterOption } from "./hooks/useProcessedEvents";
+import { toast } from "sonner";
 
 interface TimelineContentProps {
   allEvents: Alert[];
@@ -37,20 +38,16 @@ const TimelineContent = ({
       if (!selectedEvent) return null;
 
       let identifier;
-      let title;
+      let title = selectedEvent.title;
       
       if (entityType === "userorigin") {
         identifier = selectedEvent.user_origin;
-        title = selectedEvent.title;
       } else if (entityType === "userimpacted") {
         identifier = selectedEvent.user_impacted;
-        title = selectedEvent.title;
       } else {
         identifier = selectedEvent.computer_name;
-        title = selectedEvent.title;
       }
 
-      // Build the API URL with query parameters
       const params = new URLSearchParams();
       
       if (entityType === "computersimpacted") {
@@ -75,14 +72,19 @@ const TimelineContent = ({
         title
       });
 
-      const response = await fetch(`${endpoint}?${params}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch logs');
+      try {
+        const response = await fetch(`${endpoint}?${params}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch logs: ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log('Received logs:', data);
+        return data;
+      } catch (error) {
+        console.error('Error fetching logs:', error);
+        toast.error("Failed to fetch detailed logs");
+        throw error;
       }
-
-      const data = await response.json();
-      console.log('Received logs:', data);
-      return data;
     },
     enabled: !!selectedEventId,
     meta: {

@@ -37,17 +37,19 @@ const TimelineEventCard = ({
   const [detailsExpanded, setDetailsExpanded] = useState(false);
 
   const handleCardClick = () => {
-    // Call onSelect to trigger the API call first
-    onSelect?.();
-    // Then toggle the expanded state
     setDetailsExpanded(prev => !prev);
+    // Call onSelect after expanding to trigger the API call
+    if (!detailsExpanded) {
+      onSelect?.();
+    }
     
     console.log('Card clicked:', {
       title: event.title,
       entityType,
       identifier: entityType === "computersimpacted" ? event.computer_name :
                  entityType === "userorigin" ? event.user_origin :
-                 event.user_impacted
+                 event.user_impacted,
+      detailsExpanded: !detailsExpanded
     });
   };
 
