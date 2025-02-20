@@ -7,11 +7,11 @@ export const formatDateTime = (timestamp: string | Date, includeTimezone = true)
     const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
-    // Format as YYYY-MM-DD HH:mm:ss with timezone
+    // Format as YYYY-MM-DD hh:mm:ss aa (12-hour format with AM/PM)
     const formattedDate = formatInTimeZone(
       date,
       userTimeZone,
-      "yyyy-MM-dd HH:mm:ss"
+      "yyyy-MM-dd hh:mm:ss aa"
     );
 
     if (!includeTimezone) {
