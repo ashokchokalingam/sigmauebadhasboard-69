@@ -1,10 +1,12 @@
-import { Monitor, FileText, AlignLeft, User, Hash, Server, Activity, Shield, Tag, Network, AlertTriangle } from "lucide-react";
+
+import { FileText, AlignLeft, Server, Activity, Shield, Tag, AlertTriangle } from "lucide-react";
 import { Alert } from "../types";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Copy } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
 import { formatDateTime } from "@/utils/dateTimeUtils";
+import { UserCell } from "./cells/UserCell";
+import { ComputerCell } from "./cells/ComputerCell";
+import { IPAddressCell } from "./cells/IPAddressCell";
+import { getRiskBadgeColor, getRiskLabel } from "./utils/riskUtils";
 
 interface TableCellProps {
   alert: Alert;
@@ -13,33 +15,6 @@ interface TableCellProps {
 }
 
 const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
-  const { toast } = useToast();
-
-  const getRiskBadgeColor = (risk: number | null) => {
-    if (!risk) return "bg-purple-500/10 text-purple-400";
-    if (risk >= 80) return "bg-[#D32F2F]/10 text-[#D32F2F] font-semibold";
-    if (risk >= 60) return "bg-[#FF6F00]/10 text-[#FF6F00] font-semibold";
-    if (risk >= 40) return "bg-[#FFB300]/10 text-[#FFB300] font-semibold";
-    return "bg-[#4CAF50]/10 text-[#4CAF50] font-semibold";
-  };
-
-  const getRiskLabel = (risk: number | null) => {
-    if (!risk) return "Unknown";
-    if (risk >= 80) return "Critical";
-    if (risk >= 60) return "High";
-    if (risk >= 40) return "Medium";
-    return "Low";
-  };
-
-  const handleCopyIP = (ip: string) => {
-    navigator.clipboard.writeText(ip);
-    toast({
-      title: "IP Address copied",
-      description: `${ip} has been copied to clipboard`,
-      duration: 2000,
-    });
-  };
-
   switch (columnKey) {
     case 'system_time':
       const formattedTime = formatDateTime(alert.system_time, false);
@@ -49,72 +24,13 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
         </span>
       );
     case 'user_id':
-      return (
-        <div className="flex items-center min-w-0">
-          <User className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span 
-            className="hover:text-blue-400 cursor-pointer truncate text-base font-medium whitespace-nowrap"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTimelineView("user", alert.user_id || '');
-            }}
-          >
-            {alert.user_id || '-'}
-          </span>
-        </div>
-      );
+      return <UserCell userId={alert.user_id || ''} onTimelineView={onTimelineView} />;
     case 'target_user_name':
-      return (
-        <div className="flex items-center min-w-0">
-          <User className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span 
-            className="hover:text-blue-400 cursor-pointer truncate text-base font-medium whitespace-nowrap"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTimelineView("user", alert.target_user_name || '');
-            }}
-          >
-            {alert.target_user_name || '-'}
-          </span>
-        </div>
-      );
+      return <UserCell userId={alert.target_user_name || ''} onTimelineView={onTimelineView} />;
     case 'computer_name':
-      return (
-        <div className="flex items-center min-w-0">
-          <Monitor className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span 
-            className="hover:text-blue-400 cursor-pointer truncate text-base font-medium whitespace-nowrap"
-            onClick={(e) => {
-              e.stopPropagation();
-              onTimelineView("computer", alert.computer_name || '');
-            }}
-          >
-            {alert.computer_name || '-'}
-          </span>
-        </div>
-      );
+      return <ComputerCell computerName={alert.computer_name || ''} onTimelineView={onTimelineView} />;
     case 'ip_address':
-      return (
-        <div className="flex items-center gap-2 group">
-          <Network className="h-4 w-4 text-blue-400/80 flex-shrink-0" />
-          <code className="font-mono text-sm bg-slate-900/50 px-2 py-1 rounded">
-            {alert.ip_address || '-'}
-          </code>
-          {alert.ip_address && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCopyIP(alert.ip_address || '');
-              }}
-            >
-              <Copy className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-      );
+      return <IPAddressCell ipAddress={alert.ip_address || ''} />;
     case 'risk':
       return (
         <Badge 
@@ -141,7 +57,7 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
     case 'event_id':
       return (
         <div className="flex items-center min-w-0">
-          <Hash className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
+          <Server className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
           <span className="text-base font-medium whitespace-nowrap">{alert.event_id || '-'}</span>
         </div>
       );
