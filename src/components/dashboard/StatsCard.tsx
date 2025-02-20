@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
 
@@ -39,6 +40,7 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
             {breakdown.map((item) => (
               <div key={item.rule_level} className="flex justify-between items-center text-sm">
                 <span className={`font-medium ${
+                  title === "Risky Users (24h)" ? 'text-[#ea384c]' :
                   item.rule_level.toLowerCase() === 'critical' 
                     ? 'text-[#FF3B30] drop-shadow-[0_0_3px_rgba(255,59,48,0.3)]'
                     : item.rule_level.toLowerCase() === 'high'
@@ -48,6 +50,7 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
                   {item.rule_level}
                 </span>
                 <span className={`font-semibold ${
+                  title === "Risky Users (24h)" ? 'text-[#ea384c]' :
                   item.rule_level.toLowerCase() === 'critical'
                     ? 'text-[#FF3B30] drop-shadow-[0_0_3px_rgba(255,59,48,0.3)]'
                     : item.rule_level.toLowerCase() === 'high'
