@@ -55,6 +55,9 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
     }
   };
 
+  // Convert value to number for calculations
+  const numericValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
+
   return (
     <Card className="bg-[#0A0B0F] border-0 shadow-none">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -78,6 +81,8 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
           <div className="space-y-3">
             {breakdown.map((item) => {
               const colors = getRiskColors(item.rule_level);
+              const percentage = numericValue > 0 ? (item.event_count / numericValue) * 100 : 0;
+              
               return (
                 <div key={item.rule_level} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
@@ -95,7 +100,7 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
                     <div 
                       className={`h-full ${colors.bar} rounded-full transition-all duration-500`}
                       style={{ 
-                        width: `${Math.min((item.event_count / value) * 100, 100)}%`,
+                        width: `${Math.min(percentage, 100)}%`,
                       }}
                     />
                   </div>
