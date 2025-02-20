@@ -23,6 +23,16 @@ interface TimelineEventCardProps {
   selectedEventId: string | null;
 }
 
+interface LogsResponse {
+  user_origin_logs: Alert[];
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total_records: number;
+    has_more: boolean;
+  };
+}
+
 const TimelineEventCard = ({ 
   event, 
   isLast, 
@@ -42,7 +52,7 @@ const TimelineEventCard = ({
   // Generate a unique query key for this specific card
   const queryKey = `logs-${event.id}`;
 
-  const { data: logsData, isLoading } = useQuery({
+  const { data: logsData, isLoading } = useQuery<LogsResponse>({
     queryKey: [queryKey],
     queryFn: async () => {
       const params = new URLSearchParams({
@@ -60,7 +70,7 @@ const TimelineEventCard = ({
     },
     enabled: isSelected, // Only enable the query when this specific card is selected
     staleTime: Infinity, // Keep the data fresh indefinitely once fetched
-    cacheTime: 1000 * 60 * 5 // Cache the data for 5 minutes
+    gcTime: 1000 * 60 * 5 // Cache the data for 5 minutes (renamed from cacheTime)
   });
 
   const handleCardClick = () => {
@@ -133,9 +143,9 @@ const TimelineEventCard = ({
                 </div>
               ) : logsData ? (
                 <TimelineDetailedLogs
-                  logs={logsData?.user_origin_logs || []}
+                  logs={logsData.user_origin_logs}
                   isLoading={false}
-                  totalRecords={logsData?.pagination?.total_records || 0}
+                  totalRecords={logsData.pagination.total_records}
                   entityType={mappedEntityType}
                 />
               ) : null}
