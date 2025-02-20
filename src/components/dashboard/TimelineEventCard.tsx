@@ -49,6 +49,9 @@ const TimelineEventCard = ({
     });
   };
 
+  // Map the entityType to the expected type for TimelineDetailedLogs
+  const mappedEntityType = entityType === "computersimpacted" ? "computer" : "user";
+
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
   return (
@@ -108,7 +111,7 @@ const TimelineEventCard = ({
                 logs={detailedLogs?.computer_impacted_logs || []}
                 isLoading={false}
                 totalRecords={detailedLogs?.pagination?.total_records || 0}
-                entityType={entityType}
+                entityType={mappedEntityType}
               />
             </div>
           )}
