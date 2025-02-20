@@ -1,4 +1,3 @@
-
 import { Monitor, User, ArrowUp, ArrowDown } from "lucide-react";
 import { memo } from "react";
 import { RiskyEntity } from "./types";
@@ -28,6 +27,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
     bgColor: string;
     lineColor: string;
     barWidth: number;
+    glowColor: string; // Added glowColor
   } => {
     // Calculate relative width based on risk level
     const getBarWidth = (score: number): number => {
@@ -43,7 +43,8 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       textColor: "text-[#FF1A1A]",
       bgColor: "bg-[#FF1A1A]/5",
       lineColor: "bg-[#FF1A1A]",
-      barWidth: getBarWidth(score)
+      barWidth: getBarWidth(score),
+      glowColor: "#FF3D00" // Slightly lighter red for glow
     };
     if (score >= 100) return { 
       level: "HIGH", 
@@ -51,7 +52,8 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       textColor: "text-[#FF3D00]",
       bgColor: "bg-[#FF3D00]/5",
       lineColor: "bg-[#FF3D00]",
-      barWidth: getBarWidth(score)
+      barWidth: getBarWidth(score),
+      glowColor: "#FF6B00" // Orange-tinted glow
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
@@ -59,7 +61,8 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       textColor: "text-[#FFB100]",
       bgColor: "bg-[#FFB100]/5",
       lineColor: "bg-[#FFB100]",
-      barWidth: getBarWidth(score)
+      barWidth: getBarWidth(score),
+      glowColor: "#FEC6A1" // Soft orange glow
     };
     return { 
       level: "LOW", 
@@ -67,12 +70,13 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       textColor: "text-[#4ADE80]",
       bgColor: "bg-[#4ADE80]/5",
       lineColor: "bg-[#4ADE80]",
-      barWidth: getBarWidth(score)
+      barWidth: getBarWidth(score),
+      glowColor: "#86EFAC" // Lighter green glow
     };
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, color, textColor, bgColor, lineColor, barWidth } = getRiskLevel(riskScore);
+  const { level, color, textColor, bgColor, lineColor, barWidth, glowColor } = getRiskLevel(riskScore);
   
   // For demo purposes, determine trend based on score value
   // In real implementation, this should come from historical data
@@ -157,12 +161,12 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
               <div className="flex-1" />
             </div>
             
-            {/* Current progress */}
+            {/* Current progress with enhanced glow */}
             <div 
               className={`h-full ${lineColor} transition-all duration-300`}
               style={{ 
                 width: `${barWidth}%`,
-                boxShadow: `0 0 10px ${getRiskLevel(riskScore).color}`
+                boxShadow: `0 0 10px ${glowColor}, 0 0 15px ${color}40`
               }}
             />
           </div>

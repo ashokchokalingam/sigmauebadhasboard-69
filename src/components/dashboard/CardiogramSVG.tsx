@@ -14,38 +14,43 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
     switch (level) {
       case 'LOW':
         return {
-          amplitude: 2,
+          amplitude: 2.5,
           frequency: 0.5,
           segments: 2,
-          speed: 0.5
+          speed: 0.5,
+          smoothing: 0.3
         };
       case 'MEDIUM':
         return {
-          amplitude: 4,
-          frequency: 1,
+          amplitude: 4.5,
+          frequency: 0.75,
           segments: 3,
-          speed: 0.75
+          speed: 0.65,
+          smoothing: 0.4 // Increased smoothing for medium risk
         };
       case 'HIGH':
         return {
-          amplitude: 6,
-          frequency: 1.5,
+          amplitude: 6.5,
+          frequency: 1.25,
           segments: 3,
-          speed: 1
+          speed: 0.85,
+          smoothing: 0.35
         };
       case 'CRITICAL':
         return {
-          amplitude: 8,
-          frequency: 2,
+          amplitude: 8.5, // Increased amplitude for critical
+          frequency: 1.75,
           segments: 4,
-          speed: 1.25
+          speed: 1,
+          smoothing: 0.3
         };
       default:
         return {
-          amplitude: 2,
+          amplitude: 2.5,
           frequency: 0.5,
           segments: 2,
-          speed: 0.5
+          speed: 0.5,
+          smoothing: 0.3
         };
     }
   };
@@ -62,25 +67,39 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
       if (!startTime) startTime = timestamp;
       const progress = ((timestamp - startTime) * config.speed) % 1000;
       
-      // Generate wave path
+      // Generate wave path with improved smoothing
       let d = `M 0 10`;
       const width = 60;
       const segments = config.segments * 2; // Double for complete waves
       const step = width / segments;
+      const points: [number, number][] = [];
       
+      // Generate points first
       for (let i = 0; i <= segments; i++) {
         const x = i * step;
         const phase = (progress / 1000) * Math.PI * 2;
         const y = 10 + Math.sin(i * config.frequency + phase) * config.amplitude;
-        
-        if (i === 0) {
-          d += ` L ${x} ${y}`;
-        } else {
-          const cpx1 = x - step / 2;
-          const cpy1 = y;
-          d += ` S ${cpx1} ${cpy1} ${x} ${y}`;
-        }
+        points.push([x, y]);
       }
+      
+      // Create smooth curve through points
+      points.forEach((point, i) => {
+        if (i === 0) {
+          d += ` L ${point[0]} ${point[1]}`;
+        } else {
+          const prev = points[i - 1];
+          const curr = point;
+          
+          // Calculate control points for smoother curves
+          const smoothing = config.smoothing;
+          const cpx1 = prev[0] + (curr[0] - prev[0]) * smoothing;
+          const cpy1 = prev[1];
+          const cpx2 = curr[0] - (curr[0] - prev[0]) * smoothing;
+          const cpy2 = curr[1];
+          
+          d += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${curr[0]} ${curr[1]}`;
+        }
+      });
 
       path.setAttribute('d', d);
       frame = requestAnimationFrame(animate);
