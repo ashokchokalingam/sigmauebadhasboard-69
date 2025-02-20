@@ -40,14 +40,21 @@ const TimelineEventCard = ({
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
   const handleCardClick = () => {
+    const eventId = event.id || event._id; // Fallback to _id if id is not available
+    
     console.log('Card clicked:', {
-      eventId: event.id,
+      eventId,
       isCurrentlySelected: isSelected,
       entityType,
       title: event.title
     });
 
-    onSelect(isSelected ? null : event.id);
+    if (!eventId) {
+      console.error('No event ID found:', event);
+      return;
+    }
+
+    onSelect(isSelected ? null : eventId);
   };
 
   // Map the entityType to the expected type for TimelineDetailedLogs

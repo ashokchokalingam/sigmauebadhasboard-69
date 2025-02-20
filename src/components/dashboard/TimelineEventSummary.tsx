@@ -25,7 +25,8 @@ const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventS
   }
 
   const handleEventSelect = (id: string | null) => {
-    setSelectedEventId(id);
+    console.log('Event selected:', id);
+    setSelectedEventId(currentId => currentId === id ? null : id);
   };
 
   return (
@@ -39,7 +40,7 @@ const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventS
         <div className="relative max-w-3xl mx-auto">
           {summary.map((event, index) => (
             <TimelineEventCard 
-              key={index} 
+              key={`${event.id || event._id}-${index}`}
               event={event} 
               isLast={index === summary.length - 1}
               entityType={entityType}
