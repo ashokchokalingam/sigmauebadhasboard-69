@@ -46,7 +46,7 @@ const TimelineEventCard = ({
   const getApiEndpoint = () => {
     switch (entityType) {
       case "userorigin":
-        return "/api/user_origin_logs";
+        return `/api/user_origin_logs?user_origin=${encodeURIComponent(event.user_origin || '')}&title=${encodeURIComponent(event.title || '')}`;
       case "userimpacted":
         return "/api/user_impacted_logs";
       case "computersimpacted":
@@ -58,17 +58,22 @@ const TimelineEventCard = ({
 
   const fetchLogs = async () => {
     const endpoint = getApiEndpoint();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        user_origin: event.user_origin,
-        title: event.title
-      })
-    });
-    return response.json();
+    if (entityType === "userorigin") {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`);
+      return response.json();
+    } else {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_origin: event.user_origin,
+          title: event.title
+        })
+      });
+      return response.json();
+    }
   };
 
   const { data: logsData, isLoading } = useQuery({
