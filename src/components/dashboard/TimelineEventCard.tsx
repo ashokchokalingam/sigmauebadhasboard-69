@@ -26,12 +26,34 @@ const TimelineEventCard = ({
 }: TimelineEventCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const getRiskColor = (risk: number | null) => {
-    if (risk === null) return "text-gray-400";
-    if (risk >= 80) return "text-red-400";
-    if (risk >= 60) return "text-orange-400";
-    if (risk >= 40) return "text-yellow-400";
-    return "text-green-400";
+  const getSeverityColor = (level: string | undefined) => {
+    switch(level?.toLowerCase()) {
+      case 'critical':
+        return "border-red-500/30 bg-red-500/5";
+      case 'high':
+        return "border-orange-500/30 bg-orange-500/5";
+      case 'medium':
+        return "border-yellow-500/30 bg-yellow-500/5";
+      case 'low':
+        return "border-green-500/30 bg-green-500/5";
+      default:
+        return "border-blue-500/10 bg-black/40";
+    }
+  };
+
+  const getSeverityTextColor = (level: string | undefined) => {
+    switch(level?.toLowerCase()) {
+      case 'critical':
+        return "text-red-400";
+      case 'high':
+        return "text-orange-400";
+      case 'medium':
+        return "text-yellow-400";
+      case 'low':
+        return "text-green-400";
+      default:
+        return "text-blue-400";
+    }
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -49,16 +71,20 @@ const TimelineEventCard = ({
 
   return (
     <div className="group relative pl-4 w-full">
-      <div className="absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2 border-green-400 bg-background" />
+      <div className={cn(
+        "absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2 bg-background",
+        getSeverityTextColor(event.rule_level)
+      )} />
       {!isLast && (
-        <div className="absolute left-0 top-8 -ml-[1px] h-full w-[2px] bg-gradient-to-b from-green-400/50 to-transparent" />
+        <div className="absolute left-0 top-8 -ml-[1px] h-full w-[2px] bg-gradient-to-b from-blue-400/50 to-transparent" />
       )}
 
       <div className="relative ml-4 mb-6 w-full">
         <div 
           onClick={handleCardClick}
           className={cn(
-            "p-6 rounded-lg bg-black/40 border border-blue-500/10 hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer w-full",
+            "p-6 rounded-lg border hover:bg-black/60 transition-all duration-300 backdrop-blur-sm cursor-pointer w-full",
+            getSeverityColor(event.rule_level),
             isExpanded && "border-blue-500/30"
           )}
         >
@@ -72,14 +98,20 @@ const TimelineEventCard = ({
           <div className="grid grid-cols-2 gap-4 mt-4 mb-3">
             <div>
               <h4 className="text-sm font-medium text-blue-400">Risk Score</h4>
-              <p className={`text-lg font-medium ${getRiskColor(event.risk)}`}>
+              <p className={cn(
+                "text-lg font-medium",
+                event.risk && event.risk >= 80 ? "text-red-400" :
+                event.risk && event.risk >= 60 ? "text-orange-400" :
+                event.risk && event.risk >= 40 ? "text-yellow-400" :
+                "text-green-400"
+              )}>
                 {event.risk === null ? 'N/A' : `${event.risk}%`}
               </p>
             </div>
             <div>
               <h4 className="text-sm font-medium text-blue-400">ML Cluster</h4>
               <span className="px-2 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20">
-                {event.ml_cluster === null ? 'N/A' : `Cluster ${event.ml_cluster}`}
+                {event.ml_cluster !== undefined && event.ml_cluster !== null ? `${event.ml_cluster}` : 'No Cluster'}
               </span>
             </div>
           </div>
