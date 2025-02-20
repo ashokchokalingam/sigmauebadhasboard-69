@@ -107,9 +107,9 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-4">
-        <div className="flex flex-col items-start w-[100px]">
-          <span className="text-xs uppercase text-[#9b87f5]/70 mb-1">Risk Level</span>
+      <div className="flex items-center justify-end gap-3">
+        <div className="flex flex-col items-start w-[90px]">
+          <span className="text-xs uppercase text-[#9b87f5]/70 mb-0.5">Risk Level</span>
           <div className="w-full">
             <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
               {level}
@@ -117,13 +117,13 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="opacity-70 hover:opacity-100 transition-opacity w-[50px]">
+        <div className="flex items-center gap-1.5">
+          <div className="opacity-70 hover:opacity-100 transition-opacity w-[45px]">
             <CardiogramSVG riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
           </div>
         </div>
 
-        <div className="relative min-w-[140px]">
+        <div className="relative min-w-[140px] ml-2">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
