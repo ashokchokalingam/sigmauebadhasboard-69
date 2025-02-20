@@ -2,7 +2,6 @@
 import { Monitor, User } from "lucide-react";
 import { memo } from "react";
 import { RiskyEntity } from "./types";
-import Cardiogram from "./Cardiogram";
 
 interface EntityCardProps {
   entity: RiskyEntity;
@@ -15,27 +14,36 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
   const Icon = isComputer ? Monitor : User;
   const entityName = isComputer ? entity.computer : entity.user;
 
-  const getRiskLevel = (score: number): { level: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"; textColor: string; } => {
+  const getRiskLevel = (score: number): { level: string; color: string; textColor: string; progressColor: string } => {
     if (score >= 150) return { 
-      level: "CRITICAL",
-      textColor: "text-[#ea384c]"
+      level: "CRITICAL", 
+      color: "bg-[#ea384c]/10",
+      textColor: "text-[#ea384c]",
+      progressColor: "bg-[#ea384c]"
     };
     if (score >= 100) return { 
-      level: "HIGH",
-      textColor: "text-[#F97316]"
+      level: "HIGH", 
+      color: "bg-[#F97316]/10",
+      textColor: "text-[#F97316]",
+      progressColor: "bg-[#F97316]"
     };
     if (score >= 50) return { 
-      level: "MEDIUM",
-      textColor: "text-[#F97316]"
+      level: "MEDIUM", 
+      color: "bg-[#F97316]/10",
+      textColor: "text-[#F97316]",
+      progressColor: "bg-[#F97316]"
     };
     return { 
-      level: "LOW",
-      textColor: "text-[#4ADE80]"
+      level: "LOW", 
+      color: "bg-[#4ADE80]/10",
+      textColor: "text-[#4ADE80]",
+      progressColor: "bg-[#4ADE80]"
     };
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, textColor } = getRiskLevel(riskScore);
+  const { level, textColor, progressColor } = getRiskLevel(riskScore);
+  const progressWidth = Math.min((riskScore / 200) * 100, 100);
 
   return (
     <div
@@ -62,19 +70,49 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-12">
-        <div className="flex flex-col items-start">
-          <span className="text-xs uppercase opacity-60 mb-1">Risk Level</span>
-          <span className={`text-sm font-medium uppercase tracking-wider ${textColor}`}>
-            {level}
-          </span>
+      <div className="flex-1 flex items-center justify-end gap-4">
+        <div className="flex flex-col items-start gap-2">
+          <span className={`text-xs ${textColor}`}>Risk Level</span>
+          <div className="relative">
+            <span className={`text-sm font-medium ${textColor}`}>
+              {level}
+            </span>
+            <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#5856D6]/10 rounded-full overflow-hidden">
+              <div 
+                className={`h-full ${progressColor}`}
+                style={{ width: "100%" }}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="flex flex-col items-end gap-1 min-w-[100px]">
-          <div className={`font-mono font-bold text-2xl tabular-nums ${textColor}`}>
+        <div className="relative flex items-center gap-2">
+          <div className="relative w-6 h-4 overflow-hidden opacity-60">
+            <svg 
+              className={`w-[200%] h-full animate-cardiogram ${textColor}`}
+              viewBox="0 0 120 24" 
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M0,12 L20,12 L24,4 L28,20 L32,12 L60,12 L64,4 L68,20 L72,12 L100,12 L104,4 L108,20 L112,12 L120,12"
+                fill="none"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                stroke="currentColor"
+              />
+            </svg>
+          </div>
+          
+          <div className={`font-mono font-bold text-2xl ${textColor} select-none`}>
             {riskScore.toFixed(1)}
           </div>
-          <Cardiogram riskLevel={level} />
+          <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#5856D6]/10 rounded-full overflow-hidden">
+            <div 
+              className={`h-full ${progressColor}`}
+              style={{ width: `${progressWidth}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>
