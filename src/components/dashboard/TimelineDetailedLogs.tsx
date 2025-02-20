@@ -1,3 +1,4 @@
+
 import { Alert } from "./types";
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "../ui/table";
 import { ScrollArea } from "../ui/scroll-area";
@@ -35,14 +36,6 @@ const TimelineDetailedLogs = ({
       </div>
     );
   }
-
-  const getRiskBadgeColor = (risk: number | null) => {
-    if (!risk) return "bg-purple-500/10 text-purple-400";
-    if (risk >= 80) return "bg-[#D32F2F]/10 text-[#D32F2F]";
-    if (risk >= 60) return "bg-[#FF6F00]/10 text-[#FF6F00]";
-    if (risk >= 40) return "bg-[#FFC107]/10 text-[#FFC107]";
-    return "bg-[#4CAF50]/10 text-[#4CAF50]";
-  };
 
   const getRiskBadgeColor = (risk: number | null) => {
     if (!risk) return "bg-purple-500/10 text-purple-400";
