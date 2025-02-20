@@ -24,7 +24,6 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     const tooltip = tooltipRef.current;
     const tooltipRect = tooltip.getBoundingClientRect();
     
-    // Position relative to the bar's x coordinate
     setPosition({
       x: coordinate.x,
       y: -tooltipRect.height / 2
@@ -65,7 +64,7 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     <div 
       ref={tooltipRef}
       className="absolute bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
-        shadow-xl w-[300px] pointer-events-none"
+        shadow-xl w-[340px] pointer-events-none"
       style={{
         left: position.x,
         top: '50%',
@@ -84,7 +83,15 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
           </span>
         </div>
 
+        <div className="text-sm text-purple-100 font-medium">
+          {data.title}
+        </div>
+
         <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="text-purple-300/80">Risk Score:</div>
+          <div className="text-right text-purple-200">
+            {data.risk}
+          </div>
           <div className="text-purple-300/80">First seen:</div>
           <div className="text-right text-white/90">
             {formatDateTime(data.firstSeen)}
@@ -102,30 +109,39 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
         </div>
 
         <div className="grid grid-cols-2 gap-2 text-xs">
-          {data.impactedComputers.length > 0 && (
+          {data.impactedComputers && (
             <>
-              <div className="text-purple-300/80">Systems affected:</div>
-              <div className="text-right text-purple-200">
-                {data.impactedComputers.length}
+              <div className="text-purple-300/80">Systems:</div>
+              <div className="text-right text-purple-200 truncate">
+                {data.impactedComputers}
               </div>
             </>
           )}
           
-          {data.impactedUsers.length > 0 && (
+          {data.impactedUsers && (
             <>
-              <div className="text-purple-300/80">Users affected:</div>
+              <div className="text-purple-300/80">Users:</div>
+              <div className="text-right text-purple-200 truncate">
+                {data.impactedUsers}
+              </div>
+            </>
+          )}
+
+          {data.sourceIps && (
+            <>
+              <div className="text-purple-300/80">Source IP:</div>
               <div className="text-right text-purple-200">
-                {data.impactedUsers.length}
+                {data.sourceIps}
               </div>
             </>
           )}
         </div>
 
-        {data.tactics.length > 0 && (
+        {data.tactics && (
           <div className="space-y-1.5">
             <div className="text-purple-200 text-xs font-medium">MITRE ATT&CK</div>
             <div className="flex flex-wrap gap-1">
-              {data.tactics.map((tactic: string, index: number) => (
+              {data.tactics.split(',').map((tactic: string, index: number) => (
                 <div 
                   key={index}
                   className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-500/10 
@@ -136,6 +152,20 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {data.techniques && (
+          <div className="flex flex-wrap gap-1">
+            {data.techniques.split(',').map((technique: string, index: number) => (
+              <div 
+                key={index}
+                className="px-1.5 py-0.5 rounded bg-purple-900/40 
+                  border border-purple-500/20 text-purple-300 text-xs"
+              >
+                {technique.toUpperCase()}
+              </div>
+            ))}
           </div>
         )}
       </div>
