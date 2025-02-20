@@ -21,7 +21,7 @@ const TimelineEventTimestamps = ({ firstTimeSeen, lastTimeSeen }: TimelineEventT
           <TooltipTrigger asChild>
             <div className="flex items-center gap-2 text-purple-400/70">
               <Clock className="h-4 w-4" />
-              <span>Last: {formatDateTime(lastTimeSeen)}</span>
+              <span>Last: {formatDateTime(lastTimeSeen, false)}</span>
             </div>
           </TooltipTrigger>
           <TooltipContent>
@@ -35,7 +35,7 @@ const TimelineEventTimestamps = ({ firstTimeSeen, lastTimeSeen }: TimelineEventT
           <TooltipTrigger asChild>
             <div className="flex items-center gap-2 text-blue-400/70">
               <Calendar className="h-4 w-4" />
-              <span>First: {formatDateTime(firstTimeSeen)}</span>
+              <span>First: {formatDateTime(firstTimeSeen, false)}</span>
             </div>
           </TooltipTrigger>
           <TooltipContent>
