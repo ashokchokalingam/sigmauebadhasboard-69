@@ -14,27 +14,36 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
   const Icon = isComputer ? Monitor : User;
   const entityName = isComputer ? entity.computer : entity.user;
 
-  const getRiskLevel = (score: number): { level: string; textColor: string } => {
+  const getRiskLevel = (score: number): { level: string; color: string; textColor: string; progressColor: string } => {
     if (score >= 150) return { 
       level: "CRITICAL", 
-      textColor: "text-[#ea384c]"
+      color: "bg-[#ea384c]/10",
+      textColor: "text-[#ea384c]",
+      progressColor: "bg-[#ea384c]"
     };
     if (score >= 100) return { 
-      level: "HIGH",
-      textColor: "text-[#F97316]"
+      level: "HIGH", 
+      color: "bg-[#F97316]/10",
+      textColor: "text-[#F97316]",
+      progressColor: "bg-[#F97316]"
     };
     if (score >= 50) return { 
-      level: "MEDIUM",
-      textColor: "text-[#F97316]"
+      level: "MEDIUM", 
+      color: "bg-[#F97316]/10",
+      textColor: "text-[#F97316]",
+      progressColor: "bg-[#F97316]"
     };
     return { 
-      level: "LOW",
-      textColor: "text-[#4ADE80]"
+      level: "LOW", 
+      color: "bg-[#4ADE80]/10",
+      textColor: "text-[#4ADE80]",
+      progressColor: "bg-[#4ADE80]"
     };
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, textColor } = getRiskLevel(riskScore);
+  const { level, color, textColor, progressColor } = getRiskLevel(riskScore);
+  const progressWidth = Math.min((riskScore / 200) * 100, 100);
 
   return (
     <div
@@ -45,13 +54,13 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         transition-colors duration-300 cursor-pointer
         shadow-sm hover:shadow-md hover:shadow-[#5856D6]/10"
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-[0_0_50%]">
         <div className="w-8 h-8 rounded-full bg-[#5856D6]/10 flex items-center justify-center
           border border-[#5856D6]/20">
           <Icon className={`w-4 h-4 ${textColor}`} />
         </div>
         
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col min-w-[120px] gap-1">
           <span className="font-mono text-sm text-[#D6BCFA] font-medium hover:text-white truncate max-w-[200px]">
             {entityName}
           </span>
@@ -61,17 +70,21 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex flex-col items-end">
-        <div className="text-xs text-[#9b87f5]/70 uppercase mb-0.5">
-          Risk Level
-        </div>
-        <div className="flex items-center gap-3">
-          <span className={`text-sm font-medium uppercase ${textColor}`}>
-            {level}
-          </span>
-          <span className={`font-mono font-bold text-2xl ${textColor}`}>
+      <div className="flex-1 flex items-center justify-end gap-4">
+        <span className={`text-sm font-medium ${textColor}`}>
+          {level}
+        </span>
+
+        <div className="relative">
+          <div className={`font-mono font-bold text-2xl ${textColor} select-none`}>
             {riskScore.toFixed(1)}
-          </span>
+          </div>
+          <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#5856D6]/10 rounded-full overflow-hidden">
+            <div 
+              className={`h-full ${progressColor}`}
+              style={{ width: `${progressWidth}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>
