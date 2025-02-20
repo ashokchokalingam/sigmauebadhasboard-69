@@ -34,12 +34,19 @@ const TimelineEventCard = ({
 }: TimelineEventCardProps) => {
   const [detailsExpanded, setDetailsExpanded] = useState(false);
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (onSelect) {
-      onSelect(); // Trigger the API call by calling onSelect first
-    }
-    setDetailsExpanded((prev) => !prev); // Then toggle the expanded state
+  const handleCardClick = () => {
+    // Call onSelect to trigger the API call first
+    onSelect?.();
+    // Then toggle the expanded state
+    setDetailsExpanded(prev => !prev);
+    
+    console.log('Card clicked:', {
+      title: event.title,
+      entityType,
+      identifier: entityType === "computersimpacted" ? event.computer_name :
+                 entityType === "userorigin" ? event.user_origin :
+                 event.user_impacted
+    });
   };
 
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
@@ -101,7 +108,7 @@ const TimelineEventCard = ({
                 logs={detailedLogs?.computer_impacted_logs || []}
                 isLoading={false}
                 totalRecords={detailedLogs?.pagination?.total_records || 0}
-                entityType="computer"
+                entityType={entityType}
               />
             </div>
           )}

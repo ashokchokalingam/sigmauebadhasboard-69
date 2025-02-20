@@ -36,29 +36,31 @@ const TimelineContent = ({
       const selectedEvent = allEvents.find(event => event.id === selectedEventId);
       if (!selectedEvent) return null;
 
+      // Use the appropriate endpoint based on entity type
       const baseUrl = entityType === "computersimpacted" ? '/api/computer_impacted_logs' :
                      entityType === "userorigin" ? '/api/user_origin_logs' :
                      '/api/user_impacted_logs';
       
+      // Build query parameters
       const params = new URLSearchParams();
-      const identifier = entityType === "computersimpacted" ? selectedEvent.computer_name :
-                        entityType === "userorigin" ? selectedEvent.user_origin :
-                        selectedEvent.user_impacted;
       
-      if (!identifier) {
-        console.error('No identifier found for detailed logs');
-        return null;
+      // Add the appropriate identifier based on entity type
+      if (entityType === "computersimpacted" && selectedEvent.computer_name) {
+        params.append('computer_name', selectedEvent.computer_name);
+      } else if (entityType === "userorigin" && selectedEvent.user_origin) {
+        params.append('user_origin', selectedEvent.user_origin);
+      } else if (entityType === "userimpacted" && selectedEvent.user_impacted) {
+        params.append('user_impacted', selectedEvent.user_impacted);
       }
-
-      params.append(
-        entityType === "computersimpacted" ? 'computer_name' :
-        entityType === "userorigin" ? 'user_origin' :
-        'user_impacted',
-        identifier
-      );
       
+      // Add the title parameter
       params.append('title', selectedEvent.title);
-      console.log('Fetching detailed logs:', { baseUrl, params: params.toString() });
+      
+      console.log('Fetching detailed logs:', { 
+        baseUrl, 
+        params: params.toString(),
+        selectedEvent 
+      });
 
       const response = await fetch(`${baseUrl}?${params.toString()}`);
       if (!response.ok) {
