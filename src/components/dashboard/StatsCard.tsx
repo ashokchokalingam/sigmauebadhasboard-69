@@ -14,8 +14,8 @@ interface StatsCardProps {
 const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleIcon, breakdown }: StatsCardProps) => {
   const getRiskIcon = (level: string) => {
     const lowerLevel = level.toLowerCase();
-    if (lowerLevel === 'critical') return <ShieldAlert className="h-4 w-4 text-[#FF3B30]" />;
-    if (lowerLevel === 'high') return <AlertTriangle className="h-4 w-4 text-[#FF9500]" />;
+    if (lowerLevel === 'critical') return <ShieldAlert className="h-4 w-4 text-[#ea384c]" />;
+    if (lowerLevel === 'high') return <AlertTriangle className="h-4 w-4 text-[#F97316]" />;
     return <CheckCircle className="h-4 w-4 text-[#34C759]" />;
   };
 
@@ -23,76 +23,82 @@ const StatsCard = ({ title, value, icon: Icon, subtitle, subtitleIcon: SubtitleI
     const lowerLevel = level.toLowerCase();
     if (title === "Risky Users (24h)") {
       return {
-        bg: 'bg-[#ea384c]/10',
+        bg: 'bg-[#ea384c]/5',
         text: 'text-[#ea384c]',
-        border: 'border-[#ea384c]/30'
+        border: 'border-[#ea384c]/20',
+        bar: 'bg-[#ea384c]'
       };
     }
     
     switch (lowerLevel) {
       case 'critical':
         return {
-          bg: 'bg-[#FF3B30]/10',
-          text: 'text-[#FF3B30]',
-          border: 'border-[#FF3B30]/30'
+          bg: 'bg-[#ea384c]/5',
+          text: 'text-[#ea384c]',
+          border: 'border-[#ea384c]/20',
+          bar: 'bg-[#ea384c]'
         };
       case 'high':
         return {
-          bg: 'bg-[#FF9500]/10',
-          text: 'text-[#FF9500]',
-          border: 'border-[#FF9500]/30'
+          bg: 'bg-[#F97316]/5',
+          text: 'text-[#F97316]',
+          border: 'border-[#F97316]/20',
+          bar: 'bg-[#F97316]'
         };
       default:
         return {
-          bg: 'bg-[#34C759]/10',
+          bg: 'bg-[#34C759]/5',
           text: 'text-[#34C759]',
-          border: 'border-[#34C759]/30'
+          border: 'border-[#34C759]/20',
+          bar: 'bg-[#34C759]'
         };
     }
   };
 
   return (
-    <Card className="bg-[#15161E]/60 border border-[#5856D6]/20 hover:border-[#5856D6]/40 
-      transition-all duration-300 group backdrop-blur-sm relative overflow-hidden
-      shadow-lg shadow-[#5856D6]/5 hover:shadow-[#5856D6]/10">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#5856D6]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      
+    <Card className="bg-[#0A0B0F] border-0 shadow-none">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-base font-medium text-white/90 group-hover:text-white transition-colors">
+        <CardTitle className="text-sm font-medium text-white/70">
           {title}
         </CardTitle>
-        <Icon className="h-6 w-6 text-[#5856D6] group-hover:text-[#5856D6] transition-colors 
-          animate-[pulse_4s_ease-in-out_infinite]" />
+        <Icon className="h-5 w-5 text-white/40" />
       </CardHeader>
       
       <CardContent>
-        <div className="text-4xl font-bold text-white group-hover:text-white transition-colors tracking-tight mb-2">
+        <div className="text-2xl font-bold text-white mb-2">
           {typeof value === 'number' ? value.toLocaleString() : value}
         </div>
         
-        <div className="flex items-center gap-2 mt-2 text-sm text-white/80 font-medium group-hover:text-white/90 transition-colors">
-          <SubtitleIcon className="h-4 w-4 text-[#5856D6]" />
-          <p className="text-[15px]">{subtitle}</p>
+        <div className="flex items-center gap-2 text-xs text-white/50 mb-4">
+          <SubtitleIcon className="h-3.5 w-3.5" />
+          <p>{subtitle}</p>
         </div>
         
         {breakdown && breakdown.length > 0 && (
-          <div className="mt-4 space-y-3">
+          <div className="space-y-3">
             {breakdown.map((item) => {
               const colors = getRiskColors(item.rule_level);
               return (
-                <div key={item.rule_level} 
-                  className={`flex justify-between items-center p-2 rounded-lg border ${colors.border} ${colors.bg}
-                    transition-all duration-300 hover:scale-[1.02] transform`}
-                >
-                  <div className="flex items-center gap-2">
-                    {getRiskIcon(item.rule_level)}
-                    <span className={`font-medium text-[13px] ${colors.text}`}>
-                      {item.rule_level}
+                <div key={item.rule_level} className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      {getRiskIcon(item.rule_level)}
+                      <span className={`${colors.text} font-medium`}>
+                        {item.rule_level}
+                      </span>
+                    </div>
+                    <span className={`${colors.text} font-mono tabular-nums`}>
+                      {typeof item.event_count === 'number' ? item.event_count.toLocaleString() : item.event_count}
                     </span>
                   </div>
-                  <span className={`font-semibold text-[13px] ${colors.text}`}>
-                    {typeof item.event_count === 'number' ? item.event_count.toLocaleString() : item.event_count}
-                  </span>
+                  <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full ${colors.bar} rounded-full transition-all duration-500`}
+                      style={{ 
+                        width: `${Math.min((item.event_count / value) * 100, 100)}%`,
+                      }}
+                    />
+                  </div>
                 </div>
               );
             })}
