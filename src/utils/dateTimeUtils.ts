@@ -7,19 +7,12 @@ export const formatDateTime = (timestamp: string | Date, includeTimezone = true)
     const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
-    // Format for UTC time - Using escaped quotes for 'at' and 'UTC'
-    const utcTime = formatInTimeZone(
-      date, 
-      'UTC', 
-      "MMM dd, yyyy '\'at\'' h:mm:ss a 'UTC'"
-    );
-    
     if (!includeTimezone) {
       // For graph labels and places where we don't need timezone
       return formatInTimeZone(
         date, 
         userTimeZone, 
-        "MMM dd, yyyy '\'at\'' h:mm:ss a"
+        "MMM dd, yyyy 'at' h:mm:ss a"
       );
     }
 
@@ -27,13 +20,11 @@ export const formatDateTime = (timestamp: string | Date, includeTimezone = true)
     const localTime = formatInTimeZone(
       date, 
       userTimeZone,
-      `MMM dd, yyyy '\'at\'' h:mm:ss a '(${userTimeZone})'`
+      `MMM dd, yyyy 'at' h:mm:ss a '(${userTimeZone})'`
     );
 
-    return {
-      utc: utcTime,
-      local: localTime,
-    };
+    // Now we just return the local time string instead of an object
+    return localTime;
   } catch (error) {
     console.error("Date parsing error:", error);
     return typeof timestamp === 'string' ? timestamp : 'Invalid Date';
