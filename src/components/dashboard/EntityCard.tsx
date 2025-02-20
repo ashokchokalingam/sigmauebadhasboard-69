@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import Sparkline from "./Sparkline";
+import CardiogramSVG from "./CardiogramSVG";
 
 interface EntityCardProps {
   id: string;
@@ -127,7 +127,7 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
 
               <div className="flex items-center gap-2">
                 <div className="opacity-70 hover:opacity-100 transition-opacity">
-                  <Sparkline riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
+                  <CardiogramSVG riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
                 </div>
               </div>
 

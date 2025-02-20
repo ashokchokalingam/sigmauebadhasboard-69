@@ -7,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import Sparkline from "../dashboard/Sparkline";
+import CardiogramSVG from "../dashboard/CardiogramSVG";
 
 interface EntityCardProps {
   entity: RiskyEntity;
@@ -115,7 +115,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
 
         <div className="flex items-center gap-2">
           <div className="opacity-70 hover:opacity-100 transition-opacity">
-            <Sparkline riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
+            <CardiogramSVG riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
           </div>
         </div>
 
