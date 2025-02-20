@@ -10,10 +10,9 @@ interface StatsSectionProps {
 }
 
 interface TotalCountResponse {
-  total_counts: Array<{
-    event_count: number;
-    rule_level: string;
-  }>;
+  critical_count: string;
+  high_count: string;
+  total_count: number;
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
@@ -32,11 +31,10 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
     refetchInterval: 30000, // Refetch every 30 seconds
   });
 
-  // Use safe defaults if data is not available
-  const totalCounts = totalCountData?.total_counts || [];
-  const criticalCount = totalCounts.find(count => count?.rule_level === "Critical")?.event_count ?? 0;
-  const highCount = totalCounts.find(count => count?.rule_level === "High")?.event_count ?? 0;
-  const totalCount = totalCounts.find(count => count?.rule_level === "Total")?.event_count ?? totalAlerts;
+  // Parse string values to numbers and use safe defaults
+  const criticalCount = totalCountData ? parseInt(totalCountData.critical_count) || 0 : 0;
+  const highCount = totalCountData ? parseInt(totalCountData.high_count) || 0 : 0;
+  const totalCount = totalCountData?.total_count ?? totalAlerts;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
