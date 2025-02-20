@@ -1,5 +1,4 @@
 
-import { useQuery } from "@tanstack/react-query";
 import { Alert } from "./types";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -7,7 +6,8 @@ import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineDetailedLogs from "./TimelineDetailedLogs";
-import { User, Monitor, Shield, AlertTriangle } from "lucide-react";
+import { User, Monitor } from "lucide-react";
+import EntityCardRiskGauge from "./EntityCardRiskGauge";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -25,14 +25,6 @@ const TimelineEventCard = ({
   detailedLogs 
 }: TimelineEventCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const getRiskColor = (risk: number | null) => {
-    if (risk === null) return "text-gray-400";
-    if (risk >= 80) return "text-red-400";
-    if (risk >= 60) return "text-orange-400";
-    if (risk >= 40) return "text-yellow-400";
-    return "text-green-400";
-  };
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -69,12 +61,9 @@ const TimelineEventCard = ({
             description={event.description}
           />
 
-          <div className="grid grid-cols-2 gap-4 mt-4 mb-3">
-            <div>
-              <h4 className="text-sm font-medium text-blue-400">Risk Score</h4>
-              <p className={`text-lg font-medium ${getRiskColor(event.risk)}`}>
-                {event.risk === null ? 'N/A' : `${event.risk}%`}
-              </p>
+          <div className="flex items-center justify-between mt-4 mb-3">
+            <div className="flex-1">
+              <EntityCardRiskGauge riskScore={event.risk?.toString() || null} />
             </div>
             <div>
               <h4 className="text-sm font-medium text-blue-400">ML Cluster</h4>
