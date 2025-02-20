@@ -6,7 +6,7 @@ import { defaultColumns } from "./TableConfig";
 import { useAlertsFilter } from "./hooks/useAlertsFilter";
 import AnomaliesTableView from "./AnomaliesTableView";
 import AnomaliesTableHeaderSection from "./AnomaliesTableHeaderSection";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -16,13 +16,23 @@ interface AnomaliesTableProps {
   hasMore: boolean;
 }
 
+interface LogsResponse {
+  alerts: Alert[];
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total_pages: number;
+    total_records: number;
+  };
+  total_count: number;
+}
+
 const AnomaliesTable = ({ alerts: outlierAlerts, onLoadMore, hasMore }: AnomaliesTableProps) => {
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
     defaultColumns.map((col) => col.key)
   );
   const [dataSource, setDataSource] = useState<'outliers' | 'logs'>('outliers');
-  const [page, setPage] = useState(1);
   const { toast } = useToast();
   const { ref, inView } = useInView();
 
@@ -32,16 +42,19 @@ const AnomaliesTable = ({ alerts: outlierAlerts, onLoadMore, hasMore }: Anomalie
     hasNextPage,
     isFetchingNextPage,
     isLoading: isLoadingLogs,
-  } = useQuery({
+  } = useInfiniteQuery<LogsResponse>({
     queryKey: ['alerts', dataSource],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await fetch(`/api/alerts?page=${pageParam}&per_page=50`);
       if (!response.ok) throw new Error('Failed to fetch logs');
-      return response.json();
+      const data = await response.json();
+      return data;
     },
+    initialPageParam: 1,
     enabled: dataSource === 'logs',
-    getNextPageParam: (lastPage, pages) => {
-      return lastPage.hasMore ? pages.length + 1 : undefined;
+    getNextPageParam: (lastPage) => {
+      const hasMore = lastPage.pagination.current_page < lastPage.pagination.total_pages;
+      return hasMore ? lastPage.pagination.current_page + 1 : undefined;
     },
     meta: {
       onSettled: (data, error) => {
@@ -56,8 +69,9 @@ const AnomaliesTable = ({ alerts: outlierAlerts, onLoadMore, hasMore }: Anomalie
     }
   });
 
+  const allLogs = logsData?.pages.flatMap(page => page.alerts) || [];
   const { filters, filteredAlerts, handleFilterChange } = useAlertsFilter(
-    dataSource === 'outliers' ? outlierAlerts : (logsData?.pages?.flatMap(page => page.alerts) || [])
+    dataSource === 'outliers' ? outlierAlerts : allLogs
   );
 
   const handleColumnToggle = (columns: string[]) => {
@@ -80,7 +94,6 @@ const AnomaliesTable = ({ alerts: outlierAlerts, onLoadMore, hasMore }: Anomalie
   const handleDataSourceChange = (source: 'outliers' | 'logs') => {
     setDataSource(source);
     setSelectedAlert(null);
-    setPage(1);
   };
 
   // Handle infinite scroll
