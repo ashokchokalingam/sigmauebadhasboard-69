@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Circle, Shield, Flame, Skull, Activity } from "lucide-react";
+import { Monitor, User, ArrowUp, ArrowDown } from "lucide-react";
 import {
   HoverCard,
   HoverCardContent,
@@ -26,31 +26,39 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
     textColor: string; 
     bgColor: string;
     lineColor: string;
-    icon: JSX.Element;
+    barWidth: number;
   } => {
+    // Calculate relative width based on risk level
+    const getBarWidth = (score: number): number => {
+      if (score >= 150) return Math.min((score / 200) * 100, 100); // CRITICAL
+      if (score >= 100) return (score / 150) * 75; // HIGH
+      if (score >= 50) return (score / 100) * 50; // MEDIUM
+      return (score / 50) * 25; // LOW
+    };
+
     if (score >= 150) return { 
       level: "CRITICAL", 
       color: "#FF1A1A",
       textColor: "text-[#FF1A1A]",
       bgColor: "bg-[#FF1A1A]/5",
       lineColor: "bg-[#FF1A1A]",
-      icon: <Skull className="w-5 h-5 text-[#FF1A1A] animate-pulse" />
+      barWidth: getBarWidth(score)
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "#FF3D00",  // More distinct from MEDIUM
+      color: "#FF3D00",
       textColor: "text-[#FF3D00]",
       bgColor: "bg-[#FF3D00]/5",
       lineColor: "bg-[#FF3D00]",
-      icon: <Flame className="w-5 h-5 text-[#FF3D00]" />
+      barWidth: getBarWidth(score)
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "#FFB100",  // More golden orange
+      color: "#FFB100",
       textColor: "text-[#FFB100]",
       bgColor: "bg-[#FFB100]/5",
       lineColor: "bg-[#FFB100]",
-      icon: <Activity className="w-5 h-5 text-[#FFB100]" />
+      barWidth: getBarWidth(score)
     };
     return { 
       level: "LOW", 
@@ -58,14 +66,15 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
       textColor: "text-[#4ADE80]",
       bgColor: "bg-[#4ADE80]/5",
       lineColor: "bg-[#4ADE80]",
-      icon: <Shield className="w-5 h-5 text-[#4ADE80]" />
+      barWidth: getBarWidth(score)
     };
   };
 
-  const { level, textColor, bgColor, lineColor, icon } = getRiskLevel(score);
-
-  // SVG path for cardiogram
-  const cardiogramPath = "M0,10 L5,10 L7,2 L9,18 L11,10 L13,10 L15,6 L17,14 L19,10 L21,10";
+  const { level, textColor, bgColor, lineColor, barWidth } = getRiskLevel(score);
+  
+  // For demo purposes, determine trend based on score value
+  // In real implementation, this should come from historical data
+  const riskIncreasing = score > 100;
 
   return (
     <HoverCard>
@@ -84,15 +93,9 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
         >
           <div className="relative flex items-center justify-between z-10">
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className={`w-10 h-10 rounded-full ${bgColor} flex items-center justify-center 
-                  border border-[#5856D6]/20`}>
-                  {icon}
-                </div>
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#5856D6]/10 
-                  border border-[#5856D6]/20 flex items-center justify-center">
-                  <Circle className="w-3 h-3 text-[#9b87f5]" />
-                </div>
+              <div className={`w-10 h-10 rounded-full ${bgColor} flex items-center justify-center
+                border border-[#5856D6]/20`}>
+                <User className={`w-5 h-5 ${textColor}`} />
               </div>
 
               <div>
@@ -115,30 +118,35 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
                 </div>
               </div>
 
-              <div className="flex items-center gap-8">
-                <div className="cardiogram relative w-16 h-5 overflow-hidden opacity-70 flex-shrink-0">
-                  <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 22 20" fill="none" 
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d={cardiogramPath}
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className={`${textColor} stroke-current`}
-                    />
-                  </svg>
-                </div>
-
-                <div className="relative min-w-[80px] text-right">
+              <div className="relative min-w-[140px]">
+                <div className="flex items-center justify-end gap-2 mb-1">
+                  {riskIncreasing ? (
+                    <ArrowUp className={`w-4 h-4 ${textColor}`} />
+                  ) : (
+                    <ArrowDown className={`w-4 h-4 ${textColor}`} />
+                  )}
                   <div className={`font-mono font-bold text-2xl tabular-nums ${textColor}`}>
                     {score.toFixed(1)}
                   </div>
-                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#5856D6]/10 rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full ${lineColor} transition-all duration-300`}
-                      style={{ width: `${Math.min((score / 200) * 100, 100)}%` }}
-                    />
+                </div>
+                
+                <div className="relative h-2 bg-[#5856D6]/10 rounded-full overflow-hidden">
+                  {/* Background segments for risk levels */}
+                  <div className="absolute inset-0 flex">
+                    <div className="flex-1 border-r border-[#5856D6]/20" />
+                    <div className="flex-1 border-r border-[#5856D6]/20" />
+                    <div className="flex-1 border-r border-[#5856D6]/20" />
+                    <div className="flex-1" />
                   </div>
+                  
+                  {/* Current progress */}
+                  <div 
+                    className={`h-full ${lineColor} transition-all duration-300`}
+                    style={{ 
+                      width: `${barWidth}%`,
+                      boxShadow: `0 0 10px ${getRiskLevel(score).color}`
+                    }}
+                  />
                 </div>
               </div>
             </div>
