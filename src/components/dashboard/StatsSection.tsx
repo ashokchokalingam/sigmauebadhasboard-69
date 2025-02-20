@@ -21,7 +21,7 @@ interface UserCountsResponse {
 }
 
 interface ComputerCountResponse {
-  unique_computer_count: number;
+  computer_count: number;
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
@@ -61,6 +61,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         throw new Error("Failed to fetch computer count");
       }
       const data = await response.json();
+      console.log('Computer count data:', data); // Add logging to debug
       return data as ComputerCountResponse;
     },
     refetchInterval: 30000, // Refetch every 30 seconds
@@ -72,7 +73,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const totalCount = totalCountData?.total_count ?? totalAlerts;
 
   const totalUsers = (userCountsData?.user_impacted_count ?? 0) + (userCountsData?.user_origin_count ?? 0);
-  const computerCount = computerCountData?.unique_computer_count ?? 0;
+  const computerCount = computerCountData?.computer_count ?? 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
