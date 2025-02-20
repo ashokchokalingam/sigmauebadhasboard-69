@@ -70,8 +70,8 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-end gap-4">
-        <div className="flex flex-col items-end">
+      <div className="flex-1 flex items-center justify-end gap-8">
+        <div className="flex flex-col items-start gap-2">
           <span className={`text-xs ${textColor}`}>Risk Level</span>
           <span className={`text-sm font-medium ${textColor}`}>
             {level}
