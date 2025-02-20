@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Bar, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 import { format } from "date-fns";
 import { ChartDataPoint } from "./types";
