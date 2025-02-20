@@ -36,7 +36,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
 
     if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "#FF3B30", // Brighter red for better visibility
+      color: "#FF3B30", // Brighter red for critical
       textColor: "text-[#FF3B30]",
       bgColor: "bg-[#FF3B30]/10",
       lineColor: "bg-[#FF3B30]",
@@ -45,7 +45,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "#FF9500", // Warmer orange
+      color: "#FF9500", // Warmer orange for high
       textColor: "text-[#FF9500]",
       bgColor: "bg-[#FF9500]/10",
       lineColor: "bg-[#FF9500]",
@@ -54,7 +54,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "#FFB340", // Warmer yellow
+      color: "#FFB340", // Warmer amber for medium
       textColor: "text-[#FFB340]",
       bgColor: "bg-[#FFB340]/10",
       lineColor: "bg-[#FFB340]",
@@ -63,7 +63,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     };
     return { 
       level: "LOW", 
-      color: "#34C759", // Brighter green
+      color: "#34C759", // Brighter green for low
       textColor: "text-[#34C759]",
       bgColor: "bg-[#34C759]/10",
       lineColor: "bg-[#34C759]",
@@ -128,3 +128,4 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
 };
 
 export default EntityCard;
+
