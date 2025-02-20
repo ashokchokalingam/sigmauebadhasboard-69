@@ -1,4 +1,6 @@
+
 import { Database, Users, Monitor, AlertTriangle, UserCog } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import StatsCard from "./StatsCard";
 import { Stats } from "./types";
 
@@ -7,8 +9,31 @@ interface StatsSectionProps {
   totalAlerts: number;
 }
 
+interface TotalCountResponse {
+  total_counts: {
+    event_count: number;
+    rule_level: string;
+  }[];
+}
+
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const highRiskUsers = stats?.uniqueUsers?.users?.filter(user => (user?.risk_score ?? 0) > 80)?.length ?? 0;
+  
+  const { data: totalCountData } = useQuery({
+    queryKey: ["total-count"],
+    queryFn: async () => {
+      const response = await fetch("/api/total_count");
+      if (!response.ok) {
+        throw new Error("Failed to fetch total count");
+      }
+      return response.json() as Promise<TotalCountResponse>;
+    },
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
+  const criticalCount = totalCountData?.total_counts.find(count => count.rule_level === "Critical")?.event_count ?? 0;
+  const highCount = totalCountData?.total_counts.find(count => count.rule_level === "High")?.event_count ?? 0;
+  const totalCount = totalCountData?.total_counts.find(count => count.rule_level === "Total")?.event_count ?? 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
@@ -16,13 +41,13 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
       <div className="absolute inset-0 bg-gradient-to-br from-[#5856D6]/10 via-[#5856D6]/5 to-transparent pointer-events-none" />
       <StatsCard
         title="Total Events (24h)"
-        value={totalAlerts}
+        value={totalCount}
         icon={Database}
         subtitle="Total events in last 24 hours"
         subtitleIcon={AlertTriangle}
         breakdown={[
-          { rule_level: "Critical", event_count: stats?.severity?.critical ?? 0 },
-          { rule_level: "High", event_count: stats?.severity?.high ?? 0 },
+          { rule_level: "Critical", event_count: criticalCount },
+          { rule_level: "High", event_count: highCount },
         ]}
       />
       <StatsCard
