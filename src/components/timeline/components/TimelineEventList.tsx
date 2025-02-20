@@ -28,26 +28,35 @@ const TimelineEventList = ({
 }: TimelineEventListProps) => {
   return (
     <ScrollArea className="flex-1">
-      <div className="p-2 space-y-2">
+      <div className="relative p-6 space-y-6">
+        {/* Vertical timeline line */}
+        <div className="absolute left-[27px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-blue-500/50 via-purple-500/50 to-transparent" />
+        
         {events.map((event, index) => (
-          <TimelineEventCard
+          <div
             key={`${event.id}-${index}`}
-            event={event}
-            isLast={index === events.length - 1}
-            entityType={entityType}
-            onSelect={() => onSelect(event.id)}
-            detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
-            isExpanded={expandedGroups.has(event.id)}
-            onToggleExpand={() => onToggleExpand(event.id)}
-            isLatest={index === 0}
-            instances={event.instances}
-          />
+            className={`relative transition-all duration-500 transform ${
+              index === 0 ? 'scale-100' : 'hover:scale-[1.02]'
+            }`}
+          >
+            <TimelineEventCard
+              event={event}
+              isLast={index === events.length - 1}
+              entityType={entityType}
+              onSelect={() => onSelect(event.id)}
+              detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
+              isExpanded={expandedGroups.has(event.id)}
+              onToggleExpand={() => onToggleExpand(event.id)}
+              isLatest={index === 0}
+              instances={event.instances}
+            />
+          </div>
         ))}
         
         <div ref={loaderRef}>
           {hasNextPage && (
-            <div className="py-2 text-center text-sm text-blue-400/60">
-              Loading more events...
+            <div className="py-4 text-center">
+              <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
             </div>
           )}
         </div>
