@@ -1,86 +1,62 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Progress } from "@/components/ui/progress";
 
 interface EntityCardRiskGaugeProps {
   riskScore: string | null;
 }
 
 const EntityCardRiskGauge = ({ riskScore }: EntityCardRiskGaugeProps) => {
-  const score = riskScore ? parseInt(riskScore) : 0;
+  const score = riskScore ? parseFloat(riskScore) : 0;
 
   const getRiskLevel = (score: number) => {
     if (score >= 150) return { 
       level: "CRITICAL", 
       color: "#ea384c",
-      textGlow: "text-shadow-[0_0_10px_rgba(234,56,76,0.3)]",
-      bgGlow: "shadow-[0_0_15px_rgba(234,56,76,0.1)]",
-      bgColor: "bg-[#ea384c]",
-      pulsing: false
+      textColor: "text-[#ea384c]",
+      underlineGradient: "bg-gradient-to-r from-[#ea384c]/50 to-transparent"
     };
     if (score >= 80) return { 
+      level: "HIGH", 
+      color: "#F97316",
+      textColor: "text-[#F97316]",
+      underlineGradient: "bg-gradient-to-r from-[#F97316]/50 to-transparent"
+    };
+    if (score >= 50) return { 
       level: "MEDIUM", 
       color: "#F97316",
-      textGlow: "text-shadow-[0_0_10px_rgba(249,115,22,0.3)]",
-      bgGlow: "shadow-[0_0_15px_rgba(249,115,22,0.1)]",
-      bgColor: "bg-[#F97316]",
-      pulsing: false
+      textColor: "text-[#F97316]",
+      underlineGradient: "bg-gradient-to-r from-[#F97316]/50 to-transparent"
     };
     return { 
       level: "LOW", 
       color: "#28c76f",
-      textGlow: "text-shadow-[0_0_10px_rgba(40,199,111,0.3)]",
-      bgGlow: "shadow-[0_0_15px_rgba(40,199,111,0.1)]",
-      bgColor: "bg-[#28c76f]",
-      pulsing: false
+      textColor: "text-[#28c76f]",
+      underlineGradient: "bg-gradient-to-r from-[#28c76f]/50 to-transparent"
     };
   };
 
-  const { level, color, textGlow, bgGlow, bgColor, pulsing } = getRiskLevel(score);
+  const { level, textColor, underlineGradient } = getRiskLevel(score);
 
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex flex-col gap-0.5 items-end">
-        <span 
-          className={cn(
-            "text-xs tracking-wide",
-            textGlow
-          )}
-          style={{ color }}
-        >
-          Risk Level
-        </span>
-        <span 
-          className={cn(
-            "text-xs font-medium tracking-wide",
-            textGlow
-          )}
-          style={{ color }}
-        >
+    <div className="flex items-center justify-between w-full">
+      <div className="flex flex-col">
+        <span className={cn(
+          "text-xs font-medium uppercase",
+          textColor
+        )}>
           {level}
         </span>
+        <div className={cn(
+          "h-0.5 w-12 mt-0.5",
+          underlineGradient
+        )} />
       </div>
-
-      <div className="relative">
-        <div 
-          className={cn(
-            "font-mono font-bold text-2xl px-3 py-1 rounded",
-            "border border-white/5",
-            "bg-black/40",
-            bgGlow
-          )}
-          style={{ color }}
-        >
-          {score.toFixed(1)}
-        </div>
-        <div className="absolute -bottom-2 left-0 right-0">
-          <Progress 
-            value={Math.min((score / 200) * 100, 100)} 
-            className="h-1 bg-white/5"
-            indicatorClassName={bgColor}
-          />
-        </div>
+      <div className={cn(
+        "font-mono font-bold tracking-wider",
+        textColor
+      )}>
+        {score.toFixed(1)}
       </div>
     </div>
   );
