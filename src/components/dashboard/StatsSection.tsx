@@ -10,30 +10,33 @@ interface StatsSectionProps {
 }
 
 interface TotalCountResponse {
-  total_counts: {
+  total_counts: Array<{
     event_count: number;
     rule_level: string;
-  }[];
+  }>;
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const highRiskUsers = stats?.uniqueUsers?.users?.filter(user => (user?.risk_score ?? 0) > 80)?.length ?? 0;
   
-  const { data: totalCountData } = useQuery({
+  const { data: totalCountData, error } = useQuery({
     queryKey: ["total-count"],
     queryFn: async () => {
       const response = await fetch("/api/total_count");
       if (!response.ok) {
         throw new Error("Failed to fetch total count");
       }
-      return response.json() as Promise<TotalCountResponse>;
+      const data = await response.json();
+      return data as TotalCountResponse;
     },
     refetchInterval: 30000, // Refetch every 30 seconds
   });
 
-  const criticalCount = totalCountData?.total_counts.find(count => count.rule_level === "Critical")?.event_count ?? 0;
-  const highCount = totalCountData?.total_counts.find(count => count.rule_level === "High")?.event_count ?? 0;
-  const totalCount = totalCountData?.total_counts.find(count => count.rule_level === "Total")?.event_count ?? 0;
+  // Use safe defaults if data is not available
+  const totalCounts = totalCountData?.total_counts || [];
+  const criticalCount = totalCounts.find(count => count?.rule_level === "Critical")?.event_count ?? 0;
+  const highCount = totalCounts.find(count => count?.rule_level === "High")?.event_count ?? 0;
+  const totalCount = totalCounts.find(count => count?.rule_level === "Total")?.event_count ?? totalAlerts;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
