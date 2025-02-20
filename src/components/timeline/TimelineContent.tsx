@@ -58,6 +58,7 @@ const TimelineContent = ({
       );
       
       params.append('title', selectedEvent.title);
+      console.log('Fetching detailed logs:', { baseUrl, params: params.toString() });
 
       const response = await fetch(`${baseUrl}?${params.toString()}`);
       if (!response.ok) {
