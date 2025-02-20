@@ -68,7 +68,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
         ))}
       </div>
 
-      <div className="h-[300px] -mx-2">
+      <div className="h-[400px] -mx-2">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={filteredData}
@@ -103,15 +103,17 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
               tickFormatter={(timestamp) => formatDateTime(timestamp, false)}
               tick={{ 
                 fill: '#D8B4FE', 
-                fontSize: 12 
+                fontSize: 14 
               }}
               height={60}
               tickMargin={30}
               interval="preserveStartEnd"
+              angle={-45}
+              textAnchor="end"
             />
             <YAxis 
               stroke="#D8B4FE"
-              tick={{ fill: '#D8B4FE', fontSize: 12 }}
+              tick={{ fill: '#D8B4FE', fontSize: 14 }}
             />
             <Tooltip 
               content={<OutlierTooltip />}

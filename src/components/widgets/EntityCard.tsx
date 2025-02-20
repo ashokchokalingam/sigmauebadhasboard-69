@@ -1,10 +1,10 @@
-
 import React from "react";
-import { Monitor, User } from "lucide-react";
+import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Clock } from "lucide-react";
 import RiskLevelIndicator from "./RiskLevelIndicator";
 import WaveformDisplay from "./WaveformDisplay";
 import RiskScoreDisplay from "./RiskScoreDisplay";
 import { RiskyEntity } from "./types";
+import { formatDateTime } from "@/utils/dateTimeUtils";
 
 interface EntityCardProps {
   entity: RiskyEntity;
@@ -25,6 +25,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     lineColor: string;
     barWidth: number;
     glowColor: string;
+    trend: 'up' | 'down' | null;
   } => {
     // Calculate relative width based on risk level
     const getBarWidth = (score: number): number => {
@@ -34,14 +35,21 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
       return (score / 50) * 25; // LOW
     };
 
+    const trend = entity.risk_trend 
+      ? entity.risk_trend > 0 
+        ? 'up' 
+        : 'down'
+      : null;
+
     if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "#FF3B30", // Brighter red for critical
+      color: "#FF3B30",
       textColor: "text-[#FF3B30]",
       bgColor: "bg-[#FF3B30]/10",
       lineColor: "bg-[#FF3B30]",
       barWidth: getBarWidth(score),
-      glowColor: "#FF5252"
+      glowColor: "#FF5252",
+      trend
     };
     if (score >= 100) return { 
       level: "HIGH", 
@@ -50,7 +58,8 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
       bgColor: "bg-[#FF9500]/10",
       lineColor: "bg-[#FF9500]",
       barWidth: getBarWidth(score),
-      glowColor: "#FFB340"
+      glowColor: "#FFB340",
+      trend
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
@@ -59,7 +68,8 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
       bgColor: "bg-[#FFB340]/10",
       lineColor: "bg-[#FFB340]",
       barWidth: getBarWidth(score),
-      glowColor: "#FFD484"
+      glowColor: "#FFD484",
+      trend
     };
     return { 
       level: "LOW", 
@@ -68,12 +78,13 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
       bgColor: "bg-[#34C759]/10",
       lineColor: "bg-[#34C759]",
       barWidth: getBarWidth(score),
-      glowColor: "#4ADE80"
+      glowColor: "#4ADE80",
+      trend
     };
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, color, textColor, bgColor, lineColor, barWidth, glowColor } = getRiskLevel(riskScore);
+  const { level, color, textColor, bgColor, lineColor, barWidth, glowColor, trend } = getRiskLevel(riskScore);
 
   return (
     <div
@@ -94,9 +105,26 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
           <span className="font-mono text-sm text-[#D6BCFA] font-medium hover:text-white truncate max-w-[180px]">
             {entityName}
           </span>
-          <span className="text-xs text-[#9b87f5]/60">
-            {entity.unique_title_count} unique anomalies
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#9b87f5]/60">
+              {entity.unique_title_count} unique anomalies
+            </span>
+            {trend && (
+              <div className={`flex items-center ${
+                trend === 'up' ? 'text-red-400' : 'text-green-400'
+              }`}>
+                {trend === 'up' ? (
+                  <ArrowUpIcon className="h-3 w-3" />
+                ) : (
+                  <ArrowDownIcon className="h-3 w-3" />
+                )}
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-1 text-xs text-[#9b87f5]/60">
+            <Clock className="h-3 w-3" />
+            <span>Last seen: {formatDateTime(entity.last_seen || '', true)}</span>
+          </div>
         </div>
       </div>
 
