@@ -54,8 +54,8 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const highCount = totalCountData ? parseInt(totalCountData.high_count) || 0 : 0;
   const totalCount = totalCountData?.total_count ?? totalAlerts;
 
-  const activeUsers = userCountsData?.user_impacted_count ?? stats?.uniqueUsers?.current ?? 0;
-  const uniqueUsers = userCountsData?.user_origin_count ?? stats?.uniqueUsers?.users?.length ?? 0;
+  const totalUsers = (userCountsData?.user_impacted_count ?? 0) + (userCountsData?.user_origin_count ?? 0);
+  const breakdownText = `${userCountsData?.user_impacted_count ?? 0} impacted, ${userCountsData?.user_origin_count ?? 0} origin`;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
@@ -74,9 +74,9 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
       />
       <StatsCard
         title="Active Users (24h)"
-        value={activeUsers}
+        value={totalUsers}
         icon={Users}
-        subtitle={`${uniqueUsers} unique users`}
+        subtitle={breakdownText}
         subtitleIcon={Users}
       />
       <StatsCard
