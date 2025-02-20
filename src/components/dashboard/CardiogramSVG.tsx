@@ -79,6 +79,13 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
         const x = i * step;
         const phase = (progress / 1000) * Math.PI * 2;
         const y = 10 + Math.sin(i * config.frequency + phase) * config.amplitude;
+        
+        // Add some randomness for HIGH and CRITICAL risk levels
+        if (riskLevel === 'HIGH' || riskLevel === 'CRITICAL') {
+          const noise = (Math.random() - 0.5) * (riskLevel === 'CRITICAL' ? 2 : 1);
+          y += noise;
+        }
+        
         points.push([x, y]);
       }
       
@@ -90,14 +97,19 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
           const prev = points[i - 1];
           const curr = point;
           
-          // Calculate control points for smoother curves
-          const smoothing = config.smoothing;
-          const cpx1 = prev[0] + (curr[0] - prev[0]) * smoothing;
-          const cpy1 = prev[1];
-          const cpx2 = curr[0] - (curr[0] - prev[0]) * smoothing;
-          const cpy2 = curr[1];
-          
-          d += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${curr[0]} ${curr[1]}`;
+          if (riskLevel === 'HIGH' || riskLevel === 'CRITICAL') {
+            // Use more angular paths for high/critical risks
+            d += ` L ${curr[0]} ${curr[1]}`;
+          } else {
+            // Smooth curves for low/medium risks
+            const smoothing = config.smoothing;
+            const cpx1 = prev[0] + (curr[0] - prev[0]) * smoothing;
+            const cpy1 = prev[1];
+            const cpx2 = curr[0] - (curr[0] - prev[0]) * smoothing;
+            const cpy2 = curr[1];
+            
+            d += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${curr[0]} ${curr[1]}`;
+          }
         }
       });
 
@@ -116,7 +128,8 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
       viewBox="0 0 60 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className="opacity-60 hover:opacity-100 transition-opacity duration-300"
+      className={`opacity-60 hover:opacity-100 transition-opacity duration-300 
+        ${riskLevel === 'CRITICAL' ? 'animate-[pulse_2s_ease-in-out_infinite]' : ''}`}
     >
       <path
         ref={canvasRef}
@@ -128,8 +141,15 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
       />
       <defs>
         <filter id="glow" x="-2" y="-2" width="64" height="24">
-          <feGaussianBlur stdDeviation="1" result="blur" />
+          <feGaussianBlur stdDeviation="1.5" result="blur" />
           <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          <feDropShadow 
+            dx="0" 
+            dy="0" 
+            stdDeviation="2" 
+            floodColor={color} 
+            floodOpacity="0.3"
+          />
         </filter>
       </defs>
     </svg>
