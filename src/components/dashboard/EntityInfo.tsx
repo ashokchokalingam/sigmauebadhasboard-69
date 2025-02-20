@@ -20,10 +20,10 @@ const EntityInfo = ({ entityName, isComputer, uniqueTitleCount, textColor, bgCol
       </div>
       
       <div className="flex flex-col min-w-[120px] gap-0.5">
-        <span className="font-mono text-sm text-[#D6BCFA] font-medium hover:text-white truncate max-w-[180px]">
+        <span className="font-mono text-[16px] text-[#D6BCFA] font-medium hover:text-white truncate max-w-[180px]">
           {entityName}
         </span>
-        <span className="text-xs text-[#9b87f5]/60">
+        <span className="text-[13px] text-[#9b87f5]/60">
           {uniqueTitleCount} unique anomalies
         </span>
       </div>
@@ -32,3 +32,4 @@ const EntityInfo = ({ entityName, isComputer, uniqueTitleCount, textColor, bgCol
 };
 
 export default EntityInfo;
+

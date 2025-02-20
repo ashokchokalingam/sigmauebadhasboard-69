@@ -30,7 +30,7 @@ const RiskScoreDisplay = memo(({
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex items-center justify-end gap-1 mb-1">
-              <div className={`font-mono font-bold text-2xl tabular-nums ${textColor}`}>
+              <div className={`font-mono font-bold text-[20px] tabular-nums ${textColor}`}>
                 {score.toFixed(1)}
               </div>
             </div>
@@ -68,3 +68,4 @@ const RiskScoreDisplay = memo(({
 RiskScoreDisplay.displayName = 'RiskScoreDisplay';
 
 export default RiskScoreDisplay;
+

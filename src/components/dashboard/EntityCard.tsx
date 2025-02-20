@@ -55,3 +55,4 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
 };
 
 export default EntityCard;
+
