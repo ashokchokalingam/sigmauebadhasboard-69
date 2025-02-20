@@ -20,42 +20,54 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
     textColor: string; 
     bgColor: string;
     lineColor: string;
+    nextThreshold?: number;
   } => {
     if (score >= 150) return { 
       level: "CRITICAL", 
       color: "#FF1A1A",
       textColor: "text-[#FF1A1A]",
       bgColor: "bg-[#FF1A1A]/5",
-      lineColor: "bg-[#FF1A1A]"
+      lineColor: "bg-[#FF1A1A]",
+      nextThreshold: 200  // Maximum score
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "#FF3D00",  // Adjusted to be more distinct from MEDIUM
+      color: "#FF3D00",
       textColor: "text-[#FF3D00]",
       bgColor: "bg-[#FF3D00]/5",
-      lineColor: "bg-[#FF3D00]"
+      lineColor: "bg-[#FF3D00]",
+      nextThreshold: 150
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "#FFB100",  // More golden orange to distinguish from HIGH
+      color: "#FFB100",
       textColor: "text-[#FFB100]",
       bgColor: "bg-[#FFB100]/5",
-      lineColor: "bg-[#FFB100]"
+      lineColor: "bg-[#FFB100]",
+      nextThreshold: 100
     };
     return { 
       level: "LOW", 
       color: "#4ADE80",
       textColor: "text-[#4ADE80]",
       bgColor: "bg-[#4ADE80]/5",
-      lineColor: "bg-[#4ADE80]"
+      lineColor: "bg-[#4ADE80]",
+      nextThreshold: 50
     };
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, textColor, bgColor, lineColor } = getRiskLevel(riskScore);
+  const { level, textColor, bgColor, lineColor, nextThreshold } = getRiskLevel(riskScore);
+  
+  // Calculate progress within current risk level
+  const getProgressInLevel = () => {
+    if (level === "LOW") return (riskScore / 50) * 100;
+    if (level === "MEDIUM") return ((riskScore - 50) / 50) * 100;
+    if (level === "HIGH") return ((riskScore - 100) / 50) * 100;
+    return ((riskScore - 150) / 50) * 100;
+  };
 
-  // SVG path for cardiogram
-  const cardiogramPath = "M0,10 L5,10 L7,2 L9,18 L11,10 L13,10 L15,6 L17,14 L19,10 L21,10";
+  const progress = Math.min(getProgressInLevel(), 100);
 
   return (
     <div
@@ -92,30 +104,39 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-8">
-          <div className="cardiogram relative w-16 h-5 overflow-hidden opacity-70 flex-shrink-0">
-            <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 22 20" fill="none" 
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d={cardiogramPath}
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`${textColor} stroke-current`}
-              />
-            </svg>
-          </div>
-
-          <div className="relative min-w-[80px] text-right">
+        <div className="relative min-w-[140px]">
+          <div className="flex items-end justify-end mb-1">
             <div className={`font-mono font-bold text-2xl tabular-nums ${textColor}`}>
               {riskScore.toFixed(1)}
             </div>
-            <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#5856D6]/10 rounded-full overflow-hidden">
-              <div 
-                className={`h-full ${lineColor} transition-all duration-300`}
-                style={{ width: `${Math.min((riskScore / 200) * 100, 100)}%` }}
-              />
+          </div>
+          
+          <div className="relative h-2 bg-[#5856D6]/10 rounded-full overflow-hidden">
+            {/* Background segments for risk levels */}
+            <div className="absolute inset-0 flex">
+              <div className="flex-1 border-r border-[#5856D6]/20" />
+              <div className="flex-1 border-r border-[#5856D6]/20" />
+              <div className="flex-1 border-r border-[#5856D6]/20" />
+              <div className="flex-1" />
             </div>
+            
+            {/* Current progress */}
+            <div 
+              className={`h-full ${lineColor} transition-all duration-300`}
+              style={{ 
+                width: `${progress}%`,
+                boxShadow: `0 0 10px ${getRiskLevel(riskScore).color}`
+              }}
+            />
+          </div>
+          
+          {/* Progress markers */}
+          <div className="absolute -bottom-3 left-0 right-0 flex justify-between">
+            <div className="text-[10px] text-[#9b87f5]/50">0</div>
+            <div className="text-[10px] text-[#9b87f5]/50">50</div>
+            <div className="text-[10px] text-[#9b87f5]/50">100</div>
+            <div className="text-[10px] text-[#9b87f5]/50">150</div>
+            <div className="text-[10px] text-[#9b87f5]/50">200</div>
           </div>
         </div>
       </div>
