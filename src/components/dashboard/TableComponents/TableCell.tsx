@@ -1,11 +1,18 @@
 
-import { FileText, AlignLeft, Server, Activity, Shield, Tag, AlertTriangle } from "lucide-react";
+import { Tag, Activity } from "lucide-react";
 import { Alert } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { formatDateTime } from "@/utils/dateTimeUtils";
 import { UserCell } from "./cells/UserCell";
 import { ComputerCell } from "./cells/ComputerCell";
 import { IPAddressCell } from "./cells/IPAddressCell";
+import { TitleCell } from "./cells/TitleCell";
+import { DescriptionCell } from "./cells/DescriptionCell";
+import { ServerInfoCell } from "./cells/ServerInfoCell";
+import { RuleCell } from "./cells/RuleCell";
+import { TaskCell } from "./cells/TaskCell";
+import { RuleLevelCell } from "./cells/RuleLevelCell";
+import { BaseIconCell } from "./cells/BaseIconCell";
 import { getRiskBadgeColor, getRiskLabel } from "./utils/riskUtils";
 
 interface TableCellProps {
@@ -41,103 +48,37 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
         </Badge>
       );
     case 'title':
-      return (
-        <div className="flex items-center min-w-0">
-          <FileText className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate text-base font-medium whitespace-nowrap">{alert.title}</span>
-        </div>
-      );
+      return <TitleCell title={alert.title} />;
     case 'description':
-      return (
-        <div className="flex items-center min-w-0">
-          <AlignLeft className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate text-base whitespace-nowrap">{alert.description}</span>
-        </div>
-      );
+      return <DescriptionCell description={alert.description} />;
     case 'event_id':
-      return (
-        <div className="flex items-center min-w-0">
-          <Server className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="text-base font-medium whitespace-nowrap">{alert.event_id || '-'}</span>
-        </div>
-      );
+      return <ServerInfoCell text={alert.event_id || ''} isBold={true} />;
     case 'provider_name':
-      return (
-        <div className="flex items-center min-w-0">
-          <Server className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate text-base whitespace-nowrap">{alert.provider_name || '-'}</span>
-        </div>
-      );
+      return <ServerInfoCell text={alert.provider_name || ''} />;
     case 'ruleid':
-      return (
-        <div className="flex items-center min-w-0">
-          <Shield className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate text-base font-medium whitespace-nowrap">{alert.ruleid || '-'}</span>
-        </div>
-      );
+      return <RuleCell text={alert.ruleid || ''} isBold={true} />;
     case 'rule_level':
-      return (
-        <div className="flex items-center gap-3">
-          <AlertTriangle className="h-4 w-4 text-blue-400/80 flex-shrink-0" />
-          <Badge 
-            variant="outline" 
-            className="bg-blue-500/10 text-blue-300 border-blue-500/20 px-3 py-1"
-          >
-            {alert.rule_level || 'Unknown'}
-          </Badge>
-        </div>
-      );
+      return <RuleLevelCell level={alert.rule_level || ''} />;
     case 'task':
-      return (
-        <div className="flex items-center min-w-0">
-          <Activity className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate text-base whitespace-nowrap">{alert.task || '-'}</span>
-        </div>
-      );
+      return <TaskCell task={alert.task || ''} />;
     case 'target_domain_name':
-      return (
-        <div className="flex items-center min-w-0">
-          <Server className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate text-base whitespace-nowrap">{alert.target_domain_name || '-'}</span>
-        </div>
-      );
+      return <ServerInfoCell text={alert.target_domain_name || ''} />;
     case 'tactics':
-      return (
-        <div className="flex items-center min-w-0">
-          <Shield className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate text-base whitespace-nowrap">{alert.tactics || '-'}</span>
-        </div>
-      );
+      return <RuleCell text={alert.tactics || ''} />;
     case 'techniques':
-      return (
-        <div className="flex items-center min-w-0">
-          <Shield className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate text-base whitespace-nowrap">{alert.techniques || '-'}</span>
-        </div>
-      );
+      return <RuleCell text={alert.techniques || ''} />;
     case 'ml_description':
-      return (
-        <div className="flex items-center min-w-0">
-          <AlignLeft className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate text-base whitespace-nowrap">{alert.ml_description || '-'}</span>
-        </div>
-      );
+      return <DescriptionCell description={alert.ml_description || ''} />;
     case 'ml_cluster':
       return (
-        <div className="flex items-center min-w-0">
-          <Activity className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="text-base font-medium whitespace-nowrap">
-            {alert.ml_cluster === -1 ? "Noise" : `Cluster ${alert.ml_cluster}`}
-          </span>
-        </div>
+        <BaseIconCell 
+          icon={Activity} 
+          text={alert.ml_cluster === -1 ? "Noise" : `Cluster ${alert.ml_cluster}`}
+          isBold={true}
+        />
       );
     case 'tags':
-      return (
-        <div className="flex items-center min-w-0">
-          <Tag className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="truncate text-base whitespace-nowrap">{alert.tags || '-'}</span>
-        </div>
-      );
+      return <BaseIconCell icon={Tag} text={alert.tags || ''} />;
     default:
       return (
         <span className="text-base font-medium whitespace-nowrap">
