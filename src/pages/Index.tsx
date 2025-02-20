@@ -16,7 +16,7 @@ const Index = () => {
   const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
 
   const fetchAlerts = async (batchSize: number, page: number): Promise<{ alerts: Alert[]; total_count: number }> => {
-    console.log('Fetching outlier alerts:', { batchSize, page, timeFrame });
+    console.log('Fetching alerts:', { batchSize, page, timeFrame });
     
     const response = await fetch(`/api/alerts_outliers?page=${page}&per_page=${batchSize}&timeframe=${timeFrame}`, {
       method: 'GET',
