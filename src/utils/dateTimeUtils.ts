@@ -7,11 +7,11 @@ export const formatDateTime = (timestamp: string | Date, includeTimezone = true)
     const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
-    // Format for UTC time
+    // Format for UTC time - Using escaped quotes for 'at' and 'UTC'
     const utcTime = formatInTimeZone(
       date, 
       'UTC', 
-      "MMM dd, yyyy 'at' h:mm:ss a 'UTC'"
+      "MMM dd, yyyy '\'at\'' h:mm:ss a 'UTC'"
     );
     
     if (!includeTimezone) {
@@ -19,7 +19,7 @@ export const formatDateTime = (timestamp: string | Date, includeTimezone = true)
       return formatInTimeZone(
         date, 
         userTimeZone, 
-        "MMM dd, yyyy 'at' h:mm:ss a"
+        "MMM dd, yyyy '\'at\'' h:mm:ss a"
       );
     }
 
@@ -27,7 +27,7 @@ export const formatDateTime = (timestamp: string | Date, includeTimezone = true)
     const localTime = formatInTimeZone(
       date, 
       userTimeZone,
-      `MMM dd, yyyy 'at' h:mm:ss a (${userTimeZone})`
+      `MMM dd, yyyy '\'at\'' h:mm:ss a '(${userTimeZone})'`
     );
 
     return {
