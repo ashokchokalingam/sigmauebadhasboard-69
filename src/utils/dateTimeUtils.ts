@@ -20,10 +20,9 @@ export const formatDateTime = (timestamp: string | Date, includeTimezone = true)
     const localTime = formatInTimeZone(
       date, 
       userTimeZone,
-      `MMM dd, yyyy 'at' h:mm:ss a '(${userTimeZone})'`
+      "MMM dd, yyyy 'at' h:mm:ss a"
     );
 
-    // Now we just return the local time string instead of an object
     return localTime;
   } catch (error) {
     console.error("Date parsing error:", error);
