@@ -68,4 +68,3 @@ const RiskScoreDisplay = memo(({
 RiskScoreDisplay.displayName = 'RiskScoreDisplay';
 
 export default RiskScoreDisplay;
-
