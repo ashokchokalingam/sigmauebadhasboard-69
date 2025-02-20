@@ -39,17 +39,18 @@ const TimelineEventCard = ({
   const isSelected = selectedEventId === event.id;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
+  // Generate a unique query key for this specific card
+  const queryKey = `logs-${event.id}`;
+
   const { data: logsData, isLoading } = useQuery({
-    queryKey: ['logs', event.user_origin, event.title],
+    queryKey: [queryKey],
     queryFn: async () => {
-      if (!event.user_origin || !event.title) return null;
-      
       const params = new URLSearchParams({
-        user_origin: event.user_origin,
-        title: event.title
+        user_origin: event.user_origin || '',
+        title: event.title || ''
       });
       
-      console.log('Fetching logs with params:', params.toString());
+      console.log(`Fetching logs for card ${event.id}:`, params.toString());
       
       const response = await fetch(`/api/user_origin_logs?${params}`);
       if (!response.ok) {
@@ -57,11 +58,14 @@ const TimelineEventCard = ({
       }
       return response.json();
     },
-    enabled: isSelected && !!event.user_origin && !!event.title
+    enabled: isSelected, // Only enable the query when this specific card is selected
+    staleTime: Infinity, // Keep the data fresh indefinitely once fetched
+    cacheTime: 1000 * 60 * 5 // Cache the data for 5 minutes
   });
 
   const handleCardClick = () => {
     console.log('Card clicked:', {
+      id: event.id,
       user_origin: event.user_origin,
       title: event.title
     });
