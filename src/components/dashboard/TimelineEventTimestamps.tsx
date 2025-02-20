@@ -1,31 +1,38 @@
 
-import { Clock, Calendar } from "lucide-react";
-import { formatDateTime } from "@/utils/dateTimeUtils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { formatInTimeZone } from 'date-fns-tz';
 
 interface TimelineEventTimestampsProps {
-  firstTimeSeen: string;
-  lastTimeSeen: string;
+  firstSeen: string;
+  lastSeen: string;
 }
 
-const TimelineEventTimestamps = ({ firstTimeSeen, lastTimeSeen }: TimelineEventTimestampsProps) => {
+const TimelineEventTimestamps = ({ firstSeen, lastSeen }: TimelineEventTimestampsProps) => {
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return {
+      utc: formatInTimeZone(date, 'UTC', "MMM dd, yyyy - HH:mm:ss 'UTC'"),
+      local: formatInTimeZone(date, userTimezone, "MMM dd, yyyy - hh:mm:ss aa")
+    };
+  };
+
+  const firstSeenFormatted = formatTimestamp(firstSeen);
+  const lastSeenFormatted = formatTimestamp(lastSeen);
+
   return (
-    <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+    <div className="grid grid-cols-2 gap-4 mb-4 text-sm mt-3">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex items-center gap-2 text-purple-400/70">
-              <Clock className="h-4 w-4" />
-              <span>Last: {formatDateTime(lastTimeSeen, false)}</span>
+              <span>Last seen:</span>
+              <span>{lastSeenFormatted.local}</span>
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Last time this event was observed</p>
+            <p>{lastSeenFormatted.utc}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -34,12 +41,12 @@ const TimelineEventTimestamps = ({ firstTimeSeen, lastTimeSeen }: TimelineEventT
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex items-center gap-2 text-blue-400/70">
-              <Calendar className="h-4 w-4" />
-              <span>First: {formatDateTime(firstTimeSeen, false)}</span>
+              <span>First seen:</span>
+              <span>{firstSeenFormatted.local}</span>
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p>First time this event was observed</p>
+            <p>{firstSeenFormatted.utc}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
