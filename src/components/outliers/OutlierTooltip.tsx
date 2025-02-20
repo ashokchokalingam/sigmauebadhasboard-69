@@ -41,7 +41,8 @@ export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
   };
 
   return (
-    <div className="bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 shadow-xl max-w-md">
+    <div className="bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 shadow-xl max-w-md
+      transform transition-transform duration-200 ease-in-out z-50">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <div 
@@ -54,36 +55,42 @@ export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
         </div>
 
         <div className="space-y-1">
-          <div className="text-white/90 text-sm">
-            First seen: {format(new Date(data.firstSeen), "yyyy-MM-dd HH:mm:ss 'UTC'")}
+          <div className="text-white/90 text-sm flex items-center justify-between">
+            <span className="text-purple-300/80">First seen:</span>
+            <span>{format(new Date(data.firstSeen), "yyyy-MM-dd HH:mm:ss 'UTC'")}</span>
           </div>
-          <div className="text-white/90 text-sm">
-            Last seen: {format(new Date(data.lastSeen), "yyyy-MM-dd HH:mm:ss 'UTC'")}
+          <div className="text-white/90 text-sm flex items-center justify-between">
+            <span className="text-purple-300/80">Last seen:</span>
+            <span>{format(new Date(data.lastSeen), "yyyy-MM-dd HH:mm:ss 'UTC'")}</span>
           </div>
         </div>
 
-        <div className="text-purple-200 font-medium">
-          {data.count} anomalies detected
+        <div className="text-purple-200 font-medium flex items-center gap-2">
+          <span className="px-2 py-0.5 bg-purple-500/10 rounded-md">
+            {data.count} anomalies detected
+          </span>
         </div>
 
         <div className="space-y-2">
           {data.impactedComputers.length > 0 && (
-            <div className="text-purple-300 text-sm">
-              <span className="font-medium">Systems affected:</span> {data.impactedComputers.length}
+            <div className="text-purple-300 text-sm flex items-center justify-between bg-purple-500/5 px-2 py-1 rounded-md">
+              <span className="font-medium">Systems affected:</span>
+              <span>{data.impactedComputers.length}</span>
             </div>
           )}
           
           {data.impactedUsers.length > 0 && (
-            <div className="text-purple-300 text-sm">
-              <span className="font-medium">Users affected:</span> {data.impactedUsers.length}
+            <div className="text-purple-300 text-sm flex items-center justify-between bg-purple-500/5 px-2 py-1 rounded-md">
+              <span className="font-medium">Users affected:</span>
+              <span>{data.impactedUsers.length}</span>
             </div>
           )}
         </div>
 
         {data.tactics.length > 0 && (
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <div className="text-purple-200 text-sm font-medium">MITRE ATT&CK</div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {data.tactics.map((tactic: string, index: number) => (
                 <div 
                   key={index}
@@ -100,7 +107,9 @@ export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
         )}
 
         {data.description && (
-          <div className="text-purple-200/90 text-sm mt-2 border-t border-purple-500/20 pt-2">
+          <div className="text-purple-200/90 text-sm mt-2 border-t border-purple-500/20 pt-2
+            max-h-[120px] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20
+            scrollbar-track-transparent">
             {data.description}
           </div>
         )}
