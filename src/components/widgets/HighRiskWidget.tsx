@@ -60,7 +60,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
   }
 
   return (
-    <div className="bg-[#0A0B0F] border border-[#5856D6]/20 rounded-xl overflow-hidden">
+    <div className="bg-[#0A0B0F] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[300px]">
       <div className="p-4 flex items-center justify-between border-b border-[#5856D6]/20">
         <div className="flex items-center gap-2 text-sm font-medium text-[#D6BCFA]">
           <Shield className="h-5 w-5 text-[#9b87f5]" />
@@ -72,7 +72,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
         </div>
       </div>
 
-      <div className="p-3 border-b border-[#5856D6]/20">
+      <div className="p-4 border-b border-[#5856D6]/20">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9b87f5]/50" />
           <input
@@ -91,7 +91,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
         </div>
       </div>
       
-      <div className="px-4 pb-4 space-y-2 overflow-y-auto h-[calc(100%-120px)]
+      <div className="px-4 py-2 space-y-2 overflow-y-auto h-[calc(100%-136px)]
         scrollbar-thin scrollbar-thumb-[#5856D6]/20 scrollbar-track-transparent">
         {filteredEntities.map((entity: any) => (
           <EntityCard
