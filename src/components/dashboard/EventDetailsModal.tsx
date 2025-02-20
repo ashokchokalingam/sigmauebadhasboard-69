@@ -74,25 +74,33 @@ const EventDetailsModal = ({ isOpen, onClose, event }: EventDetailsModalProps) =
   };
 
   const handleViewMore = () => {
-    // Navigate to full page view
     window.open(`/alert/${event.id}`, '_blank');
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl h-[80vh] p-0 bg-[#1A1F2C] border-[#5856D6]/20">
+      <DialogContent className="w-screen h-screen max-w-full p-0 m-0 bg-[#1A1F2C] border-0">
         <Tabs defaultValue="overview" className="w-full h-full">
-          <div className="border-b border-[#5856D6]/20 px-6 pt-6">
+          <div className="border-b border-[#5856D6]/20 px-8 pt-6 bg-[#1E1E2F]">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-white">{event.title}</h2>
-              <Button 
-                variant="outline" 
-                className="bg-[#5856D6]/10 border-[#5856D6]/30 text-[#5856D6] hover:bg-[#5856D6]/20"
-                onClick={handleViewMore}
-              >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                View Full Analysis
-              </Button>
+              <h2 className="text-2xl font-semibold text-white">{event.title}</h2>
+              <div className="flex gap-4">
+                <Button 
+                  variant="outline" 
+                  className="bg-[#5856D6]/10 border-[#5856D6]/30 text-[#5856D6] hover:bg-[#5856D6]/20"
+                  onClick={handleViewMore}
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  View Full Analysis
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
+                  onClick={onClose}
+                >
+                  Close
+                </Button>
+              </div>
             </div>
             <TabsList className="bg-[#2B2B3B] border border-[#5856D6]/20">
               <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -101,12 +109,12 @@ const EventDetailsModal = ({ isOpen, onClose, event }: EventDetailsModalProps) =
             </TabsList>
           </div>
 
-          <div className="p-6 overflow-y-auto flex-1">
+          <div className="p-8 overflow-y-auto flex-1 bg-[#1A1F2C]">
             <TabsContent value="overview" className="mt-0">
-              <div className="grid gap-6">
-                <div className="bg-[#2B2B3B] rounded-lg p-6 border border-[#5856D6]/20">
-                  <h3 className="text-lg font-medium text-white mb-4">Event Details</h3>
-                  <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-8 max-w-7xl mx-auto">
+                <div className="bg-[#2B2B3B] rounded-lg p-8 border border-[#5856D6]/20">
+                  <h3 className="text-xl font-medium text-white mb-6">Event Details</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     <div>
                       <p className="text-sm text-gray-400">Risk Level</p>
                       <p className={cn("text-lg font-medium", getRiskLevelColor(event.rule_level))}>
@@ -132,27 +140,27 @@ const EventDetailsModal = ({ isOpen, onClose, event }: EventDetailsModalProps) =
                   </div>
                 </div>
 
-                <div className="bg-[#2B2B3B] rounded-lg p-6 border border-[#5856D6]/20">
-                  <h3 className="text-lg font-medium text-white mb-4">Description</h3>
-                  <p className="text-gray-300">{event.description}</p>
+                <div className="bg-[#2B2B3B] rounded-lg p-8 border border-[#5856D6]/20">
+                  <h3 className="text-xl font-medium text-white mb-6">Description</h3>
+                  <p className="text-gray-300 text-lg leading-relaxed">{event.description}</p>
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="mitre" className="mt-0">
-              <div className="bg-[#2B2B3B] rounded-lg p-6 border border-[#5856D6]/20">
-                <h3 className="text-lg font-medium text-white mb-6">MITRE ATT&CK Analysis</h3>
-                <div className="grid gap-6">
+              <div className="bg-[#2B2B3B] rounded-lg p-8 border border-[#5856D6]/20 max-w-7xl mx-auto">
+                <h3 className="text-xl font-medium text-white mb-8">MITRE ATT&CK Analysis</h3>
+                <div className="grid gap-8">
                   <div>
-                    <h4 className="text-sm font-medium text-gray-400 mb-2">Tactics</h4>
-                    <div className="flex flex-wrap gap-2">
+                    <h4 className="text-lg font-medium text-gray-400 mb-4">Tactics</h4>
+                    <div className="flex flex-wrap gap-3">
                       {event.tags?.split(',')
                         .filter(tag => tag.includes('attack.') && !tag.toLowerCase().includes('t1'))
                         .map((tactic, index) => (
                           <span 
                             key={index}
-                            className="px-3 py-1 bg-[#5856D6]/10 text-[#5856D6] rounded-full 
-                              border border-[#5856D6]/30 text-sm"
+                            className="px-4 py-2 bg-[#5856D6]/10 text-[#5856D6] rounded-full 
+                              border border-[#5856D6]/30 text-base"
                           >
                             {tactic.replace('attack.', '').split('_').map(word => 
                               word.charAt(0).toUpperCase() + word.slice(1)
@@ -162,15 +170,15 @@ const EventDetailsModal = ({ isOpen, onClose, event }: EventDetailsModalProps) =
                     </div>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-400 mb-2">Techniques</h4>
-                    <div className="flex flex-wrap gap-2">
+                    <h4 className="text-lg font-medium text-gray-400 mb-4">Techniques</h4>
+                    <div className="flex flex-wrap gap-3">
                       {event.tags?.split(',')
                         .filter(tag => tag.toLowerCase().includes('t1'))
                         .map((technique, index) => (
                           <span 
                             key={index}
-                            className="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full 
-                              border border-blue-500/30 text-sm"
+                            className="px-4 py-2 bg-blue-500/10 text-blue-400 rounded-full 
+                              border border-blue-500/30 text-base"
                           >
                             {technique.trim().toUpperCase()}
                           </span>
@@ -182,13 +190,13 @@ const EventDetailsModal = ({ isOpen, onClose, event }: EventDetailsModalProps) =
             </TabsContent>
 
             <TabsContent value="raw" className="mt-0">
-              <div className="bg-[#2B2B3B] rounded-lg border border-[#5856D6]/20">
-                <div className="bg-[#1E1E2F] p-4 rounded-t-lg border-b border-[#5856D6]/20">
-                  <h3 className="text-lg font-medium text-white">Raw Log Data</h3>
+              <div className="bg-[#2B2B3B] rounded-lg border border-[#5856D6]/20 max-w-7xl mx-auto">
+                <div className="bg-[#1E1E2F] p-6 rounded-t-lg border-b border-[#5856D6]/20">
+                  <h3 className="text-xl font-medium text-white">Raw Log Data</h3>
                 </div>
-                <div className="p-6">
-                  <pre className="overflow-auto max-h-[500px] rounded-lg bg-[#1E1E2F] p-4">
-                    <code ref={codeRef} className="language-json">
+                <div className="p-8">
+                  <pre className="overflow-auto max-h-[calc(100vh-300px)] rounded-lg bg-[#1E1E2F] p-6">
+                    <code ref={codeRef} className="language-json text-base">
                       {typeof event.raw === 'string' 
                         ? event.raw 
                         : JSON.stringify(event.raw, null, 2)}
