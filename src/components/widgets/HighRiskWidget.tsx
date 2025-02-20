@@ -1,4 +1,3 @@
-
 import { Shield, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback, useMemo } from "react";
@@ -60,19 +59,18 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
   }
 
   return (
-    <div className="bg-[#0A0B0F] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[300px]">
-      <div className="p-4 flex items-center justify-between border-b border-[#5856D6]/20">
-        <div className="flex items-center gap-2 text-sm font-medium text-[#D6BCFA]">
+    <div className="widget-container">
+      <div className="widget-header">
+        <div className="widget-title">
           <Shield className="h-5 w-5 text-[#9b87f5]" />
           {title}
         </div>
-        <div className="text-xs font-medium text-[#9b87f5] px-2 py-1 rounded-full 
-          bg-[#5856D6]/10 border border-[#5856D6]/20">
+        <div className="widget-count">
           {filteredEntities.length} active
         </div>
       </div>
 
-      <div className="p-4 border-b border-[#5856D6]/20">
+      <div className="widget-search">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9b87f5]/50" />
           <input
@@ -80,19 +78,12 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
             placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5
-              bg-[#0A0B0F] hover:bg-[#12131A]
-              border border-[#5856D6]/30 hover:border-[#5856D6]/50 
-              rounded-lg text-xs text-[#D6BCFA] 
-              placeholder:text-[#9b87f5]/50
-              transition-colors duration-200
-              focus:outline-none focus:ring-1 focus:ring-[#5856D6]/30"
+            className="widget-search-input"
           />
         </div>
       </div>
       
-      <div className="px-4 py-2 space-y-2 overflow-y-auto h-[calc(100%-136px)]
-        scrollbar-thin scrollbar-thumb-[#5856D6]/20 scrollbar-track-transparent">
+      <div className="widget-content">
         {filteredEntities.map((entity: any) => (
           <EntityCard
             key={entityType === 'computer' ? entity.computer : entity.user}

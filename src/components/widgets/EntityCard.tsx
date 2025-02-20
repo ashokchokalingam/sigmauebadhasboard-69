@@ -54,6 +54,9 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
   const riskScore = parseFloat(entity.cumulative_risk_score);
   const { level, textColor, bgColor, lineColor } = getRiskLevel(riskScore);
 
+  // SVG path for cardiogram
+  const cardiogramPath = "M0,10 L5,10 L7,2 L9,18 L11,10 L13,10 L15,6 L17,14 L19,10 L21,10";
+
   return (
     <div
       onClick={onClick}
@@ -79,23 +82,38 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-6">
+      <div className="flex items-center justify-end gap-8">
         <div className="flex flex-col items-end">
-          <span className="text-xs uppercase text-[#9b87f5]/70 mb-1">Risk Level</span>
-          <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
+          <span className="text-xs uppercase text-[#9b87f5]/70 mb-2">Risk Level</span>
+          <span className={`text-sm font-medium tracking-wider uppercase ${textColor} w-[80px] text-right`}>
             {level}
           </span>
         </div>
 
-        <div className="relative min-w-[80px] text-right">
-          <div className={`font-mono font-bold text-2xl tabular-nums ${textColor}`}>
-            {riskScore.toFixed(1)}
+        <div className="flex items-center gap-4">
+          <div className="cardiogram relative w-16 h-5 overflow-hidden opacity-70">
+            <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 22 20" fill="none" 
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d={cardiogramPath}
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`${textColor} stroke-current`}
+              />
+            </svg>
           </div>
-          <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#5856D6]/10 rounded-full overflow-hidden">
-            <div 
-              className={`h-full ${lineColor} transition-all duration-300`}
-              style={{ width: `${Math.min((riskScore / 200) * 100, 100)}%` }}
-            />
+
+          <div className="relative min-w-[80px] text-right">
+            <div className={`font-mono font-bold text-2xl tabular-nums ${textColor}`}>
+              {riskScore.toFixed(1)}
+            </div>
+            <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#5856D6]/10 rounded-full overflow-hidden">
+              <div 
+                className={`h-full ${lineColor} transition-all duration-300`}
+                style={{ width: `${Math.min((riskScore / 200) * 100, 100)}%` }}
+              />
+            </div>
           </div>
         </div>
       </div>
