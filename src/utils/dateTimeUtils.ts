@@ -7,12 +7,23 @@ export const formatDateTime = (timestamp: string | Date, includeTimezone = true)
     const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
-    const utcTime = formatInTimeZone(date, 'UTC', "MMM dd, yyyy 'at' h:mm:ss a 'UTC'");
+    // Format for UTC time
+    const utcTime = formatInTimeZone(
+      date, 
+      'UTC', 
+      "MMM dd, yyyy 'at' h:mm:ss a 'UTC'"
+    );
     
     if (!includeTimezone) {
-      return formatInTimeZone(date, userTimeZone, "MMM dd, yyyy 'at' h:mm:ss a");
+      // For graph labels and places where we don't need timezone
+      return formatInTimeZone(
+        date, 
+        userTimeZone, 
+        "MMM dd, yyyy 'at' h:mm:ss a"
+      );
     }
 
+    // For tooltips and detailed views where we want to show timezone
     const localTime = formatInTimeZone(
       date, 
       userTimeZone,

@@ -1,10 +1,10 @@
 import { Monitor, FileText, AlignLeft, User, Hash, Server, Activity, Shield, Tag, Network, AlertTriangle } from "lucide-react";
-import { format } from "date-fns";
 import { Alert } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { formatDateTime } from "@/utils/dateTimeUtils";
 
 interface TableCellProps {
   alert: Alert;
@@ -19,8 +19,8 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
     if (!risk) return "bg-purple-500/10 text-purple-400";
     if (risk >= 80) return "bg-[#D32F2F]/10 text-[#D32F2F] font-semibold";
     if (risk >= 60) return "bg-[#FF6F00]/10 text-[#FF6F00] font-semibold";
-    if (risk >= 40) return "bg-[#FFB300]/10 text-[#FFB300] font-semibold"; // Updated yellow
-    return "bg-[#4CAF50]/10 text-[#4CAF50] font-semibold"; // Brighter green
+    if (risk >= 40) return "bg-[#FFB300]/10 text-[#FFB300] font-semibold";
+    return "bg-[#4CAF50]/10 text-[#4CAF50] font-semibold";
   };
 
   const getRiskLabel = (risk: number | null) => {
@@ -42,9 +42,10 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
 
   switch (columnKey) {
     case 'system_time':
+      const formattedTime = formatDateTime(alert.system_time, false);
       return (
         <span className="text-base font-medium whitespace-nowrap">
-          {format(new Date(alert.system_time), "MMM dd, yyyy, hh:mm:ss aa")}
+          {typeof formattedTime === 'string' ? formattedTime : formattedTime.local}
         </span>
       );
     case 'user_id':
