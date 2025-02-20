@@ -1,6 +1,7 @@
 
 import { format } from "date-fns";
 import { Shield, Activity, CircleDot } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface TooltipProps {
   active?: boolean;
@@ -12,7 +13,46 @@ interface TooltipProps {
 export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipProps) => {
   if (!active || !payload?.[0]) return null;
 
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
   const data = payload[0].payload;
+
+  useEffect(() => {
+    if (!tooltipRef.current || !coordinate) return;
+
+    const tooltip = tooltipRef.current;
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const chartContainer = tooltip.closest('.recharts-wrapper');
+    
+    if (!chartContainer) return;
+    
+    const containerRect = chartContainer.getBoundingClientRect();
+    
+    // Calculate available space on each side
+    const spaceRight = containerRect.right - coordinate.x;
+    const spaceLeft = coordinate.x - containerRect.left;
+    const spaceBottom = containerRect.bottom - coordinate.y;
+    const spaceTop = coordinate.y - containerRect.top;
+
+    // Default position (right of cursor)
+    let xPos = 20;
+    let yPos = -tooltipRect.height / 2;
+
+    // Adjust horizontal position if needed
+    if (spaceRight < tooltipRect.width + 20) {
+      xPos = -tooltipRect.width - 20;
+    }
+
+    // Adjust vertical position if needed
+    if (coordinate.y + yPos < containerRect.top) {
+      yPos = containerRect.top - coordinate.y;
+    } else if (coordinate.y + yPos + tooltipRect.height > containerRect.bottom) {
+      yPos = containerRect.bottom - coordinate.y - tooltipRect.height;
+    }
+
+    setPosition({ x: xPos, y: yPos });
+  }, [coordinate]);
 
   const getSeverityColor = (severity: string) => {
     switch (severity.toLowerCase()) {
@@ -40,16 +80,13 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     }
   };
 
-  // Calculate position
-  const xPos = (coordinate?.x || 0) > window.innerWidth - 400 ? -380 : 20;
-  const yPos = (coordinate?.y || 0) > window.innerHeight - 300 ? -280 : 20;
-
   return (
     <div 
-      className="fixed bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
-        shadow-xl w-[380px] pointer-events-none"
+      ref={tooltipRef}
+      className="absolute bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
+        shadow-xl w-[320px] pointer-events-none"
       style={{
-        transform: `translate(${xPos}px, ${yPos}px)`,
+        transform: `translate(${position.x}px, ${position.y}px)`,
         zIndex: 50
       }}
     >
