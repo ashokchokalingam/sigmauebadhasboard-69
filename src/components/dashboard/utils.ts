@@ -51,3 +51,22 @@ export const getRiskLevel = (level: string = 'low') => {
       };
   }
 };
+
+export const extractTacticsAndTechniques = (tags: string): { tactics: string[], techniques: string[] } => {
+  if (!tags) return { tactics: [], techniques: [] };
+  
+  const tagArray = tags.split(',').map(tag => tag.trim());
+  
+  return {
+    tactics: tagArray.filter(tag => 
+      tag.includes('attack.') && !tag.toLowerCase().includes('t1')
+    ).map(tactic => 
+      tactic.replace('attack.', '').split('_').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join(' ')
+    ),
+    techniques: tagArray.filter(tag => 
+      tag.toLowerCase().includes('t1')
+    )
+  };
+};
