@@ -1,13 +1,12 @@
 
 import React, { useState } from "react";
-import { Circle, Shield, Flame, Skull, Activity, HelpCircle } from "lucide-react";
+import { Circle, Shield, Flame, Skull, Activity, Monitor, User } from "lucide-react";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { cn } from "@/lib/utils";
-import EntityCardRiskGauge from "./EntityCardRiskGauge";
 
 interface EntityCardProps {
   id: string;
@@ -21,18 +20,52 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
   const score = riskScore ? parseFloat(riskScore) : 0;
   const [isHovered, setIsHovered] = useState(false);
 
-  const getRiskIcon = (score: number) => {
-    if (score >= 150) return <Skull className="w-5 h-5 text-[#ea384c] animate-pulse" />;
-    if (score >= 100) return <Flame className="w-5 h-5 text-[#F97316]" />;
-    if (score >= 80) return <Activity className="w-5 h-5 text-[#F97316]" />;
-    return <Shield className="w-5 h-5 text-[#28c76f]" />;
+  const getRiskLevel = (score: number): { 
+    level: string; 
+    color: string;
+    textColor: string; 
+    bgColor: string;
+    lineColor: string;
+    icon: JSX.Element;
+  } => {
+    if (score >= 150) return { 
+      level: "CRITICAL", 
+      color: "#ea384c",
+      textColor: "text-[#ea384c]",
+      bgColor: "bg-[#ea384c]/5",
+      lineColor: "bg-[#ea384c]",
+      icon: <Skull className="w-5 h-5 text-[#ea384c] animate-pulse" />
+    };
+    if (score >= 100) return { 
+      level: "HIGH", 
+      color: "#F97316",
+      textColor: "text-[#F97316]",
+      bgColor: "bg-[#F97316]/5",
+      lineColor: "bg-[#F97316]",
+      icon: <Flame className="w-5 h-5 text-[#F97316]" />
+    };
+    if (score >= 50) return { 
+      level: "MEDIUM", 
+      color: "#F97316",
+      textColor: "text-[#F97316]",
+      bgColor: "bg-[#F97316]/5",
+      lineColor: "bg-[#F97316]",
+      icon: <Activity className="w-5 h-5 text-[#F97316]" />
+    };
+    return { 
+      level: "LOW", 
+      color: "#4ADE80",
+      textColor: "text-[#4ADE80]",
+      bgColor: "bg-[#4ADE80]/5",
+      lineColor: "bg-[#4ADE80]",
+      icon: <Shield className="w-5 h-5 text-[#4ADE80]" />
+    };
   };
 
-  const getRiskColor = (score: number) => {
-    if (score >= 150) return "from-[#ea384c]/10 to-transparent";
-    if (score >= 80) return "from-[#F97316]/10 to-transparent";
-    return "from-[#28c76f]/10 to-transparent";
-  };
+  const { level, textColor, bgColor, lineColor, icon } = getRiskLevel(score);
+
+  // SVG path for cardiogram
+  const cardiogramPath = "M0,10 L5,10 L7,2 L9,18 L11,10 L13,10 L15,6 L17,14 L19,10 L21,10";
 
   return (
     <HoverCard>
@@ -44,71 +77,91 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
           className={cn(
             "group relative p-4 rounded-lg cursor-pointer",
             "transition-all duration-300 ease-in-out",
-            "border border-blue-500/10 hover:border-blue-500/20",
-            "bg-black/40 hover:bg-black/50",
+            "border border-[#5856D6]/30 hover:border-[#5856D6]/50",
+            "bg-[#0A0B0F] hover:bg-[#12131A]",
             isHovered && "transform-gpu -translate-y-0.5"
           )}
         >
-          {/* Background gradient */}
-          <div className={cn(
-            "absolute inset-0 bg-gradient-to-r opacity-20",
-            getRiskColor(score),
-            "rounded-lg transition-opacity duration-300",
-            "group-hover:opacity-30"
-          )} />
-
           <div className="relative flex items-center justify-between z-10">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-10 h-10 rounded-full bg-blue-500/10 border border-blue-500/20 
-                flex items-center justify-center">
-                  {getRiskIcon(score)}
+                <div className={`w-10 h-10 rounded-full ${bgColor} flex items-center justify-center 
+                  border border-[#5856D6]/20`}>
+                  {icon}
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-blue-500/10 
-                border border-blue-500/20 flex items-center justify-center">
-                  <Circle className="w-3 h-3 text-blue-400" />
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#5856D6]/10 
+                  border border-[#5856D6]/20 flex items-center justify-center">
+                  <Circle className="w-3 h-3 text-[#9b87f5]" />
                 </div>
               </div>
 
               <div>
-                <h3 className="text-sm font-medium text-gray-200 group-hover:text-white">
+                <h3 className="text-sm font-medium text-[#D6BCFA] group-hover:text-white">
                   {id}
                 </h3>
-                <p className="text-xs text-blue-400/70 group-hover:text-blue-400">
+                <p className="text-xs text-[#9b87f5]/70 group-hover:text-[#9b87f5]">
                   {uniqueTitles} unique anomalies
                 </p>
               </div>
             </div>
 
-            <EntityCardRiskGauge riskScore={riskScore} />
+            <div className="flex items-center gap-8">
+              <div className="flex flex-col items-end">
+                <span className="text-xs uppercase text-[#9b87f5]/70 mb-2">Risk Level</span>
+                <span className={`text-sm font-medium tracking-wider uppercase ${textColor} w-[80px] text-right`}>
+                  {level}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="cardiogram relative w-16 h-5 overflow-hidden opacity-70">
+                  <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 22 20" fill="none" 
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d={cardiogramPath}
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={`${textColor} stroke-current`}
+                    />
+                  </svg>
+                </div>
+
+                <div className="relative min-w-[80px] text-right">
+                  <div className={`font-mono font-bold text-2xl tabular-nums ${textColor}`}>
+                    {score.toFixed(1)}
+                  </div>
+                  <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#5856D6]/10 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full ${lineColor} transition-all duration-300`}
+                      style={{ width: `${Math.min((score / 200) * 100, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </HoverCardTrigger>
       
       <HoverCardContent 
-        className="w-80 bg-black/90 border border-blue-500/20 backdrop-blur-xl"
+        className="w-80 bg-[#0A0B0F]/90 border border-[#5856D6]/20 backdrop-blur-xl"
         align="end"
       >
         <div className="space-y-2">
-          <h4 className="text-sm font-medium text-gray-200">Entity Details</h4>
+          <h4 className="text-sm font-medium text-[#D6BCFA]">Entity Details</h4>
           <div className="text-xs space-y-1.5">
-            <div className="flex justify-between text-gray-400">
+            <div className="flex justify-between text-[#9b87f5]/70">
               <span>Event Count:</span>
-              <span className="font-medium text-gray-200">{eventCount}</span>
+              <span className="font-medium text-[#D6BCFA]">{eventCount}</span>
             </div>
-            <div className="flex justify-between text-gray-400">
+            <div className="flex justify-between text-[#9b87f5]/70">
               <span>Unique Anomalies:</span>
-              <span className="font-medium text-gray-200">{uniqueTitles}</span>
+              <span className="font-medium text-[#D6BCFA]">{uniqueTitles}</span>
             </div>
-            <div className="flex justify-between text-gray-400">
+            <div className="flex justify-between text-[#9b87f5]/70">
               <span>Risk Score:</span>
-              <span className="font-medium text-gray-200">{score.toFixed(1)}</span>
-            </div>
-          </div>
-          <div className="pt-2 text-xs text-gray-400">
-            <div className="flex items-start gap-2">
-              <HelpCircle className="w-4 h-4 text-blue-400 mt-0.5" />
-              <p>Click to view detailed timeline and analysis of detected anomalies.</p>
+              <span className="font-medium text-[#D6BCFA]">{score.toFixed(1)}</span>
             </div>
           </div>
         </div>
