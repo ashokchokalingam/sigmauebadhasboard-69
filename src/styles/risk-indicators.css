@@ -1,45 +1,10 @@
+
 @layer components {
-  .risk-score-container {
-    @apply flex items-center gap-2;
-  }
-
-  .risk-level {
-    @apply flex flex-col items-end;
-  }
-
-  .risk-level-text {
-    @apply text-sm font-medium;
-  }
-
-  .risk-level-value {
-    @apply text-xs font-medium -mt-0.5;
-  }
-
   .cardiogram {
     @apply relative w-16 h-5 overflow-hidden opacity-70;
   }
 
   .cardiogram svg {
     @apply w-[200%] h-full animate-cardiogram;
-  }
-
-  .risk-score {
-    @apply font-mono font-bold text-2xl min-w-[60px] text-right tabular-nums;
-  }
-
-  /* Risk Colors */
-  .critical-value {
-    @apply text-[#FF3B30] font-bold;
-    text-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
-  }
-
-  .medium-value {
-    @apply text-[#FF9500] font-bold;
-    text-shadow: 0 0 10px rgba(255, 149, 0, 0.5);
-  }
-
-  .low-value {
-    @apply text-[#34C759] font-bold;
-    text-shadow: 0 0 10px rgba(52, 199, 89, 0.5);
   }
 }
