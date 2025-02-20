@@ -25,8 +25,8 @@ interface ComputerCountResponse {
 }
 
 interface RiskyEntitiesResponse {
-  risky_users_count: number;
-  risky_computers_count: number;
+  total_risky_users: number;
+  total_risky_computers: number;
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
@@ -91,8 +91,8 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
 
   const totalUsers = (userCountsData?.user_impacted_count ?? 0) + (userCountsData?.user_origin_count ?? 0);
   const computerCount = computerCountData?.computer_count ?? 0;
-  const riskyUsersCount = riskyEntitiesData?.risky_users_count ?? 0;
-  const riskyComputersCount = riskyEntitiesData?.risky_computers_count ?? 0;
+  const riskyUsersCount = riskyEntitiesData?.total_risky_users ?? 0;
+  const riskyComputersCount = riskyEntitiesData?.total_risky_computers ?? 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
