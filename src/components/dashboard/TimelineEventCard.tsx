@@ -19,6 +19,7 @@ interface TimelineEventCardProps {
   isExpanded?: boolean;
   onToggleExpand?: () => void;
   instances?: Alert[];
+  isLoadingLogs?: boolean;
 }
 
 const TimelineEventCard = ({ 
@@ -30,7 +31,8 @@ const TimelineEventCard = ({
   detailedLogs,
   isExpanded,
   onToggleExpand,
-  instances = []
+  instances = [],
+  isLoadingLogs = false
 }: TimelineEventCardProps) => {
   const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -105,14 +107,20 @@ const TimelineEventCard = ({
             onToggle={() => onToggleExpand?.()}
           />
 
-          {detailsExpanded && detailedLogs && (
+          {detailsExpanded && (
             <div className="border-t border-blue-500/10">
-              <TimelineDetailedLogs
-                logs={detailedLogs?.computer_impacted_logs || []}
-                isLoading={false}
-                totalRecords={detailedLogs?.pagination?.total_records || 0}
-                entityType={mappedEntityType}
-              />
+              {isLoadingLogs ? (
+                <div className="flex items-center justify-center p-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                </div>
+              ) : detailedLogs ? (
+                <TimelineDetailedLogs
+                  logs={detailedLogs?.user_origin_logs || detailedLogs?.computer_impacted_logs || []}
+                  isLoading={false}
+                  totalRecords={detailedLogs?.pagination?.total_records || 0}
+                  entityType={mappedEntityType}
+                />
+              ) : null}
             </div>
           )}
         </div>
