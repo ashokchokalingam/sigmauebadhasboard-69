@@ -17,10 +17,10 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
 
   const getRiskBadgeColor = (risk: number | null) => {
     if (!risk) return "bg-purple-500/10 text-purple-400";
-    if (risk >= 80) return "bg-[#D32F2F]/10 text-[#D32F2F]";
-    if (risk >= 60) return "bg-[#FF6F00]/10 text-[#FF6F00]";
-    if (risk >= 40) return "bg-[#FFC107]/10 text-[#FFC107]";
-    return "bg-[#4CAF50]/10 text-[#4CAF50]";
+    if (risk >= 80) return "bg-[#D32F2F]/10 text-[#D32F2F] font-semibold";
+    if (risk >= 60) return "bg-[#FF6F00]/10 text-[#FF6F00] font-semibold";
+    if (risk >= 40) return "bg-[#FFB300]/10 text-[#FFB300] font-semibold"; // Updated yellow
+    return "bg-[#4CAF50]/10 text-[#4CAF50] font-semibold"; // Brighter green
   };
 
   const getRiskLabel = (risk: number | null) => {
@@ -118,7 +118,7 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
       return (
         <Badge 
           variant="outline" 
-          className={`${getRiskBadgeColor(alert.risk)} border-none px-4 py-1`}
+          className={`${getRiskBadgeColor(alert.risk)} border-none px-4 py-1.5 shadow-sm`}
         >
           {getRiskLabel(alert.risk)}
         </Badge>
@@ -160,9 +160,14 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
       );
     case 'rule_level':
       return (
-        <div className="flex items-center min-w-0">
-          <AlertTriangle className="h-4 w-4 text-blue-400/80 mr-2 flex-shrink-0" />
-          <span className="text-base font-medium capitalize whitespace-nowrap">{alert.rule_level || '-'}</span>
+        <div className="flex items-center gap-3">
+          <AlertTriangle className="h-4 w-4 text-blue-400/80 flex-shrink-0" />
+          <Badge 
+            variant="outline" 
+            className="bg-blue-500/10 text-blue-300 border-blue-500/20 px-3 py-1"
+          >
+            {alert.rule_level || 'Unknown'}
+          </Badge>
         </div>
       );
     case 'task':

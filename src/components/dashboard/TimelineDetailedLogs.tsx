@@ -39,10 +39,10 @@ const TimelineDetailedLogs = ({
 
   const getRiskBadgeColor = (risk: number | null) => {
     if (!risk) return "bg-purple-500/10 text-purple-400";
-    if (risk >= 80) return "bg-[#D32F2F]/10 text-[#D32F2F]";
-    if (risk >= 60) return "bg-[#FF6F00]/10 text-[#FF6F00]";
-    if (risk >= 40) return "bg-[#FFC107]/10 text-[#FFC107]";
-    return "bg-[#4CAF50]/10 text-[#4CAF50]";
+    if (risk >= 80) return "bg-[#D32F2F]/10 text-[#D32F2F] font-semibold";
+    if (risk >= 60) return "bg-[#FF6F00]/10 text-[#FF6F00] font-semibold";
+    if (risk >= 40) return "bg-[#FFB300]/10 text-[#FFB300] font-semibold"; // Updated yellow
+    return "bg-[#4CAF50]/10 text-[#4CAF50] font-semibold"; // Brighter green
   };
 
   return (

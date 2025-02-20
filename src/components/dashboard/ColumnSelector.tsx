@@ -64,7 +64,7 @@ export const ColumnSelector = ({
         <Button 
           variant="outline" 
           size="sm"
-          className="flex items-center gap-2 text-blue-400 border-blue-500/20 hover:bg-blue-500/10"
+          className="flex items-center gap-2 text-[#33C3F0] border-[#33C3F0]/20 hover:bg-[#33C3F0]/10 hover:border-[#33C3F0]/30 transition-all duration-200 hover:shadow-[0_0_10px_rgba(51,195,240,0.2)] font-medium"
         >
           <Filter className="h-4 w-4" />
           <span>Filter</span>
