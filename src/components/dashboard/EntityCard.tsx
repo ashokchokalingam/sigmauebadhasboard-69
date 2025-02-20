@@ -30,7 +30,7 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
   } => {
     if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "#FF1A1A",  // Stronger red
+      color: "#FF1A1A",
       textColor: "text-[#FF1A1A]",
       bgColor: "bg-[#FF1A1A]/5",
       lineColor: "bg-[#FF1A1A]",
@@ -38,19 +38,19 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "#FF4500",  // More distinct orange-red
-      textColor: "text-[#FF4500]",
-      bgColor: "bg-[#FF4500]/5",
-      lineColor: "bg-[#FF4500]",
-      icon: <Flame className="w-5 h-5 text-[#FF4500]" />
+      color: "#FF3D00",  // More distinct from MEDIUM
+      textColor: "text-[#FF3D00]",
+      bgColor: "bg-[#FF3D00]/5",
+      lineColor: "bg-[#FF3D00]",
+      icon: <Flame className="w-5 h-5 text-[#FF3D00]" />
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "#FFA500",  // Pure orange
-      textColor: "text-[#FFA500]",
-      bgColor: "bg-[#FFA500]/5",
-      lineColor: "bg-[#FFA500]",
-      icon: <Activity className="w-5 h-5 text-[#FFA500]" />
+      color: "#FFB100",  // More golden orange
+      textColor: "text-[#FFB100]",
+      bgColor: "bg-[#FFB100]/5",
+      lineColor: "bg-[#FFB100]",
+      icon: <Activity className="w-5 h-5 text-[#FFB100]" />
     };
     return { 
       level: "LOW", 
@@ -105,17 +105,17 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
               </div>
             </div>
 
-            <div className="flex items-center gap-8">
-              <div className="flex flex-col items-end w-[120px]">
+            <div className="flex items-center justify-end gap-10">
+              <div className="flex flex-col items-start w-[130px]">
                 <span className="text-xs uppercase text-[#9b87f5]/70 mb-2">Risk Level</span>
-                <div className="flex items-center justify-end w-full">
-                  <span className={`text-sm font-medium tracking-wider uppercase ${textColor} text-right`}>
+                <div className="w-full">
+                  <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
                     {level}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-8">
                 <div className="cardiogram relative w-16 h-5 overflow-hidden opacity-70 flex-shrink-0">
                   <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 22 20" fill="none" 
                     xmlns="http://www.w3.org/2000/svg">

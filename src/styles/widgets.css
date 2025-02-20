@@ -1,7 +1,7 @@
 
 @layer components {
   .widget-container {
-    @apply bg-[#0A0B0F] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[675px] 
+    @apply bg-[#0A0B0F] border border-[#5856D6]/20 rounded-xl overflow-hidden h-[676px] 
     transition-all duration-300 shadow-lg hover:shadow-[#5856D6]/10;
   }
 
@@ -20,11 +20,11 @@
   }
 
   .widget-search {
-    @apply p-3 border-b border-[#5856D6]/20 h-[64px];
+    @apply p-3 border-b border-[#5856D6]/20 h-[60px] flex items-center;
   }
 
   .widget-search-input {
-    @apply w-full h-[40px] pl-9 pr-4
+    @apply w-full h-[38px] pl-9 pr-4
     bg-[#0A0B0F] hover:bg-[#12131A]
     border border-[#5856D6]/30 hover:border-[#5856D6]/50 
     rounded-lg text-xs text-[#D6BCFA] 
@@ -34,7 +34,7 @@
   }
 
   .widget-content {
-    @apply px-4 pb-4 space-y-2 overflow-y-auto h-[calc(100%-124px)]
+    @apply px-4 pb-4 space-y-2 overflow-y-auto h-[calc(100%-120px)]
     scrollbar-thin scrollbar-thumb-[#5856D6]/20 scrollbar-track-transparent;
   }
 
