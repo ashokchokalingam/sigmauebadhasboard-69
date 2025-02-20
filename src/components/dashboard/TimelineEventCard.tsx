@@ -43,8 +43,48 @@ const TimelineEventCard = ({
   const isSelected = selectedEventId === event.id;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
+  const getApiEndpoint = () => {
+    switch (entityType) {
+      case "userorigin":
+        return "/api/user_origin_logs";
+      case "userimpacted":
+        return "/api/user_impacted_logs";
+      case "computersimpacted":
+        return "/api/computer_impacted_logs";
+      default:
+        return "/api/user_origin_logs";
+    }
+  };
+
+  const fetchLogs = async () => {
+    const endpoint = getApiEndpoint();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user_origin: event.user_origin,
+        title: event.title
+      })
+    });
+    return response.json();
+  };
+
+  const { data: logsData, isLoading } = useQuery({
+    queryKey: ['logs', entityType, event.id],
+    queryFn: fetchLogs,
+    enabled: isDetailsExpanded
+  });
+
   const handleCardClick = () => {
     setIsDetailsExpanded(!isDetailsExpanded);
+    if (!isDetailsExpanded) {
+      console.log('Fetching logs from:', getApiEndpoint(), {
+        user_origin: event.user_origin,
+        title: event.title
+      });
+    }
   };
 
   return (
@@ -145,7 +185,11 @@ const TimelineEventCard = ({
                 </div>
               </div>
 
-              <TimelineRawLog alert={event} />
+              {isLoading ? (
+                <div className="text-center text-purple-400">Loading logs...</div>
+              ) : (
+                <TimelineRawLog alert={event} />
+              )}
             </div>
           </div>
 
