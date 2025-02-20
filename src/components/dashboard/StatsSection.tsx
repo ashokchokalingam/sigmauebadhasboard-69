@@ -104,8 +104,11 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         title="Active Computers (24h)"
         value={computerCount}
         icon={Monitor}
-        subtitle={`${computerCount} unique systems`}
+        subtitle={`${computerCount} unique ${computerCount === 1 ? 'system' : 'systems'}`}
         subtitleIcon={Monitor}
+        breakdown={[
+          { rule_level: "Systems", event_count: computerCount }
+        ]}
       />
       <StatsCard
         title="ML Outliers (24h)"
