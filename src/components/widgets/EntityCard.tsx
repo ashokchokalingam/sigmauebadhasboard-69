@@ -1,9 +1,10 @@
+
+import React from "react";
 import { Monitor, User } from "lucide-react";
-import { memo } from "react";
-import { RiskyEntity } from "./types";
 import RiskLevelIndicator from "./RiskLevelIndicator";
 import WaveformDisplay from "./WaveformDisplay";
 import RiskScoreDisplay from "./RiskScoreDisplay";
+import { RiskyEntity } from "./types";
 
 interface EntityCardProps {
   entity: RiskyEntity;
@@ -11,7 +12,7 @@ interface EntityCardProps {
   onClick: () => void;
 }
 
-const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
+const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
   const isComputer = entityType === 'computer';
   const Icon = isComputer ? Monitor : User;
   const entityName = isComputer ? entity.computer : entity.user;
@@ -113,8 +114,6 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       </div>
     </div>
   );
-});
-
-EntityCard.displayName = 'EntityCard';
+};
 
 export default EntityCard;
