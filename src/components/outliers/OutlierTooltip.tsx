@@ -1,4 +1,3 @@
-
 import { format } from "date-fns";
 import { Shield, Activity, CircleDot } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -29,26 +28,13 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     
     const containerRect = chartContainer.getBoundingClientRect();
     
-    // Calculate available space on each side
-    const spaceRight = containerRect.right - coordinate.x;
-    const spaceLeft = coordinate.x - containerRect.left;
-    const spaceBottom = containerRect.bottom - coordinate.y;
-    const spaceTop = coordinate.y - containerRect.top;
-
     // Default position (right of cursor)
-    let xPos = 20;
+    let xPos = 10;
     let yPos = -tooltipRect.height / 2;
 
-    // Adjust horizontal position if needed
-    if (spaceRight < tooltipRect.width + 20) {
-      xPos = -tooltipRect.width - 20;
-    }
-
-    // Adjust vertical position if needed
-    if (coordinate.y + yPos < containerRect.top) {
-      yPos = containerRect.top - coordinate.y;
-    } else if (coordinate.y + yPos + tooltipRect.height > containerRect.bottom) {
-      yPos = containerRect.bottom - coordinate.y - tooltipRect.height;
+    // Keep tooltip within chart bounds
+    if (coordinate.x + tooltipRect.width + 10 > containerRect.right) {
+      xPos = -tooltipRect.width - 10;
     }
 
     setPosition({ x: xPos, y: yPos });
