@@ -12,21 +12,14 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
   // Configure wave parameters based on risk level
   const getWaveConfig = (level: string) => {
     switch (level) {
-      case 'LOW':
+      case 'CRITICAL':
         return {
-          amplitude: 2.5,
-          frequency: 0.5,
-          segments: 2,
-          speed: 0.5,
-          smoothing: 0.3
-        };
-      case 'MEDIUM':
-        return {
-          amplitude: 4.5,
-          frequency: 0.75,
-          segments: 3,
-          speed: 0.65,
-          smoothing: 0.4
+          amplitude: 8.5,
+          frequency: 1.75,
+          segments: 4,
+          speed: 1,
+          smoothing: 0.3,
+          noise: 2
         };
       case 'HIGH':
         return {
@@ -34,15 +27,26 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
           frequency: 1.25,
           segments: 3,
           speed: 0.85,
-          smoothing: 0.35
+          smoothing: 0.35,
+          noise: 1
         };
-      case 'CRITICAL':
+      case 'MEDIUM':
         return {
-          amplitude: 8.5,
-          frequency: 1.75,
-          segments: 4,
-          speed: 1,
-          smoothing: 0.3
+          amplitude: 4.5,
+          frequency: 0.75,
+          segments: 3,
+          speed: 0.65,
+          smoothing: 0.4,
+          noise: 0.5
+        };
+      case 'LOW':
+        return {
+          amplitude: 2.5,
+          frequency: 0.5,
+          segments: 2,
+          speed: 0.5,
+          smoothing: 0.3,
+          noise: 0
         };
       default:
         return {
@@ -50,7 +54,8 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
           frequency: 0.5,
           segments: 2,
           speed: 0.5,
-          smoothing: 0.3
+          smoothing: 0.3,
+          noise: 0
         };
     }
   };
@@ -78,8 +83,9 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
         const phase = (progress / 1000) * Math.PI * 2;
         let y = 10 + Math.sin(i * config.frequency + phase) * config.amplitude;
         
-        if (riskLevel === 'HIGH' || riskLevel === 'CRITICAL') {
-          const noise = (Math.random() - 0.5) * (riskLevel === 'CRITICAL' ? 2 : 1);
+        // Add noise based on risk level
+        if (config.noise > 0) {
+          const noise = (Math.random() - 0.5) * config.noise;
           y += noise;
         }
         
@@ -93,7 +99,8 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
           const prev = points[i - 1];
           const curr = point;
           
-          if (riskLevel === 'HIGH' || riskLevel === 'CRITICAL') {
+          // Use sharper lines for higher risk levels
+          if (riskLevel === 'CRITICAL' || riskLevel === 'HIGH') {
             d += ` L ${curr[0]} ${curr[1]}`;
           } else {
             const smoothing = config.smoothing;

@@ -40,7 +40,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
 
     if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "#D32F2F", // Updated to new red
+      color: "#D32F2F", // Updated to new deeper red
       textColor: "text-[#D32F2F]",
       bgColor: "bg-[#D32F2F]/5",
       lineColor: "bg-[#D32F2F]",
@@ -49,21 +49,21 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "#FF6F00", // Updated to new orange
-      textColor: "text-[#FF6F00]",
-      bgColor: "bg-[#FF6F00]/5",
-      lineColor: "bg-[#FF6F00]",
+      color: "#FF5722", // Updated to brighter orange
+      textColor: "text-[#FF5722]",
+      bgColor: "bg-[#FF5722]/5",
+      lineColor: "bg-[#FF5722]",
       barWidth: getBarWidth(score),
-      glowColor: "#FFA040" // Lighter orange for glow
+      glowColor: "#FF7043" // Lighter orange for glow
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "#FFC107", // Updated to new yellow
-      textColor: "text-[#FFC107]",
-      bgColor: "bg-[#FFC107]/5",
-      lineColor: "bg-[#FFC107]",
+      color: "#FF9800", // Updated to deep orange
+      textColor: "text-[#FF9800]",
+      bgColor: "bg-[#FF9800]/5",
+      lineColor: "bg-[#FF9800]",
       barWidth: getBarWidth(score),
-      glowColor: "#FFE57F" // Lighter yellow for glow
+      glowColor: "#FFB74D" // Lighter orange for glow
     };
     return { 
       level: "LOW", 
