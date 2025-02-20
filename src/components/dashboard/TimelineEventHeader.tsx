@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { AlertTriangle, Shield, ShieldAlert, ShieldCheck } from "lucide-react";
 
@@ -51,7 +52,7 @@ const TimelineEventHeader = ({
           )}>
             {ruleLevel}
           </span>
-          <span className="text-xs text-[#0000FF] bg-[#0000FF]/10 px-2.5 py-0.5 rounded-full">
+          <span className="text-sm font-semibold bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30">
             {totalRecords || 0} events
           </span>
         </div>
