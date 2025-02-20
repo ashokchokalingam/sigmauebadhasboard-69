@@ -15,6 +15,11 @@ interface TotalCountResponse {
   total_count: number;
 }
 
+interface UserCountsResponse {
+  active_users: number;
+  unique_users: number;
+}
+
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const highRiskUsers = stats?.uniqueUsers?.users?.filter(user => (user?.risk_score ?? 0) > 80)?.length ?? 0;
   
@@ -31,10 +36,26 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
     refetchInterval: 30000, // Refetch every 30 seconds
   });
 
+  const { data: userCountsData } = useQuery({
+    queryKey: ["user-counts"],
+    queryFn: async () => {
+      const response = await fetch("/api/user_counts");
+      if (!response.ok) {
+        throw new Error("Failed to fetch user counts");
+      }
+      const data = await response.json();
+      return data as UserCountsResponse;
+    },
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
   // Parse string values to numbers and use safe defaults
   const criticalCount = totalCountData ? parseInt(totalCountData.critical_count) || 0 : 0;
   const highCount = totalCountData ? parseInt(totalCountData.high_count) || 0 : 0;
   const totalCount = totalCountData?.total_count ?? totalAlerts;
+
+  const activeUsers = userCountsData?.active_users ?? stats?.uniqueUsers?.current ?? 0;
+  const uniqueUsers = userCountsData?.unique_users ?? stats?.uniqueUsers?.users?.length ?? 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
@@ -53,9 +74,9 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
       />
       <StatsCard
         title="Active Users (24h)"
-        value={stats?.uniqueUsers?.current ?? 0}
+        value={activeUsers}
         icon={Users}
-        subtitle={`${stats?.uniqueUsers?.users?.length ?? 0} unique users`}
+        subtitle={`${uniqueUsers} unique users`}
         subtitleIcon={Users}
       />
       <StatsCard
