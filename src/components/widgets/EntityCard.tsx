@@ -54,7 +54,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "#FFB340", // Warmer amber for medium
+      color: "#FFB340", // More distinct amber for medium
       textColor: "text-[#FFB340]",
       bgColor: "bg-[#FFB340]/10",
       lineColor: "bg-[#FFB340]",
@@ -128,4 +128,3 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
 };
 
 export default EntityCard;
-
