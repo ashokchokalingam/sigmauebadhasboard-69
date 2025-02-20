@@ -1,14 +1,12 @@
 
 import { Alert } from "./types";
-import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import TimelineEventHeader from "./TimelineEventHeader";
-import TimelineDetailedLogs from "./TimelineDetailedLogs";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineInstanceList from "./TimelineInstanceList";
+import TimelineDetailedLogs from "./TimelineDetailedLogs";
 import { getRiskLevel } from "./utils";
-import { toast } from "sonner";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -24,25 +22,6 @@ interface TimelineEventCardProps {
   selectedEventId: string | null;
 }
 
-const generateEventId = (event: Alert): string => {
-  try {
-    const parts = [
-      event.title || '',
-      event.system_time || '',
-      event.description || '',
-      event.rule_level || '',
-      event.user_id || '',
-      event.computer_name || ''
-    ].filter(Boolean);
-    
-    const identifier = parts.join('-');
-    return btoa(identifier).replace(/[^a-zA-Z0-9]/g, '');
-  } catch (e) {
-    // If any error occurs during ID generation, use timestamp as fallback
-    return `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  }
-};
-
 const TimelineEventCard = ({ 
   event, 
   isLast, 
@@ -56,32 +35,13 @@ const TimelineEventCard = ({
   isLoadingLogs = false,
   selectedEventId
 }: TimelineEventCardProps) => {
-  const eventId = generateEventId(event);
-  const isSelected = selectedEventId === eventId;
+  const isSelected = selectedEventId === event.id;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
   const handleCardClick = () => {
-    console.log('Card clicked:', {
-      eventId,
-      isCurrentlySelected: isSelected,
-      entityType,
-      title: event.title,
-      systemTime: event.system_time,
-      ruleLevel: event.rule_level,
-      userOrigin: event.user_origin,
-      userImpacted: event.user_impacted,
-      computerName: event.computer_name
-    });
-
-    if (!event.title) {
-      toast.error("Event data is incomplete");
-      return;
-    }
-
-    onSelect(isSelected ? null : eventId);
+    onSelect(isSelected ? null : event.id);
   };
 
-  // Map the entityType to the expected type for TimelineDetailedLogs
   const mappedEntityType = entityType === "computersimpacted" ? "computer" : "user";
 
   return (
