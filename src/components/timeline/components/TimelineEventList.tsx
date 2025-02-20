@@ -9,11 +9,11 @@ interface TimelineEventListProps {
   selectedEventId: string | null;
   expandedGroups: Set<string>;
   detailedLogs: any;
-  onSelect: (id: string) => void;
+  onSelect: (id: string | null) => void;
   onToggleExpand: (id: string) => void;
   hasNextPage: boolean;
   loaderRef: (node?: Element | null) => void;
-  isLoadingLogs: boolean; // Added this prop to the interface
+  isLoadingLogs: boolean;
 }
 
 const TimelineEventList = ({
@@ -37,13 +37,14 @@ const TimelineEventList = ({
             event={event}
             isLast={index === events.length - 1}
             entityType={entityType}
-            onSelect={() => onSelect(event.id)}
+            onSelect={onSelect}
             detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
             isExpanded={expandedGroups.has(event.id)}
             onToggleExpand={() => onToggleExpand(event.id)}
             isLatest={index === 0}
             instances={event.instances}
-            isLoadingLogs={isLoadingLogs}
+            isLoadingLogs={isLoadingLogs && event.id === selectedEventId}
+            selectedEventId={selectedEventId}
           />
         ))}
         

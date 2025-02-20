@@ -1,6 +1,6 @@
 
 import { Alert } from "./types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineDetailedLogs from "./TimelineDetailedLogs";
@@ -14,12 +14,13 @@ interface TimelineEventCardProps {
   isLast?: boolean;
   isLatest?: boolean;
   entityType: "userorigin" | "userimpacted" | "computersimpacted";
-  onSelect?: () => void;
+  onSelect: (id: string | null) => void;
   detailedLogs?: any;
   isExpanded?: boolean;
   onToggleExpand?: () => void;
   instances?: Alert[];
   isLoadingLogs?: boolean;
+  selectedEventId: string | null;
 }
 
 const TimelineEventCard = ({ 
@@ -32,31 +33,25 @@ const TimelineEventCard = ({
   isExpanded,
   onToggleExpand,
   instances = [],
-  isLoadingLogs = false
+  isLoadingLogs = false,
+  selectedEventId
 }: TimelineEventCardProps) => {
-  const [detailsExpanded, setDetailsExpanded] = useState(false);
+  const isSelected = selectedEventId === event.id;
+  const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
   const handleCardClick = () => {
-    setDetailsExpanded(prev => !prev);
-    // Call onSelect after expanding to trigger the API call
-    if (!detailsExpanded) {
-      onSelect?.();
-    }
-    
     console.log('Card clicked:', {
-      title: event.title,
+      eventId: event.id,
+      isCurrentlySelected: isSelected,
       entityType,
-      identifier: entityType === "computersimpacted" ? event.computer_name :
-                 entityType === "userorigin" ? event.user_origin :
-                 event.user_impacted,
-      detailsExpanded: !detailsExpanded
+      title: event.title
     });
+
+    onSelect(isSelected ? null : event.id);
   };
 
   // Map the entityType to the expected type for TimelineDetailedLogs
   const mappedEntityType = entityType === "computersimpacted" ? "computer" : "user";
-
-  const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
   return (
     <div className="group relative pl-4 w-full">
@@ -81,7 +76,7 @@ const TimelineEventCard = ({
             border,
             hover,
             isLatest && "ring-1 ring-blue-500/50 bg-opacity-75",
-            detailsExpanded && "border-opacity-50"
+            isSelected && "ring-2 ring-purple-500/50"
           )}
         >
           <div 
@@ -109,7 +104,7 @@ const TimelineEventCard = ({
             onToggle={() => onToggleExpand?.()}
           />
 
-          {detailsExpanded && (
+          {isSelected && (
             <div className="border-t border-blue-500/10">
               {isLoadingLogs ? (
                 <div className="flex items-center justify-center p-4">
