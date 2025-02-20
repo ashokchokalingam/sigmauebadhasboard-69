@@ -1,5 +1,5 @@
 
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { Shield, Activity, CircleDot } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -62,7 +62,9 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
   const formatDateTime = (date: string) => {
     try {
-      return format(new Date(date), "MMM d, hh:mm:ss aa");
+      // Create a new Date object from the GMT string
+      const dateObj = new Date(date);
+      return format(dateObj, "MMM d, hh:mm:ss aa");
     } catch (error) {
       console.error("Date parsing error:", error);
       return date; // Return original string if parsing fails
