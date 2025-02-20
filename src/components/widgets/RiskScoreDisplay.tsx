@@ -6,7 +6,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import RiskScoreHelp from "@/components/dashboard/RiskScoreHelp";
 
 interface RiskScoreDisplayProps {
   score: number;
@@ -27,25 +26,24 @@ const RiskScoreDisplay = memo(({
 }: RiskScoreDisplayProps) => {
   return (
     <div className="relative min-w-[140px]">
-      <div className="flex items-center justify-end gap-2 mb-1">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex items-center justify-end gap-1 mb-1">
               <div className={`font-mono font-bold text-[20px] tabular-nums ${textColor}`}>
                 {score.toFixed(1)}
               </div>
-            </TooltipTrigger>
-            <TooltipContent
-              className="bg-[#0A0B0F]/90 border border-[#5856D6]/20 backdrop-blur-xl"
-            >
-              <p className="text-xs text-[#D6BCFA]">
-                Risk Score: {score.toFixed(1)}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <RiskScoreHelp />
-      </div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent
+            className="bg-[#0A0B0F]/90 border border-[#5856D6]/20 backdrop-blur-xl"
+          >
+            <p className="text-xs text-[#D6BCFA]">
+              Risk Score: {score.toFixed(1)}
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       
       <div className="relative h-2 bg-[#5856D6]/10 rounded-full overflow-hidden">
         <div className="absolute inset-0 flex">

@@ -43,71 +43,67 @@ const TimelineEventCard = ({
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
   return (
-    <div className="group relative pl-12">
-      {/* Timeline dot */}
+    <div className="group relative pl-4 w-full">
       <div className={cn(
-        "absolute left-0 top-8 w-[14px] h-[14px] rounded-full",
-        "border-[3px] border-[#1A1F2C]",
+        "absolute left-0 top-8 -ml-[5px] h-3 w-3 rounded-full border-2",
         color,
-        "transition-all duration-300 group-hover:scale-125",
-        isLatest && "w-[18px] h-[18px] ring-2 ring-blue-500/50 animate-pulse"
+        "bg-background"
       )} />
+      {!isLast && (
+        <div className={cn(
+          "absolute left-0 top-8 -ml-[1px] h-full w-[2px]",
+          "bg-gradient-to-b from-current to-transparent",
+          color
+        )} />
+      )}
 
-      {/* Card content */}
-      <div className={cn(
-        "relative rounded-xl border shadow-lg transition-all duration-300",
-        "backdrop-blur-xl bg-[#15161E]/60",
-        border,
-        hover,
-        "group-hover:translate-x-1",
-        isLatest && "ring-1 ring-blue-500/50"
-      )}>
+      <div className="relative ml-4 mb-2">
         <div 
-          onClick={handleCardClick}
-          className="relative overflow-hidden p-4 cursor-pointer"
+          className={cn(
+            "rounded-lg border shadow-lg transition-all duration-300",
+            cardBg,
+            border,
+            hover,
+            isLatest && "ring-1 ring-blue-500/50 bg-opacity-75",
+            detailsExpanded && "border-opacity-50"
+          )}
         >
-          {/* Glowing accent border */}
-          <div className={cn(
-            "absolute inset-x-0 top-0 h-[2px]",
-            color,
-            "opacity-50 group-hover:opacity-100 transition-opacity"
-          )} />
+          <div 
+            onClick={handleCardClick}
+            className="p-4 cursor-pointer"
+          >
+            <TimelineEventHeader
+              ruleLevel={event.rule_level}
+              totalRecords={event.total_events || 0}
+              title={event.title}
+              description={event.description}
+            />
 
-          <TimelineEventHeader
-            ruleLevel={event.rule_level}
-            totalRecords={event.total_events || 0}
-            title={event.title}
-            description={event.description}
+            <TimelineEventTimestamps
+              firstSeen={event.first_time_seen || event.system_time}
+              lastSeen={event.last_time_seen || event.system_time}
+            />
+
+            {event.tags && <TimelineMitreSection tags={event.tags} />}
+          </div>
+
+          <TimelineInstanceList
+            instances={instances}
+            isExpanded={isExpanded || false}
+            onToggle={() => onToggleExpand?.()}
           />
 
-          <TimelineEventTimestamps
-            firstSeen={event.first_time_seen || event.system_time}
-            lastSeen={event.last_time_seen || event.system_time}
-          />
-
-          {event.tags && (
-            <div className="mt-4 pt-4 border-t border-blue-500/10">
-              <TimelineMitreSection tags={event.tags} />
+          {detailsExpanded && detailedLogs && (
+            <div className="border-t border-blue-500/10">
+              <TimelineDetailedLogs
+                logs={detailedLogs?.computer_impacted_logs || []}
+                isLoading={false}
+                totalRecords={detailedLogs?.pagination?.total_records || 0}
+                entityType="computer"
+              />
             </div>
           )}
         </div>
-
-        <TimelineInstanceList
-          instances={instances}
-          isExpanded={isExpanded || false}
-          onToggle={() => onToggleExpand?.()}
-        />
-
-        {detailsExpanded && detailedLogs && (
-          <div className="border-t border-blue-500/10">
-            <TimelineDetailedLogs
-              logs={detailedLogs?.computer_impacted_logs || []}
-              isLoading={false}
-              totalRecords={detailedLogs?.pagination?.total_records || 0}
-              entityType="computer"
-            />
-          </div>
-        )}
       </div>
     </div>
   );
