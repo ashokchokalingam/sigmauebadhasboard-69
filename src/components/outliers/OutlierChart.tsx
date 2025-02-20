@@ -110,7 +110,12 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
               stroke="#D8B4FE"
               tick={{ fill: '#D8B4FE', fontSize: 12 }}
             />
-            <Tooltip content={<OutlierTooltip />} />
+            <Tooltip 
+              content={<OutlierTooltip />}
+              cursor={false}
+              position={{ x: 0, y: 0 }}
+              wrapperStyle={{ outline: 'none' }}
+            />
             <Bar 
               dataKey="count"
               radius={[4, 4, 0, 0]}

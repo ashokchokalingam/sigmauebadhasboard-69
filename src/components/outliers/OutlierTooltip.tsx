@@ -6,13 +6,13 @@ interface TooltipProps {
   active?: boolean;
   payload?: any[];
   label?: string;
+  coordinate?: { x: number; y: number };
 }
 
-export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
+export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipProps) => {
   if (!active || !payload?.[0]) return null;
 
   const data = payload[0].payload;
-  const date = new Date(label);
 
   const getSeverityColor = (severity: string) => {
     switch (severity.toLowerCase()) {
@@ -40,13 +40,23 @@ export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
     }
   };
 
+  // Calculate position
+  const xPos = (coordinate?.x || 0) > window.innerWidth - 400 ? -380 : 20;
+  const yPos = (coordinate?.y || 0) > window.innerHeight - 300 ? -280 : 20;
+
   return (
-    <div className="bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 shadow-xl max-w-md
-      transform transition-transform duration-200 ease-in-out z-50">
-      <div className="space-y-3">
+    <div 
+      className="fixed bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
+        shadow-xl w-[380px] pointer-events-none"
+      style={{
+        transform: `translate(${xPos}px, ${yPos}px)`,
+        zIndex: 50
+      }}
+    >
+      <div className="space-y-2.5">
         <div className="flex items-center gap-2">
           <div 
-            className="w-3 h-3 rounded-full animate-pulse"
+            className="w-2.5 h-2.5 rounded-full animate-pulse"
             style={{ backgroundColor: getSeverityColor(data.severity) }}
           />
           <span className="text-purple-300 text-sm font-medium">
@@ -54,52 +64,55 @@ export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
           </span>
         </div>
 
-        <div className="space-y-1">
-          <div className="text-white/90 text-sm flex items-center justify-between">
-            <span className="text-purple-300/80">First seen:</span>
-            <span>{format(new Date(data.firstSeen), "yyyy-MM-dd HH:mm:ss 'UTC'")}</span>
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="text-purple-300/80">First seen:</div>
+          <div className="text-right text-white/90">
+            {format(new Date(data.firstSeen), "MMM d, HH:mm")}
           </div>
-          <div className="text-white/90 text-sm flex items-center justify-between">
-            <span className="text-purple-300/80">Last seen:</span>
-            <span>{format(new Date(data.lastSeen), "yyyy-MM-dd HH:mm:ss 'UTC'")}</span>
+          <div className="text-purple-300/80">Last seen:</div>
+          <div className="text-right text-white/90">
+            {format(new Date(data.lastSeen), "MMM d, HH:mm")}
           </div>
         </div>
 
-        <div className="text-purple-200 font-medium flex items-center gap-2">
-          <span className="px-2 py-0.5 bg-purple-500/10 rounded-md">
-            {data.count} anomalies detected
+        <div className="flex items-center gap-2">
+          <span className="px-2 py-0.5 bg-purple-500/10 rounded text-xs text-purple-200">
+            {data.count} anomalies
           </span>
         </div>
 
-        <div className="space-y-2">
+        <div className="grid grid-cols-2 gap-2 text-xs">
           {data.impactedComputers.length > 0 && (
-            <div className="text-purple-300 text-sm flex items-center justify-between bg-purple-500/5 px-2 py-1 rounded-md">
-              <span className="font-medium">Systems affected:</span>
-              <span>{data.impactedComputers.length}</span>
-            </div>
+            <>
+              <div className="text-purple-300/80">Systems affected:</div>
+              <div className="text-right text-purple-200">
+                {data.impactedComputers.length}
+              </div>
+            </>
           )}
           
           {data.impactedUsers.length > 0 && (
-            <div className="text-purple-300 text-sm flex items-center justify-between bg-purple-500/5 px-2 py-1 rounded-md">
-              <span className="font-medium">Users affected:</span>
-              <span>{data.impactedUsers.length}</span>
-            </div>
+            <>
+              <div className="text-purple-300/80">Users affected:</div>
+              <div className="text-right text-purple-200">
+                {data.impactedUsers.length}
+              </div>
+            </>
           )}
         </div>
 
         {data.tactics.length > 0 && (
           <div className="space-y-1.5">
-            <div className="text-purple-200 text-sm font-medium">MITRE ATT&CK</div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="text-purple-200 text-xs font-medium">MITRE ATT&CK</div>
+            <div className="flex flex-wrap gap-1">
               {data.tactics.map((tactic: string, index: number) => (
                 <div 
                   key={index}
-                  className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-purple-500/10 
-                    border border-purple-500/20 text-purple-300 text-xs cursor-pointer
-                    hover:bg-purple-500/20 transition-colors"
+                  className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-500/10 
+                    border border-purple-500/20 text-purple-300 text-xs"
                 >
                   {getTacticIcon(tactic)}
-                  {tactic}
+                  <span className="truncate max-w-[100px]">{tactic}</span>
                 </div>
               ))}
             </div>
@@ -107,8 +120,8 @@ export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
         )}
 
         {data.description && (
-          <div className="text-purple-200/90 text-sm mt-2 border-t border-purple-500/20 pt-2
-            max-h-[120px] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20
+          <div className="text-purple-200/90 text-xs border-t border-purple-500/20 pt-2
+            max-h-[80px] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20
             scrollbar-track-transparent">
             {data.description}
           </div>
