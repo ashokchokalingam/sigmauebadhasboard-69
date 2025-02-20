@@ -8,8 +8,8 @@ interface AnomaliesTableHeaderSectionProps {
   onColumnToggle: (columns: string[]) => void;
   onSelectAll: () => void;
   onDeselectAll: () => void;
-  dataSource: 'outliers' | 'logs';
-  onDataSourceChange: (source: 'outliers' | 'logs') => void;
+  dataSource: 'mloutliers' | 'anomalies';
+  onDataSourceChange: (source: 'mloutliers' | 'anomalies') => void;
 }
 
 const AnomaliesTableHeaderSection = ({
@@ -31,23 +31,23 @@ const AnomaliesTableHeaderSection = ({
           variant="outline" 
           size="sm"
           className={`flex items-center gap-2 border-[#33C3F0]/20 transition-all duration-200 font-medium
-            ${dataSource === 'logs' 
+            ${dataSource === 'anomalies' 
               ? 'bg-[#33C3F0]/10 text-[#33C3F0] border-[#33C3F0]/30 shadow-[0_0_10px_rgba(51,195,240,0.2)]' 
               : 'text-[#33C3F0]/70 hover:bg-[#33C3F0]/10 hover:border-[#33C3F0]/30 hover:text-[#33C3F0]'}`}
-          onClick={() => onDataSourceChange('logs')}
+          onClick={() => onDataSourceChange('anomalies')}
         >
-          Logs
+          Anomalies
         </Button>
         <Button 
           variant="outline" 
           size="sm"
           className={`flex items-center gap-2 border-[#33C3F0]/20 transition-all duration-200 font-medium
-            ${dataSource === 'outliers' 
+            ${dataSource === 'mloutliers' 
               ? 'bg-[#33C3F0]/10 text-[#33C3F0] border-[#33C3F0]/30 shadow-[0_0_10px_rgba(51,195,240,0.2)]' 
               : 'text-[#33C3F0]/70 hover:bg-[#33C3F0]/10 hover:border-[#33C3F0]/30 hover:text-[#33C3F0]'}`}
-          onClick={() => onDataSourceChange('outliers')}
+          onClick={() => onDataSourceChange('mloutliers')}
         >
-          Outliers
+          ML Outliers
         </Button>
         <ColumnSelector
           visibleColumns={visibleColumns}

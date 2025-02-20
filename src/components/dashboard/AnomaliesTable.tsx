@@ -32,7 +32,7 @@ const AnomaliesTable = ({ alerts: outlierAlerts, onLoadMore, hasMore }: Anomalie
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
     defaultColumns.map((col) => col.key)
   );
-  const [dataSource, setDataSource] = useState<'outliers' | 'logs'>('outliers');
+  const [dataSource, setDataSource] = useState<'mloutliers' | 'anomalies'>('mloutliers');
   const { toast } = useToast();
   const { ref, inView } = useInView();
 
@@ -46,12 +46,12 @@ const AnomaliesTable = ({ alerts: outlierAlerts, onLoadMore, hasMore }: Anomalie
     queryKey: ['alerts', dataSource],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await fetch(`/api/alerts?page=${pageParam}&per_page=50`);
-      if (!response.ok) throw new Error('Failed to fetch logs');
+      if (!response.ok) throw new Error('Failed to fetch anomalies');
       const data = await response.json();
       return data;
     },
     initialPageParam: 1,
-    enabled: dataSource === 'logs',
+    enabled: dataSource === 'anomalies',
     getNextPageParam: (lastPage) => {
       const hasMore = lastPage.pagination.current_page < lastPage.pagination.total_pages;
       return hasMore ? lastPage.pagination.current_page + 1 : undefined;
@@ -60,8 +60,8 @@ const AnomaliesTable = ({ alerts: outlierAlerts, onLoadMore, hasMore }: Anomalie
       onSettled: (data, error) => {
         if (error) {
           toast({
-            title: "Error fetching logs",
-            description: "Failed to load log data. Please try again.",
+            title: "Error fetching anomalies",
+            description: "Failed to load anomaly data. Please try again.",
             variant: "destructive",
           });
         }
@@ -71,7 +71,7 @@ const AnomaliesTable = ({ alerts: outlierAlerts, onLoadMore, hasMore }: Anomalie
 
   const allLogs = logsData?.pages.flatMap(page => page.alerts) || [];
   const { filters, filteredAlerts, handleFilterChange } = useAlertsFilter(
-    dataSource === 'outliers' ? outlierAlerts : allLogs
+    dataSource === 'mloutliers' ? outlierAlerts : allLogs
   );
 
   const handleColumnToggle = (columns: string[]) => {
@@ -91,13 +91,13 @@ const AnomaliesTable = ({ alerts: outlierAlerts, onLoadMore, hasMore }: Anomalie
     console.log("Timeline view requested for:", type, id);
   };
 
-  const handleDataSourceChange = (source: 'outliers' | 'logs') => {
+  const handleDataSourceChange = (source: 'mloutliers' | 'anomalies') => {
     setDataSource(source);
     setSelectedAlert(null);
   };
 
   // Handle infinite scroll
-  if (inView && !isFetchingNextPage && hasNextPage && dataSource === 'logs') {
+  if (inView && !isFetchingNextPage && hasNextPage && dataSource === 'anomalies') {
     fetchNextPage();
   }
 
@@ -123,13 +123,13 @@ const AnomaliesTable = ({ alerts: outlierAlerts, onLoadMore, hasMore }: Anomalie
           filteredAlerts={filteredAlerts}
           onClose={() => setSelectedAlert(null)}
         />
-        {dataSource === 'logs' && (
+        {dataSource === 'anomalies' && (
           <div
             ref={ref}
             className="w-full h-20 flex items-center justify-center"
           >
             {isFetchingNextPage && (
-              <div className="text-sm text-blue-400">Loading more logs...</div>
+              <div className="text-sm text-blue-400">Loading more anomalies...</div>
             )}
           </div>
         )}
