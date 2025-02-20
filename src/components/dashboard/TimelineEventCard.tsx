@@ -36,8 +36,10 @@ const TimelineEventCard = ({
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setDetailsExpanded((prev) => !prev);
-    if (onSelect) onSelect();
+    if (onSelect) {
+      onSelect(); // Trigger the API call by calling onSelect first
+    }
+    setDetailsExpanded((prev) => !prev); // Then toggle the expanded state
   };
 
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
