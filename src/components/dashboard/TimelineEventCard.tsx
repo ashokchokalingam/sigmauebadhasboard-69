@@ -24,9 +24,22 @@ interface TimelineEventCardProps {
 }
 
 const generateEventId = (event: Alert): string => {
-  // Generate a stable ID based on event properties
-  const identifier = `${event.title}-${event.system_time}-${event.description?.slice(0, 20)}`;
-  return btoa(identifier).replace(/[^a-zA-Z0-9]/g, '');
+  try {
+    const parts = [
+      event.title || '',
+      event.system_time || '',
+      event.description || '',
+      event.rule_level || '',
+      event.user_id || '',
+      event.computer_name || ''
+    ].filter(Boolean);
+    
+    const identifier = parts.join('-');
+    return btoa(identifier).replace(/[^a-zA-Z0-9]/g, '');
+  } catch (e) {
+    // If any error occurs during ID generation, use timestamp as fallback
+    return `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }
 };
 
 const TimelineEventCard = ({ 
@@ -43,7 +56,7 @@ const TimelineEventCard = ({
   selectedEventId
 }: TimelineEventCardProps) => {
   // Generate a stable ID if one isn't provided
-  const eventId = event.id || generateEventId(event);
+  const eventId = generateEventId(event);
   const isSelected = selectedEventId === eventId;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
@@ -53,7 +66,8 @@ const TimelineEventCard = ({
       isCurrentlySelected: isSelected,
       entityType,
       title: event.title,
-      systemTime: event.system_time
+      systemTime: event.system_time,
+      ruleLevel: event.rule_level
     });
 
     onSelect(isSelected ? null : eventId);
