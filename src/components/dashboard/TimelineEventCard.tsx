@@ -84,7 +84,7 @@ const TimelineEventCard = ({
         >
           <div 
             onClick={handleCardClick}
-            className="p-4 cursor-pointer"
+            className="p-4 cursor-pointer hover:bg-slate-800/10 transition-colors"
           >
             <TimelineEventHeader
               ruleLevel={event.rule_level}
