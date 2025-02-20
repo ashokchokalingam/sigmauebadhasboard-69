@@ -1,8 +1,7 @@
-
 import { Alert } from "@/components/dashboard/types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import TimelineEventCard from "../dashboard/TimelineEventCard";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 interface TimelineContentProps {
@@ -11,6 +10,10 @@ interface TimelineContentProps {
   isLoading: boolean;
   hasNextPage: boolean;
   loaderRef: (node?: Element | null) => void;
+}
+
+interface GroupedEvent extends Alert {
+  occurrences: number;
 }
 
 const TimelineContent = ({ 
@@ -22,7 +25,56 @@ const TimelineContent = ({
 }: TimelineContentProps) => {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
-  // This query will only run when an event is selected
+  // Group and sort events
+  const processedEvents = useMemo(() => {
+    // First, group identical events
+    const groupedEvents = allEvents.reduce((acc: GroupedEvent[], event) => {
+      const existingEvent = acc.find(e => 
+        e.title === event.title && 
+        e.description === event.description &&
+        e.rule_level === event.rule_level &&
+        e.tags === event.tags
+      );
+
+      if (existingEvent) {
+        existingEvent.occurrences = (existingEvent.occurrences || 1) + 1;
+        // Keep the most recent timestamp
+        if (new Date(event.last_time_seen || event.system_time) > 
+            new Date(existingEvent.last_time_seen || existingEvent.system_time)) {
+          existingEvent.last_time_seen = event.last_time_seen || event.system_time;
+        }
+        // Keep the earliest first_seen timestamp
+        if (new Date(event.first_time_seen || event.system_time) < 
+            new Date(existingEvent.first_time_seen || existingEvent.system_time)) {
+          existingEvent.first_time_seen = event.first_time_seen || event.system_time;
+        }
+        existingEvent.total_events = (existingEvent.total_events || 1) + 1;
+      } else {
+        acc.push({
+          ...event,
+          occurrences: 1,
+          total_events: event.total_events || 1
+        });
+      }
+      return acc;
+    }, []);
+
+    // Sort by last_seen timestamp, then by first_seen if timestamps are equal
+    return groupedEvents.sort((a, b) => {
+      const lastSeenA = new Date(a.last_time_seen || a.system_time).getTime();
+      const lastSeenB = new Date(b.last_time_seen || b.system_time).getTime();
+      
+      if (lastSeenA === lastSeenB) {
+        const firstSeenA = new Date(a.first_time_seen || a.system_time).getTime();
+        const firstSeenB = new Date(b.first_time_seen || b.system_time).getTime();
+        return firstSeenB - firstSeenA; // Sort by first_seen in descending order if last_seen is equal
+      }
+      
+      return lastSeenB - lastSeenA; // Sort by last_seen in descending order
+    });
+  }, [allEvents]);
+
+  // Query for detailed logs
   const { data: detailedLogs } = useQuery({
     queryKey: ["detailed-logs", entityType, selectedEventId],
     queryFn: async () => {
@@ -88,11 +140,14 @@ const TimelineContent = ({
   return (
     <ScrollArea className="h-full">
       <div className="p-4 space-y-4">
-        {allEvents.map((event, index) => (
+        {processedEvents.map((event, index) => (
           <TimelineEventCard
             key={`${event.id}-${index}`}
-            event={event}
-            isLast={index === allEvents.length - 1}
+            event={{
+              ...event,
+              total_events: event.occurrences || 1
+            }}
+            isLast={index === processedEvents.length - 1}
             entityType={entityType}
             onSelect={() => setSelectedEventId(event.id)}
             detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
