@@ -75,7 +75,7 @@ const AlertDetailsView = ({ alert, onClose }: AlertDetailsViewProps) => {
                   <div className="flex items-center gap-2">
                     <Brain className="h-5 w-5 text-blue-400" />
                     <span className="px-3 py-1 bg-blue-500/10 text-blue-400 text-sm rounded-full border border-blue-500/20 font-medium">
-                      {alert.ml_cluster === -1 ? 'Noise' : `Cluster ${alert.ml_cluster}`}
+                      {alert.ml_cluster !== undefined && alert.ml_cluster !== null ? `${alert.ml_cluster}` : 'No Cluster'}
                     </span>
                   </div>
                 </div>
