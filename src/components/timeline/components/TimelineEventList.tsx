@@ -13,6 +13,7 @@ interface TimelineEventListProps {
   onToggleExpand: (id: string) => void;
   hasNextPage: boolean;
   loaderRef: (node?: Element | null) => void;
+  isLoadingLogs: boolean; // Added this prop to the interface
 }
 
 const TimelineEventList = ({
@@ -24,7 +25,8 @@ const TimelineEventList = ({
   onSelect,
   onToggleExpand,
   hasNextPage,
-  loaderRef
+  loaderRef,
+  isLoadingLogs
 }: TimelineEventListProps) => {
   return (
     <ScrollArea className="flex-1">
@@ -41,6 +43,7 @@ const TimelineEventList = ({
             onToggleExpand={() => onToggleExpand(event.id)}
             isLatest={index === 0}
             instances={event.instances}
+            isLoadingLogs={isLoadingLogs}
           />
         ))}
         
