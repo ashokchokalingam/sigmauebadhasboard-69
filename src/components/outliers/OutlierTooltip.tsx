@@ -1,3 +1,4 @@
+
 import { format } from "date-fns";
 import { Shield, Activity, CircleDot } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -26,16 +27,10 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     
     if (!chartContainer) return;
     
-    const containerRect = chartContainer.getBoundingClientRect();
-    
-    // Default position (right of cursor)
-    let xPos = 10;
-    let yPos = -tooltipRect.height / 2;
-
-    // Keep tooltip within chart bounds
-    if (coordinate.x + tooltipRect.width + 10 > containerRect.right) {
-      xPos = -tooltipRect.width - 10;
-    }
+    // Always position on the right side of the bar
+    const xPos = 10;
+    // Center vertically with the bar
+    const yPos = -tooltipRect.height / 2;
 
     setPosition({ x: xPos, y: yPos });
   }, [coordinate]);
@@ -70,7 +65,7 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     <div 
       ref={tooltipRef}
       className="absolute bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
-        shadow-xl w-[320px] pointer-events-none"
+        shadow-xl w-[300px] pointer-events-none"
       style={{
         transform: `translate(${position.x}px, ${position.y}px)`,
         zIndex: 50
@@ -139,14 +134,6 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
                 </div>
               ))}
             </div>
-          </div>
-        )}
-
-        {data.description && (
-          <div className="text-purple-200/90 text-xs border-t border-purple-500/20 pt-2
-            max-h-[80px] overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500/20
-            scrollbar-track-transparent">
-            {data.description}
           </div>
         )}
       </div>
