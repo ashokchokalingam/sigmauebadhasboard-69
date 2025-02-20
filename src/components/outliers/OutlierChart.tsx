@@ -72,7 +72,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={filteredData}
-            margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
+            margin={{ top: 20, right: 30, left: 0, bottom: 80 }}
           >
             <defs>
               <linearGradient id="criticalGradient" x1="0" y1="0" x2="0" y2="1">
@@ -100,13 +100,14 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
             <XAxis 
               dataKey="timestamp"
               stroke="#D8B4FE"
-              tickFormatter={(timestamp) => format(new Date(timestamp), "hh:mm:ss aa")}
+              tickFormatter={(timestamp) => format(new Date(timestamp), "MMM d, hh:mm:ss aa")}
               tick={{ 
                 fill: '#D8B4FE', 
                 fontSize: 12 
               }}
-              height={50}
-              tickMargin={20}
+              height={60}
+              tickMargin={30}
+              interval="preserveStartEnd"
             />
             <YAxis 
               stroke="#D8B4FE"
