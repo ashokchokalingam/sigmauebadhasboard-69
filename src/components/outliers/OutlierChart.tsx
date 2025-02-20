@@ -1,3 +1,4 @@
+
 import { Bar, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 import { format } from "date-fns";
 import { ChartDataPoint } from "./types";
@@ -6,43 +7,6 @@ import { OutlierTooltip } from "./OutlierTooltip";
 interface OutlierChartProps {
   data: ChartDataPoint[];
 }
-
-const getTimeOfDay = (hour: number): string => {
-  if (hour >= 5 && hour < 12) return "Morning";
-  if (hour >= 12 && hour < 17) return "Afternoon";
-  if (hour >= 17 && hour < 21) return "Evening";
-  return "Night";
-};
-
-const getSeverityColor = (severity: string) => {
-  switch (severity.toLowerCase()) {
-    case 'critical':
-      return 'risk-critical';
-    case 'high':
-      return 'risk-high';
-    case 'medium':
-      return 'risk-medium';
-    case 'low':
-      return 'risk-low';
-    default:
-      return 'risk-medium';
-  }
-};
-
-const getSeverityGlow = (severity: string) => {
-  switch (severity.toLowerCase()) {
-    case 'critical':
-      return 'risk-critical-glow';
-    case 'high':
-      return 'risk-high-glow';
-    case 'medium':
-      return 'risk-medium-glow';
-    case 'low':
-      return 'risk-low-glow';
-    default:
-      return 'risk-medium-glow';
-  }
-};
 
 export const OutlierChart = ({ data }: OutlierChartProps) => {
   return (
@@ -53,9 +17,21 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
           margin={{ top: 20, right: 30, left: 0, bottom: 30 }}
         >
           <defs>
-            <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#9333EA" stopOpacity={0.8}/>
-              <stop offset="95%" stopColor="#9333EA" stopOpacity={0.2}/>
+            <linearGradient id="criticalGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#D32F2F" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#D32F2F" stopOpacity={0.2}/>
+            </linearGradient>
+            <linearGradient id="highGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#FF5722" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#FF5722" stopOpacity={0.2}/>
+            </linearGradient>
+            <linearGradient id="mediumGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#FFB74D" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#FFB74D" stopOpacity={0.2}/>
+            </linearGradient>
+            <linearGradient id="lowGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#66BB6A" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#66BB6A" stopOpacity={0.2}/>
             </linearGradient>
           </defs>
           <CartesianGrid 
@@ -66,11 +42,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
           <XAxis 
             dataKey="timestamp"
             stroke="#D8B4FE"
-            tickFormatter={(timestamp) => {
-              const date = new Date(timestamp);
-              const timeOfDay = getTimeOfDay(date.getHours());
-              return `${format(date, 'MMM d')} ${timeOfDay}`;
-            }}
+            tickFormatter={(timestamp) => format(new Date(timestamp), 'MMM d')}
             tick={{ fill: '#D8B4FE', fontSize: 12 }}
             angle={-45}
             textAnchor="end"
@@ -83,23 +55,23 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
           <Tooltip content={<OutlierTooltip />} />
           <Bar 
             dataKey="count"
-            fill="url(#barGradient)"
             radius={[4, 4, 0, 0]}
             maxBarSize={40}
           >
-            {data.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`}
-                fill="url(#barGradient)"
-              >
-                <circle
-                  cx="50%"
-                  cy={0}
-                  r={4}
-                  className={`animate-pulse bg-${getSeverityColor(entry.severity)} shadow-lg shadow-${getSeverityGlow(entry.severity)}`}
+            {data.map((entry, index) => {
+              let fillUrl = '#lowGradient';
+              if (entry.risk >= 150) fillUrl = '#criticalGradient';
+              else if (entry.risk >= 100) fillUrl = '#highGradient';
+              else if (entry.risk >= 50) fillUrl = '#mediumGradient';
+              
+              return (
+                <Cell 
+                  key={`cell-${index}`}
+                  fill={`url(${fillUrl})`}
+                  className="hover:opacity-80 transition-opacity duration-300"
                 />
-              </Cell>
-            ))}
+              );
+            })}
           </Bar>
         </ComposedChart>
       </ResponsiveContainer>

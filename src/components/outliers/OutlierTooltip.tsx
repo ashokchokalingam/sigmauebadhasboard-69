@@ -1,4 +1,5 @@
-import { format } from "date-fns";
+
+import { format, formatDistanceToNow } from "date-fns";
 
 interface TooltipProps {
   active?: boolean;
@@ -6,57 +7,80 @@ interface TooltipProps {
   label?: string;
 }
 
-const getTimeOfDay = (hour: number): string => {
-  if (hour >= 5 && hour < 12) return "Morning";
-  if (hour >= 12 && hour < 17) return "Afternoon";
-  if (hour >= 17 && hour < 21) return "Evening";
-  return "Night";
-};
-
 export const OutlierTooltip = ({ active, payload, label }: TooltipProps) => {
   if (!active || !payload?.[0]) return null;
 
   const data = payload[0].payload;
   const date = new Date(label);
-  const timeOfDay = getTimeOfDay(date.getHours());
 
   const getSeverityColor = (severity: string) => {
     switch (severity.toLowerCase()) {
       case 'critical':
-        return '#ea384c';
+        return '#D32F2F';
       case 'high':
-        return '#F97316';
+        return '#FF5722';
       case 'medium':
-        return '#0EA5E9';
+        return '#FFB74D';
       case 'low':
-        return '#4ADE80';
+        return '#66BB6A';
       default:
         return '#9333EA';
     }
   };
 
+  const getRelativeTime = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return formatDistanceToNow(date, { addSuffix: true });
+  };
+
   return (
     <div className="bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 shadow-xl">
-      <p className="text-purple-200 text-sm mb-2 font-medium">
-        {format(date, "MMM d, yyyy")} - {timeOfDay}
-      </p>
-      <div className="flex items-center gap-2 mb-2">
-        <div 
-          className="w-3 h-3 rounded-full animate-pulse"
-          style={{ backgroundColor: getSeverityColor(data.severity) }}
-        />
-        <span className="text-purple-300 text-sm">
-          Severity: {data.severity}
-        </span>
-      </div>
-      <div className="text-white font-medium text-sm">
-        {data.count} anomalies
-      </div>
-      {data.title && (
-        <div className="text-purple-300 text-xs mt-2">
-          {data.title}
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <div 
+            className="w-3 h-3 rounded-full animate-pulse"
+            style={{ backgroundColor: getSeverityColor(data.severity) }}
+          />
+          <span className="text-purple-300 text-sm">
+            {data.severity} Severity
+          </span>
         </div>
-      )}
+
+        <div className="text-white font-medium text-sm">
+          First seen: {getRelativeTime(data.firstSeen)}
+        </div>
+        <div className="text-white font-medium text-sm">
+          Last seen: {getRelativeTime(data.lastSeen)}
+        </div>
+
+        <div className="text-purple-200 font-medium text-sm mt-2">
+          {data.count} anomalies detected
+        </div>
+
+        {data.impactedComputers.length > 0 && (
+          <div className="text-purple-300 text-xs">
+            {data.impactedComputers.length} computer{data.impactedComputers.length !== 1 ? 's' : ''} affected
+          </div>
+        )}
+        
+        {data.impactedUsers.length > 0 && (
+          <div className="text-purple-300 text-xs">
+            {data.impactedUsers.length} user{data.impactedUsers.length !== 1 ? 's' : ''} affected
+          </div>
+        )}
+
+        {data.tactics.length > 0 && (
+          <div className="text-purple-300 text-xs mt-2">
+            MITRE ATT&CK Tactics: {data.tactics.join(', ')}
+          </div>
+        )}
+
+        {data.description && (
+          <div className="text-purple-200 text-xs mt-2 max-w-[300px]">
+            {data.description}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
