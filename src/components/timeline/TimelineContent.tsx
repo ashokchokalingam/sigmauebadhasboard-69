@@ -14,12 +14,8 @@ interface TimelineContentProps {
   loaderRef: (node?: Element | null) => void;
 }
 
-interface GroupedEvent extends Alert {
-  occurrences: number;
-  instances?: Alert[];
-}
-
 type SortOption = "latest" | "oldest" | "severity";
+type FilterOption = "all" | "critical" | "medium" | "low";
 
 const TimelineContent = ({ 
   allEvents, 
@@ -30,50 +26,60 @@ const TimelineContent = ({
 }: TimelineContentProps) => {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>("latest");
+  const [filterBy, setFilterBy] = useState<FilterOption>("all");
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
-  // Group and sort events
+  // Filter and sort events
   const processedEvents = useMemo(() => {
-    // First, group identical events within a 5-minute window
-    const groupedEvents = allEvents.reduce((acc: GroupedEvent[], event) => {
-      const eventTime = new Date(event.last_time_seen || event.system_time).getTime();
-      
+    let filteredEvents = allEvents;
+
+    // Apply severity filter
+    if (filterBy !== "all") {
+      filteredEvents = allEvents.filter(event => {
+        const severity = (event.rule_level || "").toLowerCase();
+        switch (filterBy) {
+          case "critical":
+            return severity === "critical" || severity === "high";
+          case "medium":
+            return severity === "medium";
+          case "low":
+            return severity === "low" || severity === "informational";
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Group similar events within 5-minute windows
+    const groupedEvents = filteredEvents.reduce((acc: Alert[], event) => {
       const existingEvent = acc.find(e => 
         e.title === event.title && 
         e.description === event.description &&
         e.rule_level === event.rule_level &&
-        e.tags === event.tags &&
-        // Check if events are within 5 minutes of each other
-        Math.abs(eventTime - new Date(e.last_time_seen || e.system_time).getTime()) <= 300000
+        Math.abs(
+          new Date(e.last_time_seen || e.system_time).getTime() - 
+          new Date(event.last_time_seen || event.system_time).getTime()
+        ) <= 300000 // 5 minutes
       );
 
       if (existingEvent) {
-        existingEvent.occurrences = (existingEvent.occurrences || 1) + 1;
-        existingEvent.instances = [...(existingEvent.instances || []), event];
-        
-        // Keep the most recent timestamp
-        if (new Date(event.last_time_seen || event.system_time) > 
-            new Date(existingEvent.last_time_seen || existingEvent.system_time)) {
-          existingEvent.last_time_seen = event.last_time_seen || event.system_time;
-        }
-        // Keep the earliest first_seen timestamp
-        if (new Date(event.first_time_seen || event.system_time) < 
-            new Date(existingEvent.first_time_seen || existingEvent.system_time)) {
-          existingEvent.first_time_seen = event.first_time_seen || event.system_time;
-        }
         existingEvent.total_events = (existingEvent.total_events || 1) + 1;
+        if (Array.isArray(existingEvent.instances)) {
+          existingEvent.instances.push(event);
+        } else {
+          existingEvent.instances = [existingEvent, event];
+        }
       } else {
         acc.push({
           ...event,
-          occurrences: 1,
-          total_events: event.total_events || 1,
+          total_events: 1,
           instances: [event]
         });
       }
       return acc;
     }, []);
 
-    // Sort based on selected option
+    // Sort events
     return groupedEvents.sort((a, b) => {
       if (sortBy === "severity") {
         const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
@@ -81,7 +87,6 @@ const TimelineContent = ({
         const severityB = (b.rule_level || "low").toLowerCase();
         
         if (severityOrder[severityA as keyof typeof severityOrder] === severityOrder[severityB as keyof typeof severityOrder]) {
-          // If severity is the same, sort by timestamp
           return new Date(b.last_time_seen || b.system_time).getTime() - 
                  new Date(a.last_time_seen || a.system_time).getTime();
         }
@@ -91,10 +96,9 @@ const TimelineContent = ({
 
       const timeA = new Date(a.last_time_seen || a.system_time).getTime();
       const timeB = new Date(b.last_time_seen || b.system_time).getTime();
-      
       return sortBy === "latest" ? timeB - timeA : timeA - timeB;
     });
-  }, [allEvents, sortBy]);
+  }, [allEvents, sortBy, filterBy]);
 
   // Query for detailed logs
   const { data: detailedLogs } = useQuery({
@@ -143,42 +147,14 @@ const TimelineContent = ({
     enabled: !!selectedEventId
   });
 
-  const toggleGroupExpansion = (eventId: string) => {
-    setExpandedGroups(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(eventId)) {
-        newSet.delete(eventId);
-      } else {
-        newSet.add(eventId);
-      }
-      return newSet;
-    });
-  };
-
-  if (isLoading && allEvents.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  if (allEvents.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-400">No timeline events found</p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b border-blue-500/10">
+      <div className="p-3 border-b border-blue-500/10 flex gap-3 items-center">
         <Select
           value={sortBy}
           onValueChange={(value) => setSortBy(value as SortOption)}
         >
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-[140px]">
             <SelectValue placeholder="Sort by..." />
           </SelectTrigger>
           <SelectContent>
@@ -187,31 +163,53 @@ const TimelineContent = ({
             <SelectItem value="severity">By Severity</SelectItem>
           </SelectContent>
         </Select>
+
+        <Select
+          value={filterBy}
+          onValueChange={(value) => setFilterBy(value as FilterOption)}
+        >
+          <SelectTrigger className="w-[140px]">
+            <SelectValue placeholder="Filter by..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Events</SelectItem>
+            <SelectItem value="critical">Critical/High</SelectItem>
+            <SelectItem value="medium">Medium</SelectItem>
+            <SelectItem value="low">Low/Info</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="p-4 space-y-4">
+        <div className="p-2 space-y-2">
           {processedEvents.map((event, index) => (
-            <div key={`${event.id}-${index}`}>
-              <TimelineEventCard
-                event={{
-                  ...event,
-                  total_events: event.occurrences || 1
-                }}
-                isLast={index === processedEvents.length - 1}
-                entityType={entityType}
-                onSelect={() => setSelectedEventId(event.id)}
-                detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
-                isExpanded={expandedGroups.has(event.id)}
-                onToggleExpand={() => toggleGroupExpansion(event.id)}
-                instances={event.instances}
-              />
-            </div>
+            <TimelineEventCard
+              key={`${event.id}-${index}`}
+              event={event}
+              isLast={index === processedEvents.length - 1}
+              entityType={entityType}
+              onSelect={() => setSelectedEventId(event.id)}
+              detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
+              isExpanded={expandedGroups.has(event.id)}
+              onToggleExpand={() => {
+                setExpandedGroups(prev => {
+                  const newSet = new Set(prev);
+                  if (newSet.has(event.id)) {
+                    newSet.delete(event.id);
+                  } else {
+                    newSet.add(event.id);
+                  }
+                  return newSet;
+                });
+              }}
+              isLatest={index === 0}
+              instances={event.instances}
+            />
           ))}
           
           <div ref={loaderRef}>
             {hasNextPage && (
-              <div className="py-4 text-center text-sm text-blue-400/60">
+              <div className="py-2 text-center text-sm text-blue-400/60">
                 Loading more events...
               </div>
             )}

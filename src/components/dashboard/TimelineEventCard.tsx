@@ -5,14 +5,20 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineEventHeader from "./TimelineEventHeader";
-import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineDetailedLogs from "./TimelineDetailedLogs";
 import { ChevronDown, ChevronUp, Shield } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { formatInTimeZone } from 'date-fns-tz';
 
 interface TimelineEventCardProps {
   event: Alert;
   isLast?: boolean;
+  isLatest?: boolean;
   entityType: "userorigin" | "userimpacted" | "computersimpacted";
   onSelect?: () => void;
   detailedLogs?: any;
@@ -24,6 +30,7 @@ interface TimelineEventCardProps {
 const TimelineEventCard = ({ 
   event, 
   isLast, 
+  isLatest,
   entityType,
   onSelect,
   detailedLogs,
@@ -32,6 +39,7 @@ const TimelineEventCard = ({
   instances = []
 }: TimelineEventCardProps) => {
   const [detailsExpanded, setDetailsExpanded] = useState(false);
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const getRiskLevel = (level: string = 'low') => {
     switch (level.toLowerCase()) {
@@ -55,39 +63,38 @@ const TimelineEventCard = ({
         return { 
           color: 'text-yellow-400', 
           bg: 'bg-yellow-500/10',
-          border: 'border-blue-500/10',
-          hover: 'hover:border-blue-500/30',
-          cardBg: 'bg-black/40'
-        };
-      case 'low':
-        return { 
-          color: 'text-green-400', 
-          bg: 'bg-green-500/10',
-          border: 'border-blue-500/10',
-          hover: 'hover:border-blue-500/30',
-          cardBg: 'bg-black/40'
+          border: 'border-yellow-500/20',
+          hover: 'hover:border-yellow-500/40',
+          cardBg: 'bg-yellow-950/10'
         };
       default:
         return { 
-          color: 'text-gray-400', 
-          bg: 'bg-gray-500/10',
-          border: 'border-blue-500/10',
-          hover: 'hover:border-blue-500/30',
-          cardBg: 'bg-black/40'
+          color: 'text-green-400', 
+          bg: 'bg-green-500/10',
+          border: 'border-green-500/20',
+          hover: 'hover:border-green-500/40',
+          cardBg: 'bg-green-950/10'
         };
     }
+  };
+
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return {
+      utc: formatInTimeZone(date, 'UTC', "MMM dd, yyyy - HH:mm:ss 'UTC'"),
+      local: formatInTimeZone(date, userTimezone, "MMM dd, yyyy - hh:mm:ss aa")
+    };
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setDetailsExpanded((prev) => !prev);
-    if (onSelect) {
-      onSelect();
-    }
+    if (onSelect) onSelect();
   };
 
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
-  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const firstSeen = formatTimestamp(event.first_time_seen || event.system_time);
+  const lastSeen = formatTimestamp(event.last_time_seen || event.system_time);
 
   return (
     <div className="group relative pl-4 w-full">
@@ -104,19 +111,20 @@ const TimelineEventCard = ({
         )} />
       )}
 
-      <div className="relative ml-4 mb-6 w-full">
+      <div className="relative ml-4 mb-2">
         <div 
           className={cn(
             "rounded-lg border shadow-lg transition-all duration-300",
             cardBg,
             border,
             hover,
+            isLatest && "ring-1 ring-blue-500/50 bg-opacity-75",
             detailsExpanded && "border-opacity-50"
           )}
         >
           <div 
             onClick={handleCardClick}
-            className="p-6 cursor-pointer"
+            className="p-4 cursor-pointer"
           >
             <TimelineEventHeader
               ruleLevel={event.rule_level}
@@ -125,10 +133,35 @@ const TimelineEventCard = ({
               description={event.description}
             />
 
-            <TimelineEventTimestamps
-              firstTimeSeen={event.first_time_seen || ''}
-              lastTimeSeen={event.last_time_seen || ''}
-            />
+            <div className="grid grid-cols-2 gap-4 mb-4 text-sm mt-3">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-2 text-purple-400/70">
+                      <span>Last seen:</span>
+                      <span>{lastSeen.local}</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{lastSeen.utc}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-2 text-blue-400/70">
+                      <span>First seen:</span>
+                      <span>{firstSeen.local}</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{firstSeen.utc}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
 
             {event.tags && (
               <div className="space-y-3">
@@ -137,7 +170,7 @@ const TimelineEventCard = ({
                   <h4 className="text-base font-medium text-purple-400">MITRE ATT&CK Analysis</h4>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm font-medium text-gray-400 mb-2">Tactics Identified</p>
                     <div className="flex flex-wrap gap-2">
@@ -146,7 +179,7 @@ const TimelineEventCard = ({
                         .map((tactic, index) => (
                           <span 
                             key={index}
-                            className="px-3 py-1 bg-purple-500/10 text-purple-300 text-sm rounded-full 
+                            className="px-2 py-0.5 bg-purple-500/10 text-purple-300 text-sm rounded-full 
                               border border-purple-500/20"
                           >
                             {tactic.replace('attack.', '').split('_').map(word => 
@@ -165,7 +198,7 @@ const TimelineEventCard = ({
                         .map((technique, index) => (
                           <span 
                             key={index}
-                            className="px-3 py-1 bg-blue-500/10 text-blue-300 text-sm rounded-full 
+                            className="px-2 py-0.5 bg-blue-500/10 text-blue-300 text-sm rounded-full 
                               border border-blue-500/20"
                           >
                             {technique.trim()}
@@ -178,9 +211,9 @@ const TimelineEventCard = ({
             )}
           </div>
 
-          {instances.length > 1 && (
+          {instances && instances.length > 1 && (
             <div 
-              className="px-6 py-3 border-t border-blue-500/10 flex items-center justify-between cursor-pointer hover:bg-black/20"
+              className="px-4 py-2 border-t border-blue-500/10 flex items-center justify-between cursor-pointer hover:bg-black/20"
               onClick={onToggleExpand}
             >
               <span className="text-sm text-blue-300">
@@ -194,21 +227,26 @@ const TimelineEventCard = ({
             </div>
           )}
 
-          {isExpanded && instances.length > 1 && (
-            <div className="px-6 py-4 border-t border-blue-500/10 space-y-3">
-              {instances.map((instance, idx) => (
-                <div 
-                  key={idx}
-                  className="text-sm text-blue-300/70 flex justify-between items-center"
-                >
-                  <span>Instance {idx + 1}</span>
-                  <span>{formatInTimeZone(
-                    new Date(instance.last_time_seen || instance.system_time),
-                    userTimezone,
-                    "MMM dd, yyyy hh:mm:ss aa"
-                  )}</span>
-                </div>
-              ))}
+          {isExpanded && instances && instances.length > 1 && (
+            <div className="px-4 py-3 border-t border-blue-500/10 space-y-2">
+              {instances.map((instance, idx) => {
+                const timestamp = formatTimestamp(instance.last_time_seen || instance.system_time);
+                return (
+                  <TooltipProvider key={idx}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="text-sm text-blue-300/70 flex justify-between items-center">
+                          <span>Instance {idx + 1}</span>
+                          <span>{timestamp.local}</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{timestamp.utc}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                );
+              })}
             </div>
           )}
 
