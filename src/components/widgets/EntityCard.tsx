@@ -78,8 +78,6 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
   const riskScore = parseFloat(entity.cumulative_risk_score);
   const { level, color, textColor, bgColor, lineColor, barWidth, glowColor } = getRiskLevel(riskScore);
   
-  // For demo purposes, determine trend based on score value
-  // In real implementation, this should come from historical data
   const riskIncreasing = riskScore > 100;
   const riskChangePercent = ((riskScore - 50) / 50 * 100).toFixed(1);
 
@@ -109,8 +107,8 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       </div>
 
       <div className="flex items-center justify-end gap-6">
-        <div className="flex flex-col items-start w-[130px]">
-          <span className="text-xs uppercase text-[#9b87f5]/70 mb-2">Risk Level</span>
+        <div className="flex flex-col items-start w-[120px]">
+          <span className="text-xs uppercase text-[#9b87f5]/70 mb-1.5">Risk Level</span>
           <div className="w-full">
             <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
               {level}
@@ -118,8 +116,8 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="opacity-70 hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-3">
+          <div className="opacity-70 hover:opacity-100 transition-opacity w-[60px]">
             <CardiogramSVG riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
           </div>
         </div>
@@ -128,7 +126,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex items-center justify-end gap-3 mb-1">
+                <div className="flex items-center justify-end gap-2 mb-1">
                   {riskIncreasing ? (
                     <ArrowUp className={`w-4 h-4 ${textColor}`} />
                   ) : (
@@ -153,7 +151,6 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
           </TooltipProvider>
           
           <div className="relative h-2 bg-[#5856D6]/10 rounded-full overflow-hidden">
-            {/* Background segments for risk levels */}
             <div className="absolute inset-0 flex">
               <div className="flex-1 border-r border-[#5856D6]/20" />
               <div className="flex-1 border-r border-[#5856D6]/20" />
@@ -161,7 +158,6 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
               <div className="flex-1" />
             </div>
             
-            {/* Current progress with enhanced glow */}
             <div 
               className={`h-full ${lineColor} transition-all duration-300`}
               style={{ 
