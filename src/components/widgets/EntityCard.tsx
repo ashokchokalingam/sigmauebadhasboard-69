@@ -1,3 +1,4 @@
+
 import { Monitor, User, ArrowUp, ArrowDown } from "lucide-react";
 import { memo } from "react";
 import { RiskyEntity } from "./types";
@@ -7,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import CardiogramSVG from "../dashboard/CardiogramSVG";
 
 interface EntityCardProps {
   entity: RiskyEntity;
@@ -70,7 +72,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, textColor, bgColor, lineColor, barWidth } = getRiskLevel(riskScore);
+  const { level, color, textColor, bgColor, lineColor, barWidth } = getRiskLevel(riskScore);
   
   // For demo purposes, determine trend based on score value
   // In real implementation, this should come from historical data
@@ -102,13 +104,19 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-10">
+      <div className="flex items-center justify-end gap-6">
         <div className="flex flex-col items-start w-[130px]">
           <span className="text-xs uppercase text-[#9b87f5]/70 mb-2">Risk Level</span>
           <div className="w-full">
             <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
               {level}
             </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="opacity-70 hover:opacity-100 transition-opacity">
+            <CardiogramSVG riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
           </div>
         </div>
 
