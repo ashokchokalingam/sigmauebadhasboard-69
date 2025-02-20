@@ -1,4 +1,3 @@
-
 import { Shield, Activity, CircleDot } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { formatDateTime } from "@/utils/dateTimeUtils";
@@ -69,15 +68,7 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   const techniques = safeSplit(data.techniques);
 
   const formatTimestamps = (date: string) => {
-    const times = formatDateTime(date);
-    if (typeof times === 'string') return times;
-    
-    return (
-      <div className="space-y-0.5">
-        <div className="text-purple-200/90">{times.utc}</div>
-        <div className="text-purple-300/70">{times.local}</div>
-      </div>
-    );
+    return formatDateTime(date);
   };
 
   return (

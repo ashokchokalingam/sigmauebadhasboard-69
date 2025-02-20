@@ -1,4 +1,3 @@
-
 import { Tag, Activity } from "lucide-react";
 import { Alert } from "../types";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +26,7 @@ const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
       const formattedTime = formatDateTime(alert.system_time, false);
       return (
         <span className="text-base font-medium whitespace-nowrap">
-          {typeof formattedTime === 'string' ? formattedTime : formattedTime.local}
+          {formattedTime}
         </span>
       );
     case 'user_id':

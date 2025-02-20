@@ -9,8 +9,7 @@ interface TimelineEventTimestampsProps {
 
 const TimelineEventTimestamps = ({ firstTimeSeen, lastTimeSeen }: TimelineEventTimestampsProps) => {
   const formatTimestamp = (dateStr: string) => {
-    const formatted = formatDateTime(dateStr, false);
-    return typeof formatted === 'string' ? formatted : formatted.local;
+    return formatDateTime(dateStr, false);
   };
 
   return (

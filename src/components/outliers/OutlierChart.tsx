@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 import { ChartDataPoint } from "./types";
@@ -100,10 +99,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
             <XAxis 
               dataKey="timestamp"
               stroke="#D8B4FE"
-              tickFormatter={(timestamp) => {
-                const formatted = formatDateTime(timestamp, false);
-                return typeof formatted === 'string' ? formatted : formatted.local;
-              }}
+              tickFormatter={(timestamp) => formatDateTime(timestamp, false)}
               tick={{ 
                 fill: '#D8B4FE', 
                 fontSize: 12 
@@ -148,3 +144,5 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
     </div>
   );
 };
+
+export default OutlierChart;
