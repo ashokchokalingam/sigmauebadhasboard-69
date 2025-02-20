@@ -1,5 +1,4 @@
 
-import { extractTacticsAndTechniques } from "./utils";
 import WaveformDisplay from "../widgets/WaveformDisplay";
 import RiskScoreDisplay from "../widgets/RiskScoreDisplay";
 
@@ -11,7 +10,6 @@ interface RiskIndicatorsProps {
   barWidth: number;
   glowColor: string;
   riskScore: number;
-  tags?: string;
 }
 
 const RiskIndicators = ({ 
@@ -21,11 +19,8 @@ const RiskIndicators = ({
   lineColor,
   barWidth,
   glowColor,
-  riskScore,
-  tags = ''
+  riskScore
 }: RiskIndicatorsProps) => {
-  const { tactics, techniques } = extractTacticsAndTechniques(tags);
-  
   return (
     <div className="flex items-center gap-1">
       <div className="flex flex-col items-start mr-1">
@@ -50,8 +45,6 @@ const RiskIndicators = ({
           barWidth={barWidth}
           glowColor={glowColor}
           color={color}
-          tactics={tactics}
-          techniques={techniques}
         />
       </div>
     </div>
