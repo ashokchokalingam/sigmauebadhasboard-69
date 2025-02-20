@@ -24,7 +24,8 @@ export interface Alert {
   techniques?: string;
   ml_description?: string;
   risk?: number;
-  tags: string;  // Added back as it's still referenced in components
+  tags: string;
+  instances?: Alert[];  // Added for grouping similar events
 }
 
 export interface EventSummary extends Alert {
