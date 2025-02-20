@@ -100,7 +100,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <div className="flex flex-col items-end">
           <span className="text-[11px] uppercase text-[#9b87f5]/60 mb-0.5">Risk Level</span>
           <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
@@ -108,8 +108,8 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="opacity-70 hover:opacity-100 transition-opacity w-[36px]">
+        <div className="flex items-center gap-2">
+          <div className="opacity-70 hover:opacity-100 transition-opacity w-[32px]">
             <WaveformDisplay level={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
           </div>
 
