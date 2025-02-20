@@ -14,7 +14,7 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   if (!active || !payload?.[0]) return null;
 
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ x: coordinate?.x || 0, y: 0 });
 
   const data = payload[0].payload;
 
@@ -23,16 +23,12 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
     const tooltip = tooltipRef.current;
     const tooltipRect = tooltip.getBoundingClientRect();
-    const chartContainer = tooltip.closest('.recharts-wrapper');
     
-    if (!chartContainer) return;
-    
-    // Always position on the right side of the bar
-    const xPos = 10;
-    // Center vertically with the bar
-    const yPos = -tooltipRect.height / 2;
-
-    setPosition({ x: xPos, y: yPos });
+    // Position relative to the bar's x coordinate
+    setPosition({
+      x: coordinate.x,
+      y: -tooltipRect.height / 2
+    });
   }, [coordinate]);
 
   const getSeverityColor = (severity: string) => {
@@ -67,7 +63,9 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
       className="absolute bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
         shadow-xl w-[300px] pointer-events-none"
       style={{
-        transform: `translate(${position.x}px, ${position.y}px)`,
+        left: position.x,
+        top: '50%',
+        transform: 'translateY(-50%)',
         zIndex: 50
       }}
     >
