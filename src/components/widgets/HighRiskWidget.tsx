@@ -2,7 +2,6 @@
 import { Shield, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import TimelineView from "../dashboard/TimelineView";
 import EntityCard from "./EntityCard";
 
@@ -72,7 +71,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
         </div>
       </div>
 
-      <div className="p-3 border-b border-[#5856D6]/20">
+      <div className="p-4 border-b border-[#5856D6]/20">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9b87f5]/50" />
           <input
@@ -91,7 +90,7 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
         </div>
       </div>
       
-      <div className="px-4 pb-4 space-y-2 overflow-y-auto h-[calc(100%-120px)]
+      <div className="p-4 space-y-3 overflow-y-auto h-[calc(100%-120px)]
         scrollbar-thin scrollbar-thumb-[#5856D6]/20 scrollbar-track-transparent">
         {filteredEntities.map((entity: any) => (
           <EntityCard
