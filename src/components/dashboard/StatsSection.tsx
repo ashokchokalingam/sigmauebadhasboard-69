@@ -16,8 +16,8 @@ interface TotalCountResponse {
 }
 
 interface UserCountsResponse {
-  active_users: number;
-  unique_users: number;
+  user_impacted_count: number;
+  user_origin_count: number;
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
@@ -54,8 +54,8 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const highCount = totalCountData ? parseInt(totalCountData.high_count) || 0 : 0;
   const totalCount = totalCountData?.total_count ?? totalAlerts;
 
-  const activeUsers = userCountsData?.active_users ?? stats?.uniqueUsers?.current ?? 0;
-  const uniqueUsers = userCountsData?.unique_users ?? stats?.uniqueUsers?.users?.length ?? 0;
+  const activeUsers = userCountsData?.user_impacted_count ?? stats?.uniqueUsers?.current ?? 0;
+  const uniqueUsers = userCountsData?.user_origin_count ?? stats?.uniqueUsers?.users?.length ?? 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
