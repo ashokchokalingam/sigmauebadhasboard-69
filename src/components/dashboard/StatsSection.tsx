@@ -21,8 +21,7 @@ interface UserCountsResponse {
 }
 
 interface ComputerCountResponse {
-  computer_count: number;
-  unique_systems: number;
+  unique_computer_count: number;
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
@@ -57,7 +56,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const { data: computerCountData } = useQuery({
     queryKey: ["computer-count"],
     queryFn: async () => {
-      const response = await fetch("/api/computer_count");
+      const response = await fetch("http://192.168.1.107:8080/api/computer_count");
       if (!response.ok) {
         throw new Error("Failed to fetch computer count");
       }
@@ -73,8 +72,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const totalCount = totalCountData?.total_count ?? totalAlerts;
 
   const totalUsers = (userCountsData?.user_impacted_count ?? 0) + (userCountsData?.user_origin_count ?? 0);
-  const computerCount = computerCountData?.computer_count ?? 0;
-  const uniqueSystems = computerCountData?.unique_systems ?? 0;
+  const computerCount = computerCountData?.unique_computer_count ?? 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
@@ -106,7 +104,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
         title="Active Computers (24h)"
         value={computerCount}
         icon={Monitor}
-        subtitle={`${uniqueSystems} unique systems`}
+        subtitle={`${computerCount} unique systems`}
         subtitleIcon={Monitor}
       />
       <StatsCard
