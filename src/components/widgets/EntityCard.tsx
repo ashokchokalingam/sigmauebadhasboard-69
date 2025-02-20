@@ -23,24 +23,24 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
   } => {
     if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "#ea384c",
-      textColor: "text-[#ea384c]",
-      bgColor: "bg-[#ea384c]/5",
-      lineColor: "bg-[#ea384c]"
+      color: "#FF1A1A",  // Stronger red
+      textColor: "text-[#FF1A1A]",
+      bgColor: "bg-[#FF1A1A]/5",
+      lineColor: "bg-[#FF1A1A]"
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "#F97316",
-      textColor: "text-[#F97316]",
-      bgColor: "bg-[#F97316]/5",
-      lineColor: "bg-[#F97316]"
+      color: "#FF4500",  // More distinct orange-red
+      textColor: "text-[#FF4500]",
+      bgColor: "bg-[#FF4500]/5",
+      lineColor: "bg-[#FF4500]"
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "#F97316",
-      textColor: "text-[#F97316]",
-      bgColor: "bg-[#F97316]/5",
-      lineColor: "bg-[#F97316]"
+      color: "#FFA500",  // Pure orange
+      textColor: "text-[#FFA500]",
+      bgColor: "bg-[#FFA500]/5",
+      lineColor: "bg-[#FFA500]"
     };
     return { 
       level: "LOW", 
@@ -60,7 +60,7 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
   return (
     <div
       onClick={onClick}
-      className="flex items-center justify-between p-4 rounded-lg 
+      className="flex items-center justify-between p-4 rounded-lg h-[84px]
         bg-[#0A0B0F] hover:bg-[#12131A]
         border border-[#5856D6]/30 hover:border-[#5856D6]/50
         transition-colors duration-300 cursor-pointer
@@ -83,15 +83,17 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
       </div>
 
       <div className="flex items-center justify-end gap-8">
-        <div className="flex flex-col items-end">
+        <div className="flex flex-col items-end w-[120px]">
           <span className="text-xs uppercase text-[#9b87f5]/70 mb-2">Risk Level</span>
-          <span className={`text-sm font-medium tracking-wider uppercase ${textColor} w-[80px] text-right`}>
-            {level}
-          </span>
+          <div className="flex items-center justify-end w-full">
+            <span className={`text-sm font-medium tracking-wider uppercase ${textColor} text-right`}>
+              {level}
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="cardiogram relative w-16 h-5 overflow-hidden opacity-70">
+        <div className="flex items-center gap-6">
+          <div className="cardiogram relative w-16 h-5 overflow-hidden opacity-70 flex-shrink-0">
             <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 22 20" fill="none" 
               xmlns="http://www.w3.org/2000/svg">
               <path

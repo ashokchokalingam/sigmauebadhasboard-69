@@ -30,27 +30,27 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
   } => {
     if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "#ea384c",
-      textColor: "text-[#ea384c]",
-      bgColor: "bg-[#ea384c]/5",
-      lineColor: "bg-[#ea384c]",
-      icon: <Skull className="w-5 h-5 text-[#ea384c] animate-pulse" />
+      color: "#FF1A1A",  // Stronger red
+      textColor: "text-[#FF1A1A]",
+      bgColor: "bg-[#FF1A1A]/5",
+      lineColor: "bg-[#FF1A1A]",
+      icon: <Skull className="w-5 h-5 text-[#FF1A1A] animate-pulse" />
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "#F97316",
-      textColor: "text-[#F97316]",
-      bgColor: "bg-[#F97316]/5",
-      lineColor: "bg-[#F97316]",
-      icon: <Flame className="w-5 h-5 text-[#F97316]" />
+      color: "#FF4500",  // More distinct orange-red
+      textColor: "text-[#FF4500]",
+      bgColor: "bg-[#FF4500]/5",
+      lineColor: "bg-[#FF4500]",
+      icon: <Flame className="w-5 h-5 text-[#FF4500]" />
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "#F97316",
-      textColor: "text-[#F97316]",
-      bgColor: "bg-[#F97316]/5",
-      lineColor: "bg-[#F97316]",
-      icon: <Activity className="w-5 h-5 text-[#F97316]" />
+      color: "#FFA500",  // Pure orange
+      textColor: "text-[#FFA500]",
+      bgColor: "bg-[#FFA500]/5",
+      lineColor: "bg-[#FFA500]",
+      icon: <Activity className="w-5 h-5 text-[#FFA500]" />
     };
     return { 
       level: "LOW", 
@@ -75,7 +75,7 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           className={cn(
-            "group relative p-4 rounded-lg cursor-pointer",
+            "group relative p-4 rounded-lg cursor-pointer h-[84px]",
             "transition-all duration-300 ease-in-out",
             "border border-[#5856D6]/30 hover:border-[#5856D6]/50",
             "bg-[#0A0B0F] hover:bg-[#12131A]",
@@ -106,17 +106,17 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
             </div>
 
             <div className="flex items-center gap-8">
-              <div className="flex flex-col items-end min-w-[100px]">
+              <div className="flex flex-col items-end w-[120px]">
                 <span className="text-xs uppercase text-[#9b87f5]/70 mb-2">Risk Level</span>
                 <div className="flex items-center justify-end w-full">
-                  <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
+                  <span className={`text-sm font-medium tracking-wider uppercase ${textColor} text-right`}>
                     {level}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
-                <div className="cardiogram relative w-16 h-5 overflow-hidden opacity-70">
+              <div className="flex items-center gap-6">
+                <div className="cardiogram relative w-16 h-5 overflow-hidden opacity-70 flex-shrink-0">
                   <svg className="w-[200%] h-full animate-cardiogram" viewBox="0 0 22 20" fill="none" 
                     xmlns="http://www.w3.org/2000/svg">
                     <path
