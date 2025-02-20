@@ -1,3 +1,4 @@
+
 import { Monitor, User, ArrowUp, ArrowDown } from "lucide-react";
 import { memo } from "react";
 import { RiskyEntity } from "./types";
@@ -106,9 +107,9 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-6">
-        <div className="flex flex-col items-start w-[120px]">
-          <span className="text-xs uppercase text-[#9b87f5]/70 mb-1.5">Risk Level</span>
+      <div className="flex items-center justify-end gap-4">
+        <div className="flex flex-col items-start w-[100px]">
+          <span className="text-xs uppercase text-[#9b87f5]/70 mb-1">Risk Level</span>
           <div className="w-full">
             <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
               {level}
@@ -116,8 +117,8 @@ const EntityCard = memo(({ entity, entityType, onClick }: EntityCardProps) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="opacity-70 hover:opacity-100 transition-opacity w-[60px]">
+        <div className="flex items-center gap-2">
+          <div className="opacity-70 hover:opacity-100 transition-opacity w-[50px]">
             <CardiogramSVG riskLevel={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
           </div>
         </div>
