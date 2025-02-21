@@ -20,18 +20,14 @@ const TimelineLogsTable = ({
   dataSource,
   onDataSourceChange
 }: TimelineLogsTableProps) => {
-  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  // Change from Set to single number, null means no row is expanded
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
   
   if (!logs.length) return null;
 
   const toggleRow = (index: number) => {
-    const newExpandedRows = new Set(expandedRows);
-    if (expandedRows.has(index)) {
-      newExpandedRows.delete(index);
-    } else {
-      newExpandedRows.add(index);
-    }
-    setExpandedRows(newExpandedRows);
+    // If clicking the same row, collapse it. Otherwise, expand the clicked row
+    setExpandedRow(expandedRow === index ? null : index);
   };
 
   return (
@@ -111,11 +107,11 @@ const TimelineLogsTable = ({
                 <TableRow 
                   key={`row-${index}`}
                   className={`border-b border-indigo-500/10 cursor-pointer transition-colors duration-150
-                    ${expandedRows.has(index) ? 'bg-indigo-500/5' : 'hover:bg-indigo-500/5'}`}
+                    ${expandedRow === index ? 'bg-indigo-500/5' : 'hover:bg-indigo-500/5'}`}
                   onClick={() => toggleRow(index)}
                 >
                   <TableCell className="w-8 text-center">
-                    {expandedRows.has(index) ? (
+                    {expandedRow === index ? (
                       <ChevronDown className="h-4 w-4 text-indigo-400" />
                     ) : (
                       <ChevronRight className="h-4 w-4 text-slate-400" />
@@ -140,7 +136,7 @@ const TimelineLogsTable = ({
                     {log.rule_level || 'N/A'}
                   </TableCell>
                 </TableRow>
-                {expandedRows.has(index) && (
+                {expandedRow === index && (
                   <TableRow>
                     <TableCell colSpan={7} className="p-0">
                       <div className="py-6 px-8 expanded-row border-b border-indigo-500/10">
