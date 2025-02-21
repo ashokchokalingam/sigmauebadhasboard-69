@@ -1,15 +1,12 @@
+
 import { Alert } from "./types";
 import { cn } from "@/lib/utils";
 import { getRiskLevel } from "./utils";
-import TimelineEventHeader from "./TimelineEventHeader";
-import TimelineEventTimestamps from "./TimelineEventTimestamps";
-import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineConnector from "./TimelineConnector";
 import { toast } from "sonner";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { useState } from "react";
-import AnomaliesTableHeaderSection from "./AnomaliesTableHeaderSection";
-import { formatDateTime } from "@/utils/dateTimeUtils";
+import TimelineLogsTable from "./TimelineLogsTable";
+import TimelineCardContent from "./TimelineCardContent";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -97,12 +94,6 @@ const TimelineEventCard = ({
       const logsArray = entityType === "userorigin" ? data.user_origin_logs : data;
       const processedLogs = Array.isArray(logsArray) ? logsArray : [];
       setLogs(processedLogs);
-      
-      if (processedLogs.length > 0) {
-        // Set visible columns based on the first log entry
-        setVisibleColumns(Object.keys(processedLogs[0]));
-      }
-      
       setIsTableExpanded(true);
       
       if (onSelect) {
@@ -112,53 +103,6 @@ const TimelineEventCard = ({
       console.error('Error fetching logs:', error);
       toast.error("Failed to fetch logs");
     }
-  };
-
-  const renderLogsTable = () => {
-    if (!logs.length) return null;
-
-    return (
-      <div className="mt-4 bg-[#1A1F2C] rounded-lg overflow-hidden border border-purple-900/20">
-        <AnomaliesTableHeaderSection
-          visibleColumns={visibleColumns}
-          onColumnToggle={() => {}} // Disabled column toggling since we want fixed columns
-          onSelectAll={() => {}}
-          onDeselectAll={() => {}}
-          dataSource={dataSource}
-          onDataSourceChange={setDataSource}
-        />
-        
-        <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="whitespace-nowrap px-4 py-2 bg-[#1A1F2C] text-[#9b87f5] border-b border-purple-900/20">
-                  Time
-                </TableHead>
-                <TableHead className="whitespace-nowrap px-4 py-2 bg-[#1A1F2C] text-[#9b87f5] border-b border-purple-900/20">
-                  Title
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {logs.map((log, index) => (
-                <TableRow 
-                  key={index}
-                  className="border-b border-purple-900/10 hover:bg-purple-900/5"
-                >
-                  <TableCell className="whitespace-nowrap px-4 py-2 text-blue-300/70">
-                    {formatDateTime(log.system_time || '', false)}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap px-4 py-2 text-blue-300/70">
-                    {log.title || ''}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -175,27 +119,16 @@ const TimelineEventCard = ({
             isLatest && "ring-1 ring-blue-500/50 bg-opacity-75"
           )}
         >
-          <div className="p-4" onClick={handleClick}>
-            <div className="flex items-center justify-between gap-2 mb-4">
-              <div className="flex-1">
-                <TimelineEventHeader
-                  ruleLevel={event.rule_level}
-                  totalRecords={event.total_events || 0}
-                  title={event.title}
-                  description={event.description}
-                />
-              </div>
-            </div>
+          <TimelineCardContent event={event} onClick={handleClick} />
 
-            <TimelineEventTimestamps
-              firstSeen={event.first_time_seen || event.system_time}
-              lastSeen={event.last_time_seen || event.system_time}
+          {isTableExpanded && (
+            <TimelineLogsTable
+              logs={logs}
+              visibleColumns={visibleColumns}
+              dataSource={dataSource}
+              onDataSourceChange={setDataSource}
             />
-
-            {event.tags && <TimelineMitreSection tags={event.tags} />}
-          </div>
-
-          {isTableExpanded && renderLogsTable()}
+          )}
         </div>
       </div>
     </div>
@@ -203,3 +136,4 @@ const TimelineEventCard = ({
 };
 
 export default TimelineEventCard;
+
