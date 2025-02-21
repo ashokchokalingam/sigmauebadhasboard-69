@@ -1,7 +1,8 @@
-
 import { Shield, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import TimelineView from "../dashboard/TimelineView";
 import EntityCard from "./EntityCard";
 
 interface HighRiskWidgetProps {
@@ -13,7 +14,7 @@ interface HighRiskWidgetProps {
 
 const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: HighRiskWidgetProps) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
+  const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
 
   const { data: entities = [] } = useQuery({
     queryKey: [apiEndpoint],
@@ -28,16 +29,34 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
     gcTime: 5 * 60 * 1000,
   });
 
-  const filteredEntities = entities
-    .filter((entity: any) => {
-      const entityName = entityType === 'computer' ? entity.computer : entity.user;
-      return entityName?.toLowerCase().includes(searchQuery.toLowerCase());
-    })
-    .sort((a: any, b: any) => parseFloat(b.cumulative_risk_score) - parseFloat(a.cumulative_risk_score));
+  const filteredEntities = useMemo(() => {
+    return (entities as any[])
+      .filter((entity: any) => {
+        const entityName = entityType === 'computer' ? entity.computer : entity.user;
+        return entityName?.toLowerCase().includes(searchQuery.toLowerCase());
+      })
+      .sort((a: any, b: any) => parseFloat(b.cumulative_risk_score) - parseFloat(a.cumulative_risk_score));
+  }, [entities, entityType, searchQuery]);
 
-  const handleEntityClick = (entityId: string) => {
-    setSelectedEntityId(currentId => currentId === entityId ? null : entityId);
-  };
+  const handleEntityClick = useCallback((entityId: string) => {
+    setSelectedEntity(entityId);
+  }, []);
+
+  if (selectedEntity) {
+    const timelineEntityType = entityType === 'userOrigin' ? 'userorigin' :
+                              entityType === 'userImpacted' ? 'userimpacted' :
+                              'computersimpacted';
+    return (
+      <div className="fixed inset-0 z-50 bg-background">
+        <TimelineView
+          entityType={timelineEntityType}
+          entityId={selectedEntity}
+          onClose={() => setSelectedEntity(null)}
+          inSidebar={false}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="widget-container">
@@ -69,9 +88,8 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
           <EntityCard
             key={entityType === 'computer' ? entity.computer : entity.user}
             entity={entity}
-            entityType={entityType}
+            entityType={entityType.toLowerCase() as 'computer' | 'userOrigin' | 'userImpacted'}
             onClick={() => handleEntityClick(entityType === 'computer' ? entity.computer : entity.user)}
-            isExpanded={selectedEntityId === (entityType === 'computer' ? entity.computer : entity.user)}
           />
         ))}
         {filteredEntities.length === 0 && (
