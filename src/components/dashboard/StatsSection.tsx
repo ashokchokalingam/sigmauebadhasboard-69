@@ -1,153 +1,128 @@
 
-import { Database, Users, Monitor, AlertTriangle, UserCog } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import StatsCard from "./StatsCard";
-import { Stats } from "./types";
+import { Card } from "@/components/ui/card";
+import { AlertOctagon, AlertTriangle, Shield, Users, Monitor, Workflow } from "lucide-react";
+import { AlertStats } from "./types";
+import { cn } from "@/lib/utils";
 
 interface StatsSectionProps {
-  stats: Stats;
+  stats: AlertStats;
   totalAlerts: number;
 }
 
-interface TotalCountResponse {
-  critical_count: string;
-  high_count: string;
-  total_count: number;
-}
-
-interface UserCountsResponse {
-  user_impacted_count: number;
-  user_origin_count: number;
-}
-
-interface ComputerCountResponse {
-  computer_count: number;
-}
-
-interface RiskyEntitiesResponse {
-  total_risky_users: number;
-  total_risky_computers: number;
-}
-
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
-  const { data: totalCountData, error } = useQuery({
-    queryKey: ["total-count"],
-    queryFn: async () => {
-      const response = await fetch("/api/total_count");
-      if (!response.ok) {
-        throw new Error("Failed to fetch total count");
-      }
-      const data = await response.json();
-      return data as TotalCountResponse;
+  const categories = [
+    {
+      title: "Critical Alerts",
+      count: stats.critical,
+      color: "from-[#FF3B30] to-[#FF453A]",
+      borderColor: "border-red-500/20",
+      hoverBorderColor: "group-hover:border-red-500/40",
+      icon: AlertOctagon,
+      description: "High-priority security events requiring immediate attention",
+      secondaryMetric: `${((stats.critical / totalAlerts) * 100).toFixed(1)}% of total`,
+      ringColor: "ring-red-500/20",
+      textGradient: "from-red-500 via-red-400 to-red-300"
     },
-    refetchInterval: 30000,
-  });
-
-  const { data: userCountsData } = useQuery({
-    queryKey: ["user-counts"],
-    queryFn: async () => {
-      const response = await fetch("/api/user_counts");
-      if (!response.ok) {
-        throw new Error("Failed to fetch user counts");
-      }
-      const data = await response.json();
-      return data as UserCountsResponse;
+    {
+      title: "High Risk Events",
+      count: stats.high,
+      color: "from-[#FF9500] to-[#FFA724]",
+      borderColor: "border-orange-500/20",
+      hoverBorderColor: "group-hover:border-orange-500/40",
+      icon: AlertTriangle,
+      description: "Significant security concerns needing investigation",
+      secondaryMetric: `${((stats.high / totalAlerts) * 100).toFixed(1)}% of total`,
+      ringColor: "ring-orange-500/20",
+      textGradient: "from-orange-500 via-orange-400 to-orange-300"
     },
-    refetchInterval: 30000,
-  });
-
-  const { data: computerCountData } = useQuery({
-    queryKey: ["computer-count"],
-    queryFn: async () => {
-      const response = await fetch("http://192.168.1.107:8080/api/computer_count");
-      if (!response.ok) {
-        throw new Error("Failed to fetch computer count");
-      }
-      const data = await response.json();
-      console.log('Computer count data:', data);
-      return data as ComputerCountResponse;
+    {
+      title: "Systems Affected",
+      count: stats.systems || 0,
+      color: "from-[#32D74B] to-[#34C759]",
+      borderColor: "border-green-500/20",
+      hoverBorderColor: "group-hover:border-green-500/40",
+      icon: Monitor,
+      description: "Total number of impacted systems",
+      secondaryMetric: "Active monitoring",
+      ringColor: "ring-green-500/20",
+      textGradient: "from-green-500 via-green-400 to-green-300"
     },
-    refetchInterval: 30000,
-  });
-
-  const { data: riskyEntitiesData } = useQuery({
-    queryKey: ["risky-entities"],
-    queryFn: async () => {
-      const response = await fetch("/api/risky_entities_count");
-      if (!response.ok) {
-        throw new Error("Failed to fetch risky entities count");
-      }
-      const data = await response.json();
-      console.log('Risky entities data:', data);
-      return data as RiskyEntitiesResponse;
-    },
-    refetchInterval: 30000,
-  });
-
-  // Parse string values to numbers and use safe defaults
-  const criticalCount = totalCountData ? parseInt(totalCountData.critical_count) || 0 : 0;
-  const highCount = totalCountData ? parseInt(totalCountData.high_count) || 0 : 0;
-  const totalCount = totalCountData?.total_count ?? totalAlerts;
-
-  const totalUsers = (userCountsData?.user_impacted_count ?? 0) + (userCountsData?.user_origin_count ?? 0);
-  const computerCount = computerCountData?.computer_count ?? 0;
-  const riskyUsersCount = riskyEntitiesData?.total_risky_users ?? 0;
-  const riskyComputersCount = riskyEntitiesData?.total_risky_computers ?? 0;
+    {
+      title: "Users at Risk",
+      count: stats.users || 0,
+      color: "from-[#0A84FF] to-[#007AFF]",
+      borderColor: "border-blue-500/20",
+      hoverBorderColor: "group-hover:border-blue-500/40",
+      icon: Users,
+      description: "Users requiring security review",
+      secondaryMetric: "Under observation",
+      ringColor: "ring-blue-500/20",
+      textGradient: "from-blue-500 via-blue-400 to-blue-300"
+    }
+  ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-6 rounded-xl 
-    bg-[#15161E] shadow-2xl border border-[#5856D6]/20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#5856D6]/10 via-[#5856D6]/5 to-transparent pointer-events-none" />
-      <StatsCard
-        title="Total Events (24h)"
-        value={totalCount}
-        icon={Database}
-        subtitle="Total events in last 24 hours"
-        subtitleIcon={AlertTriangle}
-        breakdown={[
-          { rule_level: "Critical", event_count: criticalCount },
-          { rule_level: "High", event_count: highCount },
-        ]}
-      />
-      <StatsCard
-        title="Active Users (24h)"
-        value={totalUsers}
-        icon={Users}
-        subtitle="Total active users"
-        subtitleIcon={Users}
-        breakdown={[
-          { rule_level: "Origin", event_count: userCountsData?.user_origin_count ?? 0 },
-          { rule_level: "Impacted", event_count: userCountsData?.user_impacted_count ?? 0 },
-        ]}
-      />
-      <StatsCard
-        title="Active Computers (24h)"
-        value={computerCount}
-        icon={Monitor}
-        subtitle={`${computerCount} unique ${computerCount === 1 ? 'system' : 'systems'}`}
-        subtitleIcon={Monitor}
-        breakdown={[
-          { rule_level: "Systems", event_count: computerCount }
-        ]}
-      />
-      <StatsCard
-        title="ML Outliers (24h)"
-        value={stats?.anomalies?.current ?? 0}
-        icon={AlertTriangle}
-        subtitle="Total outliers detected"
-        subtitleIcon={AlertTriangle}
-      />
-      <StatsCard
-        title="Risky Users (24h)"
-        value={riskyUsersCount}
-        icon={UserCog}
-        subtitle="High risk users detected"
-        subtitleIcon={AlertTriangle}
-        breakdown={[
-          { rule_level: "Users", event_count: riskyUsersCount },
-          { rule_level: "Systems", event_count: riskyComputersCount },
-        ]}
-      />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {categories.map((category) => {
+        const Icon = category.icon;
+        return (
+          <Card key={category.title} 
+            className={cn(
+              "relative group overflow-hidden",
+              "border bg-black/40 backdrop-blur-sm",
+              category.borderColor,
+              category.hoverBorderColor,
+              "transition-all duration-300 ease-in-out",
+              "hover:scale-102 hover:shadow-lg",
+              category.ringColor
+            )}
+          >
+            <div className="absolute inset-0 opacity-10 bg-gradient-to-br" 
+              style={{
+                background: `radial-gradient(circle at bottom right, var(--${category.color.split('-')[1]}) 0%, transparent 70%)`
+              }}
+            />
+            
+            <div className="p-6 relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className={cn(
+                  "p-2 rounded-lg",
+                  `bg-gradient-to-br ${category.color}`,
+                  "bg-opacity-10"
+                )}>
+                  <Icon className="h-5 w-5 text-white" />
+                </div>
+                <span className="text-sm text-gray-400">{category.secondaryMetric}</span>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-base font-medium text-gray-200">
+                  {category.title}
+                </h3>
+                <div className="flex items-end gap-2">
+                  <span className={cn(
+                    "text-3xl font-bold tracking-tight",
+                    "bg-gradient-to-r bg-clip-text text-transparent",
+                    category.textGradient
+                  )}>
+                    {category.count.toLocaleString()}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-400 line-clamp-2">
+                  {category.description}
+                </p>
+              </div>
+
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r opacity-30 
+                transition-opacity group-hover:opacity-50"
+                style={{
+                  background: `linear-gradient(to right, var(--${category.color.split('-')[1]}), transparent)`
+                }}
+              />
+            </div>
+          </Card>
+        );
+      })}
     </div>
   );
 };
