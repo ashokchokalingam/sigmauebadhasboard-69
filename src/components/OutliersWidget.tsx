@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertOctagon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -9,20 +10,28 @@ import { format } from "date-fns";
 import React, { useState } from 'react';
 
 const OutliersWidget = () => {
-  // Changed initial state to false to show raw data by default
   const [isGrouped, setIsGrouped] = useState(false);
   const [groupingInterval, setGroupingInterval] = useState<'hour' | 'day'>('day');
 
   const { data: apiResponse, isLoading } = useQuery({
     queryKey: ['outliers'],
     queryFn: async () => {
-      const response = await fetch('/api/outliers');
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      
+      const params = new URLSearchParams({
+        start_date: sevenDaysAgo.toISOString(),
+        end_date: new Date().toISOString()
+      });
+      
+      const response = await fetch(`/api/outliers?${params.toString()}`);
       if (!response.ok) {
         throw new Error('Failed to fetch outliers data');
       }
       const data = await response.json();
       return data.outliers as MLOutlier[];
-    }
+    },
+    refetchInterval: 30000 // Refresh every 30 seconds
   });
 
   const calculateSeverityStats = () => {
@@ -127,7 +136,7 @@ const OutliersWidget = () => {
                 ML Outliers
               </h2>
               <p className="text-sm text-purple-300/80 font-medium">
-                Executive Summary
+                Executive Summary (Last 7 Days)
               </p>
             </div>
           </div>
