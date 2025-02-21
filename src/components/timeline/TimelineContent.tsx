@@ -1,3 +1,4 @@
+
 import { Alert } from "@/components/dashboard/types";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -28,7 +29,6 @@ const TimelineContent = ({
 
   const processedEvents = useProcessedEvents(allEvents, sortBy, filterBy);
 
-  // Add effect to log when selectedEventId changes
   useEffect(() => {
     console.log('selectedEventId changed:', {
       selectedEventId,
@@ -58,25 +58,28 @@ const TimelineContent = ({
 
       console.log('Found selected event:', selectedEvent);
 
+      // Build URL and params
       let endpoint = '/api/user_origin_logs';
       const params = new URLSearchParams();
 
       if (entityType === "userorigin") {
-        const userOrigin = selectedEvent.user_origin;
-        const title = selectedEvent.title;
-
         console.log('Building userorigin params:', {
-          userOrigin,
-          title
+          userOrigin: selectedEvent.user_origin,
+          title: selectedEvent.title
         });
 
-        if (!userOrigin || !title) {
-          console.log('Missing required params');
+        // Ensure we have the required params
+        if (!selectedEvent.user_origin || !selectedEvent.title) {
+          console.error('Missing required params:', {
+            user_origin: selectedEvent.user_origin,
+            title: selectedEvent.title
+          });
+          toast.error("Missing required parameters");
           return null;
         }
 
-        params.append("user_origin", userOrigin);
-        params.append("title", title);
+        params.append("user_origin", selectedEvent.user_origin);
+        params.append("title", selectedEvent.title);
       } else {
         endpoint = entityType === "computersimpacted" 
           ? '/api/computer_impacted_logs'
@@ -90,7 +93,13 @@ const TimelineContent = ({
           ? selectedEvent.computer_name
           : selectedEvent.user_impacted;
 
-        params.append(paramKey, paramValue || '');
+        if (!paramValue) {
+          console.error(`Missing ${paramKey} parameter`);
+          toast.error("Missing required parameters");
+          return null;
+        }
+
+        params.append(paramKey, paramValue);
         params.append("title", selectedEvent.title || '');
       }
 
@@ -100,6 +109,12 @@ const TimelineContent = ({
       try {
         const response = await fetch(url);
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error('API error:', {
+            status: response.status,
+            statusText: response.statusText,
+            errorText
+          });
           throw new Error(`Failed to fetch logs: ${response.statusText}`);
         }
         const data = await response.json();
@@ -112,7 +127,7 @@ const TimelineContent = ({
         throw error;
       }
     },
-    enabled: !!selectedEventId && entityType === "userorigin",
+    enabled: !!selectedEventId, // Removed entityType restriction to allow the query to run
     meta: {
       onSettled: (data, error) => {
         console.log('Query settled:', {
@@ -126,7 +141,8 @@ const TimelineContent = ({
   const handleSelect = (id: string | null) => {
     console.log('handleSelect called with:', {
       id,
-      currentSelectedId: selectedEventId
+      currentSelectedId: selectedEventId,
+      entityType
     });
     setSelectedEventId(id);
   };
