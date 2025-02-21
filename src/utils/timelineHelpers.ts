@@ -1,16 +1,16 @@
 
 import { Alert, EventSummary } from "@/components/dashboard/types";
 
-export const getTimelineEntityType = (entityType: string) => {
+export const getTimelineEndpoint = (entityType: string) => {
   switch (entityType) {
-    case 'computer':
-      return 'computersimpacted';
-    case 'userOrigin':
-      return 'userorigin';
-    case 'userImpacted':
-      return 'userimpacted';
+    case 'userorigin':
+      return '/api/user_origin_timeline';
+    case 'userimpacted':
+      return '/api/user_impacted_timeline';
+    case 'computersimpacted':
+      return '/api/computer_impacted_timeline';
     default:
-      return entityType;
+      throw new Error(`Unsupported entity type: ${entityType}`);
   }
 };
 
@@ -27,15 +27,15 @@ export const formatTimelineData = (data: any) => {
   };
 };
 
-export const getTimelineEndpoint = (entityType: string) => {
+export const getTimelineEntityType = (entityType: string) => {
   switch (entityType) {
-    case 'userorigin':
-      return '/api/user_origin_timeline';
-    case 'userimpacted':
-      return '/api/user_impacted_timeline';
-    case 'computersimpacted':
-      return '/api/computer_impacted_timeline';
+    case 'computer':
+      return 'computersimpacted';
+    case 'userOrigin':
+      return 'userorigin';
+    case 'userImpacted':
+      return 'userimpacted';
     default:
-      throw new Error(`Unsupported entity type: ${entityType}`);
+      return entityType;
   }
 };

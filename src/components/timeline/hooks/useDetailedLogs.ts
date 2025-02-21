@@ -27,11 +27,13 @@ export const useDetailedLogs = (
 
       switch (entityType) {
         case "userimpacted":
-          if (!selectedEvent.user_impacted) {
-            toast.error("Missing user_impacted parameter");
+          // For user impacted, we use computer_impacted_logs endpoint
+          endpoint = '/api/computer_impacted_logs';
+          if (!selectedEvent.computer_name) {
+            toast.error("Missing computer_name parameter");
             return null;
           }
-          params.append("user_impacted", selectedEvent.user_impacted);
+          params.append("computer_name", selectedEvent.computer_name);
           break;
 
         case "userorigin":
@@ -76,18 +78,8 @@ export const useDetailedLogs = (
 
         const data = await response.json();
         console.log('Logs fetched successfully:', data);
+        return data.computer_impacted_logs || [];
 
-        // Return the appropriate data based on entity type
-        switch (entityType) {
-          case "userimpacted":
-            return data.user_impacted_logs || [];
-          case "userorigin":
-            return data.user_origin_logs || [];
-          case "computersimpacted":
-            return data.computer_impacted_logs || [];
-          default:
-            return [];
-        }
       } catch (error) {
         console.error('Error fetching logs:', error);
         toast.error("Failed to fetch detailed logs");
