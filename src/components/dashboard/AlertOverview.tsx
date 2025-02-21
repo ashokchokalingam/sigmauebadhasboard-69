@@ -92,7 +92,7 @@ const AlertOverview = ({ alert }: AlertOverviewProps) => {
                       Cluster {alert.ml_cluster || 'N/A'}
                     </span>
                   </div>
-                  <p className="text-sm text-white/80">{alert.ml_description || 'Normal Behavior'}</p>
+                  <p className="text-sm text-white/80">{alert.ml_analysis || 'Normal Behavior'}</p>
                 </div>
               </div>
             </div>
