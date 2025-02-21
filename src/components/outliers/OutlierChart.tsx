@@ -28,19 +28,19 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
     });
   };
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity.toLowerCase()) {
-      case 'critical':
-        return '#D32F2F';
-      case 'high':
-        return '#FF5722';
-      case 'medium':
-        return '#FFB74D';
-      case 'low':
-        return '#66BB6A';
-      default:
-        return '#9333EA';
-    }
+  const getSeverityColor = (severity: string, risk: number) => {
+    // First check the severity level
+    const severityLevel = severity.toLowerCase();
+    if (severityLevel === 'critical') return '#D32F2F';
+    if (severityLevel === 'high') return '#FF5722';
+    if (severityLevel === 'medium') return '#FFB74D';
+    if (severityLevel === 'low') return '#66BB6A';
+    
+    // If no specific severity, fall back to risk-based coloring
+    if (risk >= 150) return '#D32F2F';
+    if (risk >= 100) return '#FF5722';
+    if (risk >= 50) return '#FFB74D';
+    return '#66BB6A';
   };
 
   return (
@@ -57,10 +57,10 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
             `}
             style={{
               backgroundColor: selectedSeverities.includes(severity.toLowerCase()) 
-                ? getSeverityColor(severity) + '33'
+                ? getSeverityColor(severity, 0) + '33'
                 : 'transparent',
-              color: getSeverityColor(severity),
-              borderColor: getSeverityColor(severity) + '40'
+              color: getSeverityColor(severity, 0),
+              borderColor: getSeverityColor(severity, 0) + '40'
             }}
           >
             {severity}
@@ -75,22 +75,27 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
             margin={{ top: 20, right: 30, left: 0, bottom: 80 }}
           >
             <defs>
-              <linearGradient id="criticalGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#D32F2F" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#D32F2F" stopOpacity={0.2}/>
-              </linearGradient>
-              <linearGradient id="highGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#FF5722" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#FF5722" stopOpacity={0.2}/>
-              </linearGradient>
-              <linearGradient id="mediumGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#FFB74D" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#FFB74D" stopOpacity={0.2}/>
-              </linearGradient>
-              <linearGradient id="lowGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#66BB6A" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#66BB6A" stopOpacity={0.2}/>
-              </linearGradient>
+              {['Critical', 'High', 'Medium', 'Low'].map((severity) => (
+                <linearGradient
+                  key={severity}
+                  id={`${severity.toLowerCase()}Gradient`}
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop
+                    offset="5%"
+                    stopColor={getSeverityColor(severity, 0)}
+                    stopOpacity={0.8}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor={getSeverityColor(severity, 0)}
+                    stopOpacity={0.2}
+                  />
+                </linearGradient>
+              ))}
             </defs>
             <CartesianGrid 
               strokeDasharray="3 3" 
@@ -126,20 +131,13 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
               radius={[4, 4, 0, 0]}
               maxBarSize={40}
             >
-              {data.map((entry, index) => {
-                let fillUrl = '#lowGradient';
-                if (entry.risk >= 150) fillUrl = '#criticalGradient';
-                else if (entry.risk >= 100) fillUrl = '#highGradient';
-                else if (entry.risk >= 50) fillUrl = '#mediumGradient';
-                
-                return (
-                  <Cell 
-                    key={`cell-${index}`}
-                    fill={`url(${fillUrl})`}
-                    className="hover:opacity-80 transition-opacity duration-300"
-                  />
-                );
-              })}
+              {data.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`}
+                  fill={`url(#${entry.severity.toLowerCase()}Gradient)`}
+                  className="hover:opacity-80 transition-opacity duration-300"
+                />
+              ))}
             </Bar>
           </ComposedChart>
         </ResponsiveContainer>
