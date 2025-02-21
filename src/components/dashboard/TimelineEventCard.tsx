@@ -7,9 +7,8 @@ import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineInstanceList from "./TimelineInstanceList";
 import TimelineConnector from "./TimelineConnector";
-import { useTimelineLogs } from "./hooks/useTimelineLogs";
 import { ChevronDown } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ExpandedContent from "./TimelineEventDetails/ExpandedContent";
 
 interface TimelineEventCardProps {
@@ -42,23 +41,24 @@ const TimelineEventCard = ({
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
-  console.log('TimelineEventCard render:', {
-    eventId: event.id,
-    isDetailsExpanded,
-    hasDetailedLogs: !!detailedLogs,
-    isLoadingLogs
-  });
-
   // Handle card click
   const handleCardClick = () => {
+    const newExpandedState = !isDetailsExpanded;
     console.log('Card clicked:', {
       eventId: event.id,
-      currentExpanded: isDetailsExpanded,
-      hasLogs: !!detailedLogs
+      entityType,
+      user_origin: event.user_origin,
+      title: event.title,
+      currentlyExpanded: isDetailsExpanded,
+      willExpand: newExpandedState
     });
     
-    setIsDetailsExpanded(!isDetailsExpanded);
-    onSelect(isDetailsExpanded ? null : event.id);
+    setIsDetailsExpanded(newExpandedState);
+    if (newExpandedState) {
+      onSelect(event.id);
+    } else {
+      onSelect(null);
+    }
   };
 
   return (
