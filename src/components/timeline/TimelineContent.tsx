@@ -26,7 +26,6 @@ const TimelineContent = ({
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>("latest");
   const [filterBy, setFilterBy] = useState<FilterOption>("all");
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   const processedEvents = useProcessedEvents(allEvents, sortBy, filterBy);
   const { data: detailedLogs, isLoading: isLoadingLogs } = useDetailedLogs(
@@ -36,23 +35,7 @@ const TimelineContent = ({
   );
 
   const handleSelect = (id: string | null) => {
-    // If clicking the same card, collapse it
-    if (id === selectedEventId) {
-      setSelectedEventId(null);
-    } else {
-      // If clicking a different card, select it
-      setSelectedEventId(id);
-    }
-  };
-
-  const handleToggleExpand = (eventId: string) => {
-    setExpandedGroups(prev => {
-      const newSet = new Set<string>();
-      if (!prev.has(eventId)) {
-        newSet.add(eventId);
-      }
-      return newSet;
-    });
+    setSelectedEventId(currentId => currentId === id ? null : id);
   };
 
   if (isLoading && allEvents.length === 0) {
@@ -77,10 +60,8 @@ const TimelineContent = ({
           events={processedEvents}
           entityType={entityType}
           selectedEventId={selectedEventId}
-          expandedGroups={expandedGroups}
           detailedLogs={detailedLogs}
           onSelect={handleSelect}
-          onToggleExpand={handleToggleExpand}
           hasNextPage={hasNextPage}
           loaderRef={loaderRef}
           isLoadingLogs={isLoadingLogs}

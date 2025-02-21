@@ -16,8 +16,6 @@ interface TimelineEventCardProps {
   onSelect?: (id: string | null) => void;
   selectedEventId?: string | null;
   detailedLogs?: any;
-  isExpanded?: boolean;
-  onToggleExpand?: () => void;
   instances?: Alert[];
   isLoadingLogs?: boolean;
 }
@@ -30,8 +28,6 @@ const TimelineEventCard = ({
   onSelect,
   selectedEventId,
   detailedLogs,
-  isExpanded,
-  onToggleExpand,
   instances,
   isLoadingLogs
 }: TimelineEventCardProps) => {
@@ -40,21 +36,23 @@ const TimelineEventCard = ({
   const [dataSource, setDataSource] = useState<'mloutliers' | 'anomalies'>('anomalies');
   const [visibleColumns] = useState<string[]>(['system_time', 'title']);
 
+  const isExpanded = selectedEventId === event.id;
+
   const handleClick = async () => {
     console.log('Card clicked:', {
       entityType,
       eventId: event.id,
       title: event.title,
-      currentSelection: selectedEventId
+      currentSelection: selectedEventId,
+      isCurrentlyExpanded: isExpanded
     });
 
-    // Toggle expansion state through parent
     if (onSelect) {
       onSelect(event.id);
     }
 
     // Only fetch logs if we're expanding the card
-    if (event.id !== selectedEventId) {
+    if (!isExpanded) {
       let endpoint = '/api/user_origin_logs';
       const params = new URLSearchParams();
 
@@ -102,8 +100,6 @@ const TimelineEventCard = ({
     }
   };
 
-  const isCardExpanded = event.id === selectedEventId;
-
   return (
     <div className="group relative pl-4 w-full">
       <TimelineConnector color={color} isLast={isLast} />
@@ -120,7 +116,7 @@ const TimelineEventCard = ({
         >
           <TimelineCardContent event={event} onClick={handleClick} />
 
-          {isCardExpanded && (
+          {isExpanded && (
             <TimelineLogsTable
               logs={logs}
               visibleColumns={visibleColumns}
