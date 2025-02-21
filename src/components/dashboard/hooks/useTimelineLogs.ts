@@ -65,6 +65,6 @@ export const useTimelineLogs = ({ entityType, event, enabled }: TimelineLogsPara
     enabled: enabled,
     retry: 1,
     staleTime: 30000, // Consider data fresh for 30 seconds
-    cacheTime: 5 * 60 * 1000, // Cache for 5 minutes
+    gcTime: 5 * 60 * 1000 // Using gcTime instead of cacheTime for garbage collection
   });
 };
