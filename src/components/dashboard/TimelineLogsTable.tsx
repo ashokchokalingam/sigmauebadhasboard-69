@@ -35,7 +35,7 @@ const TimelineLogsTable = ({
   };
 
   return (
-    <div className="mt-4 bg-[#1A1F2C] rounded-xl overflow-hidden border border-indigo-500/10 shadow-2xl">
+    <div className="mt-4 bg-[#151823] rounded-xl overflow-hidden border border-indigo-500/10 shadow-2xl">
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
@@ -44,21 +44,38 @@ const TimelineLogsTable = ({
             font-family: 'Inter', sans-serif;
           }
           
-          .hover-glow:hover {
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
-          }
-
           .description-text {
             color: #94A3B8;
             line-height: 1.6;
           }
 
           .header-gradient {
-            background: linear-gradient(to right, #1E293B, #1A1F2C);
+            background: linear-gradient(to right, #1E293B, #151823);
           }
 
-          .content-gradient {
-            background: linear-gradient(180deg, rgba(30, 41, 59, 0.5) 0%, rgba(30, 41, 59, 0.2) 100%);
+          .expanded-row {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(30, 41, 59, 0.2) 100%);
+            backdrop-filter: blur(12px);
+          }
+
+          .detail-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            border-radius: 0.5rem;
+          }
+
+          .detail-header {
+            color: #818CF8;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+          }
+
+          .detail-value {
+            color: #E2E8F0;
+            font-size: 0.875rem;
           }
         `}
       </style>
@@ -90,7 +107,8 @@ const TimelineLogsTable = ({
               <>
                 <TableRow 
                   key={`row-${index}`}
-                  className="border-b border-indigo-500/10 hover:bg-indigo-500/5 cursor-pointer transition-colors duration-150"
+                  className={`border-b border-indigo-500/10 cursor-pointer transition-colors duration-150
+                    ${expandedRows.has(index) ? 'bg-indigo-500/5' : 'hover:bg-indigo-500/5'}`}
                   onClick={() => toggleRow(index)}
                 >
                   <TableCell className="w-8 text-center">
@@ -118,26 +136,50 @@ const TimelineLogsTable = ({
                 </TableRow>
                 {expandedRows.has(index) && (
                   <TableRow>
-                    <TableCell colSpan={6} className="p-0 content-gradient">
-                      <div className="p-6 space-y-6">
-                        <div className="space-y-6">
-                          <div className="space-y-2 bg-slate-800/50 p-4 rounded-xl border border-indigo-500/10 shadow-lg hover-glow">
-                            <div className="text-sm font-medium text-indigo-400 uppercase tracking-wider">Description</div>
-                            <div className="text-sm description-text">
+                    <TableCell colSpan={6} className="p-0">
+                      <div className="py-6 px-8 expanded-row border-b border-indigo-500/10">
+                        <div className="grid gap-6">
+                          <div className="grid grid-cols-3 gap-4">
+                            <div className="detail-card p-4">
+                              <div className="detail-header">System Time</div>
+                              <div className="detail-value">{formatDateTime(log.system_time || '', true)}</div>
+                            </div>
+                            <div className="detail-card p-4">
+                              <div className="detail-header">Event Record ID</div>
+                              <div className="detail-value">{log.event_record_id || 'N/A'}</div>
+                            </div>
+                            <div className="detail-card p-4">
+                              <div className="detail-header">Event Level</div>
+                              <div className="detail-value">{log.event_level || 'N/A'}</div>
+                            </div>
+                          </div>
+
+                          <div className="detail-card p-4">
+                            <div className="detail-header">Description</div>
+                            <div className="detail-value whitespace-pre-wrap">
                               {log.description || 'N/A'}
                             </div>
                           </div>
-                          
-                          <div className="space-y-2 bg-slate-800/50 p-4 rounded-xl border border-indigo-500/10 shadow-lg hover-glow">
-                            <div className="text-sm font-medium text-indigo-400 uppercase tracking-wider">ML Description</div>
-                            <div className="text-sm description-text">
+
+                          <div className="detail-card p-4">
+                            <div className="detail-header">ML Description</div>
+                            <div className="detail-value whitespace-pre-wrap">
                               {log.ml_description || 'N/A'}
                             </div>
                           </div>
-                          
-                          <div className="col-span-2">
-                            {log.raw && <TimelineRawLog alert={log as Alert} />}
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="detail-card p-4">
+                              <div className="detail-header">Channel</div>
+                              <div className="detail-value">{log.channel || 'N/A'}</div>
+                            </div>
+                            <div className="detail-card p-4">
+                              <div className="detail-header">Task Category</div>
+                              <div className="detail-value">{log.task_category || 'N/A'}</div>
+                            </div>
                           </div>
+
+                          {log.raw && <TimelineRawLog alert={log as Alert} />}
                         </div>
                       </div>
                     </TableCell>
