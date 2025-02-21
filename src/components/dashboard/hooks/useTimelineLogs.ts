@@ -23,28 +23,40 @@ export const useTimelineLogs = (
   isEnabled: boolean
 ) => {
   const fetchLogs = async () => {
-    const endpoint = getApiEndpoint(entityType, event.user_origin, event.title);
-    if (entityType === "userorigin") {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`);
-      return response.json();
-    } else {
+    try {
+      const endpoint = getApiEndpoint(entityType, event.user_origin, event.title);
+      console.log('Fetching logs from:', endpoint);
+      
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
-        method: 'POST',
+        method: entityType === "userorigin" ? 'GET' : 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          user_origin: event.user_origin,
-          title: event.title
+        ...(entityType !== "userorigin" && {
+          body: JSON.stringify({
+            user_origin: event.user_origin,
+            title: event.title
+          })
         })
       });
-      return response.json();
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Logs data received:', data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching logs:', error);
+      throw error;
     }
   };
 
   return useQuery({
     queryKey: ['logs', entityType, event.id],
     queryFn: fetchLogs,
-    enabled: isEnabled
+    enabled: isEnabled,
+    retry: 1
   });
 };
