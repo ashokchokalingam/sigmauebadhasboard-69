@@ -8,10 +8,9 @@ import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineInstanceList from "./TimelineInstanceList";
 import TimelineConnector from "./TimelineConnector";
 import { useTimelineLogs } from "./hooks/useTimelineLogs";
-import { Button } from "@/components/ui/button";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { ChevronDown } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import ExpandedContent from "./TimelineEventDetails/ExpandedContent";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -33,21 +32,18 @@ const TimelineEventCard = ({
   isLatest,
   entityType,
   onSelect,
-  detailedLogs,
   isExpanded,
   onToggleExpand,
   instances = [],
-  isLoadingLogs = false,
   selectedEventId
 }: TimelineEventCardProps) => {
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
-  // Query for logs data with enabled flag tied to expanded state
   const { data: logsData, isLoading, error } = useTimelineLogs({
     entityType,
     event,
-    enabled: isDetailsExpanded // Only fetch when details are expanded
+    enabled: isDetailsExpanded
   });
 
   const handleCardClick = () => {
@@ -104,69 +100,12 @@ const TimelineEventCard = ({
           </div>
 
           {isDetailsExpanded && (
-            <div className="border-t border-purple-500/20 p-4">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Field</TableHead>
-                    <TableHead>Value</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {[
-                    { label: 'Event ID', value: event.event_id },
-                    { label: 'Provider Name', value: event.provider_name },
-                    { label: 'Computer Name', value: event.computer_name },
-                    { label: 'Task', value: event.task },
-                    { label: 'User ID', value: event.user_id },
-                    { label: 'IP Address', value: event.ip_address },
-                    { label: 'Risk Level', value: event.rule_level },
-                    { label: 'Risk Score', value: event.risk }
-                  ].map(({ label, value }) => (
-                    <TableRow key={label}>
-                      <TableCell className="font-medium text-purple-400">{label}</TableCell>
-                      <TableCell>{value || 'N/A'}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-
-              {isLoading ? (
-                <div className="text-center py-4 text-purple-400">Loading logs...</div>
-              ) : error ? (
-                <div className="text-red-400 mt-4 text-center">
-                  Error loading logs. Please try again.
-                </div>
-              ) : logsData ? (
-                <div className="mt-4">
-                  <h4 className="text-purple-400 font-medium mb-2">Related Logs</h4>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Timestamp</TableHead>
-                        <TableHead>Event</TableHead>
-                        <TableHead>Description</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {Array.isArray(logsData) && logsData.length > 0 ? (
-                        logsData.map((log: any, index: number) => (
-                          <TableRow key={index}>
-                            <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
-                            <TableCell>{log.event}</TableCell>
-                            <TableCell>{log.description}</TableCell>
-                          </TableRow>
-                        ))
-                      ) : (
-                        <TableRow>
-                          <TableCell colSpan={3} className="text-center">No logs available</TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              ) : null}
-            </div>
+            <ExpandedContent
+              event={event}
+              logsData={logsData}
+              isLoading={isLoading}
+              error={error as Error}
+            />
           )}
 
           <TimelineInstanceList
