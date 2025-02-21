@@ -11,7 +11,7 @@ export const useDetailedLogs = (
   return useQuery({
     queryKey: ["detailed-logs", entityType, selectedEventId],
     queryFn: async () => {
-      console.log('Fetching detailed logs:', { selectedEventId, entityType });
+      console.log('queryFn executing with:', { selectedEventId, entityType });
 
       if (!selectedEventId) {
         return null;
@@ -22,76 +22,61 @@ export const useDetailedLogs = (
         return null;
       }
 
-      // For timeline view, use timeline endpoints
-      const timelineEndpoints = {
-        userorigin: '/api/user_origin_timeline',
-        userimpacted: '/api/user_impacted_timeline',
-        computersimpacted: '/api/computer_impacted_timeline'
-      };
-
-      // For detailed logs, use logs endpoints
-      const logEndpoints = {
-        userorigin: '/api/user_origin_logs',
-        userimpacted: '/api/user_impacted_logs',
-        computersimpacted: '/api/computer_impacted_logs'
-      };
-
-      const paramMappings = {
-        userorigin: {
-          key: 'user_origin',
-          value: selectedEvent.user_origin
-        },
-        userimpacted: {
-          key: 'user_impacted',
-          value: selectedEvent.user_impacted
-        },
-        computersimpacted: {
-          key: 'computer_name',
-          value: selectedEvent.computer_name
-        }
-      };
-
-      const timelineEndpoint = timelineEndpoints[entityType];
-      const logEndpoint = logEndpoints[entityType];
-      const { key, value } = paramMappings[entityType];
-
-      if (!value) {
-        toast.error("Missing required entity identifier");
-        return null;
-      }
-
+      let endpoint = '/api/user_origin_logs';
       const params = new URLSearchParams();
-      params.append(key, value);
-      
-      if (selectedEvent.title) {
-        params.append("title", selectedEvent.title);
-      }
 
-      // Fetch both timeline and detailed logs
-      try {
-        const [timelineResponse, logsResponse] = await Promise.all([
-          fetch(`${timelineEndpoint}?${params.toString()}`),
-          fetch(`${logEndpoint}?${params.toString()}`)
-        ]);
-
-        if (!timelineResponse.ok || !logsResponse.ok) {
-          throw new Error('Failed to fetch data');
+      if (entityType === "userorigin") {
+        if (!selectedEvent.user_origin || !selectedEvent.title) {
+          toast.error("Missing required parameters");
+          return null;
         }
 
-        const timelineData = await timelineResponse.json();
-        const logsData = await logsResponse.json();
+        params.append("user_origin", selectedEvent.user_origin);
+        params.append("title", selectedEvent.title);
+      } else {
+        endpoint = entityType === "computersimpacted" 
+          ? '/api/computer_impacted_logs'
+          : '/api/user_impacted_logs';
 
-        console.log('Data fetched successfully:', { timelineData, logsData });
+        const paramKey = entityType === "computersimpacted" 
+          ? "computer_name" 
+          : "user_impacted";
         
-        // Combine timeline and logs data
-        return {
-          timeline: timelineData[`${entityType}_timeline`] || [],
-          logs: logsData[`${entityType}_logs`] || []
-        };
+        const paramValue = entityType === "computersimpacted"
+          ? selectedEvent.computer_name
+          : selectedEvent.user_impacted;
 
+        if (!paramValue) {
+          toast.error("Missing required parameters");
+          return null;
+        }
+
+        params.append(paramKey, paramValue);
+        params.append("title", selectedEvent.title || '');
+      }
+
+      const url = `${endpoint}?${params.toString()}`;
+      console.log('Fetching logs from:', url);
+
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch logs: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log('Logs fetched successfully:', data);
+        return entityType === "userorigin" ? data.user_origin_logs : data;
       } catch (error) {
-        console.error('Error fetching data:', error);
-        toast.error("Failed to fetch timeline and logs data");
+        console.error('Error fetching logs:', error);
+        toast.error("Failed to fetch detailed logs");
         throw error;
       }
     },

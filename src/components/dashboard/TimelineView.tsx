@@ -28,35 +28,18 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   } = useInfiniteQuery({
     queryKey: ["timeline", entityType, entityId],
     queryFn: async ({ pageParam = 1 }) => {
-      const endpoints = {
-        userorigin: '/api/user_origin_timeline',
-        userimpacted: '/api/user_impacted_timeline',
-        computersimpacted: '/api/computer_impacted_timeline'
-      };
-
-      const paramMappings = {
-        userorigin: 'user_origin',
-        userimpacted: 'user_impacted',
-        computersimpacted: 'computer_name'
-      };
-
-      const endpoint = endpoints[entityType];
-      const paramKey = paramMappings[entityType];
-
+      const endpoint = getTimelineEndpoint(entityType);
+      const queryParam = entityType === 'userorigin' ? 'user_origin' : 
+                        entityType === 'userimpacted' ? 'user_impacted' : 
+                        'computer_name';
       console.log('Fetching timeline data:', {
         endpoint,
-        paramKey,
+        queryParam,
         entityId,
         entityType
       });
       
-      const params = new URLSearchParams({
-        [paramKey]: entityId,
-        page: pageParam.toString(),
-        per_page: EVENTS_PER_PAGE.toString()
-      });
-
-      const response = await fetch(`${endpoint}?${params.toString()}`);
+      const response = await fetch(`${endpoint}?${queryParam}=${encodeURIComponent(entityId)}`);
       if (!response.ok) {
         throw new Error('Failed to fetch timeline data');
       }
@@ -75,14 +58,9 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
   });
 
   const allEvents = data?.pages.flatMap(
-    (page) => {
-      const eventMappings = {
-        computersimpacted: page.computer_impacted_timeline,
-        userorigin: page.user_origin_timeline,
-        userimpacted: page.user_impacted_timeline
-      };
-      return eventMappings[entityType] || [];
-    }
+    (page) => entityType === "computersimpacted" ? page.computer_impacted_timeline : 
+              entityType === "userorigin" ? page.user_origin_timeline :
+              page.user_impacted_timeline
   ) || [];
 
   // Sort events by last_seen timestamp, then by first_seen if last_seen is equal
@@ -93,10 +71,10 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     if (lastSeenA === lastSeenB) {
       const firstSeenA = new Date(a.first_time_seen || a.system_time).getTime();
       const firstSeenB = new Date(b.first_time_seen || b.system_time).getTime();
-      return firstSeenB - firstSeenA;
+      return firstSeenB - firstSeenA; // Sort by first_seen if last_seen is equal
     }
     
-    return lastSeenB - lastSeenA;
+    return lastSeenB - lastSeenA; // Sort by last_seen in descending order
   });
 
   if (inView && !isFetchingNextPage && hasNextPage) {
