@@ -29,7 +29,7 @@ const TimelineLogsTable = ({
   };
 
   return (
-    <div className="mt-4 bg-[#151823] rounded-xl overflow-hidden border border-indigo-500/10 shadow-2xl">
+    <div className="mt-4 rounded-xl overflow-hidden border border-slate-800">
       <style>{tableStyles}</style>
       
       <div className="overflow-x-auto max-h-[800px] overflow-y-auto custom-table">

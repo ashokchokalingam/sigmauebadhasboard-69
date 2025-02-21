@@ -10,19 +10,28 @@ const TimelineTableHeader = () => {
           Time
         </TableHead>
         <TableHead className="whitespace-nowrap px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10">
-          Event ID
+          User Origin
+        </TableHead>
+        <TableHead className="whitespace-nowrap px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10">
+          User Impacted
         </TableHead>
         <TableHead className="whitespace-nowrap px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10">
           Title
         </TableHead>
         <TableHead className="whitespace-nowrap px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10">
-          Computer Name
+          Computer
         </TableHead>
         <TableHead className="whitespace-nowrap px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10">
-          Provider Name
+          Description
         </TableHead>
         <TableHead className="whitespace-nowrap px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10">
-          Risk Level
+          IP Address
+        </TableHead>
+        <TableHead className="whitespace-nowrap px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10">
+          Rule Level
+        </TableHead>
+        <TableHead className="whitespace-nowrap px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10">
+          Risk Score
         </TableHead>
       </TableRow>
     </TableHeader>
