@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -30,7 +31,19 @@ const Index = () => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText
+      });
+      throw new Error(`Failed to fetch alerts: ${response.statusText}`);
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.error('Invalid content type:', contentType);
+      throw new Error('Server returned invalid content type');
     }
 
     const data = await response.json();
@@ -50,8 +63,8 @@ const Index = () => {
         if (error) {
           console.error('Initial query error:', error);
           toast({
-            title: "Error fetching data",
-            description: "Failed to load alerts. Please try again.",
+            title: "Error loading dashboard data",
+            description: "Please check your connection and try again",
             variant: "destructive",
           });
         }
@@ -69,7 +82,7 @@ const Index = () => {
         if (error) {
           console.error('Remaining query error:', error);
           toast({
-            title: "Error fetching additional data",
+            title: "Error loading additional data",
             description: "Failed to load more alerts. Please try again.",
             variant: "destructive",
           });
