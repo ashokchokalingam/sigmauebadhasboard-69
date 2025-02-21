@@ -46,7 +46,10 @@ const TimelineLogsTable = ({
                   onClick={() => toggleRow(index)}
                 />
                 {expandedRow === index && (
-                  <TimelineExpandedContent log={log} />
+                  <TimelineExpandedContent 
+                    log={log} 
+                    onClose={() => setExpandedRow(null)}
+                  />
                 )}
               </>
             ))}

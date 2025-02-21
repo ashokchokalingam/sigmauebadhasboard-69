@@ -5,15 +5,16 @@ import { Alert } from "./types";
 
 interface TimelineExpandedContentProps {
   log: Alert;
+  onClose: () => void;
 }
 
-const TimelineExpandedContent = ({ log }: TimelineExpandedContentProps) => {
+const TimelineExpandedContent = ({ log, onClose }: TimelineExpandedContentProps) => {
   return (
     <TableRow>
       <TableCell colSpan={10} className="p-0">
         <AlertDetailsView 
           alert={log} 
-          onClose={() => {}} // We don't need the close functionality in this context
+          onClose={onClose}
         />
       </TableCell>
     </TableRow>
