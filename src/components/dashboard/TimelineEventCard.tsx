@@ -5,24 +5,13 @@ import { getRiskLevel } from "./utils";
 import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineMitreSection from "./TimelineMitreSection";
-import TimelineInstanceList from "./TimelineInstanceList";
 import TimelineConnector from "./TimelineConnector";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
-import ExpandedContent from "./TimelineEventDetails/ExpandedContent";
 
 interface TimelineEventCardProps {
   event: Alert;
   isLast?: boolean;
   isLatest?: boolean;
   entityType: "userorigin" | "userimpacted" | "computersimpacted";
-  onSelect: (id: string | null) => void;
-  detailedLogs?: any;
-  isExpanded?: boolean;
-  onToggleExpand?: () => void;
-  instances?: Alert[];
-  isLoadingLogs?: boolean;
-  selectedEventId: string | null;
 }
 
 const TimelineEventCard = ({ 
@@ -30,36 +19,8 @@ const TimelineEventCard = ({
   isLast, 
   isLatest,
   entityType,
-  onSelect,
-  detailedLogs,
-  isExpanded,
-  onToggleExpand,
-  instances = [],
-  isLoadingLogs,
-  selectedEventId
 }: TimelineEventCardProps) => {
-  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
-
-  // Handle card click
-  const handleCardClick = () => {
-    const newExpandedState = !isDetailsExpanded;
-    console.log('Card clicked:', {
-      eventId: event.id,
-      entityType,
-      user_origin: event.user_origin,
-      title: event.title,
-      currentlyExpanded: isDetailsExpanded,
-      willExpand: newExpandedState
-    });
-    
-    setIsDetailsExpanded(newExpandedState);
-    if (newExpandedState) {
-      onSelect(event.id);
-    } else {
-      onSelect(null);
-    }
-  };
 
   return (
     <div className="group relative pl-4 w-full">
@@ -68,15 +29,12 @@ const TimelineEventCard = ({
       <div className="relative ml-4 mb-2">
         <div 
           className={cn(
-            "rounded-lg border shadow-lg cursor-pointer",
+            "rounded-lg border shadow-lg",
             cardBg,
             border,
             hover,
             isLatest && "ring-1 ring-blue-500/50 bg-opacity-75"
           )}
-          onClick={handleCardClick}
-          role="button"
-          tabIndex={0}
         >
           <div className="p-4">
             <div className="flex items-center justify-between gap-2 mb-4">
@@ -88,12 +46,6 @@ const TimelineEventCard = ({
                   description={event.description}
                 />
               </div>
-              <ChevronDown 
-                className={cn(
-                  "h-5 w-5 text-purple-400 transition-transform duration-200",
-                  isDetailsExpanded && "transform rotate-180"
-                )} 
-              />
             </div>
 
             <TimelineEventTimestamps
@@ -103,21 +55,6 @@ const TimelineEventCard = ({
 
             {event.tags && <TimelineMitreSection tags={event.tags} />}
           </div>
-
-          {isDetailsExpanded && (
-            <ExpandedContent
-              event={event}
-              logsData={detailedLogs}
-              isLoading={isLoadingLogs || false}
-              error={null}
-            />
-          )}
-
-          <TimelineInstanceList
-            instances={instances}
-            isExpanded={isExpanded || false}
-            onToggle={() => onToggleExpand?.()}
-          />
         </div>
       </div>
     </div>
