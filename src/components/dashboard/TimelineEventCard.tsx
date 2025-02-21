@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import TimelineLogsTable from "./TimelineLogsTable";
 import TimelineCardContent from "./TimelineCardContent";
+import LoadingSpinner from "@/components/timeline/components/LoadingSpinner";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -34,16 +35,18 @@ const TimelineEventCard = ({
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
   const [logs, setLogs] = useState<any[]>([]);
   const [dataSource, setDataSource] = useState<'mloutliers' | 'anomalies'>('anomalies');
-  const [visibleColumns] = useState<string[]>(['system_time', 'title']);
+  const [visibleColumns] = useState<string[]>(['system_time', 'title', 'description', 'ip_address', 'rule_level']);
 
   // Reset logs when card is collapsed
   useEffect(() => {
     if (selectedEventId !== event.id) {
       setLogs([]);
+    } else if (detailedLogs) {
+      setLogs(detailedLogs);
     }
-  }, [selectedEventId, event.id]);
+  }, [selectedEventId, event.id, detailedLogs]);
 
-  const handleClick = async () => {
+  const handleClick = () => {
     console.log('Card clicked:', {
       entityType,
       eventId: event.id,
@@ -54,54 +57,6 @@ const TimelineEventCard = ({
 
     if (onSelect) {
       onSelect(event.id);
-    }
-
-    // Only fetch logs if this card is being expanded
-    if (selectedEventId !== event.id) {
-      let endpoint = '/api/user_origin_logs';
-      const params = new URLSearchParams();
-
-      if (entityType === "userorigin") {
-        if (!event.user_origin || !event.title) {
-          toast.error("Missing required parameters");
-          return;
-        }
-        params.append("user_origin", event.user_origin);
-        params.append("title", event.title);
-      } else {
-        endpoint = entityType === "computersimpacted" 
-          ? '/api/computer_impacted_logs'
-          : '/api/user_impacted_logs';
-
-        const paramKey = entityType === "computersimpacted" 
-          ? "computer_name" 
-          : "user_impacted";
-        
-        const paramValue = entityType === "computersimpacted"
-          ? event.computer_name
-          : event.user_impacted;
-
-        if (!paramValue) {
-          toast.error("Missing required parameters");
-          return;
-        }
-
-        params.append(paramKey, paramValue);
-        params.append("title", event.title || '');
-      }
-
-      try {
-        const response = await fetch(`${endpoint}?${params.toString()}`);
-        const data = await response.json();
-        console.log('API Response:', data);
-        
-        const logsArray = entityType === "userorigin" ? data.user_origin_logs : data;
-        const processedLogs = Array.isArray(logsArray) ? logsArray : [];
-        setLogs(processedLogs);
-      } catch (error) {
-        console.error('Error fetching logs:', error);
-        toast.error("Failed to fetch logs");
-      }
     }
   };
 
@@ -114,7 +69,7 @@ const TimelineEventCard = ({
       <div className="relative ml-4 mb-2">
         <div 
           className={cn(
-            "rounded-lg border shadow-lg cursor-pointer",
+            "rounded-lg border shadow-lg cursor-pointer transition-all duration-200",
             cardBg,
             border,
             hover,
@@ -125,12 +80,26 @@ const TimelineEventCard = ({
           <TimelineCardContent event={event} onClick={handleClick} />
 
           {isExpanded && (
-            <TimelineLogsTable
-              logs={logs}
-              visibleColumns={visibleColumns}
-              dataSource={dataSource}
-              onDataSourceChange={setDataSource}
-            />
+            <div className="border-t border-slate-700/50">
+              {isLoadingLogs ? (
+                <div className="p-4 flex justify-center">
+                  <LoadingSpinner />
+                </div>
+              ) : logs && logs.length > 0 ? (
+                <div className="p-4">
+                  <TimelineLogsTable
+                    logs={logs}
+                    visibleColumns={visibleColumns}
+                    dataSource={dataSource}
+                    onDataSourceChange={setDataSource}
+                  />
+                </div>
+              ) : (
+                <div className="p-4 text-center text-slate-400">
+                  No detailed logs available
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
