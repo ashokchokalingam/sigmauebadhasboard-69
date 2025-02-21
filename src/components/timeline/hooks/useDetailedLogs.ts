@@ -22,18 +22,11 @@ export const useDetailedLogs = (
         return null;
       }
 
-      // For timeline view, use timeline endpoints
-      const timelineEndpoints = {
+      // Determine the correct API endpoint and parameters based on entity type
+      const endpoints = {
         userorigin: '/api/user_origin_timeline',
         userimpacted: '/api/user_impacted_timeline',
         computersimpacted: '/api/computer_impacted_timeline'
-      };
-
-      // For detailed logs, use logs endpoints
-      const logEndpoints = {
-        userorigin: '/api/user_origin_logs',
-        userimpacted: '/api/user_impacted_logs',
-        computersimpacted: '/api/computer_impacted_logs'
       };
 
       const paramMappings = {
@@ -51,8 +44,7 @@ export const useDetailedLogs = (
         }
       };
 
-      const timelineEndpoint = timelineEndpoints[entityType];
-      const logEndpoint = logEndpoints[entityType];
+      const endpoint = endpoints[entityType];
       const { key, value } = paramMappings[entityType];
 
       if (!value) {
@@ -67,31 +59,29 @@ export const useDetailedLogs = (
         params.append("title", selectedEvent.title);
       }
 
-      // Fetch both timeline and detailed logs
-      try {
-        const [timelineResponse, logsResponse] = await Promise.all([
-          fetch(`${timelineEndpoint}?${params.toString()}`),
-          fetch(`${logEndpoint}?${params.toString()}`)
-        ]);
+      const url = `${endpoint}?${params.toString()}`;
+      console.log('Fetching logs from:', url);
 
-        if (!timelineResponse.ok || !logsResponse.ok) {
-          throw new Error('Failed to fetch data');
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch logs: ${response.statusText}`);
         }
 
-        const timelineData = await timelineResponse.json();
-        const logsData = await logsResponse.json();
-
-        console.log('Data fetched successfully:', { timelineData, logsData });
+        const data = await response.json();
+        console.log('Logs fetched successfully:', data);
         
-        // Combine timeline and logs data
-        return {
-          timeline: timelineData[`${entityType}_timeline`] || [],
-          logs: logsData[`${entityType}_logs`] || []
+        // Map the response based on entity type
+        const responseMapping = {
+          userorigin: data.user_origin_timeline,
+          userimpacted: data.user_impacted_timeline,
+          computersimpacted: data.computer_impacted_timeline
         };
 
+        return responseMapping[entityType] || [];
       } catch (error) {
-        console.error('Error fetching data:', error);
-        toast.error("Failed to fetch timeline and logs data");
+        console.error('Error fetching logs:', error);
+        toast.error("Failed to fetch detailed logs");
         throw error;
       }
     },
