@@ -4,7 +4,6 @@ import { Bar, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cartesi
 import { ChartDataPoint } from "./types";
 import { OutlierTooltip } from "./OutlierTooltip";
 import { Toggle } from "@/components/ui/toggle";
-import { formatDateTime } from "@/utils/dateTimeUtils";
 import { format } from "date-fns";
 
 interface OutlierChartProps {
@@ -78,7 +77,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={filteredData}
-            margin={{ top: 20, right: 30, left: 0, bottom: 80 }}
+            margin={{ top: 20, right: 30, left: 0, bottom: 35 }}
           >
             <defs>
               {['Critical', 'High', 'Medium', 'Low'].map((severity) => (
@@ -114,13 +113,13 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
               tickFormatter={formatXAxisDate}
               tick={{ 
                 fill: '#D8B4FE', 
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: 500
               }}
-              height={80}
-              tickMargin={35}
-              interval="preserveStartEnd"
-              angle={-45}
+              height={35}
+              tickMargin={8}
+              interval={0}
+              angle={-35}
               textAnchor="end"
             />
             <YAxis 
