@@ -1,6 +1,7 @@
 
 import { Alert } from "./types";
 import { cn } from "@/lib/utils";
+import { getRiskLevel } from "./utils"; // Add this import
 import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineMitreSection from "./TimelineMitreSection";
