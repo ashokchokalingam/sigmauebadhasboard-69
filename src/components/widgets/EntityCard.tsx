@@ -1,11 +1,11 @@
 import React from "react";
-import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Clock } from "lucide-react";
-import RiskLevelIndicator from "./RiskLevelIndicator";
-import WaveformDisplay from "./WaveformDisplay";
-import RiskScoreDisplay from "./RiskScoreDisplay";
 import { RiskyEntity } from "./types";
 import { cn } from "@/lib/utils";
-import { formatDateTime } from "@/utils/dateTimeUtils";
+import WaveformDisplay from "./WaveformDisplay";
+import RiskScoreDisplay from "./RiskScoreDisplay";
+import EntityCardInfo from "./EntityCardInfo";
+import EntityCardExpanded from "./EntityCardExpanded";
+import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Clock } from "lucide-react";
 
 interface EntityCardProps {
   entity: RiskyEntity;
@@ -15,9 +15,6 @@ interface EntityCardProps {
 }
 
 const EntityCard = ({ entity, entityType, onClick, isExpanded }: EntityCardProps) => {
-  const isComputer = entityType === 'computer';
-  const Icon = isComputer ? Monitor : User;
-  const entityName = isComputer ? entity.computer : entity.user;
   const riskScore = parseFloat(entity.cumulative_risk_score);
 
   const getRiskLevel = (score: number): { 
@@ -103,21 +100,12 @@ const EntityCard = ({ entity, entityType, onClick, isExpanded }: EntityCardProps
         "hover:shadow-lg hover:shadow-[#5856D6]/5",
         isExpanded && "border-b border-[#5856D6]/20"
       )}>
-        <div className="flex items-center gap-3 flex-[0_0_40%]">
-          <div className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center
-            border border-[#5856D6]/10`}>
-            <Icon className={`w-4 h-4 ${textColor}`} />
-          </div>
-          
-          <div className="flex flex-col min-w-[120px] gap-0.5">
-            <span className="font-mono text-sm text-[#D6BCFA] font-medium hover:text-white truncate max-w-[180px]">
-              {entityName}
-            </span>
-            <span className="text-xs text-[#9b87f5]/60">
-              {entity.unique_title_count} unique anomalies
-            </span>
-          </div>
-        </div>
+        <EntityCardInfo 
+          entityType={entityType}
+          entity={entity}
+          textColor={textColor}
+          bgColor={bgColor}
+        />
 
         <div className="flex items-center gap-1">
           <div className="flex flex-col items-start mr-1">
@@ -145,43 +133,10 @@ const EntityCard = ({ entity, entityType, onClick, isExpanded }: EntityCardProps
       </div>
 
       {isExpanded && (
-        <div className="px-4 py-3 text-sm text-[#9b87f5]/70">
-          <div className="space-y-2">
-            <div>
-              <div>Unique Tactics: {entity.unique_tactics_count}</div>
-              <div>Unique Outliers: {entity.unique_outliers}</div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <span>Risk Score Trend:</span>
-              {trend && (
-                <div className={cn(
-                  "flex items-center gap-1",
-                  trend === 'up' ? "text-red-400" : "text-green-400"
-                )}>
-                  {trend === 'up' ? (
-                    <>
-                      <ArrowUpIcon className="h-4 w-4" />
-                      <span>Increasing</span>
-                    </>
-                  ) : (
-                    <>
-                      <ArrowDownIcon className="h-4 w-4" />
-                      <span>Decreasing</span>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {entity.last_seen && (
-              <div className="flex items-center gap-1 text-xs">
-                <Clock className="h-3 w-3" />
-                <span>Last seen: {formatDateTime(entity.last_seen, true)}</span>
-              </div>
-            )}
-          </div>
-        </div>
+        <EntityCardExpanded 
+          entity={entity}
+          trend={trend}
+        />
       )}
     </div>
   );
