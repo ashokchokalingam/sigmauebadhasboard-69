@@ -30,7 +30,7 @@ interface RiskyEntitiesResponse {
 }
 
 const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
-  const { data: totalCountData, error } = useQuery({
+  const { data: totalCountData } = useQuery({
     queryKey: ["total-count"],
     queryFn: async () => {
       const response = await fetch("/api/total_count");
@@ -59,7 +59,7 @@ const StatsSection = ({ stats, totalAlerts }: StatsSectionProps) => {
   const { data: computerCountData } = useQuery({
     queryKey: ["computer-count"],
     queryFn: async () => {
-      const response = await fetch("http://192.168.1.107:8080/api/computer_count");
+      const response = await fetch("/api/computer_count");
       if (!response.ok) {
         throw new Error("Failed to fetch computer count");
       }
