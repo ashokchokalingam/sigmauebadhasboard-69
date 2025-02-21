@@ -100,6 +100,9 @@ const TimelineLogsTable = ({
               <TableHead className="whitespace-nowrap px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10">
                 Provider Name
               </TableHead>
+              <TableHead className="whitespace-nowrap px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10">
+                Risk Level
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -133,10 +136,13 @@ const TimelineLogsTable = ({
                   <TableCell className="whitespace-nowrap px-4 py-3 text-slate-300">
                     {log.provider_name || 'N/A'}
                   </TableCell>
+                  <TableCell className="whitespace-nowrap px-4 py-3 text-slate-300">
+                    {log.rule_level || 'N/A'}
+                  </TableCell>
                 </TableRow>
                 {expandedRows.has(index) && (
                   <TableRow>
-                    <TableCell colSpan={6} className="p-0">
+                    <TableCell colSpan={7} className="p-0">
                       <div className="py-6 px-8 expanded-row border-b border-indigo-500/10">
                         <div className="grid gap-6">
                           <div className="grid grid-cols-3 gap-4">
@@ -145,12 +151,38 @@ const TimelineLogsTable = ({
                               <div className="detail-value">{formatDateTime(log.system_time || '', true)}</div>
                             </div>
                             <div className="detail-card p-4">
-                              <div className="detail-header">Event Record ID</div>
-                              <div className="detail-value">{log.event_record_id || 'N/A'}</div>
+                              <div className="detail-header">Risk Score</div>
+                              <div className="detail-value">{log.risk || 'N/A'}</div>
                             </div>
                             <div className="detail-card p-4">
-                              <div className="detail-header">Event Level</div>
-                              <div className="detail-value">{log.event_level || 'N/A'}</div>
+                              <div className="detail-header">User ID</div>
+                              <div className="detail-value">{log.user_id || 'N/A'}</div>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-4">
+                            <div className="detail-card p-4">
+                              <div className="detail-header">Target User Name</div>
+                              <div className="detail-value">{log.target_user_name || 'N/A'}</div>
+                            </div>
+                            <div className="detail-card p-4">
+                              <div className="detail-header">Target Domain Name</div>
+                              <div className="detail-value">{log.target_domain_name || 'N/A'}</div>
+                            </div>
+                            <div className="detail-card p-4">
+                              <div className="detail-header">Task</div>
+                              <div className="detail-value">{log.task || 'N/A'}</div>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="detail-card p-4">
+                              <div className="detail-header">Tactics</div>
+                              <div className="detail-value">{log.tactics || 'N/A'}</div>
+                            </div>
+                            <div className="detail-card p-4">
+                              <div className="detail-header">Techniques</div>
+                              <div className="detail-value">{log.techniques || 'N/A'}</div>
                             </div>
                           </div>
 
@@ -168,15 +200,9 @@ const TimelineLogsTable = ({
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="detail-card p-4">
-                              <div className="detail-header">Channel</div>
-                              <div className="detail-value">{log.channel || 'N/A'}</div>
-                            </div>
-                            <div className="detail-card p-4">
-                              <div className="detail-header">Task Category</div>
-                              <div className="detail-value">{log.task_category || 'N/A'}</div>
-                            </div>
+                          <div className="detail-card p-4">
+                            <div className="detail-header">Tags</div>
+                            <div className="detail-value">{log.tags || 'N/A'}</div>
                           </div>
 
                           {log.raw && <TimelineRawLog alert={log as Alert} />}
