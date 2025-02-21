@@ -1,6 +1,5 @@
-
 import { Alert } from "@/components/dashboard/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import TimelineControls from "./components/TimelineControls";
 import TimelineEventList from "./components/TimelineEventList";
@@ -29,10 +28,27 @@ const TimelineContent = ({
 
   const processedEvents = useProcessedEvents(allEvents, sortBy, filterBy);
 
+  // Add effect to log when selectedEventId changes
+  useEffect(() => {
+    console.log('selectedEventId changed:', {
+      selectedEventId,
+      entityType,
+      eventDetails: selectedEventId ? allEvents.find(e => e.id === selectedEventId) : null
+    });
+  }, [selectedEventId, entityType, allEvents]);
+
   const { data: detailedLogs, isLoading: isLoadingLogs } = useQuery({
     queryKey: ["detailed-logs", entityType, selectedEventId],
     queryFn: async () => {
-      if (!selectedEventId) return null;
+      console.log('queryFn executing with:', {
+        selectedEventId,
+        entityType
+      });
+
+      if (!selectedEventId) {
+        console.log('No selectedEventId, returning null');
+        return null;
+      }
       
       const selectedEvent = allEvents.find(event => event.id === selectedEventId);
       if (!selectedEvent) {
@@ -40,23 +56,28 @@ const TimelineContent = ({
         return null;
       }
 
-      // Log the event data to verify we have the correct information
-      console.log('Selected event:', selectedEvent);
+      console.log('Found selected event:', selectedEvent);
 
-      // Construct the endpoint and params based on entity type
       let endpoint = '/api/user_origin_logs';
       const params = new URLSearchParams();
 
       if (entityType === "userorigin") {
-        params.append("user_origin", selectedEvent.user_origin || '');
-        params.append("title", selectedEvent.title || '');
-        
-        console.log('Fetching user origin logs with params:', {
-          user_origin: selectedEvent.user_origin,
-          title: selectedEvent.title
+        const userOrigin = selectedEvent.user_origin;
+        const title = selectedEvent.title;
+
+        console.log('Building userorigin params:', {
+          userOrigin,
+          title
         });
+
+        if (!userOrigin || !title) {
+          console.log('Missing required params');
+          return null;
+        }
+
+        params.append("user_origin", userOrigin);
+        params.append("title", title);
       } else {
-        // Handle other entity types similarly
         endpoint = entityType === "computersimpacted" 
           ? '/api/computer_impacted_logs'
           : '/api/user_impacted_logs';
@@ -74,7 +95,7 @@ const TimelineContent = ({
       }
 
       const url = `${endpoint}?${params.toString()}`;
-      console.log('Fetching logs from URL:', url);
+      console.log('Making API request to:', url);
 
       try {
         const response = await fetch(url);
@@ -82,9 +103,8 @@ const TimelineContent = ({
           throw new Error(`Failed to fetch logs: ${response.statusText}`);
         }
         const data = await response.json();
-        console.log('Received logs data:', data);
+        console.log('Received API response:', data);
         
-        // For user_origin_logs, the data is nested under a specific key
         return entityType === "userorigin" ? data.user_origin_logs : data;
       } catch (error) {
         console.error('Error fetching logs:', error);
@@ -92,23 +112,24 @@ const TimelineContent = ({
         throw error;
       }
     },
-    enabled: !!selectedEventId,
+    enabled: !!selectedEventId && entityType === "userorigin",
     meta: {
       onSettled: (data, error) => {
-        if (error) {
-          console.error('Error in logs query:', error);
-        }
+        console.log('Query settled:', {
+          hasData: !!data,
+          error
+        });
       }
     }
   });
 
-  console.log('Timeline Content Render:', {
-    entityType,
-    eventsCount: allEvents.length,
-    processedEventsCount: processedEvents.length,
-    selectedEventId,
-    hasDetailedLogs: !!detailedLogs
-  });
+  const handleSelect = (id: string | null) => {
+    console.log('handleSelect called with:', {
+      id,
+      currentSelectedId: selectedEventId
+    });
+    setSelectedEventId(id);
+  };
 
   const handleToggleExpand = (eventId: string) => {
     setExpandedGroups(prev => {
@@ -154,7 +175,7 @@ const TimelineContent = ({
           selectedEventId={selectedEventId}
           expandedGroups={expandedGroups}
           detailedLogs={detailedLogs}
-          onSelect={setSelectedEventId}
+          onSelect={handleSelect}
           onToggleExpand={handleToggleExpand}
           hasNextPage={hasNextPage}
           loaderRef={loaderRef}
