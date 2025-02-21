@@ -4,30 +4,35 @@ import { Alert } from "../types";
 
 type EntityType = "userorigin" | "userimpacted" | "computersimpacted";
 
-const getApiEndpoint = (entityType: EntityType, userOrigin?: string, title?: string) => {
+interface TimelineLogsParams {
+  entityType: EntityType;
+  event: Alert;
+  enabled: boolean;
+}
+
+const getApiEndpoint = (entityType: EntityType, event: Alert) => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  
   switch (entityType) {
     case "userorigin":
-      return `/api/user_origin_logs?user_origin=${encodeURIComponent(userOrigin || '')}&title=${encodeURIComponent(title || '')}`;
+      return `${baseUrl}/api/user_origin_logs?user_origin=${encodeURIComponent(event.user_origin || '')}&title=${encodeURIComponent(event.title || '')}`;
     case "userimpacted":
-      return "/api/user_impacted_logs";
+      return `${baseUrl}/api/user_impacted_logs`;
     case "computersimpacted":
-      return "/api/computer_impacted_logs";
+      return `${baseUrl}/api/computer_impacted_logs`;
     default:
-      return "/api/user_origin_logs";
+      return `${baseUrl}/api/user_origin_logs`;
   }
 };
 
-export const useTimelineLogs = (
-  entityType: EntityType,
-  event: Alert,
-  isEnabled: boolean
-) => {
+export const useTimelineLogs = ({ entityType, event, enabled }: TimelineLogsParams) => {
   const fetchLogs = async () => {
     try {
-      const endpoint = getApiEndpoint(entityType, event.user_origin, event.title);
+      const endpoint = getApiEndpoint(entityType, event);
       console.log('Fetching logs from:', endpoint);
+      console.log('Event data:', event);
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+      const response = await fetch(endpoint, {
         method: entityType === "userorigin" ? 'GET' : 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -35,7 +40,8 @@ export const useTimelineLogs = (
         ...(entityType !== "userorigin" && {
           body: JSON.stringify({
             user_origin: event.user_origin,
-            title: event.title
+            title: event.title,
+            computer_name: event.computer_name
           })
         })
       });
@@ -56,7 +62,9 @@ export const useTimelineLogs = (
   return useQuery({
     queryKey: ['logs', entityType, event.id],
     queryFn: fetchLogs,
-    enabled: isEnabled,
-    retry: 1
+    enabled: enabled,
+    retry: 1,
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    cacheTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 };

@@ -1,7 +1,7 @@
 
 import { Alert } from "./types";
 import { cn } from "@/lib/utils";
-import { getRiskLevel } from "./utils"; // Add this import
+import { getRiskLevel } from "./utils";
 import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineMitreSection from "./TimelineMitreSection";
@@ -11,7 +11,7 @@ import { useTimelineLogs } from "./hooks/useTimelineLogs";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -44,14 +44,24 @@ const TimelineEventCard = ({
   const isSelected = selectedEventId === event.id;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
-  const { data: logsData, isLoading } = useTimelineLogs(
+  // Query for logs data
+  const { data: logsData, isLoading, error } = useTimelineLogs({
     entityType,
     event,
-    isDetailsExpanded
-  );
+    enabled: isDetailsExpanded
+  });
+
+  useEffect(() => {
+    if (error) {
+      console.error('Error fetching logs:', error);
+    }
+  }, [error]);
 
   const handleExpandClick = () => {
     setIsDetailsExpanded(!isDetailsExpanded);
+    if (!isDetailsExpanded) {
+      console.log('Expanding card and fetching logs for:', event);
+    }
   };
 
   return (
@@ -67,6 +77,9 @@ const TimelineEventCard = ({
             hover,
             isLatest && "ring-1 ring-blue-500/50 bg-opacity-75"
           )}
+          onClick={handleExpandClick}
+          role="button"
+          tabIndex={0}
         >
           <div className="p-4">
             <div className="flex items-center justify-between gap-2 mb-4">
@@ -81,7 +94,6 @@ const TimelineEventCard = ({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleExpandClick}
                 className="text-purple-400 hover:text-purple-300"
               >
                 <ChevronDown className={cn(
@@ -174,6 +186,12 @@ const TimelineEventCard = ({
                   </Table>
                 </div>
               ) : null}
+
+              {error && (
+                <div className="text-red-400 mt-4 text-center">
+                  Error loading logs. Please try again.
+                </div>
+              )}
             </div>
           )}
 
