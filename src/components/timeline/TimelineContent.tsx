@@ -1,6 +1,6 @@
 
 import { Alert } from "@/components/dashboard/types";
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import TimelineControls from "./components/TimelineControls";
 import TimelineEventList from "./components/TimelineEventList";
 import LoadingSpinner from "./components/LoadingSpinner";
@@ -35,31 +35,25 @@ const TimelineContent = ({
     allEvents
   );
 
-  const handleSelect = useCallback((id: string | null) => {
-    // If clicking the same card, just toggle it
+  const handleSelect = (id: string | null) => {
+    // If clicking the same card, collapse it
     if (id === selectedEventId) {
       setSelectedEventId(null);
-      setExpandedGroups(new Set());
     } else {
-      // If clicking a different card, select it and clear any expanded groups
+      // If clicking a different card, select it
       setSelectedEventId(id);
-      setExpandedGroups(new Set());
     }
-  }, [selectedEventId]);
+  };
 
-  const handleToggleExpand = useCallback((eventId: string) => {
+  const handleToggleExpand = (eventId: string) => {
     setExpandedGroups(prev => {
-      // Create a new empty set (clears all previous expansions)
       const newSet = new Set<string>();
-      
-      // Only add this eventId if it wasn't already expanded
       if (!prev.has(eventId)) {
         newSet.add(eventId);
       }
-      
       return newSet;
     });
-  }, []);
+  };
 
   if (isLoading && allEvents.length === 0) {
     return <LoadingSpinner />;

@@ -37,73 +37,72 @@ const TimelineEventCard = ({
 }: TimelineEventCardProps) => {
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
   const [logs, setLogs] = useState<any[]>([]);
-  const [isTableExpanded, setIsTableExpanded] = useState(false);
-  const [visibleColumns] = useState<string[]>(['system_time', 'title']);
   const [dataSource, setDataSource] = useState<'mloutliers' | 'anomalies'>('anomalies');
+  const [visibleColumns] = useState<string[]>(['system_time', 'title']);
 
   const handleClick = async () => {
     console.log('Card clicked:', {
       entityType,
       eventId: event.id,
       title: event.title,
-      user_origin: event.user_origin,
-      user_impacted: event.user_impacted,
-      computer_name: event.computer_name
+      currentSelection: selectedEventId
     });
 
-    let endpoint = '/api/user_origin_logs';
-    const params = new URLSearchParams();
-
-    if (entityType === "userorigin") {
-      if (!event.user_origin || !event.title) {
-        toast.error("Missing required parameters");
-        return;
-      }
-      params.append("user_origin", event.user_origin);
-      params.append("title", event.title);
-    } else {
-      endpoint = entityType === "computersimpacted" 
-        ? '/api/computer_impacted_logs'
-        : '/api/user_impacted_logs';
-
-      const paramKey = entityType === "computersimpacted" 
-        ? "computer_name" 
-        : "user_impacted";
-      
-      const paramValue = entityType === "computersimpacted"
-        ? event.computer_name
-        : event.user_impacted;
-
-      if (!paramValue) {
-        toast.error("Missing required parameters");
-        return;
-      }
-
-      params.append(paramKey, paramValue);
-      params.append("title", event.title || '');
+    // Toggle expansion state through parent
+    if (onSelect) {
+      onSelect(event.id);
     }
 
-    const url = `${endpoint}?${params.toString()}`;
-    console.log('Fetching logs from:', url);
+    // Only fetch logs if we're expanding the card
+    if (event.id !== selectedEventId) {
+      let endpoint = '/api/user_origin_logs';
+      const params = new URLSearchParams();
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      console.log('API Response:', data);
-      
-      const logsArray = entityType === "userorigin" ? data.user_origin_logs : data;
-      const processedLogs = Array.isArray(logsArray) ? logsArray : [];
-      setLogs(processedLogs);
-      setIsTableExpanded(true);
-      
-      if (onSelect) {
-        onSelect(event.id === selectedEventId ? null : event.id);
+      if (entityType === "userorigin") {
+        if (!event.user_origin || !event.title) {
+          toast.error("Missing required parameters");
+          return;
+        }
+        params.append("user_origin", event.user_origin);
+        params.append("title", event.title);
+      } else {
+        endpoint = entityType === "computersimpacted" 
+          ? '/api/computer_impacted_logs'
+          : '/api/user_impacted_logs';
+
+        const paramKey = entityType === "computersimpacted" 
+          ? "computer_name" 
+          : "user_impacted";
+        
+        const paramValue = entityType === "computersimpacted"
+          ? event.computer_name
+          : event.user_impacted;
+
+        if (!paramValue) {
+          toast.error("Missing required parameters");
+          return;
+        }
+
+        params.append(paramKey, paramValue);
+        params.append("title", event.title || '');
       }
-    } catch (error) {
-      console.error('Error fetching logs:', error);
-      toast.error("Failed to fetch logs");
+
+      try {
+        const response = await fetch(`${endpoint}?${params.toString()}`);
+        const data = await response.json();
+        console.log('API Response:', data);
+        
+        const logsArray = entityType === "userorigin" ? data.user_origin_logs : data;
+        const processedLogs = Array.isArray(logsArray) ? logsArray : [];
+        setLogs(processedLogs);
+      } catch (error) {
+        console.error('Error fetching logs:', error);
+        toast.error("Failed to fetch logs");
+      }
     }
   };
+
+  const isCardExpanded = event.id === selectedEventId;
 
   return (
     <div className="group relative pl-4 w-full">
@@ -121,7 +120,7 @@ const TimelineEventCard = ({
         >
           <TimelineCardContent event={event} onClick={handleClick} />
 
-          {isTableExpanded && (
+          {isCardExpanded && (
             <TimelineLogsTable
               logs={logs}
               visibleColumns={visibleColumns}
@@ -136,4 +135,3 @@ const TimelineEventCard = ({
 };
 
 export default TimelineEventCard;
-
