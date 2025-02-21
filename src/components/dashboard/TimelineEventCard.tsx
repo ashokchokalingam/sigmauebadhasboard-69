@@ -58,46 +58,57 @@ const TimelineEventCard = ({
 
     // Only fetch logs if this card is being expanded
     if (selectedEventId !== event.id) {
-      let endpoint = '/api/user_origin_logs';
-      const params = new URLSearchParams();
-
-      if (entityType === "userorigin") {
-        if (!event.user_origin || !event.title) {
-          toast.error("Missing required parameters");
-          return;
+      // Define endpoints and parameters based on entity type
+      const config = {
+        userorigin: {
+          endpoint: '/api/user_origin_logs',
+          paramKey: 'user_origin',
+          paramValue: event.user_origin
+        },
+        userimpacted: {
+          endpoint: '/api/user_impacted_logs',
+          paramKey: 'user_impacted',
+          paramValue: event.user_impacted
+        },
+        computersimpacted: {
+          endpoint: '/api/computer_impacted_logs',
+          paramKey: 'computer_name',
+          paramValue: event.computer_name
         }
-        params.append("user_origin", event.user_origin);
-        params.append("title", event.title);
-      } else {
-        endpoint = entityType === "computersimpacted" 
-          ? '/api/computer_impacted_logs'
-          : '/api/user_impacted_logs';
+      };
 
-        const paramKey = entityType === "computersimpacted" 
-          ? "computer_name" 
-          : "user_impacted";
-        
-        const paramValue = entityType === "computersimpacted"
-          ? event.computer_name
-          : event.user_impacted;
+      const { endpoint, paramKey, paramValue } = config[entityType];
 
-        if (!paramValue) {
-          toast.error("Missing required parameters");
-          return;
-        }
-
-        params.append(paramKey, paramValue);
-        params.append("title", event.title || '');
+      if (!paramValue || !event.title) {
+        toast.error("Missing required parameters");
+        return;
       }
 
+      const params = new URLSearchParams({
+        [paramKey]: paramValue,
+        title: event.title
+      });
+
       try {
+        console.log('Fetching logs from:', `${endpoint}?${params.toString()}`);
         const response = await fetch(`${endpoint}?${params.toString()}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         console.log('API Response:', data);
         
-        const logsArray = entityType === "userorigin" ? data.user_origin_logs : data;
-        const processedLogs = Array.isArray(logsArray) ? logsArray : [];
-        setLogs(processedLogs);
+        // Handle different response structures based on entity type
+        const logsMap = {
+          userorigin: data.user_origin_logs,
+          userimpacted: data.user_impacted_logs,
+          computersimpacted: data.computer_impacted_logs
+        };
+        
+        const logsArray = logsMap[entityType] || [];
+        setLogs(Array.isArray(logsArray) ? logsArray : []);
       } catch (error) {
         console.error('Error fetching logs:', error);
         toast.error("Failed to fetch logs");
@@ -139,3 +150,4 @@ const TimelineEventCard = ({
 };
 
 export default TimelineEventCard;
+
