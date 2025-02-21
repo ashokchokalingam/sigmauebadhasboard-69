@@ -4,11 +4,17 @@ import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Clock } from "lucide-react";
 import RiskLevelIndicator from "./RiskLevelIndicator";
 import WaveformDisplay from "./WaveformDisplay";
 import RiskScoreDisplay from "./RiskScoreDisplay";
-import { RiskyEntity } from "./types";
 import { formatDateTime } from "@/utils/dateTimeUtils";
 
 interface EntityCardProps {
-  entity: RiskyEntity;
+  entity: {
+    computer?: string;
+    user?: string;
+    cumulative_risk_score: string;
+    unique_title_count: number;
+    risk_trend?: number;
+    last_seen?: string;
+  };
   entityType: 'computer' | 'userOrigin' | 'userImpacted';
   onClick: () => void;
 }
@@ -18,22 +24,12 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
   const Icon = isComputer ? Monitor : User;
   const entityName = isComputer ? entity.computer : entity.user;
 
-  const getRiskLevel = (score: number): { 
-    level: string; 
-    color: string;
-    textColor: string; 
-    bgColor: string;
-    lineColor: string;
-    barWidth: number;
-    glowColor: string;
-    trend: 'up' | 'down' | null;
-  } => {
-    // Calculate relative width based on risk level
+  const getRiskLevel = (score: number) => {
     const getBarWidth = (score: number): number => {
-      if (score >= 150) return Math.min((score / 200) * 100, 100); // CRITICAL
-      if (score >= 100) return (score / 150) * 75; // HIGH
-      if (score >= 50) return (score / 100) * 50; // MEDIUM
-      return (score / 50) * 25; // LOW
+      if (score >= 150) return Math.min((score / 200) * 100, 100);
+      if (score >= 100) return (score / 150) * 75;
+      if (score >= 50) return (score / 100) * 50;
+      return (score / 50) * 25;
     };
 
     const trend = typeof entity.risk_trend === 'number'
