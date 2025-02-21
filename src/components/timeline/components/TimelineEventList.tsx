@@ -8,7 +8,6 @@ interface TimelineEventListProps {
   entityType: "userorigin" | "userimpacted" | "computersimpacted";
   selectedEventId: string | null;
   expandedGroups: Set<string>;
-  detailedLogs: any;
   onSelect: (id: string | null) => void;
   onToggleExpand: (id: string) => void;
   hasNextPage: boolean;
@@ -21,13 +20,18 @@ const TimelineEventList = ({
   entityType,
   selectedEventId,
   expandedGroups,
-  detailedLogs,
   onSelect,
   onToggleExpand,
   hasNextPage,
   loaderRef,
   isLoadingLogs
 }: TimelineEventListProps) => {
+  console.log('TimelineEventList Render:', {
+    eventsCount: events.length,
+    entityType,
+    selectedEventId
+  });
+
   return (
     <ScrollArea className="flex-1">
       <div className="p-2 space-y-2">
@@ -38,12 +42,11 @@ const TimelineEventList = ({
             isLast={index === events.length - 1}
             entityType={entityType}
             onSelect={onSelect}
-            detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
             isExpanded={expandedGroups.has(event.id)}
             onToggleExpand={() => onToggleExpand(event.id)}
             isLatest={index === 0}
             instances={event.instances}
-            isLoadingLogs={isLoadingLogs && event.id === selectedEventId}
+            isLoadingLogs={isLoadingLogs}
             selectedEventId={selectedEventId}
           />
         ))}
