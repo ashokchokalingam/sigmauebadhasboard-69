@@ -1,9 +1,9 @@
+
 import { Shield, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback, useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import TimelineView from "../dashboard/TimelineView";
-import EntityCard from "./EntityCard";
+import TimelineView from "../components/dashboard/TimelineView";
+import EntityCard from "./widgets/EntityCard";
 
 interface HighRiskWidgetProps {
   entityType: "userOrigin" | "userImpacted" | "computer";
@@ -16,12 +16,13 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
 
-  const { data: entities = [] } = useQuery({
+  const { data: entities = [], isLoading } = useQuery({
     queryKey: [apiEndpoint],
     queryFn: async () => {
       const response = await fetch(`/api/${apiEndpoint}`);
       if (!response.ok) throw new Error(`Failed to fetch ${title}`);
       const data = await response.json();
+      console.log('Fetched entities:', data);
       const key = Object.keys(data)[0];
       return data[key] || [];
     },
@@ -88,13 +89,18 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
           <EntityCard
             key={entityType === 'computer' ? entity.computer : entity.user}
             entity={entity}
-            entityType={entityType.toLowerCase() as 'computer' | 'userOrigin' | 'userImpacted'}
+            entityType={entityType}
             onClick={() => handleEntityClick(entityType === 'computer' ? entity.computer : entity.user)}
           />
         ))}
-        {filteredEntities.length === 0 && (
+        {filteredEntities.length === 0 && !isLoading && (
           <div className="text-center text-[#9b87f5]/60 py-4">
             No high risk entities found
+          </div>
+        )}
+        {isLoading && (
+          <div className="text-center text-[#9b87f5]/60 py-4">
+            Loading...
           </div>
         )}
       </div>

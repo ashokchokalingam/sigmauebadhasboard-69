@@ -18,7 +18,7 @@ interface TimelineContentProps {
 
 const TimelineContent = ({ 
   allEvents, 
-  entityType,
+  entityType, 
   isLoading, 
   hasNextPage,
   loaderRef 
@@ -34,15 +34,7 @@ const TimelineContent = ({
     allEvents
   );
 
-  console.log('Timeline Content:', {
-    entityType,
-    selectedEventId,
-    hasDetailedLogs: !!detailedLogs,
-    isLoadingLogs
-  });
-
   const handleSelect = (id: string | null) => {
-    console.log('Selecting event:', id);
     setSelectedEventId(currentId => currentId === id ? null : id);
   };
 
@@ -50,7 +42,7 @@ const TimelineContent = ({
     return <LoadingSpinner />;
   }
 
-  if (!isLoading && allEvents.length === 0) {
+  if (allEvents.length === 0) {
     return <EmptyState />;
   }
 
@@ -59,8 +51,8 @@ const TimelineContent = ({
       <TimelineControls
         sortBy={sortBy}
         filterBy={filterBy}
-        onSortChange={setSortBy}
-        onFilterChange={setFilterBy}
+        onSortChange={(value) => setSortBy(value)}
+        onFilterChange={(value) => setFilterBy(value)}
       />
       
       <div className="flex-1 overflow-auto">

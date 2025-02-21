@@ -1,14 +1,11 @@
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { formatDateTime } from "@/utils/dateTimeUtils";
-import { Badge } from "@/components/ui/badge";
+import { Table, TableBody } from "@/components/ui/table";
+import { useState } from "react";
+import { tableStyles } from "./styles/TimelineTableStyles";
+import TimelineTableHeader from "./TimelineTableHeader";
+import TimelineTableRow from "./TimelineTableRow";
+import TimelineExpandedContent from "./TimelineExpandedContent";
+import { Alert } from "./types";
 
 interface TimelineLogsTableProps {
   logs: any[];
@@ -17,82 +14,48 @@ interface TimelineLogsTableProps {
   onDataSourceChange: (source: 'mloutliers' | 'anomalies') => void;
 }
 
-const TimelineLogsTable = ({
+const TimelineLogsTable = ({ 
   logs,
   visibleColumns,
   dataSource,
   onDataSourceChange
 }: TimelineLogsTableProps) => {
-  const getRiskLevelColor = (level: string) => {
-    switch (level?.toLowerCase()) {
-      case 'critical':
-      case 'high':
-        return 'bg-red-500/10 text-red-400 border-red-500/20';
-      case 'medium':
-        return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20';
-      case 'low':
-        return 'bg-green-500/10 text-green-400 border-green-500/20';
-      default:
-        return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-    }
-  };
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  
+  if (!logs.length) return null;
 
-  const formatColumnHeader = (column: string) => {
-    return column
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
-
-  const renderCellContent = (log: any, column: string) => {
-    switch (column) {
-      case 'system_time':
-        return formatDateTime(log[column], false);
-      case 'rule_level':
-        return (
-          <Badge 
-            variant="outline" 
-            className={getRiskLevelColor(log[column])}
-          >
-            {log[column]?.toUpperCase() || 'N/A'}
-          </Badge>
-        );
-      case 'title':
-      case 'description':
-        return (
-          <div className="max-w-md truncate">
-            {log[column] || 'N/A'}
-          </div>
-        );
-      default:
-        return log[column] || 'N/A';
-    }
+  const toggleRow = (index: number) => {
+    setExpandedRow(expandedRow === index ? null : index);
   };
 
   return (
-    <div className="w-full overflow-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {visibleColumns.map((column) => (
-              <TableHead key={column}>
-                {formatColumnHeader(column)}
-              </TableHead>
+    <div className="mt-4 rounded-xl overflow-hidden border border-slate-800">
+      <style>{tableStyles}</style>
+      
+      <div className="overflow-x-auto max-h-[800px] overflow-y-auto custom-table">
+        <Table>
+          <TimelineTableHeader />
+          <TableBody>
+            {logs.map((log, index) => (
+              <>
+                <TimelineTableRow
+                  key={index}
+                  log={log}
+                  index={index}
+                  isExpanded={expandedRow === index}
+                  onClick={() => toggleRow(index)}
+                />
+                {expandedRow === index && (
+                  <TimelineExpandedContent 
+                    log={log} 
+                    onClose={() => setExpandedRow(null)}
+                  />
+                )}
+              </>
             ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {logs.map((log, index) => (
-            <TableRow key={`${log.id || index}-${log.system_time}`}>
-              {visibleColumns.map((column) => (
-                <TableCell key={`${log.id || index}-${column}`}>
-                  {renderCellContent(log, column)}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };

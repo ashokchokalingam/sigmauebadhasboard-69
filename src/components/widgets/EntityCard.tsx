@@ -4,33 +4,27 @@ import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Clock } from "lucide-react";
 import RiskLevelIndicator from "./RiskLevelIndicator";
 import WaveformDisplay from "./WaveformDisplay";
 import RiskScoreDisplay from "./RiskScoreDisplay";
-import { RiskyEntity } from "./types";
-import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/utils/dateTimeUtils";
 
 interface EntityCardProps {
-  entity: RiskyEntity;
+  entity: {
+    computer?: string;
+    user?: string;
+    cumulative_risk_score: string;
+    unique_title_count: number;
+    risk_trend?: number;
+    last_seen?: string;
+  };
   entityType: 'computer' | 'userOrigin' | 'userImpacted';
   onClick: () => void;
-  isExpanded: boolean;
 }
 
-const EntityCard = ({ entity, entityType, onClick, isExpanded }: EntityCardProps) => {
+const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
   const isComputer = entityType === 'computer';
   const Icon = isComputer ? Monitor : User;
   const entityName = isComputer ? entity.computer : entity.user;
-  const riskScore = parseFloat(entity.cumulative_risk_score);
 
-  const getRiskLevel = (score: number): { 
-    level: string; 
-    color: string;
-    textColor: string; 
-    bgColor: string;
-    lineColor: string;
-    barWidth: number;
-    glowColor: string;
-    trend: 'up' | 'down' | null;
-  } => {
+  const getRiskLevel = (score: number) => {
     const getBarWidth = (score: number): number => {
       if (score >= 150) return Math.min((score / 200) * 100, 100);
       if (score >= 100) return (score / 150) * 75;
@@ -86,122 +80,76 @@ const EntityCard = ({ entity, entityType, onClick, isExpanded }: EntityCardProps
     };
   };
 
+  const riskScore = parseFloat(entity.cumulative_risk_score);
   const { level, color, textColor, bgColor, lineColor, barWidth, glowColor, trend } = getRiskLevel(riskScore);
 
   return (
-    <div className="flex flex-col w-full">
-      <div
-        onClick={onClick}
-        className={cn(
-          "flex items-center justify-between px-4 py-3 rounded-lg",
-          "bg-[#0A0B0F] hover:bg-[#12131A]",
-          "border border-[#5856D6]/20 hover:border-[#5856D6]/30",
-          "transition-all duration-300 cursor-pointer",
-          "hover:shadow-lg hover:shadow-[#5856D6]/5",
-          isExpanded && "ring-2 ring-blue-500 rounded-b-none"
-        )}
-      >
-        <div className="flex items-center gap-3 flex-[0_0_40%]">
-          <div className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center
-            border border-[#5856D6]/10`}>
-            <Icon className={`w-4 h-4 ${textColor}`} />
-          </div>
-          
-          <div className="flex flex-col min-w-[120px] gap-0.5">
-            <span className="font-mono text-sm text-[#D6BCFA] font-medium hover:text-white truncate max-w-[180px]">
-              {entityName}
+    <div
+      onClick={onClick}
+      className="flex items-center justify-between px-4 py-3 rounded-lg
+        bg-[#0A0B0F] hover:bg-[#12131A]
+        border border-[#5856D6]/20 hover:border-[#5856D6]/30
+        transition-all duration-300 cursor-pointer
+        hover:shadow-lg hover:shadow-[#5856D6]/5"
+    >
+      <div className="flex items-center gap-3 flex-[0_0_40%]">
+        <div className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center
+          border border-[#5856D6]/10`}>
+          <Icon className={`w-4 h-4 ${textColor}`} />
+        </div>
+        
+        <div className="flex flex-col min-w-[120px] gap-0.5">
+          <span className="font-mono text-sm text-[#D6BCFA] font-medium hover:text-white truncate max-w-[180px]">
+            {entityName}
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#9b87f5]/60">
+              {entity.unique_title_count} unique anomalies
             </span>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-[#9b87f5]/60">
-                {entity.unique_title_count} unique anomalies
-              </span>
-              {trend && (
-                <div className={`flex items-center ${
-                  trend === 'up' ? 'text-red-400' : 'text-green-400'
-                }`}>
-                  {trend === 'up' ? (
-                    <ArrowUpIcon className="h-3 w-3" />
-                  ) : (
-                    <ArrowDownIcon className="h-3 w-3" />
-                  )}
-                </div>
-              )}
-            </div>
-            {entity.last_seen && (
-              <div className="flex items-center gap-1 text-xs text-[#9b87f5]/60">
-                <Clock className="h-3 w-3" />
-                <span>Last seen: {formatDateTime(entity.last_seen, true)}</span>
+            {trend && (
+              <div className={`flex items-center ${
+                trend === 'up' ? 'text-red-400' : 'text-green-400'
+              }`}>
+                {trend === 'up' ? (
+                  <ArrowUpIcon className="h-3 w-3" />
+                ) : (
+                  <ArrowDownIcon className="h-3 w-3" />
+                )}
               </div>
             )}
           </div>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <div className="flex flex-col items-start mr-1">
-            <span className="text-[11px] uppercase text-[#9b87f5]/60">Risk Level</span>
-            <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
-              {level}
-            </span>
-          </div>
-
-          <div className="flex items-center">
-            <div className="opacity-70 hover:opacity-100 transition-opacity w-[32px]">
-              <WaveformDisplay level={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
+          {entity.last_seen && (
+            <div className="flex items-center gap-1 text-xs text-[#9b87f5]/60">
+              <Clock className="h-3 w-3" />
+              <span>Last seen: {formatDateTime(entity.last_seen, true)}</span>
             </div>
-
-            <RiskScoreDisplay 
-              score={riskScore}
-              textColor={textColor}
-              lineColor={lineColor}
-              barWidth={barWidth}
-              glowColor={glowColor}
-              color={color}
-            />
-          </div>
+          )}
         </div>
       </div>
 
-      {isExpanded && (
-        <div className={cn(
-          "px-4 py-3 border-t border-[#5856D6]/20",
-          "bg-[#0A0B0F] rounded-b-lg",
-          "border-l border-r border-b border-[#5856D6]/20"
-        )}>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-[#D6BCFA]">
-                <div>Unique Tactics: {entity.unique_tactics_count}</div>
-                <div>Unique Outliers: {entity.unique_outliers}</div>
-              </div>
-            </div>
-            
-            {/* Risk Score Trend */}
-            <div className="text-sm text-[#D6BCFA]">
-              <div className="flex items-center gap-2">
-                <span>Risk Score Trend:</span>
-                {trend && (
-                  <div className={cn(
-                    "flex items-center gap-1 font-medium",
-                    trend === 'up' ? "text-red-400" : "text-green-400"
-                  )}>
-                    {trend === 'up' ? (
-                      <>
-                        <ArrowUpIcon className="h-4 w-4" />
-                        <span>Increasing</span>
-                      </>
-                    ) : (
-                      <>
-                        <ArrowDownIcon className="h-4 w-4" />
-                        <span>Decreasing</span>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+      <div className="flex items-center gap-1">
+        <div className="flex flex-col items-start mr-1">
+          <span className="text-[11px] uppercase text-[#9b87f5]/60">Risk Level</span>
+          <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
+            {level}
+          </span>
         </div>
-      )}
+
+        <div className="flex items-center">
+          <div className="opacity-70 hover:opacity-100 transition-opacity w-[32px]">
+            <WaveformDisplay level={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
+          </div>
+
+          <RiskScoreDisplay 
+            score={riskScore}
+            textColor={textColor}
+            lineColor={lineColor}
+            barWidth={barWidth}
+            glowColor={glowColor}
+            color={color}
+          />
+        </div>
+      </div>
     </div>
   );
 };

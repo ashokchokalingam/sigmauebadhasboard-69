@@ -11,95 +11,95 @@ export const useDetailedLogs = (
   return useQuery({
     queryKey: ["detailed-logs", entityType, selectedEventId],
     queryFn: async () => {
-      console.log('queryFn executing with:', { selectedEventId, entityType, allEvents });
+      console.log('Fetching detailed logs:', { selectedEventId, entityType });
 
       if (!selectedEventId) {
-        console.log('No selectedEventId, returning null');
         return null;
       }
       
       const selectedEvent = allEvents.find(event => event.id === selectedEventId);
       if (!selectedEvent) {
-        console.log('No matching event found in allEvents:', { selectedEventId, allEvents });
         return null;
       }
 
-      console.log('Selected event:', selectedEvent);
-      let endpoint = '/api/user_impacted_logs';
-      const params = new URLSearchParams();
+      // For timeline view, use timeline endpoints
+      const timelineEndpoints = {
+        userorigin: '/api/user_origin_timeline',
+        userimpacted: '/api/user_impacted_timeline',
+        computersimpacted: '/api/computer_impacted_timeline'
+      };
 
-      switch (entityType) {
-        case "userimpacted":
-          endpoint = '/api/computer_impacted_logs';
-          if (!selectedEvent.computer_name) {
-            console.error('Missing computer_name for event:', selectedEvent);
-            toast.error("Missing computer_name parameter");
-            return null;
-          }
-          params.append("computer_name", selectedEvent.computer_name);
-          break;
+      // For detailed logs, use logs endpoints
+      const logEndpoints = {
+        userorigin: '/api/user_origin_logs',
+        userimpacted: '/api/user_impacted_logs',
+        computersimpacted: '/api/computer_impacted_logs'
+      };
 
-        case "userorigin":
-          endpoint = '/api/user_origin_logs';
-          if (!selectedEvent.user_origin) {
-            console.error('Missing user_origin for event:', selectedEvent);
-            toast.error("Missing user_origin parameter");
-            return null;
-          }
-          params.append("user_origin", selectedEvent.user_origin);
-          break;
+      const paramMappings = {
+        userorigin: {
+          key: 'user_origin',
+          value: selectedEvent.user_origin
+        },
+        userimpacted: {
+          key: 'user_impacted',
+          value: selectedEvent.user_impacted
+        },
+        computersimpacted: {
+          key: 'computer_name',
+          value: selectedEvent.computer_name
+        }
+      };
 
-        case "computersimpacted":
-          endpoint = '/api/computer_impacted_logs';
-          if (!selectedEvent.computer_name) {
-            console.error('Missing computer_name for event:', selectedEvent);
-            toast.error("Missing computer_name parameter");
-            return null;
-          }
-          params.append("computer_name", selectedEvent.computer_name);
-          break;
+      const timelineEndpoint = timelineEndpoints[entityType];
+      const logEndpoint = logEndpoints[entityType];
+      const { key, value } = paramMappings[entityType];
+
+      if (!value) {
+        toast.error("Missing required entity identifier");
+        return null;
       }
 
-      // Add title parameter if available
+      const params = new URLSearchParams();
+      params.append(key, value);
+      
       if (selectedEvent.title) {
         params.append("title", selectedEvent.title);
       }
 
-      const url = `${endpoint}?${params.toString()}`;
-      console.log('Attempting to fetch logs from:', url);
-
+      // Fetch both timeline and detailed logs
       try {
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        });
+        const [timelineResponse, logsResponse] = await Promise.all([
+          fetch(`${timelineEndpoint}?${params.toString()}`),
+          fetch(`${logEndpoint}?${params.toString()}`)
+        ]);
 
-        if (!response.ok) {
-          console.error('API response not OK:', response.status, response.statusText);
-          throw new Error(`Failed to fetch logs: ${response.statusText}`);
+        if (!timelineResponse.ok || !logsResponse.ok) {
+          throw new Error('Failed to fetch data');
         }
 
-        const data = await response.json();
-        console.log('Logs fetched successfully:', data);
+        const timelineData = await timelineResponse.json();
+        const logsData = await logsResponse.json();
 
-        // Return appropriate data based on entity type
-        const logs = entityType === "userimpacted" ? data.computer_impacted_logs :
-                    entityType === "userorigin" ? data.user_origin_logs :
-                    data.computer_impacted_logs;
-                    
-        console.log('Returning logs:', logs);
-        return logs || [];
+        console.log('Data fetched successfully:', { timelineData, logsData });
+        
+        // Combine timeline and logs data
+        return {
+          timeline: timelineData[`${entityType}_timeline`] || [],
+          logs: logsData[`${entityType}_logs`] || []
+        };
 
       } catch (error) {
-        console.error('Error fetching logs:', error);
-        toast.error("Failed to fetch detailed logs");
+        console.error('Error fetching data:', error);
+        toast.error("Failed to fetch timeline and logs data");
         throw error;
       }
     },
-    enabled: !!selectedEventId && !!allEvents?.length,
-    refetchOnWindowFocus: false
+    enabled: !!selectedEventId,
+    meta: {
+      onSettled: (data, error) => {
+        console.log('Query settled:', { hasData: !!data, error });
+      }
+    }
   });
 };
