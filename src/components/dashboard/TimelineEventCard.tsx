@@ -15,6 +15,11 @@ interface TimelineEventCardProps {
   entityType: "userorigin" | "userimpacted" | "computersimpacted";
   onSelect?: (id: string | null) => void;
   selectedEventId?: string | null;
+  detailedLogs?: any;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
+  instances?: Alert[];
+  isLoadingLogs?: boolean;
 }
 
 const TimelineEventCard = ({ 
@@ -24,6 +29,11 @@ const TimelineEventCard = ({
   entityType,
   onSelect,
   selectedEventId,
+  detailedLogs,
+  isExpanded,
+  onToggleExpand,
+  instances,
+  isLoadingLogs
 }: TimelineEventCardProps) => {
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
