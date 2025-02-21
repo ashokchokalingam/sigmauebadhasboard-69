@@ -11,7 +11,7 @@ export const useDetailedLogs = (
   return useQuery({
     queryKey: ["detailed-logs", entityType, selectedEventId],
     queryFn: async () => {
-      console.log('queryFn executing with:', { selectedEventId, entityType });
+      console.log('Fetching detailed logs:', { selectedEventId, entityType });
 
       if (!selectedEventId) {
         return null;
@@ -22,58 +22,63 @@ export const useDetailedLogs = (
         return null;
       }
 
-      let endpoint = '/api/user_origin_logs';
+      // Determine the correct API endpoint and parameters based on entity type
+      const endpoints = {
+        userorigin: '/api/user_origin_timeline',
+        userimpacted: '/api/user_impacted_timeline',
+        computersimpacted: '/api/computer_impacted_timeline'
+      };
+
+      const paramMappings = {
+        userorigin: {
+          key: 'user_origin',
+          value: selectedEvent.user_origin
+        },
+        userimpacted: {
+          key: 'user_impacted',
+          value: selectedEvent.user_impacted
+        },
+        computersimpacted: {
+          key: 'computer_name',
+          value: selectedEvent.computer_name
+        }
+      };
+
+      const endpoint = endpoints[entityType];
+      const { key, value } = paramMappings[entityType];
+
+      if (!value) {
+        toast.error("Missing required entity identifier");
+        return null;
+      }
+
       const params = new URLSearchParams();
-
-      if (entityType === "userorigin") {
-        if (!selectedEvent.user_origin || !selectedEvent.title) {
-          toast.error("Missing required parameters");
-          return null;
-        }
-
-        params.append("user_origin", selectedEvent.user_origin);
+      params.append(key, value);
+      
+      if (selectedEvent.title) {
         params.append("title", selectedEvent.title);
-      } else {
-        endpoint = entityType === "computersimpacted" 
-          ? '/api/computer_impacted_logs'
-          : '/api/user_impacted_logs';
-
-        const paramKey = entityType === "computersimpacted" 
-          ? "computer_name" 
-          : "user_impacted";
-        
-        const paramValue = entityType === "computersimpacted"
-          ? selectedEvent.computer_name
-          : selectedEvent.user_impacted;
-
-        if (!paramValue) {
-          toast.error("Missing required parameters");
-          return null;
-        }
-
-        params.append(paramKey, paramValue);
-        params.append("title", selectedEvent.title || '');
       }
 
       const url = `${endpoint}?${params.toString()}`;
       console.log('Fetching logs from:', url);
 
       try {
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        });
-
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`Failed to fetch logs: ${response.statusText}`);
         }
 
         const data = await response.json();
         console.log('Logs fetched successfully:', data);
-        return entityType === "userorigin" ? data.user_origin_logs : data;
+        
+        // Map the response based on entity type
+        const responseMapping = {
+          userorigin: data.user_origin_timeline,
+          userimpacted: data.user_impacted_timeline,
+          computersimpacted: data.computer_impacted_timeline
+        };
+
+        return responseMapping[entityType] || [];
       } catch (error) {
         console.error('Error fetching logs:', error);
         toast.error("Failed to fetch detailed logs");
