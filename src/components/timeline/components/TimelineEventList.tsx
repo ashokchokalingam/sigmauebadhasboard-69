@@ -34,6 +34,17 @@ const TimelineEventList = ({
     selectedEventId
   });
 
+  const handleEventSelect = (id: string) => {
+    // If selecting a different event, close any previously selected event
+    if (selectedEventId !== id) {
+      onSelect(id);
+      // Clear any expanded sections when selecting a new event
+      expandedGroups.clear();
+    } else {
+      onSelect(null);
+    }
+  };
+
   return (
     <ScrollArea className="flex-1">
       <div className="p-2 space-y-2">
@@ -43,7 +54,7 @@ const TimelineEventList = ({
             event={event}
             isLast={index === events.length - 1}
             entityType={entityType}
-            onSelect={onSelect}
+            onSelect={() => handleEventSelect(event.id)}
             detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
             isExpanded={expandedGroups.has(event.id)}
             onToggleExpand={() => onToggleExpand(event.id)}

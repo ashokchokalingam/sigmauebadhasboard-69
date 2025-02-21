@@ -36,6 +36,10 @@ const TimelineContent = ({
   );
 
   const handleSelect = (id: string | null) => {
+    if (id !== selectedEventId) {
+      // Clear expanded groups when selecting a new event
+      setExpandedGroups(new Set());
+    }
     setSelectedEventId(id);
   };
 
