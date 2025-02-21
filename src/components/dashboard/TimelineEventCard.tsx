@@ -7,6 +7,8 @@ import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineConnector from "./TimelineConnector";
 import { toast } from "sonner";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+import { useState } from "react";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -36,6 +38,8 @@ const TimelineEventCard = ({
   isLoadingLogs
 }: TimelineEventCardProps) => {
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
+  const [logs, setLogs] = useState<any[]>([]);
+  const [isTableExpanded, setIsTableExpanded] = useState(false);
 
   const handleClick = async () => {
     console.log('Card clicked:', {
@@ -86,6 +90,12 @@ const TimelineEventCard = ({
       const response = await fetch(url);
       const data = await response.json();
       console.log('API Response:', data);
+      
+      // Extract logs array based on endpoint
+      const logsArray = entityType === "userorigin" ? data.user_origin_logs : data;
+      setLogs(Array.isArray(logsArray) ? logsArray : []);
+      setIsTableExpanded(true);
+      
       if (onSelect) {
         onSelect(event.id === selectedEventId ? null : event.id);
       }
@@ -93,6 +103,42 @@ const TimelineEventCard = ({
       console.error('Error fetching logs:', error);
       toast.error("Failed to fetch logs");
     }
+  };
+
+  const renderLogsTable = () => {
+    if (!logs.length) return null;
+
+    // Get all unique keys from the logs
+    const keys = Array.from(new Set(logs.flatMap(log => Object.keys(log))));
+
+    return (
+      <div className="mt-4 overflow-x-auto max-h-[400px] overflow-y-auto rounded-lg border border-slate-200">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {keys.map((key) => (
+                <TableHead key={key} className="whitespace-nowrap px-4 py-2 bg-slate-50">
+                  {key}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {logs.map((log, index) => (
+              <TableRow key={index}>
+                {keys.map((key) => (
+                  <TableCell key={key} className="whitespace-nowrap px-4 py-2">
+                    {typeof log[key] === 'object' 
+                      ? JSON.stringify(log[key]) 
+                      : String(log[key] || '')}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
   };
 
   return (
@@ -108,9 +154,8 @@ const TimelineEventCard = ({
             hover,
             isLatest && "ring-1 ring-blue-500/50 bg-opacity-75"
           )}
-          onClick={handleClick}
         >
-          <div className="p-4">
+          <div className="p-4" onClick={handleClick}>
             <div className="flex items-center justify-between gap-2 mb-4">
               <div className="flex-1">
                 <TimelineEventHeader
@@ -129,6 +174,8 @@ const TimelineEventCard = ({
 
             {event.tags && <TimelineMitreSection tags={event.tags} />}
           </div>
+
+          {isTableExpanded && renderLogsTable()}
         </div>
       </div>
     </div>
