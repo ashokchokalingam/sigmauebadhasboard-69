@@ -20,7 +20,7 @@ export const useDetailedLogs = (
       
       const selectedEvent = allEvents.find(event => event.id === selectedEventId);
       if (!selectedEvent) {
-        console.log('No matching event found in allEvents');
+        console.log('No matching event found in allEvents:', { selectedEventId, allEvents });
         return null;
       }
 
@@ -99,11 +99,7 @@ export const useDetailedLogs = (
         throw error;
       }
     },
-    enabled: !!selectedEventId,
-    meta: {
-      onSettled: (data, error) => {
-        console.log('Query settled:', { hasData: !!data, error });
-      }
-    }
+    enabled: !!selectedEventId && !!allEvents?.length,
+    refetchOnWindowFocus: false
   });
 };

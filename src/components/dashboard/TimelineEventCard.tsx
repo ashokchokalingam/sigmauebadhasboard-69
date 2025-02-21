@@ -42,7 +42,7 @@ const TimelineEventCard = ({
     if (selectedEventId !== event.id) {
       setLogs([]);
     } else if (detailedLogs) {
-      setLogs(detailedLogs);
+      setLogs(Array.isArray(detailedLogs) ? detailedLogs : []);
     }
   }, [selectedEventId, event.id, detailedLogs]);
 
@@ -52,11 +52,18 @@ const TimelineEventCard = ({
       eventId: event.id,
       title: event.title,
       currentSelection: selectedEventId,
-      isCurrentlyExpanded: selectedEventId === event.id
+      isCurrentlyExpanded: selectedEventId === event.id,
+      computerName: event.computer_name,
+      userOrigin: event.user_origin
     });
 
     if (onSelect) {
-      onSelect(event.id);
+      // If it's already selected, deselect it
+      if (selectedEventId === event.id) {
+        onSelect(null);
+      } else {
+        onSelect(event.id);
+      }
     }
   };
 
