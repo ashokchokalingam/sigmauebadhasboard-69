@@ -5,18 +5,21 @@ import RiskLevelIndicator from "./RiskLevelIndicator";
 import WaveformDisplay from "./WaveformDisplay";
 import RiskScoreDisplay from "./RiskScoreDisplay";
 import { RiskyEntity } from "./types";
+import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/utils/dateTimeUtils";
 
 interface EntityCardProps {
   entity: RiskyEntity;
   entityType: 'computer' | 'userOrigin' | 'userImpacted';
   onClick: () => void;
+  isExpanded: boolean;
 }
 
-const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
+const EntityCard = ({ entity, entityType, onClick, isExpanded }: EntityCardProps) => {
   const isComputer = entityType === 'computer';
   const Icon = isComputer ? Monitor : User;
   const entityName = isComputer ? entity.computer : entity.user;
+  const riskScore = parseFloat(entity.cumulative_risk_score);
 
   const getRiskLevel = (score: number): { 
     level: string; 
@@ -28,12 +31,11 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     glowColor: string;
     trend: 'up' | 'down' | null;
   } => {
-    // Calculate relative width based on risk level
     const getBarWidth = (score: number): number => {
-      if (score >= 150) return Math.min((score / 200) * 100, 100); // CRITICAL
-      if (score >= 100) return (score / 150) * 75; // HIGH
-      if (score >= 50) return (score / 100) * 50; // MEDIUM
-      return (score / 50) * 25; // LOW
+      if (score >= 150) return Math.min((score / 200) * 100, 100);
+      if (score >= 100) return (score / 150) * 75;
+      if (score >= 50) return (score / 100) * 50;
+      return (score / 50) * 25;
     };
 
     const trend = typeof entity.risk_trend === 'number'
@@ -84,17 +86,19 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     };
   };
 
-  const riskScore = parseFloat(entity.cumulative_risk_score);
   const { level, color, textColor, bgColor, lineColor, barWidth, glowColor, trend } = getRiskLevel(riskScore);
 
   return (
     <div
       onClick={onClick}
-      className="flex items-center justify-between px-4 py-3 rounded-lg
-        bg-[#0A0B0F] hover:bg-[#12131A]
-        border border-[#5856D6]/20 hover:border-[#5856D6]/30
-        transition-all duration-300 cursor-pointer
-        hover:shadow-lg hover:shadow-[#5856D6]/5"
+      className={cn(
+        "flex items-center justify-between px-4 py-3 rounded-lg",
+        "bg-[#0A0B0F] hover:bg-[#12131A]",
+        "border border-[#5856D6]/20 hover:border-[#5856D6]/30",
+        "transition-all duration-300 cursor-pointer",
+        "hover:shadow-lg hover:shadow-[#5856D6]/5",
+        isExpanded && "ring-2 ring-blue-500"
+      )}
     >
       <div className="flex items-center gap-3 flex-[0_0_40%]">
         <div className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center
