@@ -1,4 +1,3 @@
-
 import { Alert } from "./types";
 import { cn } from "@/lib/utils";
 import { getRiskLevel } from "./utils";
@@ -32,76 +31,18 @@ const TimelineEventCard = ({
   isLoadingLogs
 }: TimelineEventCardProps) => {
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
-  const [logs, setLogs] = useState<any[]>([]);
   const [dataSource, setDataSource] = useState<'mloutliers' | 'anomalies'>('anomalies');
   const [visibleColumns] = useState<string[]>(['system_time', 'title']);
 
-  // Reset logs when card is collapsed
-  useEffect(() => {
-    if (selectedEventId !== event.id) {
-      setLogs([]);
-    }
-  }, [selectedEventId, event.id]);
-
-  const handleClick = async () => {
+  const handleClick = () => {
     console.log('Card clicked:', {
       entityType,
       eventId: event.id,
-      title: event.title,
-      currentSelection: selectedEventId,
-      isCurrentlyExpanded: selectedEventId === event.id
+      currentSelection: selectedEventId
     });
 
     if (onSelect) {
-      onSelect(event.id);
-    }
-
-    // Only fetch logs if this card is being expanded
-    if (selectedEventId !== event.id) {
-      let endpoint = '/api/user_origin_logs';
-      const params = new URLSearchParams();
-
-      if (entityType === "userorigin") {
-        if (!event.user_origin || !event.title) {
-          toast.error("Missing required parameters");
-          return;
-        }
-        params.append("user_origin", event.user_origin);
-        params.append("title", event.title);
-      } else {
-        endpoint = entityType === "computersimpacted" 
-          ? '/api/computer_impacted_logs'
-          : '/api/user_impacted_logs';
-
-        const paramKey = entityType === "computersimpacted" 
-          ? "computer_name" 
-          : "user_impacted";
-        
-        const paramValue = entityType === "computersimpacted"
-          ? event.computer_name
-          : event.user_impacted;
-
-        if (!paramValue) {
-          toast.error("Missing required parameters");
-          return;
-        }
-
-        params.append(paramKey, paramValue);
-        params.append("title", event.title || '');
-      }
-
-      try {
-        const response = await fetch(`${endpoint}?${params.toString()}`);
-        const data = await response.json();
-        console.log('API Response:', data);
-        
-        const logsArray = entityType === "userorigin" ? data.user_origin_logs : data;
-        const processedLogs = Array.isArray(logsArray) ? logsArray : [];
-        setLogs(processedLogs);
-      } catch (error) {
-        console.error('Error fetching logs:', error);
-        toast.error("Failed to fetch logs");
-      }
+      onSelect(selectedEventId === event.id ? null : event.id);
     }
   };
 
@@ -124,13 +65,19 @@ const TimelineEventCard = ({
         >
           <TimelineCardContent event={event} onClick={handleClick} />
 
-          {isExpanded && (
+          {isExpanded && detailedLogs && (
             <TimelineLogsTable
-              logs={logs}
+              logs={detailedLogs.logs || []}
               visibleColumns={visibleColumns}
               dataSource={dataSource}
               onDataSourceChange={setDataSource}
             />
+          )}
+
+          {isExpanded && isLoadingLogs && (
+            <div className="p-4 text-center text-[#9b87f5]/60">
+              Loading logs...
+            </div>
           )}
         </div>
       </div>
