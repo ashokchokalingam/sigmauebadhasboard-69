@@ -22,37 +22,40 @@ export const useDetailedLogs = (
         return null;
       }
 
-      let endpoint = '/api/user_origin_logs';
+      let endpoint = '/api/user_impacted_logs';
       const params = new URLSearchParams();
 
-      if (entityType === "userorigin") {
-        if (!selectedEvent.user_origin || !selectedEvent.title) {
-          toast.error("Missing required parameters");
-          return null;
-        }
+      switch (entityType) {
+        case "userimpacted":
+          if (!selectedEvent.user_impacted) {
+            toast.error("Missing user_impacted parameter");
+            return null;
+          }
+          params.append("user_impacted", selectedEvent.user_impacted);
+          break;
 
-        params.append("user_origin", selectedEvent.user_origin);
+        case "userorigin":
+          endpoint = '/api/user_origin_logs';
+          if (!selectedEvent.user_origin) {
+            toast.error("Missing user_origin parameter");
+            return null;
+          }
+          params.append("user_origin", selectedEvent.user_origin);
+          break;
+
+        case "computersimpacted":
+          endpoint = '/api/computer_impacted_logs';
+          if (!selectedEvent.computer_name) {
+            toast.error("Missing computer_name parameter");
+            return null;
+          }
+          params.append("computer_name", selectedEvent.computer_name);
+          break;
+      }
+
+      // Add title parameter if available
+      if (selectedEvent.title) {
         params.append("title", selectedEvent.title);
-      } else {
-        endpoint = entityType === "computersimpacted" 
-          ? '/api/computer_impacted_logs'
-          : '/api/user_impacted_logs';
-
-        const paramKey = entityType === "computersimpacted" 
-          ? "computer_name" 
-          : "user_impacted";
-        
-        const paramValue = entityType === "computersimpacted"
-          ? selectedEvent.computer_name
-          : selectedEvent.user_impacted;
-
-        if (!paramValue) {
-          toast.error("Missing required parameters");
-          return null;
-        }
-
-        params.append(paramKey, paramValue);
-        params.append("title", selectedEvent.title || '');
       }
 
       const url = `${endpoint}?${params.toString()}`;
@@ -73,7 +76,18 @@ export const useDetailedLogs = (
 
         const data = await response.json();
         console.log('Logs fetched successfully:', data);
-        return entityType === "userorigin" ? data.user_origin_logs : data;
+
+        // Return the appropriate data based on entity type
+        switch (entityType) {
+          case "userimpacted":
+            return data.user_impacted_logs || [];
+          case "userorigin":
+            return data.user_origin_logs || [];
+          case "computersimpacted":
+            return data.computer_impacted_logs || [];
+          default:
+            return [];
+        }
       } catch (error) {
         console.error('Error fetching logs:', error);
         toast.error("Failed to fetch detailed logs");

@@ -1,7 +1,6 @@
 
 import { Alert } from "@/components/dashboard/types";
-import TimelineEventCard from "../../dashboard/TimelineEventCard";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import TimelineEventCard from "@/components/dashboard/TimelineEventCard";
 
 interface TimelineEventListProps {
   events: Alert[];
@@ -24,39 +23,25 @@ const TimelineEventList = ({
   loaderRef,
   isLoadingLogs
 }: TimelineEventListProps) => {
-  console.log('TimelineEventList Render:', {
-    eventsCount: events.length,
-    entityType,
-    selectedEventId
-  });
-
   return (
-    <ScrollArea className="flex-1">
-      <div className="p-2 space-y-2">
-        {events.map((event, index) => (
-          <TimelineEventCard
-            key={`${event.id}-${index}`}
-            event={event}
-            isLast={index === events.length - 1}
-            entityType={entityType}
-            onSelect={() => onSelect(event.id)}
-            selectedEventId={selectedEventId}
-            detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
-            isLatest={index === 0}
-            instances={event.instances}
-            isLoadingLogs={isLoadingLogs && event.id === selectedEventId}
-          />
-        ))}
-        
-        <div ref={loaderRef}>
-          {hasNextPage && (
-            <div className="py-2 text-center text-sm text-blue-400/60">
-              Loading more events...
-            </div>
-          )}
-        </div>
-      </div>
-    </ScrollArea>
+    <div className="space-y-2 px-4 py-2">
+      {events.map((event, index) => (
+        <TimelineEventCard
+          key={event.id}
+          event={event}
+          isLast={index === events.length - 1}
+          isLatest={index === 0}
+          entityType={entityType}
+          onSelect={onSelect}
+          selectedEventId={selectedEventId}
+          detailedLogs={detailedLogs}
+          isLoadingLogs={isLoadingLogs}
+        />
+      ))}
+      {hasNextPage && (
+        <div ref={loaderRef} className="h-10" />
+      )}
+    </div>
   );
 };
 
