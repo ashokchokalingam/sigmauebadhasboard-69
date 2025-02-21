@@ -45,7 +45,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
 
   const formatXAxisDate = (timestamp: string) => {
     const date = new Date(timestamp);
-    return format(date, 'MMM d, HH:mm');
+    return format(date, 'MMM d, hh:mm a'); // Changed to 12-hour format with AM/PM
   };
 
   return (
