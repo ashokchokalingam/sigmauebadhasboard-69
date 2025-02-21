@@ -15,11 +15,11 @@ const getApiEndpoint = (entityType: EntityType, event: Alert) => {
   
   switch (entityType) {
     case "userorigin":
-      return `${baseUrl}/api/user_origin_logs?user_origin=${encodeURIComponent(event.user_origin || '')}&title=${encodeURIComponent(event.title || '')}`;
+      return `${baseUrl}/api/user_origin_logs?user_origin=${encodeURIComponent(event.user_id || '')}&title=${encodeURIComponent(event.title || '')}`;
     case "userimpacted":
-      return `${baseUrl}/api/user_impacted_logs`;
+      return `${baseUrl}/api/user_impacted_logs?user_impacted=${encodeURIComponent(event.target_user_name || '')}&title=${encodeURIComponent(event.title || '')}`;
     case "computersimpacted":
-      return `${baseUrl}/api/computer_impacted_logs`;
+      return `${baseUrl}/api/computer_impacted_logs?computer_name=${encodeURIComponent(event.computer_name || '')}&title=${encodeURIComponent(event.title || '')}`;
     default:
       return `${baseUrl}/api/user_origin_logs`;
   }
@@ -33,17 +33,10 @@ export const useTimelineLogs = ({ entityType, event, enabled }: TimelineLogsPara
       console.log('Event data:', event);
       
       const response = await fetch(endpoint, {
-        method: entityType === "userorigin" ? 'GET' : 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json'
-        },
-        ...(entityType !== "userorigin" && {
-          body: JSON.stringify({
-            user_origin: event.user_origin,
-            title: event.title,
-            computer_name: event.computer_name
-          })
-        })
+        }
       });
 
       if (!response.ok) {

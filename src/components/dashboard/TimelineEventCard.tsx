@@ -41,27 +41,23 @@ const TimelineEventCard = ({
   selectedEventId
 }: TimelineEventCardProps) => {
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
-  const isSelected = selectedEventId === event.id;
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
-  // Query for logs data
+  // Query for logs data with enabled flag tied to expanded state
   const { data: logsData, isLoading, error } = useTimelineLogs({
     entityType,
     event,
-    enabled: isDetailsExpanded
+    enabled: isDetailsExpanded // Only fetch when details are expanded
   });
 
-  useEffect(() => {
-    if (error) {
-      console.error('Error fetching logs:', error);
-    }
-  }, [error]);
-
-  const handleExpandClick = () => {
+  const handleCardClick = () => {
     setIsDetailsExpanded(!isDetailsExpanded);
-    if (!isDetailsExpanded) {
-      console.log('Expanding card and fetching logs for:', event);
-    }
+    onSelect(event.id);
+    console.log('Card clicked:', {
+      entityType,
+      event,
+      isExpanded: !isDetailsExpanded
+    });
   };
 
   return (
@@ -71,13 +67,13 @@ const TimelineEventCard = ({
       <div className="relative ml-4 mb-2">
         <div 
           className={cn(
-            "rounded-lg border shadow-lg",
+            "rounded-lg border shadow-lg cursor-pointer",
             cardBg,
             border,
             hover,
             isLatest && "ring-1 ring-blue-500/50 bg-opacity-75"
           )}
-          onClick={handleExpandClick}
+          onClick={handleCardClick}
           role="button"
           tabIndex={0}
         >
@@ -91,17 +87,12 @@ const TimelineEventCard = ({
                   description={event.description}
                 />
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-purple-400 hover:text-purple-300"
-              >
-                <ChevronDown className={cn(
-                  "h-5 w-5",
-                  isDetailsExpanded && "opacity-50"
-                )} />
-                {isDetailsExpanded ? 'Hide Details' : 'Show Details'}
-              </Button>
+              <ChevronDown 
+                className={cn(
+                  "h-5 w-5 text-purple-400 transition-transform duration-200",
+                  isDetailsExpanded && "transform rotate-180"
+                )} 
+              />
             </div>
 
             <TimelineEventTimestamps
@@ -122,43 +113,30 @@ const TimelineEventCard = ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell className="font-medium text-purple-400">Event ID</TableCell>
-                    <TableCell>{event.event_id || 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium text-purple-400">Provider Name</TableCell>
-                    <TableCell>{event.provider_name || 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium text-purple-400">Computer Name</TableCell>
-                    <TableCell>{event.computer_name || 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium text-purple-400">Task</TableCell>
-                    <TableCell>{event.task || 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium text-purple-400">User ID</TableCell>
-                    <TableCell>{event.user_id || 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium text-purple-400">IP Address</TableCell>
-                    <TableCell>{event.ip_address || 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium text-purple-400">Risk Level</TableCell>
-                    <TableCell>{event.rule_level || 'N/A'}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="font-medium text-purple-400">Risk Score</TableCell>
-                    <TableCell>{event.risk || 'N/A'}</TableCell>
-                  </TableRow>
+                  {[
+                    { label: 'Event ID', value: event.event_id },
+                    { label: 'Provider Name', value: event.provider_name },
+                    { label: 'Computer Name', value: event.computer_name },
+                    { label: 'Task', value: event.task },
+                    { label: 'User ID', value: event.user_id },
+                    { label: 'IP Address', value: event.ip_address },
+                    { label: 'Risk Level', value: event.rule_level },
+                    { label: 'Risk Score', value: event.risk }
+                  ].map(({ label, value }) => (
+                    <TableRow key={label}>
+                      <TableCell className="font-medium text-purple-400">{label}</TableCell>
+                      <TableCell>{value || 'N/A'}</TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
 
               {isLoading ? (
                 <div className="text-center py-4 text-purple-400">Loading logs...</div>
+              ) : error ? (
+                <div className="text-red-400 mt-4 text-center">
+                  Error loading logs. Please try again.
+                </div>
               ) : logsData ? (
                 <div className="mt-4">
                   <h4 className="text-purple-400 font-medium mb-2">Related Logs</h4>
@@ -171,13 +149,15 @@ const TimelineEventCard = ({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {Array.isArray(logsData) ? logsData.map((log: any, index: number) => (
-                        <TableRow key={index}>
-                          <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
-                          <TableCell>{log.event}</TableCell>
-                          <TableCell>{log.description}</TableCell>
-                        </TableRow>
-                      )) : (
+                      {Array.isArray(logsData) && logsData.length > 0 ? (
+                        logsData.map((log: any, index: number) => (
+                          <TableRow key={index}>
+                            <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
+                            <TableCell>{log.event}</TableCell>
+                            <TableCell>{log.description}</TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
                         <TableRow>
                           <TableCell colSpan={3} className="text-center">No logs available</TableCell>
                         </TableRow>
@@ -186,12 +166,6 @@ const TimelineEventCard = ({
                   </Table>
                 </div>
               ) : null}
-
-              {error && (
-                <div className="text-red-400 mt-4 text-center">
-                  Error loading logs. Please try again.
-                </div>
-              )}
             </div>
           )}
 
