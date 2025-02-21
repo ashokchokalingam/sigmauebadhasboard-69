@@ -1,6 +1,6 @@
 
 import { Alert } from "@/components/dashboard/types";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import TimelineControls from "./components/TimelineControls";
 import TimelineEventList from "./components/TimelineEventList";
 import LoadingSpinner from "./components/LoadingSpinner";
@@ -35,25 +35,31 @@ const TimelineContent = ({
     allEvents
   );
 
-  const handleSelect = (id: string | null) => {
-    if (id !== selectedEventId) {
-      // Clear expanded groups when selecting a new event
+  const handleSelect = useCallback((id: string | null) => {
+    // If clicking the same card, just toggle it
+    if (id === selectedEventId) {
+      setSelectedEventId(null);
+      setExpandedGroups(new Set());
+    } else {
+      // If clicking a different card, select it and clear any expanded groups
+      setSelectedEventId(id);
       setExpandedGroups(new Set());
     }
-    setSelectedEventId(id);
-  };
+  }, [selectedEventId]);
 
-  const handleToggleExpand = (eventId: string) => {
+  const handleToggleExpand = useCallback((eventId: string) => {
     setExpandedGroups(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(eventId)) {
-        newSet.delete(eventId);
-      } else {
+      // Create a new empty set (clears all previous expansions)
+      const newSet = new Set<string>();
+      
+      // Only add this eventId if it wasn't already expanded
+      if (!prev.has(eventId)) {
         newSet.add(eventId);
       }
+      
       return newSet;
     });
-  };
+  }, []);
 
   if (isLoading && allEvents.length === 0) {
     return <LoadingSpinner />;
