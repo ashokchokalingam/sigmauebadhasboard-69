@@ -11,6 +11,13 @@ interface ExpandedContentProps {
 }
 
 const ExpandedContent = ({ event, logsData, isLoading, error }: ExpandedContentProps) => {
+  console.log('ExpandedContent render:', {
+    eventId: event.id,
+    hasLogsData: !!logsData,
+    isLoading,
+    error
+  });
+
   return (
     <div className="border-t border-purple-500/20 p-4">
       <DetailsTable event={event} />

@@ -1,38 +1,37 @@
 
 import { Alert } from "../types";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 interface DetailsTableProps {
   event: Alert;
 }
 
 const DetailsTable = ({ event }: DetailsTableProps) => {
+  const details = [
+    { label: "Event ID", value: event.event_id },
+    { label: "Computer Name", value: event.computer_name },
+    { label: "User Origin", value: event.user_origin },
+    { label: "User Impacted", value: event.user_impacted },
+    { label: "Provider Name", value: event.provider_name },
+    { label: "Rule Level", value: event.rule_level },
+    { label: "System Time", value: event.system_time },
+  ];
+
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Field</TableHead>
-          <TableHead>Value</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {[
-          { label: 'Event ID', value: event.event_id },
-          { label: 'Provider Name', value: event.provider_name },
-          { label: 'Computer Name', value: event.computer_name },
-          { label: 'Task', value: event.task },
-          { label: 'User ID', value: event.user_id },
-          { label: 'IP Address', value: event.ip_address },
-          { label: 'Risk Level', value: event.rule_level },
-          { label: 'Risk Score', value: event.risk }
-        ].map(({ label, value }) => (
-          <TableRow key={label}>
-            <TableCell className="font-medium text-purple-400">{label}</TableCell>
-            <TableCell>{value || 'N/A'}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="rounded-md border">
+      <Table>
+        <TableBody>
+          {details.map(({ label, value }) => (
+            value && (
+              <TableRow key={label}>
+                <TableCell className="font-medium w-1/3">{label}</TableCell>
+                <TableCell>{value}</TableCell>
+              </TableRow>
+            )
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

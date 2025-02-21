@@ -32,43 +32,33 @@ const TimelineEventCard = ({
   isLatest,
   entityType,
   onSelect,
+  detailedLogs,
   isExpanded,
   onToggleExpand,
   instances = [],
+  isLoadingLogs,
   selectedEventId
 }: TimelineEventCardProps) => {
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
-  // Update query configuration to use the correct parameters
-  const { data: logsData, isLoading, error, refetch } = useTimelineLogs({
-    entityType,
-    event,
-    enabled: false // We'll manually control when to fetch
+  console.log('TimelineEventCard render:', {
+    eventId: event.id,
+    isDetailsExpanded,
+    hasDetailedLogs: !!detailedLogs,
+    isLoadingLogs
   });
 
-  // Effect to handle API calls when card is expanded
-  useEffect(() => {
-    if (isDetailsExpanded) {
-      console.log('Fetching logs for:', {
-        entityType,
-        eventId: event.id,
-        userId: event.user_id,
-        computerName: event.computer_name
-      });
-      refetch();
-    }
-  }, [isDetailsExpanded, event.id, refetch]);
-
+  // Handle card click
   const handleCardClick = () => {
-    console.log('Card clicked - Current state:', {
-      isDetailsExpanded,
-      entityType,
-      eventId: event.id
+    console.log('Card clicked:', {
+      eventId: event.id,
+      currentExpanded: isDetailsExpanded,
+      hasLogs: !!detailedLogs
     });
     
     setIsDetailsExpanded(!isDetailsExpanded);
-    onSelect(event.id);
+    onSelect(isDetailsExpanded ? null : event.id);
   };
 
   return (
@@ -117,9 +107,9 @@ const TimelineEventCard = ({
           {isDetailsExpanded && (
             <ExpandedContent
               event={event}
-              logsData={logsData}
-              isLoading={isLoading}
-              error={error as Error}
+              logsData={detailedLogs}
+              isLoading={isLoadingLogs || false}
+              error={null}
             />
           )}
 
