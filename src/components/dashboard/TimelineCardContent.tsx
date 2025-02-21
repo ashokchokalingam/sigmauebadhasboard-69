@@ -34,4 +34,3 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
 };
 
 export default TimelineCardContent;
-

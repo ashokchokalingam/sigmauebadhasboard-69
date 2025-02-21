@@ -41,40 +41,55 @@ const TimelineLogsTable = ({
   );
 
   return (
-    <div className="mt-4 bg-white rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-      <AnomaliesTableHeaderSection
-        visibleColumns={visibleColumns}
-        onColumnToggle={() => {}}
-        onSelectAll={() => {}}
-        onDeselectAll={() => {}}
-        dataSource={dataSource}
-        onDataSourceChange={onDataSourceChange}
-      />
+    <div className="mt-4 bg-white rounded-xl overflow-hidden border border-gray-200/50 shadow-lg">
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+          
+          .custom-table {
+            font-family: 'Inter', sans-serif;
+          }
+          
+          .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+          }
+          
+          .metadata-card {
+            background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(8px);
+          }
+        `}
+      </style>
       
-      <div className="p-4 border-b border-gray-200">
+      <div className="p-4 border-b border-gray-200/50 bg-gradient-to-r from-gray-50 to-white">
         <div className="relative">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search logs..."
-            className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg 
-                     text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 
-                     focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Search in logs..."
+            className="w-full pl-9 pr-4 py-2.5 bg-white/50 border border-gray-200 rounded-lg 
+                     text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 
+                     focus:ring-blue-500/20 focus:border-blue-500/30 transition-all duration-200"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
       
-      <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
+      <div className="overflow-x-auto max-h-[600px] overflow-y-auto custom-table">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-8 bg-gray-50 text-gray-600 border-b border-gray-200" />
-              <TableHead className="whitespace-nowrap px-4 py-2 bg-gray-50 text-gray-600 border-b border-gray-200">
+              <TableHead className="w-8 bg-gray-50/50 text-gray-600 font-semibold border-b border-gray-200/50" />
+              <TableHead className="whitespace-nowrap px-4 py-3 bg-gray-50/50 text-gray-600 font-semibold border-b border-gray-200/50">
                 Time
               </TableHead>
-              <TableHead className="whitespace-nowrap px-4 py-2 bg-gray-50 text-gray-600 border-b border-gray-200">
+              <TableHead className="whitespace-nowrap px-4 py-3 bg-gray-50/50 text-gray-600 font-semibold border-b border-gray-200/50">
                 Title
               </TableHead>
             </TableRow>
@@ -84,66 +99,66 @@ const TimelineLogsTable = ({
               <>
                 <TableRow 
                   key={`row-${index}`}
-                  className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                  className="border-b border-gray-100/50 hover:bg-blue-50/30 cursor-pointer transition-colors duration-150"
                   onClick={() => toggleRow(index)}
                 >
                   <TableCell className="w-8 text-center">
                     {expandedRows.has(index) ? (
-                      <ChevronDown className="h-4 w-4 text-gray-400" />
+                      <ChevronDown className="h-4 w-4 text-blue-500" />
                     ) : (
                       <ChevronRight className="h-4 w-4 text-gray-400" />
                     )}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-4 py-2 text-gray-700">
+                  <TableCell className="whitespace-nowrap px-4 py-3 text-gray-700 font-medium">
                     {formatDateTime(log.system_time || '', false)}
                   </TableCell>
-                  <TableCell className="whitespace-nowrap px-4 py-2 text-gray-700">
+                  <TableCell className="whitespace-nowrap px-4 py-3 text-gray-700">
                     {log.title || ''}
                   </TableCell>
                 </TableRow>
                 {expandedRows.has(index) && (
                   <TableRow>
-                    <TableCell colSpan={3} className="bg-gray-50 p-0">
+                    <TableCell colSpan={3} className="p-0 bg-gradient-to-b from-gray-50/50 to-white">
                       <div className="p-6 space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                          <div className="space-y-2">
-                            <div className="text-sm font-medium text-gray-500">COMPUTER NAME</div>
-                            <div className="text-sm text-gray-900">{log.computer_name || 'N/A'}</div>
-                          </div>
-                          <div className="space-y-2">
-                            <div className="text-sm font-medium text-gray-500">EVENT ID</div>
-                            <div className="text-sm text-gray-900">{log.event_id || 'N/A'}</div>
-                          </div>
-                          <div className="col-span-2">
-                            <div className="space-y-2">
-                              <div className="text-sm font-medium text-gray-500">DESCRIPTION</div>
-                              <div className="text-sm text-gray-900 bg-white p-4 rounded-lg border border-gray-200">
-                                {log.description || 'N/A'}
-                              </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-2 bg-white p-4 rounded-xl border border-gray-200/50 shadow-sm">
+                            <div className="text-sm font-medium text-gray-500 uppercase tracking-wider">Description</div>
+                            <div className="text-sm text-gray-900 leading-relaxed">
+                              {log.description || 'N/A'}
                             </div>
                           </div>
-                          <div className="space-y-2">
-                            <div className="text-sm font-medium text-gray-500">ML CLUSTER</div>
-                            <div className="text-sm text-gray-900">{log.ml_cluster || 'N/A'}</div>
+                          
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="p-3 bg-white rounded-lg border border-gray-200/50 shadow-sm">
+                                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Computer Name</div>
+                                <div className="text-sm text-gray-900 font-medium">{log.computer_name || 'N/A'}</div>
+                              </div>
+                              <div className="p-3 bg-white rounded-lg border border-gray-200/50 shadow-sm">
+                                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Event ID</div>
+                                <div className="text-sm text-gray-900 font-medium">{log.event_id || 'N/A'}</div>
+                              </div>
+                            </div>
+                            
+                            <div className="p-3 bg-white rounded-lg border border-gray-200/50 shadow-sm">
+                              <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Provider Name</div>
+                              <div className="text-sm text-gray-900">{log.provider_name || 'N/A'}</div>
+                            </div>
                           </div>
-                          <div className="space-y-2">
-                            <div className="text-sm font-medium text-gray-500">PROVIDER NAME</div>
-                            <div className="text-sm text-gray-900">{log.provider_name || 'N/A'}</div>
-                          </div>
+                          
                           <div className="col-span-2">
-                            <div className="space-y-2">
-                              <div className="text-sm font-medium text-gray-500">ML DESCRIPTION</div>
-                              <div className="text-sm text-gray-900 bg-white p-4 rounded-lg border border-gray-200">
+                            <div className="space-y-2 bg-white p-4 rounded-xl border border-gray-200/50 shadow-sm">
+                              <div className="text-sm font-medium text-gray-500 uppercase tracking-wider">ML Description</div>
+                              <div className="text-sm text-gray-900 leading-relaxed">
                                 {log.ml_description || 'N/A'}
                               </div>
                             </div>
                           </div>
-                          <div className="space-y-2">
-                            <div className="text-sm font-medium text-gray-500">RISK</div>
-                            <div className="text-sm text-gray-900">{log.risk || 'N/A'}</div>
+                          
+                          <div className="col-span-2">
+                            {log.raw && <TimelineRawLog alert={log as Alert} />}
                           </div>
                         </div>
-                        {log.raw && <TimelineRawLog alert={log as Alert} />}
                       </div>
                     </TableCell>
                   </TableRow>
