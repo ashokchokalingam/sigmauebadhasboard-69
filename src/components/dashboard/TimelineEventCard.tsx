@@ -9,6 +9,7 @@ import TimelineConnector from "./TimelineConnector";
 import { toast } from "sonner";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { useState } from "react";
+import AnomaliesTableHeaderSection from "./AnomaliesTableHeaderSection";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -40,6 +41,8 @@ const TimelineEventCard = ({
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
   const [logs, setLogs] = useState<any[]>([]);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
+  const [dataSource, setDataSource] = useState<'mloutliers' | 'anomalies'>('anomalies');
 
   const handleClick = async () => {
     console.log('Card clicked:', {
@@ -91,9 +94,15 @@ const TimelineEventCard = ({
       const data = await response.json();
       console.log('API Response:', data);
       
-      // Extract logs array based on endpoint
       const logsArray = entityType === "userorigin" ? data.user_origin_logs : data;
-      setLogs(Array.isArray(logsArray) ? logsArray : []);
+      const processedLogs = Array.isArray(logsArray) ? logsArray : [];
+      setLogs(processedLogs);
+      
+      if (processedLogs.length > 0) {
+        // Set visible columns based on the first log entry
+        setVisibleColumns(Object.keys(processedLogs[0]));
+      }
+      
       setIsTableExpanded(true);
       
       if (onSelect) {
@@ -108,35 +117,52 @@ const TimelineEventCard = ({
   const renderLogsTable = () => {
     if (!logs.length) return null;
 
-    // Get all unique keys from the logs
-    const keys = Array.from(new Set(logs.flatMap(log => Object.keys(log))));
-
     return (
-      <div className="mt-4 overflow-x-auto max-h-[400px] overflow-y-auto rounded-lg border border-slate-200">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {keys.map((key) => (
-                <TableHead key={key} className="whitespace-nowrap px-4 py-2 bg-slate-50">
-                  {key}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {logs.map((log, index) => (
-              <TableRow key={index}>
-                {keys.map((key) => (
-                  <TableCell key={key} className="whitespace-nowrap px-4 py-2">
-                    {typeof log[key] === 'object' 
-                      ? JSON.stringify(log[key]) 
-                      : String(log[key] || '')}
-                  </TableCell>
+      <div className="mt-4 bg-[#1A1F2C] rounded-lg overflow-hidden border border-purple-900/20">
+        <AnomaliesTableHeaderSection
+          visibleColumns={visibleColumns}
+          onColumnToggle={setVisibleColumns}
+          onSelectAll={() => setVisibleColumns(Object.keys(logs[0]))}
+          onDeselectAll={() => setVisibleColumns([])}
+          dataSource={dataSource}
+          onDataSourceChange={setDataSource}
+        />
+        
+        <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {visibleColumns.map((key) => (
+                  <TableHead 
+                    key={key} 
+                    className="whitespace-nowrap px-4 py-2 bg-[#1A1F2C] text-[#9b87f5] border-b border-purple-900/20"
+                  >
+                    {key}
+                  </TableHead>
                 ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {logs.map((log, index) => (
+                <TableRow 
+                  key={index}
+                  className="border-b border-purple-900/10 hover:bg-purple-900/5"
+                >
+                  {visibleColumns.map((key) => (
+                    <TableCell 
+                      key={key} 
+                      className="whitespace-nowrap px-4 py-2 text-blue-300/70"
+                    >
+                      {typeof log[key] === 'object' 
+                        ? JSON.stringify(log[key]) 
+                        : String(log[key] || '')}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     );
   };
