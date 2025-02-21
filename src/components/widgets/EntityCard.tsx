@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Clock } from "lucide-react";
 import RiskLevelIndicator from "./RiskLevelIndicator";
@@ -89,18 +88,21 @@ const EntityCard = ({ entity, entityType, onClick, isExpanded }: EntityCardProps
   const { level, color, textColor, bgColor, lineColor, barWidth, glowColor, trend } = getRiskLevel(riskScore);
 
   return (
-    <div className="flex flex-col w-full">
-      <div
-        onClick={onClick}
-        className={cn(
-          "flex items-center justify-between px-4 py-3 rounded-lg",
-          "bg-[#0A0B0F] hover:bg-[#12131A]",
-          "border border-[#5856D6]/20 hover:border-[#5856D6]/30",
-          "transition-all duration-300 cursor-pointer",
-          "hover:shadow-lg hover:shadow-[#5856D6]/5",
-          isExpanded && "ring-2 ring-blue-500 rounded-b-none"
-        )}
-      >
+    <div 
+      onClick={onClick}
+      className={cn(
+        "w-full mb-2 cursor-pointer",
+        isExpanded && "bg-[#0A0B0F] rounded-lg border border-[#5856D6]/20"
+      )}
+    >
+      <div className={cn(
+        "flex items-center justify-between px-4 py-3 rounded-lg",
+        !isExpanded && "bg-[#0A0B0F] border border-[#5856D6]/20",
+        "hover:bg-[#12131A]",
+        "transition-all duration-300",
+        "hover:shadow-lg hover:shadow-[#5856D6]/5",
+        isExpanded && "border-b border-[#5856D6]/20"
+      )}>
         <div className="flex items-center gap-3 flex-[0_0_40%]">
           <div className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center
             border border-[#5856D6]/10`}>
@@ -111,28 +113,9 @@ const EntityCard = ({ entity, entityType, onClick, isExpanded }: EntityCardProps
             <span className="font-mono text-sm text-[#D6BCFA] font-medium hover:text-white truncate max-w-[180px]">
               {entityName}
             </span>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-[#9b87f5]/60">
-                {entity.unique_title_count} unique anomalies
-              </span>
-              {trend && (
-                <div className={`flex items-center ${
-                  trend === 'up' ? 'text-red-400' : 'text-green-400'
-                }`}>
-                  {trend === 'up' ? (
-                    <ArrowUpIcon className="h-3 w-3" />
-                  ) : (
-                    <ArrowDownIcon className="h-3 w-3" />
-                  )}
-                </div>
-              )}
-            </div>
-            {entity.last_seen && (
-              <div className="flex items-center gap-1 text-xs text-[#9b87f5]/60">
-                <Clock className="h-3 w-3" />
-                <span>Last seen: {formatDateTime(entity.last_seen, true)}</span>
-              </div>
-            )}
+            <span className="text-xs text-[#9b87f5]/60">
+              {entity.unique_title_count} unique anomalies
+            </span>
           </div>
         </div>
 
@@ -162,43 +145,41 @@ const EntityCard = ({ entity, entityType, onClick, isExpanded }: EntityCardProps
       </div>
 
       {isExpanded && (
-        <div className={cn(
-          "px-4 py-3 border-t border-[#5856D6]/20",
-          "bg-[#0A0B0F] rounded-b-lg",
-          "border-l border-r border-b border-[#5856D6]/20"
-        )}>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-[#D6BCFA]">
-                <div>Unique Tactics: {entity.unique_tactics_count}</div>
-                <div>Unique Outliers: {entity.unique_outliers}</div>
-              </div>
+        <div className="px-4 py-3 text-sm text-[#9b87f5]/70">
+          <div className="space-y-2">
+            <div>
+              <div>Unique Tactics: {entity.unique_tactics_count}</div>
+              <div>Unique Outliers: {entity.unique_outliers}</div>
             </div>
             
-            {/* Risk Score Trend */}
-            <div className="text-sm text-[#D6BCFA]">
-              <div className="flex items-center gap-2">
-                <span>Risk Score Trend:</span>
-                {trend && (
-                  <div className={cn(
-                    "flex items-center gap-1 font-medium",
-                    trend === 'up' ? "text-red-400" : "text-green-400"
-                  )}>
-                    {trend === 'up' ? (
-                      <>
-                        <ArrowUpIcon className="h-4 w-4" />
-                        <span>Increasing</span>
-                      </>
-                    ) : (
-                      <>
-                        <ArrowDownIcon className="h-4 w-4" />
-                        <span>Decreasing</span>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
+            <div className="flex items-center gap-2">
+              <span>Risk Score Trend:</span>
+              {trend && (
+                <div className={cn(
+                  "flex items-center gap-1",
+                  trend === 'up' ? "text-red-400" : "text-green-400"
+                )}>
+                  {trend === 'up' ? (
+                    <>
+                      <ArrowUpIcon className="h-4 w-4" />
+                      <span>Increasing</span>
+                    </>
+                  ) : (
+                    <>
+                      <ArrowDownIcon className="h-4 w-4" />
+                      <span>Decreasing</span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
+
+            {entity.last_seen && (
+              <div className="flex items-center gap-1 text-xs">
+                <Clock className="h-3 w-3" />
+                <span>Last seen: {formatDateTime(entity.last_seen, true)}</span>
+              </div>
+            )}
           </div>
         </div>
       )}
