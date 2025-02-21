@@ -24,9 +24,9 @@ export const useDetailedLogs = (
 
       // Determine the correct API endpoint and parameters based on entity type
       const endpoints = {
-        userorigin: '/api/user_origin_timeline',
-        userimpacted: '/api/user_impacted_timeline',
-        computersimpacted: '/api/computer_impacted_timeline'
+        userorigin: '/api/user_origin_logs',
+        userimpacted: '/api/user_impacted_logs',
+        computersimpacted: '/api/computer_impacted_logs'
       };
 
       const paramMappings = {
@@ -73,9 +73,9 @@ export const useDetailedLogs = (
         
         // Map the response based on entity type
         const responseMapping = {
-          userorigin: data.user_origin_timeline,
-          userimpacted: data.user_impacted_timeline,
-          computersimpacted: data.computer_impacted_timeline
+          userorigin: data.user_origin_logs,
+          userimpacted: data.user_impacted_logs,
+          computersimpacted: data.computer_impacted_logs
         };
 
         return responseMapping[entityType] || [];
