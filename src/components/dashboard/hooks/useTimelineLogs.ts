@@ -11,7 +11,7 @@ interface TimelineLogsParams {
 }
 
 const getApiEndpoint = (entityType: EntityType, event: Alert) => {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
   
   switch (entityType) {
     case "userorigin":
@@ -26,38 +26,25 @@ const getApiEndpoint = (entityType: EntityType, event: Alert) => {
 };
 
 export const useTimelineLogs = ({ entityType, event, enabled }: TimelineLogsParams) => {
-  const fetchLogs = async () => {
-    try {
-      const endpoint = getApiEndpoint(entityType, event);
-      console.log('Fetching logs from:', endpoint);
-      console.log('Event data:', event);
+  const endpoint = getApiEndpoint(entityType, event);
+  
+  return useQuery({
+    queryKey: ['logs', entityType, event.id],
+    queryFn: async () => {
+      console.log('Fetching logs from endpoint:', endpoint);
       
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
+      const response = await fetch(endpoint);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+      
       const data = await response.json();
-      console.log('Logs data received:', data);
+      console.log('Received logs data:', data);
       return data;
-    } catch (error) {
-      console.error('Error fetching logs:', error);
-      throw error;
-    }
-  };
-
-  return useQuery({
-    queryKey: ['logs', entityType, event.id],
-    queryFn: fetchLogs,
+    },
     enabled: enabled,
     retry: 1,
-    staleTime: 30000, // Consider data fresh for 30 seconds
-    gcTime: 5 * 60 * 1000 // Using gcTime instead of cacheTime for garbage collection
+    staleTime: 30000,
+    gcTime: 5 * 60 * 1000
   });
 };

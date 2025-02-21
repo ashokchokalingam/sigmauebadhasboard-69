@@ -9,7 +9,7 @@ import TimelineInstanceList from "./TimelineInstanceList";
 import TimelineConnector from "./TimelineConnector";
 import { useTimelineLogs } from "./hooks/useTimelineLogs";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ExpandedContent from "./TimelineEventDetails/ExpandedContent";
 
 interface TimelineEventCardProps {
@@ -40,20 +40,35 @@ const TimelineEventCard = ({
   const [isDetailsExpanded, setIsDetailsExpanded] = useState(false);
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
-  const { data: logsData, isLoading, error } = useTimelineLogs({
+  // Update query configuration to use the correct parameters
+  const { data: logsData, isLoading, error, refetch } = useTimelineLogs({
     entityType,
     event,
-    enabled: isDetailsExpanded
+    enabled: false // We'll manually control when to fetch
   });
 
+  // Effect to handle API calls when card is expanded
+  useEffect(() => {
+    if (isDetailsExpanded) {
+      console.log('Fetching logs for:', {
+        entityType,
+        eventId: event.id,
+        userId: event.user_id,
+        computerName: event.computer_name
+      });
+      refetch();
+    }
+  }, [isDetailsExpanded, event.id, refetch]);
+
   const handleCardClick = () => {
+    console.log('Card clicked - Current state:', {
+      isDetailsExpanded,
+      entityType,
+      eventId: event.id
+    });
+    
     setIsDetailsExpanded(!isDetailsExpanded);
     onSelect(event.id);
-    console.log('Card clicked:', {
-      entityType,
-      event,
-      isExpanded: !isDetailsExpanded
-    });
   };
 
   return (
