@@ -6,6 +6,7 @@ import TimelineEventHeader from "./TimelineEventHeader";
 import TimelineEventTimestamps from "./TimelineEventTimestamps";
 import TimelineMitreSection from "./TimelineMitreSection";
 import TimelineConnector from "./TimelineConnector";
+import { toast } from "sonner";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -14,11 +15,6 @@ interface TimelineEventCardProps {
   entityType: "userorigin" | "userimpacted" | "computersimpacted";
   onSelect?: (id: string | null) => void;
   selectedEventId?: string | null;
-  detailedLogs?: any;
-  isExpanded?: boolean;
-  onToggleExpand?: () => void;
-  instances?: Alert[];
-  isLoadingLogs?: boolean;
 }
 
 const TimelineEventCard = ({ 
@@ -28,17 +24,64 @@ const TimelineEventCard = ({
   entityType,
   onSelect,
   selectedEventId,
-  detailedLogs,
-  isExpanded,
-  onToggleExpand,
-  instances,
-  isLoadingLogs
 }: TimelineEventCardProps) => {
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
 
-  const handleClick = () => {
-    if (onSelect) {
-      onSelect(event.id === selectedEventId ? null : event.id);
+  const handleClick = async () => {
+    console.log('Card clicked:', {
+      entityType,
+      eventId: event.id,
+      title: event.title,
+      user_origin: event.user_origin,
+      user_impacted: event.user_impacted,
+      computer_name: event.computer_name
+    });
+
+    let endpoint = '/api/user_origin_logs';
+    const params = new URLSearchParams();
+
+    if (entityType === "userorigin") {
+      if (!event.user_origin || !event.title) {
+        toast.error("Missing required parameters");
+        return;
+      }
+      params.append("user_origin", event.user_origin);
+      params.append("title", event.title);
+    } else {
+      endpoint = entityType === "computersimpacted" 
+        ? '/api/computer_impacted_logs'
+        : '/api/user_impacted_logs';
+
+      const paramKey = entityType === "computersimpacted" 
+        ? "computer_name" 
+        : "user_impacted";
+      
+      const paramValue = entityType === "computersimpacted"
+        ? event.computer_name
+        : event.user_impacted;
+
+      if (!paramValue) {
+        toast.error("Missing required parameters");
+        return;
+      }
+
+      params.append(paramKey, paramValue);
+      params.append("title", event.title || '');
+    }
+
+    const url = `${endpoint}?${params.toString()}`;
+    console.log('Fetching logs from:', url);
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      console.log('API Response:', data);
+      if (onSelect) {
+        onSelect(event.id === selectedEventId ? null : event.id);
+      }
+    } catch (error) {
+      console.error('Error fetching logs:', error);
+      toast.error("Failed to fetch logs");
     }
   };
 
