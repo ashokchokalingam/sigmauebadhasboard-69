@@ -8,6 +8,7 @@ interface TimelineEventListProps {
   entityType: "userorigin" | "userimpacted" | "computersimpacted";
   selectedEventId: string | null;
   expandedGroups: Set<string>;
+  detailedLogs: any;
   onSelect: (id: string | null) => void;
   onToggleExpand: (id: string) => void;
   hasNextPage: boolean;
@@ -20,6 +21,7 @@ const TimelineEventList = ({
   entityType,
   selectedEventId,
   expandedGroups,
+  detailedLogs,
   onSelect,
   onToggleExpand,
   hasNextPage,
@@ -42,11 +44,12 @@ const TimelineEventList = ({
             isLast={index === events.length - 1}
             entityType={entityType}
             onSelect={onSelect}
+            detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
             isExpanded={expandedGroups.has(event.id)}
             onToggleExpand={() => onToggleExpand(event.id)}
             isLatest={index === 0}
             instances={event.instances}
-            isLoadingLogs={isLoadingLogs}
+            isLoadingLogs={isLoadingLogs && event.id === selectedEventId}
             selectedEventId={selectedEventId}
           />
         ))}

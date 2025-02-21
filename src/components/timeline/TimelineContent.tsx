@@ -29,6 +29,73 @@ const TimelineContent = ({
 
   const processedEvents = useProcessedEvents(allEvents, sortBy, filterBy);
 
+  const { data: detailedLogs, isLoading: isLoadingLogs } = useQuery({
+    queryKey: ["detailed-logs", entityType, selectedEventId],
+    queryFn: async () => {
+      if (!selectedEventId) return null;
+      
+      const selectedEvent = allEvents.find(event => event.id === selectedEventId);
+      if (!selectedEvent) return null;
+
+      let identifier;
+      let title = selectedEvent.title;
+      
+      if (entityType === "userorigin") {
+        identifier = selectedEvent.user_origin;
+      } else if (entityType === "userimpacted") {
+        identifier = selectedEvent.user_impacted;
+      } else {
+        identifier = selectedEvent.computer_name;
+      }
+
+      const params = new URLSearchParams();
+      
+      if (entityType === "computersimpacted") {
+        params.append("computer_name", identifier || '');
+      } else if (entityType === "userorigin") {
+        params.append("user_origin", identifier || '');
+      } else {
+        params.append("user_impacted", identifier || '');
+      }
+      
+      params.append("title", title || '');
+
+      const endpoint = entityType === "computersimpacted" ? '/api/computer_impacted_logs' :
+                      entityType === "userorigin" ? '/api/user_origin_logs' :
+                      '/api/user_impacted_logs';
+
+      console.log('Fetching logs:', {
+        endpoint,
+        params: params.toString(),
+        entityType,
+        identifier,
+        title
+      });
+
+      try {
+        const response = await fetch(`${endpoint}?${params}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch logs: ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log('Received logs:', data);
+        return data;
+      } catch (error) {
+        console.error('Error fetching logs:', error);
+        toast.error("Failed to fetch detailed logs");
+        throw error;
+      }
+    },
+    enabled: !!selectedEventId,
+    meta: {
+      onSettled: (data, error) => {
+        if (error) {
+          console.error('Error fetching logs:', error);
+        }
+      }
+    }
+  });
+
   console.log('Timeline Content Render:', {
     entityType,
     eventsCount: allEvents.length,
@@ -79,11 +146,12 @@ const TimelineContent = ({
           entityType={entityType}
           selectedEventId={selectedEventId}
           expandedGroups={expandedGroups}
+          detailedLogs={detailedLogs}
           onSelect={setSelectedEventId}
           onToggleExpand={handleToggleExpand}
           hasNextPage={hasNextPage}
           loaderRef={loaderRef}
-          isLoadingLogs={false}
+          isLoadingLogs={isLoadingLogs}
         />
       </div>
     </div>
