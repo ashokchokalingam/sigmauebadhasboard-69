@@ -35,51 +35,57 @@ const TimelineContent = ({
       if (!selectedEventId) return null;
       
       const selectedEvent = allEvents.find(event => event.id === selectedEventId);
-      if (!selectedEvent) return null;
-
-      let identifier;
-      let title = selectedEvent.title;
-      
-      if (entityType === "userorigin") {
-        identifier = selectedEvent.user_origin;
-      } else if (entityType === "userimpacted") {
-        identifier = selectedEvent.user_impacted;
-      } else {
-        identifier = selectedEvent.computer_name;
+      if (!selectedEvent) {
+        console.log('No event found with ID:', selectedEventId);
+        return null;
       }
 
+      // Log the event data to verify we have the correct information
+      console.log('Selected event:', selectedEvent);
+
+      // Construct the endpoint and params based on entity type
+      let endpoint = '/api/user_origin_logs';
       const params = new URLSearchParams();
-      
-      if (entityType === "computersimpacted") {
-        params.append("computer_name", identifier || '');
-      } else if (entityType === "userorigin") {
-        params.append("user_origin", identifier || '');
+
+      if (entityType === "userorigin") {
+        params.append("user_origin", selectedEvent.user_origin || '');
+        params.append("title", selectedEvent.title || '');
+        
+        console.log('Fetching user origin logs with params:', {
+          user_origin: selectedEvent.user_origin,
+          title: selectedEvent.title
+        });
       } else {
-        params.append("user_impacted", identifier || '');
+        // Handle other entity types similarly
+        endpoint = entityType === "computersimpacted" 
+          ? '/api/computer_impacted_logs'
+          : '/api/user_impacted_logs';
+
+        const paramKey = entityType === "computersimpacted" 
+          ? "computer_name" 
+          : "user_impacted";
+        
+        const paramValue = entityType === "computersimpacted"
+          ? selectedEvent.computer_name
+          : selectedEvent.user_impacted;
+
+        params.append(paramKey, paramValue || '');
+        params.append("title", selectedEvent.title || '');
       }
-      
-      params.append("title", title || '');
 
-      const endpoint = entityType === "computersimpacted" ? '/api/computer_impacted_logs' :
-                      entityType === "userorigin" ? '/api/user_origin_logs' :
-                      '/api/user_impacted_logs';
-
-      console.log('Fetching logs:', {
-        endpoint,
-        params: params.toString(),
-        entityType,
-        identifier,
-        title
-      });
+      const url = `${endpoint}?${params.toString()}`;
+      console.log('Fetching logs from URL:', url);
 
       try {
-        const response = await fetch(`${endpoint}?${params}`);
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`Failed to fetch logs: ${response.statusText}`);
         }
         const data = await response.json();
-        console.log('Received logs:', data);
-        return data;
+        console.log('Received logs data:', data);
+        
+        // For user_origin_logs, the data is nested under a specific key
+        return entityType === "userorigin" ? data.user_origin_logs : data;
       } catch (error) {
         console.error('Error fetching logs:', error);
         toast.error("Failed to fetch detailed logs");
@@ -90,7 +96,7 @@ const TimelineContent = ({
     meta: {
       onSettled: (data, error) => {
         if (error) {
-          console.error('Error fetching logs:', error);
+          console.error('Error in logs query:', error);
         }
       }
     }
@@ -100,7 +106,8 @@ const TimelineContent = ({
     entityType,
     eventsCount: allEvents.length,
     processedEventsCount: processedEvents.length,
-    selectedEventId
+    selectedEventId,
+    hasDetailedLogs: !!detailedLogs
   });
 
   const handleToggleExpand = (eventId: string) => {
