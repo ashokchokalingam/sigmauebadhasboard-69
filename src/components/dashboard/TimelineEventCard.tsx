@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { getRiskLevel } from "./utils";
 import TimelineConnector from "./TimelineConnector";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TimelineLogsTable from "./TimelineLogsTable";
 import TimelineCardContent from "./TimelineCardContent";
 
@@ -36,7 +36,12 @@ const TimelineEventCard = ({
   const [dataSource, setDataSource] = useState<'mloutliers' | 'anomalies'>('anomalies');
   const [visibleColumns] = useState<string[]>(['system_time', 'title']);
 
-  const isExpanded = selectedEventId === event.id;
+  // Reset logs when card is collapsed
+  useEffect(() => {
+    if (selectedEventId !== event.id) {
+      setLogs([]);
+    }
+  }, [selectedEventId, event.id]);
 
   const handleClick = async () => {
     console.log('Card clicked:', {
@@ -44,15 +49,15 @@ const TimelineEventCard = ({
       eventId: event.id,
       title: event.title,
       currentSelection: selectedEventId,
-      isCurrentlyExpanded: isExpanded
+      isCurrentlyExpanded: selectedEventId === event.id
     });
 
     if (onSelect) {
       onSelect(event.id);
     }
 
-    // Only fetch logs if we're expanding the card
-    if (!isExpanded) {
+    // Only fetch logs if this card is being expanded
+    if (selectedEventId !== event.id) {
       let endpoint = '/api/user_origin_logs';
       const params = new URLSearchParams();
 
@@ -100,6 +105,8 @@ const TimelineEventCard = ({
     }
   };
 
+  const isExpanded = selectedEventId === event.id;
+
   return (
     <div className="group relative pl-4 w-full">
       <TimelineConnector color={color} isLast={isLast} />
@@ -111,7 +118,8 @@ const TimelineEventCard = ({
             cardBg,
             border,
             hover,
-            isLatest && "ring-1 ring-blue-500/50 bg-opacity-75"
+            isLatest && "ring-1 ring-blue-500/50 bg-opacity-75",
+            isExpanded && "ring-2 ring-blue-500"
           )}
         >
           <TimelineCardContent event={event} onClick={handleClick} />
