@@ -1,4 +1,3 @@
-
 import { Alert } from "./types";
 import { cn } from "@/lib/utils";
 import { getRiskLevel } from "./utils";
@@ -10,6 +9,7 @@ import { toast } from "sonner";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { useState } from "react";
 import AnomaliesTableHeaderSection from "./AnomaliesTableHeaderSection";
+import { formatDateTime } from "@/utils/dateTimeUtils";
 
 interface TimelineEventCardProps {
   event: Alert;
@@ -41,7 +41,7 @@ const TimelineEventCard = ({
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
   const [logs, setLogs] = useState<any[]>([]);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
-  const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
+  const [visibleColumns] = useState<string[]>(['system_time', 'title']);
   const [dataSource, setDataSource] = useState<'mloutliers' | 'anomalies'>('anomalies');
 
   const handleClick = async () => {
@@ -121,9 +121,9 @@ const TimelineEventCard = ({
       <div className="mt-4 bg-[#1A1F2C] rounded-lg overflow-hidden border border-purple-900/20">
         <AnomaliesTableHeaderSection
           visibleColumns={visibleColumns}
-          onColumnToggle={setVisibleColumns}
-          onSelectAll={() => setVisibleColumns(Object.keys(logs[0]))}
-          onDeselectAll={() => setVisibleColumns([])}
+          onColumnToggle={() => {}} // Disabled column toggling since we want fixed columns
+          onSelectAll={() => {}}
+          onDeselectAll={() => {}}
           dataSource={dataSource}
           onDataSourceChange={setDataSource}
         />
@@ -132,14 +132,12 @@ const TimelineEventCard = ({
           <Table>
             <TableHeader>
               <TableRow>
-                {visibleColumns.map((key) => (
-                  <TableHead 
-                    key={key} 
-                    className="whitespace-nowrap px-4 py-2 bg-[#1A1F2C] text-[#9b87f5] border-b border-purple-900/20"
-                  >
-                    {key}
-                  </TableHead>
-                ))}
+                <TableHead className="whitespace-nowrap px-4 py-2 bg-[#1A1F2C] text-[#9b87f5] border-b border-purple-900/20">
+                  Time
+                </TableHead>
+                <TableHead className="whitespace-nowrap px-4 py-2 bg-[#1A1F2C] text-[#9b87f5] border-b border-purple-900/20">
+                  Title
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -148,16 +146,12 @@ const TimelineEventCard = ({
                   key={index}
                   className="border-b border-purple-900/10 hover:bg-purple-900/5"
                 >
-                  {visibleColumns.map((key) => (
-                    <TableCell 
-                      key={key} 
-                      className="whitespace-nowrap px-4 py-2 text-blue-300/70"
-                    >
-                      {typeof log[key] === 'object' 
-                        ? JSON.stringify(log[key]) 
-                        : String(log[key] || '')}
-                    </TableCell>
-                  ))}
+                  <TableCell className="whitespace-nowrap px-4 py-2 text-blue-300/70">
+                    {formatDateTime(log.system_time || '', false)}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap px-4 py-2 text-blue-300/70">
+                    {log.title || ''}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
