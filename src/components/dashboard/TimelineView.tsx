@@ -71,10 +71,10 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     if (lastSeenA === lastSeenB) {
       const firstSeenA = new Date(a.first_time_seen || a.system_time).getTime();
       const firstSeenB = new Date(b.first_time_seen || b.system_time).getTime();
-      return firstSeenB - firstSeenA; // Sort by first_seen if last_seen is equal
+      return firstSeenB - firstSeenA;
     }
     
-    return lastSeenB - lastSeenA; // Sort by last_seen in descending order
+    return lastSeenB - lastSeenA;
   });
 
   if (inView && !isFetchingNextPage && hasNextPage) {
