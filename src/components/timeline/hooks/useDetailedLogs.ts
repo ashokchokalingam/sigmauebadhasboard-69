@@ -56,13 +56,23 @@ export const useDetailedLogs = (
       }
 
       const url = `${endpoint}?${params.toString()}`;
+      console.log('Fetching logs from:', url);
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+
         if (!response.ok) {
           throw new Error(`Failed to fetch logs: ${response.statusText}`);
         }
+
         const data = await response.json();
+        console.log('Logs fetched successfully:', data);
         return entityType === "userorigin" ? data.user_origin_logs : data;
       } catch (error) {
         console.error('Error fetching logs:', error);
