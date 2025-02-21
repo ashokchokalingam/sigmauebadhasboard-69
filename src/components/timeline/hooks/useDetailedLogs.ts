@@ -11,25 +11,28 @@ export const useDetailedLogs = (
   return useQuery({
     queryKey: ["detailed-logs", entityType, selectedEventId],
     queryFn: async () => {
-      console.log('queryFn executing with:', { selectedEventId, entityType });
+      console.log('queryFn executing with:', { selectedEventId, entityType, allEvents });
 
       if (!selectedEventId) {
+        console.log('No selectedEventId, returning null');
         return null;
       }
       
       const selectedEvent = allEvents.find(event => event.id === selectedEventId);
       if (!selectedEvent) {
+        console.log('No matching event found in allEvents');
         return null;
       }
 
+      console.log('Selected event:', selectedEvent);
       let endpoint = '/api/user_impacted_logs';
       const params = new URLSearchParams();
 
       switch (entityType) {
         case "userimpacted":
-          // For user impacted, we use computer_impacted_logs endpoint
           endpoint = '/api/computer_impacted_logs';
           if (!selectedEvent.computer_name) {
+            console.error('Missing computer_name for event:', selectedEvent);
             toast.error("Missing computer_name parameter");
             return null;
           }
@@ -39,6 +42,7 @@ export const useDetailedLogs = (
         case "userorigin":
           endpoint = '/api/user_origin_logs';
           if (!selectedEvent.user_origin) {
+            console.error('Missing user_origin for event:', selectedEvent);
             toast.error("Missing user_origin parameter");
             return null;
           }
@@ -48,6 +52,7 @@ export const useDetailedLogs = (
         case "computersimpacted":
           endpoint = '/api/computer_impacted_logs';
           if (!selectedEvent.computer_name) {
+            console.error('Missing computer_name for event:', selectedEvent);
             toast.error("Missing computer_name parameter");
             return null;
           }
@@ -61,7 +66,7 @@ export const useDetailedLogs = (
       }
 
       const url = `${endpoint}?${params.toString()}`;
-      console.log('Fetching logs from:', url);
+      console.log('Attempting to fetch logs from:', url);
 
       try {
         const response = await fetch(url, {
@@ -73,12 +78,20 @@ export const useDetailedLogs = (
         });
 
         if (!response.ok) {
+          console.error('API response not OK:', response.status, response.statusText);
           throw new Error(`Failed to fetch logs: ${response.statusText}`);
         }
 
         const data = await response.json();
         console.log('Logs fetched successfully:', data);
-        return data.computer_impacted_logs || [];
+
+        // Return appropriate data based on entity type
+        const logs = entityType === "userimpacted" ? data.computer_impacted_logs :
+                    entityType === "userorigin" ? data.user_origin_logs :
+                    data.computer_impacted_logs;
+                    
+        console.log('Returning logs:', logs);
+        return logs || [];
 
       } catch (error) {
         console.error('Error fetching logs:', error);
