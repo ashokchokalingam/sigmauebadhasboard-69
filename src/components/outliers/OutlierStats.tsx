@@ -1,4 +1,3 @@
-
 import { AlertOctagon, TrendingUp, Monitor, Users } from "lucide-react";
 import { StatsData, ImpactedCounts } from "./types";
 
