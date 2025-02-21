@@ -5,6 +5,7 @@ import { ChartDataPoint } from "./types";
 import { OutlierTooltip } from "./OutlierTooltip";
 import { Toggle } from "@/components/ui/toggle";
 import { formatDateTime } from "@/utils/dateTimeUtils";
+import { format } from "date-fns";
 
 interface OutlierChartProps {
   data: ChartDataPoint[];
@@ -41,6 +42,11 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
     if (risk >= 100) return '#FF5722';
     if (risk >= 50) return '#FFB74D';
     return '#66BB6A';
+  };
+
+  const formatXAxisDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return format(date, 'MMM d, HH:mm');
   };
 
   return (
@@ -105,13 +111,14 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
             <XAxis 
               dataKey="timestamp"
               stroke="#D8B4FE"
-              tickFormatter={(timestamp) => formatDateTime(timestamp, false)}
+              tickFormatter={formatXAxisDate}
               tick={{ 
                 fill: '#D8B4FE', 
-                fontSize: 14 
+                fontSize: 13,
+                fontWeight: 500
               }}
-              height={60}
-              tickMargin={30}
+              height={80}
+              tickMargin={35}
               interval="preserveStartEnd"
               angle={-45}
               textAnchor="end"
