@@ -37,38 +37,4 @@
     @apply px-4 pb-4 space-y-2 overflow-y-auto h-[calc(100%-120px)]
     scrollbar-thin scrollbar-thumb-[#5856D6]/20 scrollbar-track-transparent;
   }
-
-  /* New styles for enhanced stats cards */
-  .stat-card {
-    @apply relative overflow-hidden rounded-xl border transition-all duration-300;
-  }
-
-  .stat-card-gradient {
-    @apply absolute inset-0 opacity-10 bg-gradient-to-br;
-  }
-
-  .stat-card-content {
-    @apply relative z-10 p-6;
-  }
-
-  .stat-card-icon {
-    @apply p-2 rounded-lg bg-opacity-10;
-  }
-
-  .stat-card-title {
-    @apply text-base font-medium text-gray-200;
-  }
-
-  .stat-card-value {
-    @apply text-3xl font-bold tracking-tight;
-  }
-
-  .stat-card-description {
-    @apply text-sm text-gray-400 line-clamp-2;
-  }
-
-  .stat-card-progress {
-    @apply absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r opacity-30 
-    transition-opacity group-hover:opacity-50;
-  }
 }

@@ -1,4 +1,3 @@
-
 import { Download } from "lucide-react";
 import { Alert } from "./types";
 import StatsSection from "./StatsSection";
@@ -32,15 +31,7 @@ const DashboardLayout = ({
   onLoadMore,
   hasMore
 }: DashboardLayoutProps) => {
-  const calculatedStats = calculateStats(allAlerts, totalRecords);
-  
-  // Transform Stats to AlertStats
-  const stats = {
-    critical: calculatedStats.severity?.critical || 0,
-    high: calculatedStats.severity?.high || 0,
-    systems: calculatedStats.uniqueComputers?.current || 0,
-    users: calculatedStats.uniqueUsers?.current || 0
-  };
+  const stats = calculateStats(allAlerts, totalRecords);
 
   if (selectedEntity) {
     return (

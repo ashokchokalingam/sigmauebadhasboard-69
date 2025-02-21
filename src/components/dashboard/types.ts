@@ -1,4 +1,3 @@
-
 export interface Alert {
   id: string;
   title: string;
@@ -71,11 +70,3 @@ export interface Column {
   key: string;
   label: string;
 }
-
-export interface AlertStats {
-  critical: number;
-  high: number;
-  systems: number;
-  users: number;
-}
-
