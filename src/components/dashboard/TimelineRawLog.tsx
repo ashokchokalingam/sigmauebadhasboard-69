@@ -1,3 +1,4 @@
+
 import { Terminal, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Prism from "prismjs";
