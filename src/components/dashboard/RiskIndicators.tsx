@@ -29,10 +29,10 @@ const RiskIndicators = ({
     switch(level) {
       case "CRITICAL":
         return {
-          bg: "bg-gradient-to-r from-[#FF3B30] to-[#FF453A]",
-          text: "text-white font-medium",
+          bg: "bg-[#FF3B30]/10",
+          text: "text-[#FF3B30]",
           border: "border-[#FF3B30]/20",
-          shadow: "shadow-[0_0_12px_rgba(255,59,48,0.15)]"
+          shadow: ""
         };
       case "HIGH":
         return {
@@ -74,7 +74,7 @@ const RiskIndicators = ({
               <span className="w-full text-center inline-flex items-center justify-center gap-1.5">
                 {level}
                 {level === "CRITICAL" && (
-                  <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5] text-white flex-shrink-0" />
+                  <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5] text-[#FF3B30] flex-shrink-0" />
                 )}
               </span>
             </button>
