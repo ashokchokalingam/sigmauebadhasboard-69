@@ -94,7 +94,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
         transition-all duration-300 cursor-pointer
         hover:shadow-lg hover:shadow-[#5856D6]/5"
     >
-      <div className="flex items-center gap-3 flex-[0_0_40%]">
+      <div className="flex items-center gap-3">
         <div className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center
           border border-[#5856D6]/10`}>
           <Icon className={`w-4 h-4 ${textColor}`} />
@@ -129,22 +129,18 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <div className="flex flex-col items-start">
+      <div className="flex items-center gap-3">
+        <div className="flex flex-col items-end">
           <span className="text-[11px] uppercase text-[#9b87f5]/60">Risk Level</span>
-          <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
-            {level}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
+              {level}
+            </span>
+            <span className={`font-mono font-bold text-[20px] tabular-nums ${textColor}`}>
+              {riskScore.toFixed(1)}
+            </span>
+          </div>
         </div>
-
-        <RiskScoreDisplay 
-          score={riskScore}
-          textColor={textColor}
-          lineColor={lineColor}
-          barWidth={barWidth}
-          glowColor={glowColor}
-          color={color}
-        />
       </div>
     </div>
   );
