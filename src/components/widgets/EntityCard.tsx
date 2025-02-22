@@ -1,6 +1,8 @@
 
 import React from "react";
 import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Clock } from "lucide-react";
+import RiskLevelIndicator from "./RiskLevelIndicator";
+import WaveformDisplay from "./WaveformDisplay";
 import RiskScoreDisplay from "./RiskScoreDisplay";
 import { RiskyEntity } from "./types";
 import { formatDateTime } from "@/utils/dateTimeUtils";
@@ -129,19 +131,28 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
-          {level}
-        </span>
+      <div className="flex items-center gap-1">
+        <div className="flex flex-col items-start mr-1">
+          <span className="text-[11px] uppercase text-[#9b87f5]/60">Risk Level</span>
+          <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
+            {level}
+          </span>
+        </div>
 
-        <RiskScoreDisplay 
-          score={riskScore}
-          textColor={textColor}
-          lineColor={lineColor}
-          barWidth={barWidth}
-          glowColor={glowColor}
-          color={color}
-        />
+        <div className="flex items-center">
+          <div className="opacity-70 hover:opacity-100 transition-opacity w-[32px]">
+            <WaveformDisplay level={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
+          </div>
+
+          <RiskScoreDisplay 
+            score={riskScore}
+            textColor={textColor}
+            lineColor={lineColor}
+            barWidth={barWidth}
+            glowColor={glowColor}
+            color={color}
+          />
+        </div>
       </div>
     </div>
   );
