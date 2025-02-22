@@ -1,8 +1,6 @@
 
 import React from "react";
 import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Clock } from "lucide-react";
-import RiskLevelIndicator from "./RiskLevelIndicator";
-import WaveformDisplay from "./WaveformDisplay";
 import RiskScoreDisplay from "./RiskScoreDisplay";
 import { RiskyEntity } from "./types";
 import { formatDateTime } from "@/utils/dateTimeUtils";
@@ -20,22 +18,10 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
 
   const getRiskLevel = (score: number): { 
     level: string; 
-    color: string;
     textColor: string; 
     bgColor: string;
-    lineColor: string;
-    barWidth: number;
-    glowColor: string;
     trend: 'up' | 'down' | null;
   } => {
-    // Calculate relative width based on risk level
-    const getBarWidth = (score: number): number => {
-      if (score >= 150) return Math.min((score / 200) * 100, 100); // CRITICAL
-      if (score >= 100) return (score / 150) * 75; // HIGH
-      if (score >= 50) return (score / 100) * 50; // MEDIUM
-      return (score / 50) * 25; // LOW
-    };
-
     const trend = typeof entity.risk_trend === 'number'
       ? entity.risk_trend > 0 
         ? 'up' 
@@ -44,48 +30,32 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
 
     if (score >= 150) return { 
       level: "CRITICAL", 
-      color: "#FF3B30",
       textColor: "text-[#FF3B30]",
       bgColor: "bg-[#FF3B30]/10",
-      lineColor: "bg-[#FF3B30]",
-      barWidth: getBarWidth(score),
-      glowColor: "#FF5252",
       trend
     };
     if (score >= 100) return { 
       level: "HIGH", 
-      color: "#FF9500",
       textColor: "text-[#FF9500]",
       bgColor: "bg-[#FF9500]/10",
-      lineColor: "bg-[#FF9500]",
-      barWidth: getBarWidth(score),
-      glowColor: "#FFB340",
       trend
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
-      color: "#FFB340",
       textColor: "text-[#FFB340]",
       bgColor: "bg-[#FFB340]/10",
-      lineColor: "bg-[#FFB340]",
-      barWidth: getBarWidth(score),
-      glowColor: "#FFD484",
       trend
     };
     return { 
       level: "LOW", 
-      color: "#34C759",
       textColor: "text-[#34C759]",
       bgColor: "bg-[#34C759]/10",
-      lineColor: "bg-[#34C759]",
-      barWidth: getBarWidth(score),
-      glowColor: "#4ADE80",
       trend
     };
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, color, textColor, bgColor, lineColor, barWidth, glowColor, trend } = getRiskLevel(riskScore);
+  const { level, textColor, bgColor, trend } = getRiskLevel(riskScore);
 
   return (
     <div
@@ -96,7 +66,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
         transition-all duration-300 cursor-pointer
         hover:shadow-lg hover:shadow-[#5856D6]/5"
     >
-      <div className="flex items-center gap-3 flex-[0_0_40%]">
+      <div className="flex items-center gap-3">
         <div className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center
           border border-[#5856D6]/10`}>
           <Icon className={`w-4 h-4 ${textColor}`} />
@@ -131,27 +101,15 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-1">
-        <div className="flex flex-col items-start mr-1">
+      <div className="flex items-center gap-3">
+        <div className="flex flex-col items-end">
           <span className="text-[11px] uppercase text-[#9b87f5]/60">Risk Level</span>
-          <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
-            {level}
-          </span>
-        </div>
-
-        <div className="flex items-center">
-          <div className="opacity-70 hover:opacity-100 transition-opacity w-[32px]">
-            <WaveformDisplay level={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
+          <div className="flex items-center gap-2">
+            <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
+              {level}
+            </span>
+            <RiskScoreDisplay score={riskScore} textColor={textColor} />
           </div>
-
-          <RiskScoreDisplay 
-            score={riskScore}
-            textColor={textColor}
-            lineColor={lineColor}
-            barWidth={barWidth}
-            glowColor={glowColor}
-            color={color}
-          />
         </div>
       </div>
     </div>
