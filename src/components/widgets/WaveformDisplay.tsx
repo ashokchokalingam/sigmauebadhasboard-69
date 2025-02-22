@@ -1,6 +1,6 @@
 
 import { memo } from "react";
-import CardiogramSVG from "../dashboard/CardiogramSVG";
+import RiskLevelIndicator from "./RiskLevelIndicator";
 
 interface WaveformDisplayProps {
   level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -8,25 +8,9 @@ interface WaveformDisplayProps {
 }
 
 const WaveformDisplay = memo(({ level, color }: WaveformDisplayProps) => {
-  // Calculate wave size based on risk level
-  const getWaveSize = (level: string): string => {
-    switch (level) {
-      case 'CRITICAL':
-        return 'scale-110';
-      case 'HIGH':
-        return 'scale-105';
-      case 'MEDIUM':
-        return 'scale-100';
-      default:
-        return 'scale-95';
-    }
-  };
-
   return (
-    <div className={`flex items-center gap-1.5 transition-transform duration-300 ${getWaveSize(level)}`}>
-      <div className="opacity-70 hover:opacity-100 transition-opacity w-[45px]">
-        <CardiogramSVG riskLevel={level} color={color} />
-      </div>
+    <div className="flex items-center gap-1.5">
+      <RiskLevelIndicator level={level} textColor={color} />
     </div>
   );
 });
