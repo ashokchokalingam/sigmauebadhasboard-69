@@ -1,17 +1,24 @@
 
-import React from "react";
+import { memo } from "react";
 
 interface RiskLevelIndicatorProps {
-  level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  level: string;
   textColor: string;
 }
 
-const RiskLevelIndicator = ({ level, textColor }: RiskLevelIndicatorProps) => {
+const RiskLevelIndicator = memo(({ level, textColor }: RiskLevelIndicatorProps) => {
   return (
-    <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
-      {level}
-    </span>
+    <div className="flex flex-col items-start w-[90px]">
+      <span className="text-xs uppercase text-[#9b87f5]/70 mb-0.5">Risk Level</span>
+      <div className="w-full">
+        <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
+          {level}
+        </span>
+      </div>
+    </div>
   );
-};
+});
+
+RiskLevelIndicator.displayName = 'RiskLevelIndicator';
 
 export default RiskLevelIndicator;

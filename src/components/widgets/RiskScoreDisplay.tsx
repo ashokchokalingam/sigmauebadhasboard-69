@@ -1,5 +1,11 @@
 
-import React from "react";
+import { memo } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface RiskScoreDisplayProps {
   score: number;
@@ -10,23 +16,55 @@ interface RiskScoreDisplayProps {
   color: string;
 }
 
-const RiskScoreDisplay = ({ score, textColor, lineColor, barWidth, glowColor }: RiskScoreDisplayProps) => {
+const RiskScoreDisplay = memo(({ 
+  score, 
+  textColor, 
+  lineColor, 
+  barWidth, 
+  glowColor,
+  color 
+}: RiskScoreDisplayProps) => {
   return (
-    <div className="flex items-center gap-3">
-      <div className="w-[100px] h-[4px] bg-[#1A1B23] rounded-full overflow-hidden relative">
-        <div
-          className={`h-full rounded-full transition-all duration-500 ease-out ${lineColor}`}
-          style={{
+    <div className="relative min-w-[140px]">
+      <div className="flex items-center justify-end gap-2 mb-1">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className={`font-mono font-bold text-[20px] tabular-nums ${textColor}`}>
+                {score.toFixed(1)}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent
+              className="bg-[#0A0B0F]/90 border border-[#5856D6]/20 backdrop-blur-xl"
+            >
+              <p className="text-xs text-[#D6BCFA]">
+                Risk Score: {score.toFixed(1)}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      
+      <div className="relative h-2 bg-[#5856D6]/10 rounded-full overflow-hidden">
+        <div className="absolute inset-0 flex">
+          <div className="flex-1 border-r border-[#5856D6]/20" />
+          <div className="flex-1 border-r border-[#5856D6]/20" />
+          <div className="flex-1 border-r border-[#5856D6]/20" />
+          <div className="flex-1" />
+        </div>
+        
+        <div 
+          className={`h-full ${lineColor} transition-all duration-300`}
+          style={{ 
             width: `${barWidth}%`,
-            boxShadow: `0 0 10px ${glowColor}`
+            boxShadow: `0 0 10px ${glowColor}, 0 0 15px ${color}40`
           }}
         />
       </div>
-      <span className={`font-mono text-base font-medium ${textColor} min-w-[60px] text-right`}>
-        {score.toFixed(1)}
-      </span>
     </div>
   );
-};
+});
+
+RiskScoreDisplay.displayName = 'RiskScoreDisplay';
 
 export default RiskScoreDisplay;
