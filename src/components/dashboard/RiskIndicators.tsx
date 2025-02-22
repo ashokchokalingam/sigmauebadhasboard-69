@@ -29,10 +29,10 @@ const RiskIndicators = ({
     switch(level) {
       case "CRITICAL":
         return {
-          bg: "bg-[#ea384c]",
-          text: "text-white",
-          border: "border-[#ea384c]/50",
-          shadow: "shadow-[0_0_10px_rgba(234,56,76,0.25)]"
+          bg: "bg-gradient-to-r from-[#931F1D] to-[#B42D2B]",
+          text: "text-[#FAFAFC] font-semibold",
+          border: "border-[#931F1D]/40",
+          shadow: "shadow-[0_0_12px_rgba(147,31,29,0.25)]"
         };
       case "HIGH":
         return {
@@ -68,12 +68,12 @@ const RiskIndicators = ({
             <button 
               className={`px-3 rounded text-[11px] font-medium tracking-wider uppercase 
                 ${styles.bg} ${styles.text} ${styles.border} ${styles.shadow}
-                hover:opacity-90 transition-all cursor-pointer
+                hover:opacity-90 transition-all cursor-pointer backdrop-blur-[1px]
                 border flex items-center justify-center gap-1.5 h-[24px] min-w-[70px]`}
             >
               {level}
               {level === "CRITICAL" && (
-                <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5]" />
+                <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5] text-[#FAFAFC]" />
               )}
             </button>
           </PopoverTrigger>
