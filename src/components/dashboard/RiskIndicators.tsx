@@ -25,15 +25,30 @@ const RiskIndicators = ({
   linkedUsers = [],
   mitreTactics = []
 }: RiskIndicatorsProps) => {
+  const getLevelBackground = () => {
+    switch(level) {
+      case "CRITICAL":
+        return "bg-[#FF3B30]/10";
+      case "HIGH":
+        return "bg-[#FF9500]/10";
+      case "MEDIUM":
+        return "bg-[#FFB340]/10";
+      default:
+        return "bg-[#34C759]/10";
+    }
+  };
+
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-3">
       <div className="flex flex-col items-end">
         <span className="text-[11px] uppercase text-[#9b87f5]/60">Risk Level</span>
         <Popover>
           <PopoverTrigger asChild>
             <button 
-              className={`text-sm font-bold tracking-wider uppercase ${textColor} 
-                hover:opacity-80 transition-opacity cursor-pointer`}
+              className={`px-2 py-0.5 rounded text-sm font-bold tracking-wider uppercase 
+                ${textColor} ${getLevelBackground()}
+                hover:opacity-80 transition-all cursor-pointer
+                border border-current border-opacity-20`}
             >
               {level}
             </button>
