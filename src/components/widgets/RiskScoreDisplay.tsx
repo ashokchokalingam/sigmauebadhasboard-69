@@ -18,10 +18,10 @@ const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
     const baseClasses = "font-mono font-bold tabular-nums transition-all leading-none";
     
     if (score >= 150) {
-      return `${baseClasses} text-[22px] text-[#FF3B30] drop-shadow-[0_0_12px_rgba(255,59,48,0.6)]`;
+      return `${baseClasses} text-[20px] text-[#FF3B30]`;
     }
     if (score >= 100) {
-      return `${baseClasses} text-[22px] text-[#FF9500] drop-shadow-[0_0_6px_rgba(255,149,0,0.5)]`;
+      return `${baseClasses} text-[20px] text-[#FF9500]`;
     }
     if (score >= 50) {
       return `${baseClasses} text-[20px] text-[#FFB340]`;
@@ -31,10 +31,10 @@ const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
 
   const getShieldStyles = (score: number) => {
     if (score >= 150) {
-      return "text-[#FF3B30] drop-shadow-[0_0_8px_rgba(255,59,48,0.4)]";
+      return "text-[#FF3B30]";
     }
     if (score >= 100) {
-      return "text-[#FF9500] drop-shadow-[0_0_6px_rgba(255,149,0,0.3)]";
+      return "text-[#FF9500]";
     }
     if (score >= 50) {
       return "text-[#FFB340]";
@@ -47,6 +47,13 @@ const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
     if (score >= 100) return "High risk level - Urgent investigation needed";
     if (score >= 50) return "Medium risk level - Monitor closely";
     return "Low risk level - Normal activity";
+  };
+
+  // Remove leading zeros by using Math.floor for the whole number part
+  const formatScore = (score: number) => {
+    const wholeNumber = Math.floor(score);
+    const decimal = score - wholeNumber;
+    return wholeNumber + (decimal ? decimal.toFixed(1).substring(1) : '');
   };
 
   return (
@@ -63,7 +70,7 @@ const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
                   className={`w-4 h-4 transition-all stroke-[2.5] ${getShieldStyles(score)}`}
                 />
                 <div className={getScoreClasses(score)}>
-                  {score.toFixed(1)}
+                  {formatScore(score)}
                 </div>
               </div>
             </TooltipTrigger>
@@ -72,7 +79,7 @@ const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
             >
               <div className="space-y-1">
                 <p className="text-xs font-medium text-[#D6BCFA]">
-                  Risk Score: {score.toFixed(1)}
+                  Risk Score: {formatScore(score)}
                 </p>
                 <p className="text-xs text-[#9b87f5]">
                   {getScoreDescription(score)}
