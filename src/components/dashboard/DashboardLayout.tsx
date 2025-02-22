@@ -46,12 +46,12 @@ const DashboardLayout = ({
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-4 md:p-6">
+    <div className="min-h-screen w-full bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] pt-2 px-4 md:px-6">
       <div className="mb-3 relative">
         <div className="absolute -left-2 -top-2 w-[calc(100%+1rem)] h-[calc(100%+1rem)] bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-violet-500/10 rounded-lg blur-xl" />
-        <div className="relative bg-black/40 rounded-lg border border-blue-500/10 px-5 py-4 backdrop-blur-sm">
+        <div className="relative bg-black/40 rounded-lg border border-blue-500/10 px-5 py-3 backdrop-blur-sm">
           <div className="max-w-full lg:max-w-[80%]">
-            <div className="flex items-center gap-4 mb-2.5">
+            <div className="flex items-center gap-4 mb-2">
               <div className="flex items-center gap-3">
                 <Shield className="h-6 w-6 text-blue-400" />
                 <Brain className="h-6 w-6 text-purple-400" />
@@ -63,7 +63,7 @@ const DashboardLayout = ({
               </span>
             </div>
             
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-2">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-1.5">
               <span className="inline bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-violet-400">
                 ML-Powered ATT&CK User Behavior Analytics
               </span>
