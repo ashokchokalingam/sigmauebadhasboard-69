@@ -45,13 +45,13 @@ const EntityCard = ({
   return (
     <div
       onClick={onClick}
-      className="flex items-center justify-between px-5 py-3.5 rounded-lg
+      className="flex items-center justify-between px-4 py-3 rounded-lg
         bg-[#0A0B0F] hover:bg-[#12131A]
         border border-[#5856D6]/20 hover:border-[#5856D6]/30
         transition-all duration-300 cursor-pointer
         hover:shadow-lg hover:shadow-[#5856D6]/5 group"
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 flex-1">
         <EntityInfo
           entityName={id}
           isComputer={false}
@@ -73,7 +73,7 @@ const EntityCard = ({
         )}
       </div>
 
-      <div className="flex items-center pl-6 border-l border-[#5856D6]/10">
+      <div className="flex items-center pl-4 ml-4 border-l border-[#5856D6]/10">
         <RiskIndicators
           level={level}
           textColor={textColor}
