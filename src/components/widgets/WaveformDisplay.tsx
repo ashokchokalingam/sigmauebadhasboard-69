@@ -1,5 +1,5 @@
 
-import SignalStrengthBars from "@/components/dashboard/SignalStrengthBars";
+import RiskMeter from "@/components/dashboard/RiskMeter";
 
 interface WaveformDisplayProps {
   level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -7,7 +7,7 @@ interface WaveformDisplayProps {
 }
 
 const WaveformDisplay = ({ level, color }: WaveformDisplayProps) => {
-  return <SignalStrengthBars riskLevel={level} color={color} />;
+  return <RiskMeter riskLevel={level} color={color} />;
 };
 
 export default WaveformDisplay;
