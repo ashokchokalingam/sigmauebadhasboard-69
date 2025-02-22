@@ -45,7 +45,7 @@ const EntityCard = ({
   return (
     <div
       onClick={onClick}
-      className="flex items-center justify-between px-6 py-4 rounded-lg
+      className="flex items-center justify-between px-5 py-3.5 rounded-lg
         bg-[#0A0B0F] hover:bg-[#12131A]
         border border-[#5856D6]/20 hover:border-[#5856D6]/30
         transition-all duration-300 cursor-pointer
@@ -73,7 +73,7 @@ const EntityCard = ({
         )}
       </div>
 
-      <div className="flex items-center gap-6 pl-6 border-l border-[#5856D6]/10">
+      <div className="flex items-center pl-6 border-l border-[#5856D6]/10">
         <RiskIndicators
           level={level}
           textColor={textColor}

@@ -14,10 +14,10 @@ interface RiskScoreDisplayProps {
 
 const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
   const getScoreClasses = (score: number) => {
-    const baseClasses = "font-mono font-bold tabular-nums transition-all";
+    const baseClasses = "font-mono font-bold tabular-nums transition-all min-w-[60px] text-right";
     
     if (score >= 150) {
-      return `${baseClasses} text-[24px] ${textColor} drop-shadow-[0_0_8px_rgba(255,59,48,0.5)]`;
+      return `${baseClasses} text-[24px] text-[#FF3B30] drop-shadow-[0_0_8px_rgba(255,59,48,0.5)]`;
     }
     if (score >= 100) {
       return `${baseClasses} text-[22px] ${textColor} drop-shadow-[0_0_6px_rgba(255,149,0,0.5)]`;
@@ -26,7 +26,7 @@ const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative pl-2">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>

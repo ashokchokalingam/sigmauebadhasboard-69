@@ -39,16 +39,17 @@ const RiskIndicators = ({
   };
 
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex flex-col items-end">
-        <span className="text-[11px] uppercase text-[#9b87f5]/60">Risk Level</span>
+    <div className="flex items-center gap-4">
+      <div className="flex flex-col items-end min-w-[100px]">
+        <span className="text-[11px] uppercase text-[#9b87f5]/60 mb-1">Risk Level</span>
         <Popover>
           <PopoverTrigger asChild>
             <button 
-              className={`px-2 py-0.5 rounded text-sm font-bold tracking-wider uppercase 
+              className={`px-2.5 py-0.5 rounded text-sm font-bold tracking-wider uppercase 
                 ${textColor} ${getLevelBackground()}
                 hover:opacity-80 transition-all cursor-pointer
-                border border-current border-opacity-20`}
+                border border-current border-opacity-20
+                shadow-sm`}
             >
               {level}
             </button>
