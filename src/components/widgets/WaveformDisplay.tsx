@@ -1,5 +1,5 @@
 
-import RiskMeter from "@/components/dashboard/RiskMeter";
+import RiskSparkline from "@/components/dashboard/RiskSparkline";
 
 interface WaveformDisplayProps {
   level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -7,7 +7,7 @@ interface WaveformDisplayProps {
 }
 
 const WaveformDisplay = ({ level, color }: WaveformDisplayProps) => {
-  return <RiskMeter riskLevel={level} color={color} />;
+  return <RiskSparkline riskLevel={level} color={color} />;
 };
 
 export default WaveformDisplay;
