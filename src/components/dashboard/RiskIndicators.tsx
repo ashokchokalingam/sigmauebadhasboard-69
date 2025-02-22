@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Clock, Users, Shield } from "lucide-react";
+import { Clock, Users, Shield, AlertTriangle } from "lucide-react";
 
 interface RiskIndicatorsProps {
   level: string;
@@ -39,18 +39,20 @@ const RiskIndicators = ({
   };
 
   return (
-    <div className="flex items-center gap-6">
-      <div className="flex flex-col items-end min-w-[90px]">
-        <span className="text-[10px] uppercase text-[#9b87f5]/60 mb-0.5">Risk Level</span>
+    <div className="flex items-center gap-5">
+      <div className="flex flex-col items-end min-w-[80px]">
         <Popover>
           <PopoverTrigger asChild>
             <button 
-              className={`px-2 py-0.5 rounded-md text-xs font-semibold tracking-wider uppercase 
+              className={`px-2 py-0.5 rounded text-[11px] font-medium tracking-wider uppercase 
                 ${textColor} ${getLevelBackground()}
                 hover:opacity-80 transition-all cursor-pointer
-                border border-current border-opacity-20`}
+                border border-current border-opacity-20 flex items-center gap-1`}
             >
               {level}
+              {level === "CRITICAL" && (
+                <AlertTriangle className="w-3 h-3 stroke-[3]" />
+              )}
             </button>
           </PopoverTrigger>
           <PopoverContent 
