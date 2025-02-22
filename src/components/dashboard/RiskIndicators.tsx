@@ -29,16 +29,16 @@ const RiskIndicators = ({
     switch(level) {
       case "CRITICAL":
         return {
-          bg: "bg-[#FF3B30]/10",
+          bg: "bg-transparent",
           text: "text-[#FF3B30]",
-          border: "border-[#FF3B30]/20",
+          border: "border-[#FF3B30]",
           shadow: ""
         };
       case "HIGH":
         return {
-          bg: "bg-[#FF9500]/10",
+          bg: "bg-transparent",
           text: "text-[#FF9500]",
-          border: "border-[#FF9500]/20",
+          border: "border-[#FF9500]",
           shadow: ""
         };
       case "MEDIUM":
