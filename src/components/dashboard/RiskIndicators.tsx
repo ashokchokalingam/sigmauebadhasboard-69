@@ -31,25 +31,29 @@ const RiskIndicators = ({
         return {
           bg: "bg-[#ea384c]",
           text: "text-white",
-          border: "border-[#ea384c]/50"
+          border: "border-[#ea384c]/50",
+          shadow: "shadow-[0_0_10px_rgba(234,56,76,0.25)]"
         };
       case "HIGH":
         return {
           bg: "bg-[#FF9500]/10",
           text: "text-[#FF9500]",
-          border: "border-[#FF9500]/20"
+          border: "border-[#FF9500]/20",
+          shadow: ""
         };
       case "MEDIUM":
         return {
           bg: "bg-[#FFB340]/10",
           text: "text-[#FFB340]",
-          border: "border-[#FFB340]/20"
+          border: "border-[#FFB340]/20",
+          shadow: ""
         };
       default:
         return {
           bg: "bg-[#34C759]/10",
           text: "text-[#34C759]",
-          border: "border-[#34C759]/20"
+          border: "border-[#34C759]/20",
+          shadow: ""
         };
     }
   };
@@ -62,10 +66,10 @@ const RiskIndicators = ({
         <Popover>
           <PopoverTrigger asChild>
             <button 
-              className={`px-3 py-1 rounded text-[11px] font-medium tracking-wider uppercase 
-                ${styles.bg} ${styles.text} ${styles.border}
+              className={`px-3 rounded text-[11px] font-medium tracking-wider uppercase 
+                ${styles.bg} ${styles.text} ${styles.border} ${styles.shadow}
                 hover:opacity-90 transition-all cursor-pointer
-                border flex items-center justify-center gap-1.5 shadow-sm h-[22px] min-w-[70px]`}
+                border flex items-center justify-center gap-1.5 h-[24px] min-w-[70px]`}
             >
               {level}
               {level === "CRITICAL" && (

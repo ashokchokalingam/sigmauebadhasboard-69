@@ -80,7 +80,7 @@ const EntityCard = ({
         )}
       </div>
 
-      <div className="flex items-center pl-6 border-l border-[#5856D6]/10 min-w-[200px]">
+      <div className="flex items-center pl-6 border-l border-[#5856D6]/5 min-w-[200px]">
         <RiskIndicators
           level={level}
           textColor={textColor}

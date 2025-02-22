@@ -17,7 +17,7 @@ const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
     const baseClasses = "font-mono font-bold tabular-nums transition-all min-w-[65px] text-right leading-none";
     
     if (score >= 150) {
-      return `${baseClasses} text-[22px] text-[#FF3B30] drop-shadow-[0_0_8px_rgba(255,59,48,0.5)]`;
+      return `${baseClasses} text-[22px] text-[#FF3B30] drop-shadow-[0_0_12px_rgba(255,59,48,0.6)]`;
     }
     if (score >= 100) {
       return `${baseClasses} text-[22px] text-[#FF9500] drop-shadow-[0_0_6px_rgba(255,149,0,0.5)]`;
