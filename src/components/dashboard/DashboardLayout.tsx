@@ -47,50 +47,50 @@ const DashboardLayout = ({
 
   return (
     <div className="min-h-screen w-full bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-4 md:p-6">
-      <div className="mb-8 relative">
+      <div className="mb-4 relative">
         <div className="absolute -left-2 -top-2 w-[calc(100%+1rem)] h-[calc(100%+1rem)] bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-violet-500/10 rounded-lg blur-xl" />
-        <div className="relative bg-black/40 rounded-lg border border-blue-500/10 p-8 backdrop-blur-sm">
+        <div className="relative bg-black/40 rounded-lg border border-blue-500/10 p-5 backdrop-blur-sm">
           <div className="max-w-full lg:max-w-[80%]">
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center gap-4 mb-3">
               <div className="flex items-center gap-3">
-                <Shield className="h-7 w-7 text-blue-400" />
-                <Brain className="h-7 w-7 text-purple-400" />
-                <Activity className="h-7 w-7 text-violet-400" />
+                <Shield className="h-6 w-6 text-blue-400" />
+                <Brain className="h-6 w-6 text-purple-400" />
+                <Activity className="h-6 w-6 text-violet-400" />
               </div>
-              <div className="h-8 w-[1px] bg-gradient-to-b from-blue-500/20 via-purple-500/20 to-violet-500/20" />
+              <div className="h-6 w-[1px] bg-gradient-to-b from-blue-500/20 via-purple-500/20 to-violet-500/20" />
               <span className="text-sm font-medium text-blue-300/80 tracking-wider">
                 ENTERPRISE SECURITY ANALYTICS
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-3">
               <span className="inline bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-violet-400">
                 ML-Powered ATT&CK User Behavior Analytics
               </span>
             </h1>
             
-            <div className="mt-6 text-sm text-blue-300/60 max-w-lg">
+            <div className="text-sm text-blue-300/60 max-w-lg">
               Advanced threat detection powered by machine learning and MITRE ATT&CK framework
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mb-6">
+      <div className="mb-4">
         <StatsSection stats={stats} totalAlerts={totalRecords} />
       </div>
 
-      <div className="mb-6">
+      <div className="mb-4">
         <OutliersWidget />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
         <HighRiskUsersOriginWidget />
         <HighRiskUsersImpactedWidget />
         <HighRiskComputersWidget />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
         <div className="bg-black/40 border border-blue-500/10 rounded-lg p-4">
           <RiskyEntities 
             alerts={allAlerts} 
@@ -114,7 +114,7 @@ const DashboardLayout = ({
         </div>
       </div>
 
-      <div className="mt-6 bg-black/40 rounded-lg backdrop-blur-sm border border-blue-500/10">
+      <div className="bg-black/40 rounded-lg backdrop-blur-sm border border-blue-500/10">
         <AnomaliesTable 
           alerts={alerts.slice(0, 1000)} 
           onLoadMore={onLoadMore}
