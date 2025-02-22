@@ -6,7 +6,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import RiskScoreHelp from "@/components/dashboard/RiskScoreHelp";
 
 interface RiskScoreDisplayProps {
   score: number;
@@ -44,7 +43,6 @@ const RiskScoreDisplay = memo(({
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <RiskScoreHelp />
       </div>
       
       <div className="relative h-2 bg-[#5856D6]/10 rounded-full overflow-hidden">
