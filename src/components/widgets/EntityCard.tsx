@@ -1,6 +1,8 @@
 
 import React from "react";
-import { Monitor, User, Clock } from "lucide-react";
+import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Clock } from "lucide-react";
+import RiskLevelIndicator from "./RiskLevelIndicator";
+import WaveformDisplay from "./WaveformDisplay";
 import RiskScoreDisplay from "./RiskScoreDisplay";
 import { RiskyEntity } from "./types";
 import { formatDateTime } from "@/utils/dateTimeUtils";
@@ -24,7 +26,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     lineColor: string;
     barWidth: number;
     glowColor: string;
-    trend: 'up' | 'down' | 'stable' | null;
+    trend: 'up' | 'down' | null;
   } => {
     // Calculate relative width based on risk level
     const getBarWidth = (score: number): number => {
@@ -34,13 +36,10 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
       return (score / 50) * 25; // LOW
     };
 
-    // Determine trend
     const trend = typeof entity.risk_trend === 'number'
       ? entity.risk_trend > 0 
-        ? 'up'
-        : entity.risk_trend < 0
-          ? 'down'
-          : 'stable'
+        ? 'up' 
+        : 'down'
       : null;
 
     if (score >= 150) return { 
@@ -85,17 +84,6 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     };
   };
 
-  const getTrendSymbol = (trend: 'up' | 'down' | 'stable' | null) => {
-    if (!trend || trend === 'stable') {
-      return <span className="text-[#888888] text-sm">◄►</span>;
-    }
-    return (
-      <span className={trend === 'up' ? 'text-[#ea384c]' : 'text-[#34C759]'}>
-        {trend === 'up' ? '▲' : '▼'}
-      </span>
-    );
-  };
-
   const riskScore = parseFloat(entity.cumulative_risk_score);
   const { level, color, textColor, bgColor, lineColor, barWidth, glowColor, trend } = getRiskLevel(riskScore);
 
@@ -122,9 +110,17 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
             <span className="text-xs text-[#9b87f5]/60">
               {entity.unique_title_count} unique anomalies
             </span>
-            <div className="flex items-center">
-              {getTrendSymbol(trend)}
-            </div>
+            {trend && (
+              <div className={`flex items-center ${
+                trend === 'up' ? 'text-red-400' : 'text-green-400'
+              }`}>
+                {trend === 'up' ? (
+                  <ArrowUpIcon className="h-3 w-3" />
+                ) : (
+                  <ArrowDownIcon className="h-3 w-3" />
+                )}
+              </div>
+            )}
           </div>
           {entity.last_seen && (
             <div className="flex items-center gap-1 text-xs text-[#9b87f5]/60">
@@ -135,19 +131,28 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
-          {level}
-        </span>
+      <div className="flex items-center gap-1">
+        <div className="flex flex-col items-start mr-1">
+          <span className="text-[11px] uppercase text-[#9b87f5]/60">Risk Level</span>
+          <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
+            {level}
+          </span>
+        </div>
 
-        <RiskScoreDisplay 
-          score={riskScore}
-          textColor={textColor}
-          lineColor={lineColor}
-          barWidth={barWidth}
-          glowColor={glowColor}
-          color={color}
-        />
+        <div className="flex items-center">
+          <div className="opacity-70 hover:opacity-100 transition-opacity w-[32px]">
+            <WaveformDisplay level={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} color={color} />
+          </div>
+
+          <RiskScoreDisplay 
+            score={riskScore}
+            textColor={textColor}
+            lineColor={lineColor}
+            barWidth={barWidth}
+            glowColor={glowColor}
+            color={color}
+          />
+        </div>
       </div>
     </div>
   );
