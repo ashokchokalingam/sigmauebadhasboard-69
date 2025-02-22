@@ -16,12 +16,8 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
   const score = riskScore ? parseFloat(riskScore) : 0;
   const {
     level,
-    color,
     textColor,
-    bgColor,
-    lineColor,
-    barWidth,
-    glowColor
+    bgColor
   } = getRiskLevel(score);
 
   return (
@@ -43,11 +39,7 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
 
       <RiskIndicators
         level={level}
-        color={color}
         textColor={textColor}
-        lineColor={lineColor}
-        barWidth={barWidth}
-        glowColor={glowColor}
         riskScore={score}
       />
     </div>
@@ -55,4 +47,3 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
 };
 
 export default EntityCard;
-
