@@ -1,3 +1,4 @@
+
 import { Shield, Activity, CircleDot } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { formatDateTime } from "@/utils/dateTimeUtils";
@@ -12,24 +13,9 @@ interface TooltipProps {
 export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipProps) => {
   if (!active || !payload?.[0]) return null;
 
-  const tooltipRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: coordinate?.x || 0, y: 0 });
-
   const data = payload[0].payload;
   
   if (!data) return null;
-
-  useEffect(() => {
-    if (!tooltipRef.current || !coordinate) return;
-
-    const tooltip = tooltipRef.current;
-    const tooltipRect = tooltip.getBoundingClientRect();
-    
-    setPosition({
-      x: coordinate.x,
-      y: -tooltipRect.height / 2
-    });
-  }, [coordinate]);
 
   const getSeverityColor = (severity: string = 'medium') => {
     switch (severity?.toLowerCase()) {
@@ -71,17 +57,18 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     return formatDateTime(date);
   };
 
+  const xPos = coordinate ? coordinate.x : 0;
+  const tooltipStyle = {
+    transform: 'translateY(-50%)',
+    left: Math.max(10, xPos), // Ensure tooltip doesn't go off-screen to the left
+    position: 'fixed' as const
+  };
+
   return (
     <div 
-      ref={tooltipRef}
-      className="absolute bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
-        shadow-xl w-[400px] pointer-events-none"
-      style={{
-        left: position.x,
-        top: '50%',
-        transform: 'translateY(-50%)',
-        zIndex: 50
-      }}
+      className="fixed bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
+        shadow-xl w-[400px] pointer-events-none z-50"
+      style={tooltipStyle}
     >
       <div className="space-y-2.5">
         <div className="flex items-center gap-2">
