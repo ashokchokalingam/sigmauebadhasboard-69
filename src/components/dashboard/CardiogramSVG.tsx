@@ -19,7 +19,8 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
           segments: 4,
           speed: 1,
           smoothing: 0.3,
-          noise: 2
+          noise: 2,
+          peakHeight: 12
         };
       case 'HIGH':
         return {
@@ -28,7 +29,8 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
           segments: 3,
           speed: 0.85,
           smoothing: 0.35,
-          noise: 1
+          noise: 1,
+          peakHeight: 10
         };
       case 'MEDIUM':
         return {
@@ -37,7 +39,8 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
           segments: 3,
           speed: 0.65,
           smoothing: 0.4,
-          noise: 0.5
+          noise: 0.5,
+          peakHeight: 8
         };
       case 'LOW':
         return {
@@ -46,7 +49,8 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
           segments: 2,
           speed: 0.5,
           smoothing: 0.3,
-          noise: 0
+          noise: 0,
+          peakHeight: 6
         };
       default:
         return {
@@ -55,7 +59,8 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
           segments: 2,
           speed: 0.5,
           smoothing: 0.3,
-          noise: 0
+          noise: 0,
+          peakHeight: 6
         };
     }
   };
@@ -72,45 +77,57 @@ const CardiogramSVG = ({ riskLevel, color }: CardiogramSVGProps) => {
       if (!startTime) startTime = timestamp;
       const progress = ((timestamp - startTime) * config.speed) % 1000;
       
+      // Create a more natural-looking heartbeat pattern
       let d = `M 0 10`;
-      const width = 60;
-      const segments = config.segments * 2;
-      const step = width / segments;
       const points: [number, number][] = [];
+      const width = 60;
+      const step = width / 20; // More points for smoother curves
       
-      for (let i = 0; i <= segments; i++) {
-        const x = i * step;
+      for (let x = 0; x <= width; x += step) {
         const phase = (progress / 1000) * Math.PI * 2;
-        let y = 10 + Math.sin(i * config.frequency + phase) * config.amplitude;
+        let y = 10;
         
-        // Add noise based on risk level
+        // Create the characteristic QRS complex shape
+        const normalizedX = x / width;
+        if (normalizedX > 0.3 && normalizedX < 0.7) {
+          const peakPosition = 0.5;
+          const distanceFromPeak = Math.abs(normalizedX - peakPosition);
+          if (distanceFromPeak < 0.1) {
+            // Create sharp peak
+            y -= Math.cos(distanceFromPeak * Math.PI * 5) * config.peakHeight;
+          } else {
+            // Create baseline waves
+            y += Math.sin(x * config.frequency + phase) * config.amplitude;
+          }
+        } else {
+          // Baseline waves
+          y += Math.sin(x * config.frequency + phase) * (config.amplitude * 0.5);
+        }
+        
+        // Add subtle noise for more realistic appearance
         if (config.noise > 0) {
-          const noise = (Math.random() - 0.5) * config.noise;
-          y += noise;
+          y += (Math.random() - 0.5) * config.noise;
         }
         
         points.push([x, y]);
       }
       
+      // Create smooth curve through points
       points.forEach((point, i) => {
         if (i === 0) {
-          d += ` L ${point[0]} ${point[1]}`;
+          d += ` M ${point[0]} ${point[1]}`;
         } else {
-          const prev = points[i - 1];
-          const curr = point;
+          const prevPoint = points[i - 1];
+          const nextPoint = points[i + 1] || point;
           
-          // Use sharper lines for higher risk levels
-          if (riskLevel === 'CRITICAL' || riskLevel === 'HIGH') {
-            d += ` L ${curr[0]} ${curr[1]}`;
-          } else {
-            const smoothing = config.smoothing;
-            const cpx1 = prev[0] + (curr[0] - prev[0]) * smoothing;
-            const cpy1 = prev[1];
-            const cpx2 = curr[0] - (curr[0] - prev[0]) * smoothing;
-            const cpy2 = curr[1];
-            
-            d += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${curr[0]} ${curr[1]}`;
-          }
+          // Use cubic bezier curves for smoother transitions
+          const smoothing = config.smoothing;
+          const cpx1 = prevPoint[0] + (point[0] - prevPoint[0]) * smoothing;
+          const cpy1 = prevPoint[1];
+          const cpx2 = point[0] - (nextPoint[0] - point[0]) * smoothing;
+          const cpy2 = point[1];
+          
+          d += ` C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${point[0]} ${point[1]}`;
         }
       });
 
