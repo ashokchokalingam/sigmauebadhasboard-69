@@ -57,15 +57,15 @@ const RiskIndicators = ({
   const styles = getLevelStyles();
 
   return (
-    <div className="flex items-center gap-6">
-      <div className="w-[72px]">
+    <div className="flex items-center justify-end w-full gap-4">
+      <div className="w-[80px] flex justify-end">
         <Popover>
           <PopoverTrigger asChild>
             <button 
-              className={`w-full px-2 py-1 rounded text-[11px] font-medium tracking-wider uppercase 
+              className={`px-3 py-1 rounded text-[11px] font-medium tracking-wider uppercase 
                 ${styles.bg} ${styles.text} ${styles.border}
                 hover:opacity-90 transition-all cursor-pointer
-                border flex items-center justify-center gap-1.5 shadow-sm h-[22px]`}
+                border flex items-center justify-center gap-1.5 shadow-sm h-[22px] min-w-[70px]`}
             >
               {level}
               {level === "CRITICAL" && (

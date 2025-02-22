@@ -56,7 +56,7 @@ const EntityCard = ({
         border ${getCardBorderClass()} hover:border-opacity-50
         transition-all duration-300 cursor-pointer
         hover:shadow-lg hover:shadow-[#5856D6]/5 group
-        mb-2`}
+        mb-3`}
     >
       <div className="flex items-center gap-3 flex-1">
         <EntityInfo
@@ -80,7 +80,7 @@ const EntityCard = ({
         )}
       </div>
 
-      <div className="flex items-center pl-6 border-l border-[#5856D6]/10">
+      <div className="flex items-center pl-6 border-l border-[#5856D6]/10 min-w-[200px]">
         <RiskIndicators
           level={level}
           textColor={textColor}
