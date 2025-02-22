@@ -29,6 +29,19 @@ const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
     return `${baseClasses} text-[20px] text-[#34C759]`;
   };
 
+  const getShieldStyles = (score: number) => {
+    if (score >= 150) {
+      return "text-[#FF3B30] drop-shadow-[0_0_8px_rgba(255,59,48,0.4)]";
+    }
+    if (score >= 100) {
+      return "text-[#FF9500] drop-shadow-[0_0_6px_rgba(255,149,0,0.3)]";
+    }
+    if (score >= 50) {
+      return "text-[#FFB340]";
+    }
+    return "text-[#34C759]";
+  };
+
   const getScoreDescription = (score: number) => {
     if (score >= 150) return "Critical risk level - Immediate attention required";
     if (score >= 100) return "High risk level - Urgent investigation needed";
@@ -47,7 +60,7 @@ const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
             <TooltipTrigger asChild>
               <div className="flex items-center gap-1.5">
                 <Shield 
-                  className={`w-4 h-4 ${score >= 150 ? 'text-[#FF3B30]' : score >= 100 ? 'text-[#FF9500]' : 'text-[#9b87f5]'}`}
+                  className={`w-4 h-4 transition-all stroke-[2.5] ${getShieldStyles(score)}`}
                 />
                 <div className={getScoreClasses(score)}>
                   {score.toFixed(1)}
