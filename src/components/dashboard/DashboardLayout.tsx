@@ -63,12 +63,9 @@ const DashboardLayout = ({
               </span>
             </div>
             
-            <h1 className="text-5xl md:text-6xl font-bold space-y-2">
-              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
-                ML-Powered ATT&CK
-              </span>
-              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-purple-300">
-                User Behavior Analytics
+            <h1 className="text-5xl md:text-6xl font-bold">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                ML-Powered ATT&CK User Behavior Analytics
               </span>
             </h1>
             
