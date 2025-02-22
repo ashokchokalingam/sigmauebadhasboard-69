@@ -107,10 +107,15 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
       </div>
 
       <div className="flex items-center gap-8">
-        <span className={`px-2 py-0.5 rounded text-[11px] font-medium tracking-wider uppercase 
-          ${bgColor} ${textColor} border ${borderColor} w-[70px] text-center`}>
-          {level}
-        </span>
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-[11px] uppercase text-[#9b87f5]/60 tracking-wide">
+            Risk Level
+          </span>
+          <span className={`px-2 py-0.5 rounded text-[11px] font-medium tracking-wider uppercase 
+            ${bgColor} ${textColor} border ${borderColor} w-[70px] text-center`}>
+            {level}
+          </span>
+        </div>
         <RiskScoreDisplay score={riskScore} textColor={textColor} />
       </div>
     </div>
