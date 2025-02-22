@@ -49,32 +49,31 @@ const DashboardLayout = ({
     <div className="min-h-screen w-full bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-4 md:p-6">
       <div className="mb-8 relative">
         <div className="absolute -left-2 -top-2 w-[calc(100%+1rem)] h-[calc(100%+1rem)] bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-lg blur-xl" />
-        <div className="relative bg-black/40 rounded-lg border border-blue-500/10 p-8 backdrop-blur-sm">
-          <div className="max-w-[80%] lg:max-w-[60%]">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="flex items-center gap-3">
-                <Shield className="h-7 w-7 text-blue-400" />
-                <Brain className="h-7 w-7 text-purple-400" />
-                <Activity className="h-7 w-7 text-pink-400" />
-              </div>
-              <div className="h-8 w-[1px] bg-gradient-to-b from-blue-500/20 via-purple-500/20 to-pink-500/20" />
-              <span className="text-sm font-medium text-blue-300/80 tracking-wider">
-                ENTERPRISE SECURITY ANALYTICS
-              </span>
+        <div className="relative bg-black/40 rounded-lg border border-blue-500/10 p-6 backdrop-blur-sm">
+          <div className="flex items-center gap-4 mb-2">
+            <div className="flex items-center gap-2">
+              <Shield className="h-6 w-6 text-blue-400" />
+              <Brain className="h-6 w-6 text-purple-400" />
+              <Activity className="h-6 w-6 text-pink-400" />
             </div>
-            
-            <h1 className="text-5xl md:text-6xl font-bold space-y-2">
-              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
-                ML-Powered ATT&CK
-              </span>
-              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-purple-300">
-                User Behavior Analytics
-              </span>
-            </h1>
-            
-            <div className="mt-6 text-sm text-blue-300/60 max-w-lg">
-              Advanced threat detection powered by machine learning and MITRE ATT&CK framework
-            </div>
+            <div className="h-8 w-[1px] bg-gradient-to-b from-blue-500/20 via-purple-500/20 to-pink-500/20" />
+            <span className="text-sm font-medium text-blue-300/80 tracking-wider">
+              ENTERPRISE SECURITY ANALYTICS
+            </span>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-bold">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+              ML-Powered ATT&CK
+            </span>
+            <br />
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-purple-300">
+              User Behavior Analytics
+            </span>
+          </h1>
+          
+          <div className="mt-4 text-sm text-blue-300/60">
+            Advanced threat detection powered by machine learning and MITRE ATT&CK framework
           </div>
         </div>
       </div>
