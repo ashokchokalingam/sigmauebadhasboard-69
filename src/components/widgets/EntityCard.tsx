@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Clock } from "lucide-react";
+import { Monitor, User, ArrowUpIcon, ArrowDownIcon, Minus, Clock } from "lucide-react";
 import RiskLevelIndicator from "./RiskLevelIndicator";
 import WaveformDisplay from "./WaveformDisplay";
 import RiskScoreDisplay from "./RiskScoreDisplay";
@@ -39,7 +39,9 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     const trend = typeof entity.risk_trend === 'number'
       ? entity.risk_trend > 0 
         ? 'up' 
-        : 'down'
+        : entity.risk_trend < 0
+          ? 'down'
+          : null
       : null;
 
     if (score >= 150) return { 
@@ -87,6 +89,16 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
   const riskScore = parseFloat(entity.cumulative_risk_score);
   const { level, color, textColor, bgColor, lineColor, barWidth, glowColor, trend } = getRiskLevel(riskScore);
 
+  const getTrendIcon = () => {
+    if (!trend) {
+      return <Minus className="h-4 w-4 text-gray-400" />;
+    }
+    if (trend === 'up') {
+      return <ArrowUpIcon className="h-4 w-4 text-[#ea384c]" />; // Red for increased risk
+    }
+    return <ArrowDownIcon className="h-4 w-4 text-[#34C759]" />; // Green for decreased risk
+  };
+
   return (
     <div
       onClick={onClick}
@@ -110,17 +122,9 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
             <span className="text-xs text-[#9b87f5]/60">
               {entity.unique_title_count} unique anomalies
             </span>
-            {trend && (
-              <div className={`flex items-center ${
-                trend === 'up' ? 'text-red-400' : 'text-green-400'
-              }`}>
-                {trend === 'up' ? (
-                  <ArrowUpIcon className="h-3 w-3" />
-                ) : (
-                  <ArrowDownIcon className="h-3 w-3" />
-                )}
-              </div>
-            )}
+            <div className="flex items-center justify-center">
+              {getTrendIcon()}
+            </div>
           </div>
           {entity.last_seen && (
             <div className="flex items-center gap-1 text-xs text-[#9b87f5]/60">
