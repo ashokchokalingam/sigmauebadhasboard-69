@@ -1,24 +1,15 @@
 
-import WaveformDisplay from "../widgets/WaveformDisplay";
 import RiskScoreDisplay from "../widgets/RiskScoreDisplay";
 
 interface RiskIndicatorsProps {
   level: string;
-  color: string;
   textColor: string;
-  lineColor: string;
-  barWidth: number;
-  glowColor: string;
   riskScore: number;
 }
 
 const RiskIndicators = ({ 
   level,
-  color,
   textColor,
-  lineColor,
-  barWidth,
-  glowColor,
   riskScore
 }: RiskIndicatorsProps) => {
   return (
@@ -31,20 +22,9 @@ const RiskIndicators = ({
       </div>
 
       <div className="flex items-center">
-        <div className="opacity-70 hover:opacity-100 transition-opacity w-[32px]">
-          <WaveformDisplay 
-            level={level as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'} 
-            color={color} 
-          />
-        </div>
-
         <RiskScoreDisplay 
           score={riskScore}
           textColor={textColor}
-          lineColor={lineColor}
-          barWidth={barWidth}
-          glowColor={glowColor}
-          color={color}
         />
       </div>
     </div>
