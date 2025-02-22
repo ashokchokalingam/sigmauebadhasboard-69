@@ -69,11 +69,11 @@ const RiskIndicators = ({
               className={`px-3 rounded text-[11px] font-medium tracking-wider uppercase 
                 ${styles.bg} ${styles.text} ${styles.border} ${styles.shadow}
                 hover:opacity-90 transition-all cursor-pointer backdrop-blur-[1px]
-                border flex items-center justify-center gap-1.5 h-[24px] min-w-[70px]`}
+                border flex items-center justify-center gap-1.5 h-[24px] w-[80px]`}
             >
-              {level}
+              <span className="flex-1 text-center">{level}</span>
               {level === "CRITICAL" && (
-                <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5] text-[#FAFAFC]" />
+                <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5] text-[#FAFAFC] flex-shrink-0" />
               )}
             </button>
           </PopoverTrigger>
