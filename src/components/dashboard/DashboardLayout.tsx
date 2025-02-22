@@ -49,7 +49,7 @@ const DashboardLayout = ({
     <div className="min-h-screen w-full bg-[#1A1F2C] bg-gradient-to-br from-[#1A1F2C] to-[#121212] p-4 md:p-6">
       <div className="mb-6">
         <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#60A5FA] to-[#3B82F6]">
-          ATT&CK User Behavior Analytics
+          ML Powered ATT&CK User Behavior Analytics
         </h1>
       </div>
 
