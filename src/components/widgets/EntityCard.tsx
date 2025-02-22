@@ -20,6 +20,7 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     level: string; 
     textColor: string; 
     bgColor: string;
+    borderColor: string;
     trend: 'up' | 'down' | null;
   } => {
     const trend = typeof entity.risk_trend === 'number'
@@ -31,31 +32,35 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
     if (score >= 150) return { 
       level: "CRITICAL", 
       textColor: "text-[#FF3B30]",
-      bgColor: "bg-[#FF3B30]/10",
+      bgColor: "bg-transparent",
+      borderColor: "border-[#FF3B30]",
       trend
     };
     if (score >= 100) return { 
       level: "HIGH", 
       textColor: "text-[#FF9500]",
-      bgColor: "bg-[#FF9500]/10",
+      bgColor: "bg-transparent",
+      borderColor: "border-[#FF9500]",
       trend
     };
     if (score >= 50) return { 
       level: "MEDIUM", 
       textColor: "text-[#FFB340]",
       bgColor: "bg-[#FFB340]/10",
+      borderColor: "border-[#FFB340]/20",
       trend
     };
     return { 
       level: "LOW", 
       textColor: "text-[#34C759]",
       bgColor: "bg-[#34C759]/10",
+      borderColor: "border-[#34C759]/20",
       trend
     };
   };
 
   const riskScore = parseFloat(entity.cumulative_risk_score);
-  const { level, textColor, bgColor, trend } = getRiskLevel(riskScore);
+  const { level, textColor, bgColor, borderColor, trend } = getRiskLevel(riskScore);
 
   return (
     <div
@@ -105,7 +110,8 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
         <div className="flex flex-col items-end">
           <span className="text-[11px] uppercase text-[#9b87f5]/60">Risk Level</span>
           <div className="flex items-center gap-2">
-            <span className={`text-sm font-medium tracking-wider uppercase ${textColor}`}>
+            <span className={`px-2 py-0.5 rounded text-[11px] font-medium tracking-wider uppercase 
+              ${bgColor} ${textColor} border ${borderColor}`}>
               {level}
             </span>
             <RiskScoreDisplay score={riskScore} textColor={textColor} />
