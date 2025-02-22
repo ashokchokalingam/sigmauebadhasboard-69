@@ -13,12 +13,24 @@ interface RiskScoreDisplayProps {
 }
 
 const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
+  const getScoreClasses = (score: number) => {
+    const baseClasses = "font-mono font-bold tabular-nums transition-all";
+    
+    if (score >= 150) {
+      return `${baseClasses} text-[24px] ${textColor} drop-shadow-[0_0_8px_rgba(255,59,48,0.5)]`;
+    }
+    if (score >= 100) {
+      return `${baseClasses} text-[22px] ${textColor} drop-shadow-[0_0_6px_rgba(255,149,0,0.5)]`;
+    }
+    return `${baseClasses} text-[20px] ${textColor}`;
+  };
+
   return (
     <div className="relative">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className={`font-mono font-bold text-[20px] tabular-nums ${textColor}`}>
+            <div className={getScoreClasses(score)}>
               {score.toFixed(1)}
             </div>
           </TooltipTrigger>

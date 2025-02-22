@@ -3,16 +3,29 @@ import React from "react";
 import EntityInfo from "./EntityInfo";
 import RiskIndicators from "./RiskIndicators";
 import { getRiskLevel } from "./utils/riskLevelUtils";
+import { formatDateTime } from "@/utils/dateTimeUtils";
 
 interface EntityCardProps {
   id: string;
   eventCount: number;
   uniqueTitles: number;
   riskScore: string | null;
+  timestamp?: string;
+  linkedUsers?: string[];
+  mitreTactics?: string[];
   onClick: () => void;
 }
 
-const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: EntityCardProps) => {
+const EntityCard = ({ 
+  id, 
+  eventCount, 
+  uniqueTitles, 
+  riskScore, 
+  timestamp,
+  linkedUsers,
+  mitreTactics,
+  onClick 
+}: EntityCardProps) => {
   const score = riskScore ? parseFloat(riskScore) : 0;
   const {
     level,
@@ -41,6 +54,9 @@ const EntityCard = ({ id, eventCount, uniqueTitles, riskScore, onClick }: Entity
         level={level}
         textColor={textColor}
         riskScore={score}
+        timestamp={timestamp}
+        linkedUsers={linkedUsers}
+        mitreTactics={mitreTactics}
       />
     </div>
   );
