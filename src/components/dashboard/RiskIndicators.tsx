@@ -31,29 +31,25 @@ const RiskIndicators = ({
         return {
           bg: "bg-[#ea384c]",
           text: "text-white",
-          border: "border-[#ea384c]/50",
-          padding: "px-3 py-1"
+          border: "border-[#ea384c]/50"
         };
       case "HIGH":
         return {
           bg: "bg-[#FF9500]/10",
           text: "text-[#FF9500]",
-          border: "border-[#FF9500]/20",
-          padding: "px-2.5 py-1"
+          border: "border-[#FF9500]/20"
         };
       case "MEDIUM":
         return {
           bg: "bg-[#FFB340]/10",
           text: "text-[#FFB340]",
-          border: "border-[#FFB340]/20",
-          padding: "px-2.5 py-1"
+          border: "border-[#FFB340]/20"
         };
       default:
         return {
           bg: "bg-[#34C759]/10",
           text: "text-[#34C759]",
-          border: "border-[#34C759]/20",
-          padding: "px-2.5 py-1"
+          border: "border-[#34C759]/20"
         };
     }
   };
@@ -62,18 +58,18 @@ const RiskIndicators = ({
 
   return (
     <div className="flex items-center gap-6">
-      <div className="flex flex-col items-end min-w-[85px]">
+      <div className="w-[72px]">
         <Popover>
           <PopoverTrigger asChild>
             <button 
-              className={`rounded text-[11px] font-medium tracking-wider uppercase 
-                ${styles.bg} ${styles.text} ${styles.border} ${styles.padding}
+              className={`w-full px-2 py-1 rounded text-[11px] font-medium tracking-wider uppercase 
+                ${styles.bg} ${styles.text} ${styles.border}
                 hover:opacity-90 transition-all cursor-pointer
-                border flex items-center justify-center gap-1.5 shadow-sm h-[24px]`}
+                border flex items-center justify-center gap-1.5 shadow-sm h-[22px]`}
             >
               {level}
               {level === "CRITICAL" && (
-                <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5] translate-y-[0.5px]" />
+                <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5]" />
               )}
             </button>
           </PopoverTrigger>
