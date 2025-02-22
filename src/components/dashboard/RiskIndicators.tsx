@@ -62,14 +62,17 @@ const RiskIndicators = ({
 
   return (
     <div className="flex items-center justify-end w-full gap-6">
-      <div className="flex justify-start w-[80px]">
+      <div className="flex flex-col items-center gap-1">
+        <span className="text-[11px] uppercase text-[#9b87f5]/60 tracking-wide">
+          Risk Level
+        </span>
         <Popover>
           <PopoverTrigger asChild>
             <button 
-              className={`px-3 rounded text-[11px] font-medium tracking-wider uppercase 
+              className={`px-2 py-0.5 rounded text-[11px] font-medium tracking-wider uppercase 
                 ${styles.bg} ${styles.text} ${styles.border} ${styles.shadow}
                 hover:opacity-90 transition-all cursor-pointer backdrop-blur-[1px]
-                border flex items-center justify-center h-[24px] w-[80px]`}
+                border flex items-center justify-center h-[24px] w-[70px]`}
             >
               <span className="w-full text-center inline-flex items-center justify-center gap-1.5">
                 {level}
@@ -127,10 +130,7 @@ const RiskIndicators = ({
         </Popover>
       </div>
 
-      <RiskScoreDisplay 
-        score={riskScore}
-        textColor={textColor}
-      />
+      <RiskScoreDisplay score={riskScore} textColor={textColor} />
     </div>
   );
 };
