@@ -43,7 +43,7 @@ const EntityCard = ({
     : null;
 
   const getCardBorderClass = () => {
-    if (score >= 150) return "border-[#FF3B30]/30";
+    if (score >= 150) return "border-[#ea384c]/30";
     if (score >= 100) return "border-[#FF9500]/30";
     return "border-[#5856D6]/20";
   };
@@ -51,9 +51,9 @@ const EntityCard = ({
   return (
     <div
       onClick={onClick}
-      className={`flex items-center justify-between px-4 py-3 rounded-lg
+      className={`flex items-center justify-between px-5 py-3.5 rounded-lg
         bg-[#0A0B0F] hover:bg-[#12131A]
-        border ${getCardBorderClass()} hover:border-opacity-40
+        border ${getCardBorderClass()} hover:border-opacity-50
         transition-all duration-300 cursor-pointer
         hover:shadow-lg hover:shadow-[#5856D6]/5 group`}
     >
@@ -79,7 +79,7 @@ const EntityCard = ({
         )}
       </div>
 
-      <div className="flex items-center pl-4 ml-4 border-l border-[#5856D6]/10">
+      <div className="flex items-center pl-6 border-l border-[#5856D6]/10">
         <RiskIndicators
           level={level}
           textColor={textColor}

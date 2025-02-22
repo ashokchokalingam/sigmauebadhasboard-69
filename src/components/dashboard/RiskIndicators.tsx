@@ -25,33 +25,51 @@ const RiskIndicators = ({
   linkedUsers = [],
   mitreTactics = []
 }: RiskIndicatorsProps) => {
-  const getLevelBackground = () => {
+  const getLevelStyles = () => {
     switch(level) {
       case "CRITICAL":
-        return "bg-[#FF3B30]/10";
+        return {
+          bg: "bg-[#ea384c]",
+          text: "text-white",
+          border: "border-[#ea384c]/50"
+        };
       case "HIGH":
-        return "bg-[#FF9500]/10";
+        return {
+          bg: "bg-[#FF9500]/10",
+          text: "text-[#FF9500]",
+          border: "border-[#FF9500]/20"
+        };
       case "MEDIUM":
-        return "bg-[#FFB340]/10";
+        return {
+          bg: "bg-[#FFB340]/10",
+          text: "text-[#FFB340]",
+          border: "border-[#FFB340]/20"
+        };
       default:
-        return "bg-[#34C759]/10";
+        return {
+          bg: "bg-[#34C759]/10",
+          text: "text-[#34C759]",
+          border: "border-[#34C759]/20"
+        };
     }
   };
 
+  const styles = getLevelStyles();
+
   return (
     <div className="flex items-center gap-5">
-      <div className="flex flex-col items-end min-w-[80px]">
+      <div className="flex flex-col items-end min-w-[85px]">
         <Popover>
           <PopoverTrigger asChild>
             <button 
-              className={`px-2 py-0.5 rounded text-[11px] font-medium tracking-wider uppercase 
-                ${textColor} ${getLevelBackground()}
-                hover:opacity-80 transition-all cursor-pointer
-                border border-current border-opacity-20 flex items-center gap-1`}
+              className={`px-2.5 py-1 rounded text-[11px] font-medium tracking-wider uppercase 
+                ${styles.bg} ${styles.text} ${styles.border}
+                hover:opacity-90 transition-all cursor-pointer
+                border flex items-center gap-1.5 shadow-sm`}
             >
               {level}
               {level === "CRITICAL" && (
-                <AlertTriangle className="w-3 h-3 stroke-[3]" />
+                <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5]" />
               )}
             </button>
           </PopoverTrigger>
