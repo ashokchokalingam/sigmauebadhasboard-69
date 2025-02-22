@@ -31,25 +31,29 @@ const RiskIndicators = ({
         return {
           bg: "bg-[#ea384c]",
           text: "text-white",
-          border: "border-[#ea384c]/50"
+          border: "border-[#ea384c]/50",
+          padding: "px-3 py-1"
         };
       case "HIGH":
         return {
           bg: "bg-[#FF9500]/10",
           text: "text-[#FF9500]",
-          border: "border-[#FF9500]/20"
+          border: "border-[#FF9500]/20",
+          padding: "px-2.5 py-1"
         };
       case "MEDIUM":
         return {
           bg: "bg-[#FFB340]/10",
           text: "text-[#FFB340]",
-          border: "border-[#FFB340]/20"
+          border: "border-[#FFB340]/20",
+          padding: "px-2.5 py-1"
         };
       default:
         return {
           bg: "bg-[#34C759]/10",
           text: "text-[#34C759]",
-          border: "border-[#34C759]/20"
+          border: "border-[#34C759]/20",
+          padding: "px-2.5 py-1"
         };
     }
   };
@@ -57,19 +61,19 @@ const RiskIndicators = ({
   const styles = getLevelStyles();
 
   return (
-    <div className="flex items-center gap-5">
+    <div className="flex items-center gap-6">
       <div className="flex flex-col items-end min-w-[85px]">
         <Popover>
           <PopoverTrigger asChild>
             <button 
-              className={`px-2.5 py-1 rounded text-[11px] font-medium tracking-wider uppercase 
-                ${styles.bg} ${styles.text} ${styles.border}
+              className={`rounded text-[11px] font-medium tracking-wider uppercase 
+                ${styles.bg} ${styles.text} ${styles.border} ${styles.padding}
                 hover:opacity-90 transition-all cursor-pointer
-                border flex items-center gap-1.5 shadow-sm`}
+                border flex items-center justify-center gap-1.5 shadow-sm h-[24px]`}
             >
               {level}
               {level === "CRITICAL" && (
-                <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5]" />
+                <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5] translate-y-[0.5px]" />
               )}
             </button>
           </PopoverTrigger>

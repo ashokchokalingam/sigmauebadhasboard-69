@@ -55,7 +55,8 @@ const EntityCard = ({
         bg-[#0A0B0F] hover:bg-[#12131A]
         border ${getCardBorderClass()} hover:border-opacity-50
         transition-all duration-300 cursor-pointer
-        hover:shadow-lg hover:shadow-[#5856D6]/5 group`}
+        hover:shadow-lg hover:shadow-[#5856D6]/5 group
+        mb-2`}
     >
       <div className="flex items-center gap-3 flex-1">
         <EntityInfo
