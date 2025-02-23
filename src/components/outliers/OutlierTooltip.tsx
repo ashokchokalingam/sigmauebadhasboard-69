@@ -54,9 +54,10 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
   const xPos = coordinate ? coordinate.x : 0;
   const tooltipStyle = {
+    left: xPos + 60, // Add offset to position tooltip to the right of the bar
+    top: '50%',
     transform: 'translateY(-50%)',
-    left: Math.max(10, xPos),
-    position: 'fixed' as const
+    position: 'fixed' as const,
   };
 
   return (

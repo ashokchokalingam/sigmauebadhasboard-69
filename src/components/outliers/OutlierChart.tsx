@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 import { ChartDataPoint } from "./types";
@@ -77,7 +76,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={filteredData}
-            margin={{ top: 20, right: 30, left: 0, bottom: 35 }}
+            margin={{ top: 20, right: 430, left: 0, bottom: 35 }}
           >
             <defs>
               {['Critical', 'High', 'Medium', 'Low'].map((severity) => (
