@@ -36,7 +36,7 @@ const TimelineEventCard = ({
 
   console.log('TimelineEventCard render:', {
     title: event.title,
-    total_events: event.total_events,
+    logs_length: logs.length,
     rule_level: event.rule_level
   });
 
@@ -109,6 +109,7 @@ const TimelineEventCard = ({
   };
 
   const isExpanded = selectedEventId === event.id;
+  const totalEvents = logs.length || event.total_events || 0;
 
   return (
     <div className="group relative pl-4 w-full">
@@ -126,7 +127,7 @@ const TimelineEventCard = ({
           )}
         >
           <TimelineCardContent 
-            event={event}
+            event={{...event, total_events: totalEvents}}
             onClick={handleClick} 
           />
 
