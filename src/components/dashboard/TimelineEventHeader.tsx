@@ -54,9 +54,6 @@ const TimelineEventHeader = ({
           )}>
             {ruleLevel}
           </span>
-          <span className="text-xs font-medium bg-blue-500/20 text-blue-400 px-2.5 py-0.5 rounded-full border border-blue-500/30">
-            {`${totalRecords} event${totalRecords !== 1 ? 's' : ''}`}
-          </span>
         </div>
       </div>
       <div className="space-y-1">
