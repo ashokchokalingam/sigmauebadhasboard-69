@@ -36,6 +36,12 @@ const TimelineEventCard = ({
   const [dataSource, setDataSource] = useState<'mloutliers' | 'anomalies'>('anomalies');
   const [visibleColumns] = useState<string[]>(['system_time', 'title']);
 
+  console.log('TimelineEventCard render:', {
+    title: event.title,
+    total_events: event.total_events,
+    rule_level: event.rule_level
+  });
+
   // Reset logs when card is collapsed
   useEffect(() => {
     if (selectedEventId !== event.id) {
@@ -49,7 +55,8 @@ const TimelineEventCard = ({
       eventId: event.id,
       title: event.title,
       currentSelection: selectedEventId,
-      isCurrentlyExpanded: selectedEventId === event.id
+      isCurrentlyExpanded: selectedEventId === event.id,
+      total_events: event.total_events
     });
 
     if (onSelect) {
@@ -133,7 +140,13 @@ const TimelineEventCard = ({
             isExpanded && "ring-2 ring-blue-500"
           )}
         >
-          <TimelineCardContent event={event} onClick={handleClick} />
+          <TimelineCardContent 
+            event={{
+              ...event,
+              total_events: event.total_events || instances?.length || 1
+            }} 
+            onClick={handleClick} 
+          />
 
           {isExpanded && (
             <TimelineLogsTable
@@ -150,4 +163,3 @@ const TimelineEventCard = ({
 };
 
 export default TimelineEventCard;
-
