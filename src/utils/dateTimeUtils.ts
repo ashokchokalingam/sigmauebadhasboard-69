@@ -2,7 +2,7 @@
 import { format } from "date-fns";
 import { formatInTimeZone } from 'date-fns-tz';
 
-export const formatDateTime = (timestamp: string | Date, includeTimezone = true) => {
+export const formatDateTime = (timestamp: string | Date, includeTimezone = false) => {
   try {
     const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp;
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;

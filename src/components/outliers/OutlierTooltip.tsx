@@ -1,4 +1,3 @@
-
 import { Shield, Activity, CircleDot } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { formatDateTime } from "@/utils/dateTimeUtils";
@@ -97,11 +96,11 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
             </span>
           </div>
           <div className="text-[14px] text-purple-300/80">First seen:</div>
-          <div className="text-right text-[15px] font-medium text-cyan-300 hover:text-cyan-200 transition-colors">
+          <div className="text-right text-[15px] font-medium text-[#00FFB2] hover:text-[#00E6A1] transition-colors">
             {formatTimestamps(data.first_seen || data.firstSeen)}
           </div>
           <div className="text-[14px] text-purple-300/80">Last seen:</div>
-          <div className="text-right text-[15px] font-medium text-amber-300 hover:text-amber-200 transition-colors">
+          <div className="text-right text-[15px] font-medium text-[#FF5EBD] hover:text-[#FF47B3] transition-colors">
             {formatTimestamps(data.last_seen || data.lastSeen)}
           </div>
         </div>
