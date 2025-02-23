@@ -2,11 +2,12 @@
 import { Shield } from "lucide-react";
 
 interface TimelineMitreSectionProps {
-  tags: string;
+  tactics: string[];
+  techniques: string[];
 }
 
-const TimelineMitreSection = ({ tags }: TimelineMitreSectionProps) => {
-  if (!tags) return null;
+const TimelineMitreSection = ({ tactics, techniques }: TimelineMitreSectionProps) => {
+  if (!tactics.length && !techniques.length) return null;
 
   return (
     <div className="space-y-3">
@@ -19,8 +20,8 @@ const TimelineMitreSection = ({ tags }: TimelineMitreSectionProps) => {
         <div>
           <p className="text-sm font-medium text-gray-400 mb-2">Tactics Identified</p>
           <div className="flex flex-wrap gap-2">
-            {tags.split(',')
-              .filter(tag => tag.includes('attack.') && !tag.toLowerCase().includes('t1'))
+            {tactics
+              .filter(tactic => tactic.includes('attack.') && !tactic.toLowerCase().includes('t1'))
               .map((tactic, index) => (
                 <span 
                   key={index}
@@ -38,8 +39,8 @@ const TimelineMitreSection = ({ tags }: TimelineMitreSectionProps) => {
         <div>
           <p className="text-sm font-medium text-gray-400 mb-2">Techniques Observed</p>
           <div className="flex flex-wrap gap-2">
-            {tags.split(',')
-              .filter(tag => tag.toLowerCase().includes('t1'))
+            {techniques
+              .filter(technique => technique.toLowerCase().includes('t1'))
               .map((technique, index) => (
                 <span 
                   key={index}

@@ -16,7 +16,7 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
   };
 
   const tactics = safeSplit(event.tags);
-  const techniques = safeSplit(event.techniques);
+  const techniques = tactics.filter(tag => tag.toLowerCase().includes('t1'));
 
   return (
     <div 
