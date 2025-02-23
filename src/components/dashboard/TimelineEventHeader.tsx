@@ -43,9 +43,6 @@ const TimelineEventHeader = ({
     }
   };
 
-  // Ensure totalRecords is treated as a number
-  const eventCount = Number(totalRecords);
-
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -58,7 +55,7 @@ const TimelineEventHeader = ({
             {ruleLevel}
           </span>
           <span className="text-sm font-semibold bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30">
-            {eventCount} {eventCount === 1 ? 'event' : 'events'}
+            {totalRecords} {totalRecords === 1 ? 'event' : 'events'}
           </span>
         </div>
       </div>

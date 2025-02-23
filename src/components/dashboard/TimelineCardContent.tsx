@@ -13,7 +13,6 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
   console.log('TimelineCardContent event:', {
     title: event.title,
     totalEvents: event.total_events,
-    instances: event.instances?.length
   });
 
   const safeSplit = (value: string | undefined) => {
@@ -24,7 +23,6 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
   const tactics = safeSplit(event.tags);
   const techniques = tactics.filter(tag => tag.toLowerCase().includes('t1'));
 
-  // Make sure to pass the total_events directly from the event object
   return (
     <div 
       onClick={onClick}

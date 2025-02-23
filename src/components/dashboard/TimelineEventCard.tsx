@@ -16,7 +16,6 @@ interface TimelineEventCardProps {
   onSelect?: (id: string | null) => void;
   selectedEventId?: string | null;
   detailedLogs?: any;
-  instances?: Alert[];
   isLoadingLogs?: boolean;
 }
 
@@ -28,7 +27,6 @@ const TimelineEventCard = ({
   onSelect,
   selectedEventId,
   detailedLogs,
-  instances,
   isLoadingLogs
 }: TimelineEventCardProps) => {
   const { color, bg, border, hover, cardBg } = getRiskLevel(event.rule_level);
@@ -50,22 +48,12 @@ const TimelineEventCard = ({
   }, [selectedEventId, event.id]);
 
   const handleClick = async () => {
-    console.log('Card clicked:', {
-      entityType,
-      eventId: event.id,
-      title: event.title,
-      currentSelection: selectedEventId,
-      isCurrentlyExpanded: selectedEventId === event.id,
-      total_events: event.total_events
-    });
-
     if (onSelect) {
       onSelect(event.id);
     }
 
     // Only fetch logs if this card is being expanded
     if (selectedEventId !== event.id) {
-      // Define endpoints and parameters based on entity type
       const config = {
         userorigin: {
           endpoint: '/api/user_origin_logs',
@@ -97,7 +85,6 @@ const TimelineEventCard = ({
       });
 
       try {
-        console.log('Fetching logs from:', `${endpoint}?${params.toString()}`);
         const response = await fetch(`${endpoint}?${params.toString()}`);
         
         if (!response.ok) {
@@ -105,9 +92,7 @@ const TimelineEventCard = ({
         }
         
         const data = await response.json();
-        console.log('API Response:', data);
         
-        // Handle different response structures based on entity type
         const logsMap = {
           userorigin: data.user_origin_logs,
           userimpacted: data.user_impacted_logs,
@@ -141,10 +126,7 @@ const TimelineEventCard = ({
           )}
         >
           <TimelineCardContent 
-            event={{
-              ...event,
-              total_events: event.total_events || instances?.length || 1
-            }} 
+            event={event}
             onClick={handleClick} 
           />
 
