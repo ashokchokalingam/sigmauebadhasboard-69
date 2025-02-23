@@ -58,6 +58,11 @@ const TimelineEventHeader = ({
           )}>
             {ruleLevel}
           </span>
+          {totalRecords > 0 && (
+            <span className="text-xs font-medium bg-blue-500/20 text-blue-400 px-2.5 py-0.5 rounded-full border border-blue-500/30">
+              {totalRecords} {totalRecords === 1 ? 'event' : 'events'}
+            </span>
+          )}
         </div>
       </div>
       <div className="space-y-1">
@@ -69,3 +74,4 @@ const TimelineEventHeader = ({
 };
 
 export default TimelineEventHeader;
+
