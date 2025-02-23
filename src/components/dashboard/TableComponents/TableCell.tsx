@@ -1,5 +1,5 @@
 
-import { Activity, Tag } from "lucide-react";
+import { Activity, Tag, User, Monitor, Network, FileText, Shield, AlertTriangle, Server, AlignLeft } from "lucide-react";
 import { Alert } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { formatDateTime } from "@/utils/dateTimeUtils";
@@ -88,3 +88,4 @@ const TableCellComponent = ({ alert, columnKey, onTimelineView }: TableCellProps
 };
 
 export default TableCellComponent;
+
