@@ -35,22 +35,27 @@ const TimelineLogsTable = ({
       <div className="overflow-x-auto max-h-[800px] overflow-y-auto custom-table">
         <Table>
           <TimelineTableHeader />
-          <TableBody>
+          <TableBody className="relative">
             {logs.map((log, index) => (
-              <div key={`log-${log.id || index}`}>
+              <>
                 <TimelineTableRow
+                  key={`log-${log.id || index}`}
                   log={log}
                   index={index}
                   isExpanded={expandedRow === index}
                   onClick={() => toggleRow(index)}
                 />
                 {expandedRow === index && (
-                  <TimelineExpandedContent 
-                    log={log} 
-                    onClose={() => setExpandedRow(null)}
-                  />
+                  <tr className="expanded-content">
+                    <td colSpan={9}>
+                      <TimelineExpandedContent 
+                        log={log} 
+                        onClose={() => setExpandedRow(null)}
+                      />
+                    </td>
+                  </tr>
                 )}
-              </div>
+              </>
             ))}
           </TableBody>
         </Table>

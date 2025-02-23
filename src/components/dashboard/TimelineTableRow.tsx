@@ -27,7 +27,6 @@ const TimelineTableRow = ({ log, index, isExpanded, onClick }: TimelineTableRowP
 
   return (
     <TableRow 
-      key={`row-${index}`}
       className={`border-b border-indigo-500/10 cursor-pointer transition-colors duration-150
         ${isExpanded ? 'bg-indigo-500/5' : 'hover:bg-indigo-500/5'}`}
       onClick={onClick}
@@ -84,19 +83,11 @@ const TimelineTableRow = ({ log, index, isExpanded, onClick }: TimelineTableRowP
           <AlertTriangle className="h-4 w-4 text-blue-400/80" />
           <Badge 
             variant="outline" 
-            className={`${getRiskBadgeColor(log.rule_level)} px-2 py-0.5 font-medium`}
+            className={getRiskBadgeColor(log.rule_level)}
           >
             {log.rule_level || 'unknown'}
           </Badge>
         </div>
-      </TableCell>
-      <TableCell className="whitespace-nowrap px-4 py-3">
-        <Badge 
-          variant="outline" 
-          className="bg-green-500/10 text-green-400 border-green-500/20 px-2 py-0.5 font-medium"
-        >
-          Low
-        </Badge>
       </TableCell>
     </TableRow>
   );
