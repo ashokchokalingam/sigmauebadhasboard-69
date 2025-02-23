@@ -1,19 +1,8 @@
 
-import { Tag, Activity } from "lucide-react";
 import { Alert } from "../types";
+import TableCell from "./TableCell";
 import { Badge } from "@/components/ui/badge";
-import { formatDateTime } from "@/utils/dateTimeUtils";
-import { UserCell } from "./cells/UserCell";
-import { ComputerCell } from "./cells/ComputerCell";
-import { IPAddressCell } from "./cells/IPAddressCell";
-import { TitleCell } from "./cells/TitleCell";
-import { DescriptionCell } from "./cells/DescriptionCell";
-import { ServerInfoCell } from "./cells/ServerInfoCell";
-import { RuleCell } from "./cells/RuleCell";
-import { TaskCell } from "./cells/TaskCell";
-import { RuleLevelCell } from "./cells/RuleLevelCell";
-import { BaseIconCell } from "./cells/BaseIconCell";
-import { getRiskBadgeColor, getRiskLabel } from "./utils/riskUtils";
+import { Copy } from "lucide-react";
 
 interface TableCellProps {
   alert: Alert;
