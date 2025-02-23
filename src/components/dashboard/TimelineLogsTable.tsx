@@ -1,7 +1,7 @@
 
 import { Alert } from "./types";
 import { Table } from "@/components/ui/table";
-import { SegmentedControl } from "@radix-ui/themes";
+import { ToggleGroup } from "@/components/ui/toggle-group";
 
 interface TimelineLogsTableProps {
   logs: any[];
@@ -22,14 +22,21 @@ const TimelineLogsTable = ({
     <div className="border-t border-blue-500/20 mt-4 pt-4">
       <div className="flex items-center justify-between mb-4 px-4">
         <h3 className="text-sm font-medium text-blue-100">Detailed Logs</h3>
-        <SegmentedControl
+        <ToggleGroup
+          type="single"
           value={dataSource}
-          onValueChange={(value: any) => onDataSourceChange(value)}
-          className="bg-blue-950/50"
+          onValueChange={(value: any) => {
+            if (value) onDataSourceChange(value as 'mloutliers' | 'anomalies');
+          }}
+          className="bg-blue-950/50 rounded-md"
         >
-          <button value="anomalies">Anomalies</button>
-          <button value="mloutliers">ML Outliers</button>
-        </SegmentedControl>
+          <ToggleGroup.Item value="anomalies" className="px-3 py-2 text-sm">
+            Anomalies
+          </ToggleGroup.Item>
+          <ToggleGroup.Item value="mloutliers" className="px-3 py-2 text-sm">
+            ML Outliers
+          </ToggleGroup.Item>
+        </ToggleGroup>
       </div>
 
       <div className="max-h-[300px] overflow-y-auto">
