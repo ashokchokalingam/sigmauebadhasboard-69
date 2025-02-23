@@ -1,3 +1,4 @@
+
 import { Info } from "lucide-react";
 import { formatDateTime } from "@/utils/dateTimeUtils";
 import { TacticIcon } from "./components/TacticIcon";
@@ -43,6 +44,8 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
+
+  console.log('Tooltip data:', { data, tactics, techniques }); // Debug log
 
   return (
     <div 
@@ -121,13 +124,13 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
           ) : null}
         </div>
 
-        {tactics.length > 0 && (
+        {tactics && tactics.length > 0 && (
           <div className="space-y-2.5">
             <div className="text-[13px] text-purple-200 font-medium">MITRE ATT&CK</div>
             <div className="flex flex-wrap gap-1.5">
               {tactics.map((tactic: string, index: number) => (
                 <div 
-                  key={index}
+                  key={`${tactic}-${index}`}
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-purple-500/10 
                     border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-500/20 
                     transition-colors"
@@ -140,11 +143,11 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
           </div>
         )}
 
-        {techniques.length > 0 && (
+        {techniques && techniques.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {techniques.map((technique: string, index: number) => (
               <div 
-                key={index}
+                key={`${technique}-${index}`}
                 className="px-2.5 py-1 rounded bg-purple-900/40 
                   border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-800/40
                   transition-colors"
