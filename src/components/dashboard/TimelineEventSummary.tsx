@@ -53,7 +53,6 @@ const TimelineEventSummary = ({ summary, isLoading, entityType }: TimelineEventS
                 entityType={entityType}
                 onSelect={handleEventSelect}
                 selectedEventId={selectedEventId}
-                instances={[]}
                 isLoadingLogs={false}
               />
             );

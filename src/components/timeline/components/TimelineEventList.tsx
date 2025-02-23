@@ -43,7 +43,6 @@ const TimelineEventList = ({
             selectedEventId={selectedEventId}
             detailedLogs={event.id === selectedEventId ? detailedLogs : undefined}
             isLatest={index === 0}
-            instances={event.instances}
             isLoadingLogs={isLoadingLogs && event.id === selectedEventId}
           />
         ))}
