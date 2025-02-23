@@ -1,13 +1,9 @@
 
-import { Shield, Activity, CircleDot, Info } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Info } from "lucide-react";
 import { formatDateTime } from "@/utils/dateTimeUtils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { TacticIcon } from "./components/TacticIcon";
+import { RiskScoreDisplay } from "./components/RiskScoreDisplay";
+import { getSeverityColor } from "./utils/colorUtils";
 
 interface TooltipProps {
   active?: boolean;
@@ -23,48 +19,6 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   
   if (!data) return null;
 
-  const getRiskScoreColor = (severity: string) => {
-    switch (severity?.toLowerCase()) {
-      case 'critical':
-        return 'from-[#D32F2F] to-[#FF4444]';
-      case 'high':
-        return 'from-[#FF9800] to-[#FFA726]';
-      case 'medium':
-        return 'from-[#FFB74D] to-[#FFB732]';
-      case 'low':
-        return 'from-[#4ADE80] to-[#22C55E]';
-      default:
-        return 'from-[#9333EA] to-[#A855F7]';
-    }
-  };
-
-  const getSeverityColor = (severity: string = 'medium') => {
-    switch (severity?.toLowerCase()) {
-      case 'critical':
-        return '#D32F2F';
-      case 'high':
-        return '#FF9800';
-      case 'medium':
-        return '#FFB74D';
-      case 'low':
-        return '#4ADE80';
-      default:
-        return '#9333EA';
-    }
-  };
-
-  const getTacticIcon = (tactic: string) => {
-    switch (tactic?.toLowerCase()) {
-      case 'initial_access':
-      case 'initial-access':
-        return <Shield className="w-4 h-4" />;
-      case 'execution':
-        return <Activity className="w-4 h-4" />;
-      default:
-        return <CircleDot className="w-4 h-4" />;
-    }
-  };
-
   const safeSplit = (value: string | null | undefined): string[] => {
     if (!value || typeof value !== 'string') return [];
     return value.split(',').map(item => item.trim()).filter(Boolean);
@@ -72,10 +26,6 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
   const tactics = safeSplit(data.tactics);
   const techniques = safeSplit(data.techniques);
-
-  const formatTimestamps = (date: string) => {
-    return formatDateTime(date);
-  };
 
   const xPos = coordinate ? coordinate.x : 0;
   const yPos = coordinate ? coordinate.y : 0;
@@ -114,34 +64,15 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
         <div className="grid grid-cols-2 gap-4">
           <div className="text-[14px] text-purple-300/90 font-medium">Risk Score:</div>
-          <div className="text-right flex items-center justify-end">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="inline-flex items-center gap-1.5">
-                    <span className={`text-[19px] font-bold bg-gradient-to-r ${getRiskScoreColor(data.severity)} 
-                      bg-clip-text text-transparent leading-none`}>
-                      {data.risk || 'N/A'}
-                    </span>
-                    <Info className="w-4 h-4 text-purple-400/70" />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent 
-                  className="bg-black/90 border-purple-500/20 text-purple-100 text-[13px] max-w-[200px]"
-                >
-                  Risk score calculation based on severity, impact, and historical patterns
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          <RiskScoreDisplay risk={data.risk} severity={data.severity} />
           
           <div className="text-[14px] text-purple-300/90">First seen:</div>
           <div className="text-right text-[14px] font-medium text-[#CCCCCC]">
-            {formatTimestamps(data.first_seen || data.firstSeen)}
+            {formatDateTime(data.first_seen || data.firstSeen)}
           </div>
           <div className="text-[14px] text-purple-300/90">Last seen:</div>
           <div className="text-right text-[14px] font-medium text-[#CCCCCC]">
-            {formatTimestamps(data.last_seen || data.lastSeen)}
+            {formatDateTime(data.last_seen || data.lastSeen)}
           </div>
         </div>
 
@@ -194,7 +125,7 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
                   border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-500/20 
                   transition-colors"
               >
-                {getTacticIcon(tactic)}
+                <TacticIcon tactic={tactic} />
                 <span className="truncate max-w-[120px]">{tactic}</span>
               </div>
             ))}
