@@ -1,7 +1,7 @@
 
 import { Alert } from "./types";
 import { Table } from "@/components/ui/table";
-import { ToggleGroup } from "@/components/ui/toggle-group";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface TimelineLogsTableProps {
   logs: any[];
@@ -30,12 +30,12 @@ const TimelineLogsTable = ({
           }}
           className="bg-blue-950/50 rounded-md"
         >
-          <ToggleGroup.Item value="anomalies" className="px-3 py-2 text-sm">
+          <ToggleGroupItem value="anomalies" className="px-3 py-2 text-sm">
             Anomalies
-          </ToggleGroup.Item>
-          <ToggleGroup.Item value="mloutliers" className="px-3 py-2 text-sm">
+          </ToggleGroupItem>
+          <ToggleGroupItem value="mloutliers" className="px-3 py-2 text-sm">
             ML Outliers
-          </ToggleGroup.Item>
+          </ToggleGroupItem>
         </ToggleGroup>
       </div>
 
