@@ -7,18 +7,21 @@ interface TimelineEventHeaderProps {
   totalRecords: number;
   title: string;
   description: string;
+  logsCount?: number;
 }
 
 const TimelineEventHeader = ({
   ruleLevel = 'medium',
   totalRecords,
   title,
-  description
+  description,
+  logsCount
 }: TimelineEventHeaderProps) => {
   console.log('TimelineEventHeader props:', { 
     ruleLevel, 
     totalRecords,
-    title 
+    title,
+    logsCount 
   });
 
   const getSeverityIcon = () => {
@@ -47,6 +50,8 @@ const TimelineEventHeader = ({
     }
   };
 
+  const displayCount = logsCount !== undefined ? logsCount : totalRecords;
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -58,9 +63,9 @@ const TimelineEventHeader = ({
           )}>
             {ruleLevel}
           </span>
-          {totalRecords > 0 && (
+          {displayCount > 0 && (
             <span className="text-xs font-medium bg-blue-500/20 text-blue-400 px-2.5 py-0.5 rounded-full border border-blue-500/30">
-              {totalRecords} {totalRecords === 1 ? 'event' : 'events'}
+              {displayCount} {displayCount === 1 ? 'event' : 'events'}
             </span>
           )}
         </div>

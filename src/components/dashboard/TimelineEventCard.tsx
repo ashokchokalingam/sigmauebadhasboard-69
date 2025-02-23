@@ -37,7 +37,8 @@ const TimelineEventCard = ({
   console.log('TimelineEventCard render:', {
     title: event.title,
     total_events: event.total_events,
-    rule_level: event.rule_level
+    rule_level: event.rule_level,
+    logsLength: logs.length
   });
 
   // Reset logs when card is collapsed
@@ -127,7 +128,8 @@ const TimelineEventCard = ({
         >
           <TimelineCardContent 
             event={event}
-            onClick={handleClick} 
+            onClick={handleClick}
+            logs={logs}
           />
 
           {isExpanded && (
@@ -145,3 +147,4 @@ const TimelineEventCard = ({
 };
 
 export default TimelineEventCard;
+

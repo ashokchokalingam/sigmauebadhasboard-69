@@ -7,12 +7,14 @@ import TimelineEventTimestamps from "./TimelineEventTimestamps";
 interface TimelineCardContentProps {
   event: Alert;
   onClick?: () => void;
+  logs?: any[];
 }
 
-const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
+const TimelineCardContent = ({ event, onClick, logs }: TimelineCardContentProps) => {
   console.log('TimelineCardContent event:', {
     title: event.title,
     totalEvents: event.total_events,
+    logsCount: logs?.length
   });
 
   const safeSplit = (value: string | undefined) => {
@@ -36,6 +38,7 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
         totalRecords={totalEvents}
         title={event.title}
         description={event.description || ''}
+        logsCount={logs?.length}
       />
 
       <TimelineMitreSection 
@@ -52,3 +55,4 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
 };
 
 export default TimelineCardContent;
+
