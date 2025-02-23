@@ -19,13 +19,25 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   
   if (!data) return null;
 
+  // Debug the incoming data structure
+  console.log('Raw tooltip data:', data);
+
   const safeSplit = (value: string | null | undefined): string[] => {
     if (!value || typeof value !== 'string') return [];
-    return value.split(',').map(item => item.trim()).filter(Boolean);
+    // Ensure we're getting a clean split by trimming and filtering empty values
+    return value.split(',')
+      .map(item => item.trim())
+      .filter(item => item.length > 0);
   };
 
-  const tactics = safeSplit(data.tactics);
-  const techniques = safeSplit(data.techniques);
+  // Get tactics and techniques from either direct properties or nested ones
+  const tacticsStr = typeof data.tactics === 'string' ? data.tactics : data?.data?.tactics;
+  const techniquesStr = typeof data.techniques === 'string' ? data.techniques : data?.data?.techniques;
+
+  const tactics = safeSplit(tacticsStr);
+  const techniques = safeSplit(techniquesStr);
+
+  console.log('Processed data:', { tactics, techniques, tacticsStr, techniquesStr });
 
   const xPos = coordinate ? coordinate.x : 0;
   const yPos = coordinate ? coordinate.y : 0;
@@ -44,8 +56,6 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
-
-  console.log('Tooltip data:', { data, tactics, techniques }); // Debug log
 
   return (
     <div 
