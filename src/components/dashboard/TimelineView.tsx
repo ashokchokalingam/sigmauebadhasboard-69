@@ -62,6 +62,7 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
       }
 
       const data = await response.json();
+      console.log('Timeline API Response:', data); // Log the API response
       return formatTimelineData(data);
     },
     initialPageParam: 1,
@@ -98,6 +99,12 @@ const TimelineView = ({ entityType, entityId, onClose, inSidebar = false }: Time
     
     return lastSeenB - lastSeenA;
   });
+
+  // Log the sorted events to verify total_events is present
+  console.log('Sorted Events:', sortedEvents.map(e => ({
+    title: e.title,
+    total_events: e.total_events
+  })));
 
   if (inView && !isFetchingNextPage && hasNextPage) {
     fetchNextPage();
