@@ -36,15 +36,14 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     switch (tactic?.toLowerCase()) {
       case 'initial_access':
       case 'initial-access':
-        return <Shield className="w-3 h-3" />;
+        return <Shield className="w-4 h-4" />;
       case 'execution':
-        return <Activity className="w-3 h-3" />;
+        return <Activity className="w-4 h-4" />;
       default:
-        return <CircleDot className="w-3 h-3" />;
+        return <CircleDot className="w-4 h-4" />;
     }
   };
 
-  // Safely split comma-separated strings
   const safeSplit = (value: string | null | undefined): string[] => {
     if (!value || typeof value !== 'string') return [];
     return value.split(',').map(item => item.trim()).filter(Boolean);
@@ -60,32 +59,32 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   const xPos = coordinate ? coordinate.x : 0;
   const tooltipStyle = {
     transform: 'translateY(-50%)',
-    left: Math.max(10, xPos), // Ensure tooltip doesn't go off-screen to the left
+    left: Math.max(10, xPos),
     position: 'fixed' as const
   };
 
   return (
     <div 
       className="fixed bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
-        shadow-xl w-[400px] pointer-events-none z-50"
+        shadow-xl w-[450px] pointer-events-none z-50"
       style={tooltipStyle}
     >
-      <div className="space-y-2.5">
+      <div className="space-y-3">
         <div className="flex items-center gap-2">
           <div 
-            className="w-2.5 h-2.5 rounded-full animate-pulse"
+            className="w-3 h-3 rounded-full animate-pulse"
             style={{ backgroundColor: getSeverityColor(data.severity) }}
           />
-          <span className="text-purple-300 text-sm font-medium">
+          <span className="text-purple-300 text-base font-medium">
             {(data.severity || 'Unknown').toUpperCase()} Severity Alert
           </span>
         </div>
 
-        <div className="text-sm text-purple-100 font-medium">
+        <div className="text-base text-purple-100 font-medium">
           {data.title || 'Untitled Alert'}
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-xs">
+        <div className="grid grid-cols-2 gap-2 text-sm">
           <div className="text-purple-300/80">Risk Score:</div>
           <div className="text-right text-purple-200">
             {data.risk || 'N/A'}
@@ -101,12 +100,12 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 bg-purple-500/10 rounded text-xs text-purple-200">
+          <span className="px-2.5 py-1 bg-purple-500/10 rounded text-sm text-purple-200">
             {data.anomaly_count || data.count || 1} anomalies
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-xs">
+        <div className="grid grid-cols-2 gap-2 text-sm">
           {data.impacted_computers || data.impactedComputers ? (
             <>
               <div className="text-purple-300/80">Systems:</div>
@@ -136,17 +135,17 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
         </div>
 
         {tactics.length > 0 && (
-          <div className="space-y-1.5">
-            <div className="text-purple-200 text-xs font-medium">MITRE ATT&CK</div>
-            <div className="flex flex-wrap gap-1">
+          <div className="space-y-2">
+            <div className="text-purple-200 text-sm font-medium">MITRE ATT&CK</div>
+            <div className="flex flex-wrap gap-1.5">
               {tactics.map((tactic: string, index: number) => (
                 <div 
                   key={index}
-                  className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-500/10 
-                    border border-purple-500/20 text-purple-300 text-xs"
+                  className="flex items-center gap-1.5 px-2 py-1 rounded bg-purple-500/10 
+                    border border-purple-500/20 text-purple-300 text-sm"
                 >
                   {getTacticIcon(tactic)}
-                  <span className="truncate max-w-[100px]">{tactic}</span>
+                  <span className="truncate max-w-[120px]">{tactic}</span>
                 </div>
               ))}
             </div>
@@ -154,12 +153,12 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
         )}
 
         {techniques.length > 0 && (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1.5">
             {techniques.map((technique: string, index: number) => (
               <div 
                 key={index}
-                className="px-1.5 py-0.5 rounded bg-purple-900/40 
-                  border border-purple-500/20 text-purple-300 text-xs"
+                className="px-2 py-1 rounded bg-purple-900/40 
+                  border border-purple-500/20 text-purple-300 text-sm"
               >
                 {technique.toUpperCase()}
               </div>
