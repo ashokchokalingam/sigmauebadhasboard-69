@@ -14,6 +14,15 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: false,
         ws: true,
+        configure: (proxy, options) => {
+          proxy.on('error', (err, req, res) => {
+            console.warn('proxy error', err);
+          });
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            proxyReq.setHeader('Connection', 'keep-alive');
+          });
+        },
+        timeout: 30000, // 30 second timeout
       },
     },
   },
