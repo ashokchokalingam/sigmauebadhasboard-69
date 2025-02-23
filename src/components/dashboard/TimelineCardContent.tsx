@@ -30,7 +30,7 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
     >
       <TimelineEventHeader 
         ruleLevel={event.rule_level}
-        totalRecords={event.total_events}
+        totalRecords={Number(event.total_events) || 0}
         title={event.title}
         description={event.description || ''}
       />

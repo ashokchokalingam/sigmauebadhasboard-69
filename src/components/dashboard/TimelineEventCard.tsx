@@ -126,10 +126,7 @@ const TimelineEventCard = ({
           )}
         >
           <TimelineCardContent 
-            event={{
-              ...event,
-              total_events: event.total_events
-            }}
+            event={event}
             onClick={handleClick} 
           />
 
