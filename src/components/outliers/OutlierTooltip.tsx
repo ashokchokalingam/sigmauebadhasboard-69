@@ -115,8 +115,8 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
         <div className="grid grid-cols-2 gap-2">
           {data.impacted_computers || data.impactedComputers ? (
             <>
-              <div className="text-[13px] text-purple-300/80">Systems:</div>
-              <div className="text-right text-[13px] font-medium text-blue-300 hover:text-blue-200 transition-colors truncate">
+              <div className="text-[14px] text-purple-300/80 font-medium">Systems:</div>
+              <div className="text-right text-[15px] font-medium text-[#1EAEDB] hover:text-[#0FA0CE] transition-colors truncate">
                 {data.impacted_computers || data.impactedComputers}
               </div>
             </>
@@ -124,8 +124,8 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
           
           {data.origin_users || data.impactedUsers ? (
             <>
-              <div className="text-[13px] text-purple-300/80">Users:</div>
-              <div className="text-right text-[13px] font-medium text-emerald-300 hover:text-emerald-200 transition-colors truncate">
+              <div className="text-[14px] text-purple-300/80 font-medium">Users:</div>
+              <div className="text-right text-[15px] font-medium text-emerald-300 hover:text-emerald-200 transition-colors truncate">
                 {data.origin_users || data.impactedUsers}
               </div>
             </>
