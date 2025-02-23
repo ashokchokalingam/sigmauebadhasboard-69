@@ -1,3 +1,4 @@
+
 import { Search } from "lucide-react";
 
 interface EntitySearchInputProps {

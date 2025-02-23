@@ -1,3 +1,4 @@
+
 export interface MLOutlier {
   anomaly_count: number;
   first_seen: string;
@@ -22,9 +23,11 @@ export interface ChartDataPoint {
   severity: string;
   title: string;
   description: string;
-  tactics: string[];
+  tactics?: string[];
+  techniques?: string[];
   impactedComputers: string[];
   impactedUsers: string[];
+  sourceIps?: string[];
 }
 
 export interface StatsData {

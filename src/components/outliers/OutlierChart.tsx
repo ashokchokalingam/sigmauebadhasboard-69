@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Bar, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 import { ChartDataPoint } from "./types";
@@ -14,9 +15,31 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
     'critical', 'high', 'medium', 'low'
   ]);
 
-  const filteredData = data.filter(entry => 
+  // Process the data to ensure tactics and techniques are included
+  const processedData = data.map(entry => ({
+    ...entry,
+    // Keep all original fields
+    timestamp: entry.timestamp,
+    firstSeen: entry.firstSeen,
+    lastSeen: entry.lastSeen,
+    count: entry.count,
+    risk: entry.risk,
+    severity: entry.severity,
+    title: entry.title,
+    description: entry.description,
+    // Ensure tactics and techniques are passed through with optional chaining
+    tactics: entry.tactics?.join(',') || '',
+    techniques: entry.techniques?.join(',') || '',
+    impactedComputers: entry.impactedComputers?.join(',') || '',
+    impactedUsers: entry.impactedUsers?.join(',') || '',
+    sourceIps: entry.sourceIps?.join(',') || ''
+  }));
+
+  const filteredData = processedData.filter(entry => 
     selectedSeverities.includes(entry.severity.toLowerCase())
   );
+
+  console.log('Chart processed data:', processedData);
 
   const handleSeverityToggle = (severity: string) => {
     setSelectedSeverities(prev => {
@@ -44,7 +67,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
 
   const formatXAxisDate = (timestamp: string) => {
     const date = new Date(timestamp);
-    return format(date, 'MMM d, hh:mm a'); // Changed to 12-hour format with AM/PM
+    return format(date, 'MMM d, hh:mm a');
   };
 
   return (
@@ -76,7 +99,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={filteredData}
-            margin={{ top: 20, right: 430, left: 0, bottom: 35 }}
+            margin={{ top: 20, right: 30, left: 0, bottom: 35 }}
           >
             <defs>
               {['Critical', 'High', 'Medium', 'Low'].map((severity) => (

@@ -1,6 +1,9 @@
 
-import { Shield, Activity, CircleDot } from "lucide-react";
+import { Info } from "lucide-react";
 import { formatDateTime } from "@/utils/dateTimeUtils";
+import { TacticIcon } from "./components/TacticIcon";
+import { RiskScoreDisplay } from "./components/RiskScoreDisplay";
+import { getSeverityColor } from "./utils/colorUtils";
 
 interface TooltipProps {
   active?: boolean;
@@ -12,38 +15,19 @@ interface TooltipProps {
 export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipProps) => {
   if (!active || !payload?.[0]) return null;
 
-  const data = payload[0].payload;
-  
-  if (!data) return null;
+  // Get the raw data from the payload
+  const rawData = payload[0].payload;
+  if (!rawData) return null;
 
-  const getSeverityColor = (severity: string = 'medium') => {
-    switch (severity?.toLowerCase()) {
-      case 'critical':
-        return '#D32F2F';
-      case 'high':
-        return '#FF5722';
-      case 'medium':
-        return '#FFB74D';
-      case 'low':
-        return '#66BB6A';
-      default:
-        return '#9333EA';
-    }
+  // Extract data from either the raw format or the chart format
+  const data = {
+    ...rawData,
+    ...rawData.data, // Merge any nested data
   };
 
-  const getTacticIcon = (tactic: string) => {
-    switch (tactic?.toLowerCase()) {
-      case 'initial_access':
-      case 'initial-access':
-        return <Shield className="w-3.5 h-3.5" />;
-      case 'execution':
-        return <Activity className="w-3.5 h-3.5" />;
-      default:
-        return <CircleDot className="w-3.5 h-3.5" />;
-    }
-  };
+  console.log('Tooltip raw data:', rawData);
+  console.log('Tooltip processed data:', data);
 
-  // Safely split comma-separated strings
   const safeSplit = (value: string | null | undefined): string[] => {
     if (!value || typeof value !== 'string') return [];
     return value.split(',').map(item => item.trim()).filter(Boolean);
@@ -53,99 +37,129 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   const techniques = safeSplit(data.techniques);
 
   const xPos = coordinate ? coordinate.x : 0;
+  const yPos = coordinate ? coordinate.y : 0;
+  
   const tooltipStyle = {
-    left: xPos + 60,
-    top: '50%',
-    transform: 'translateY(-50%)',
-    position: 'fixed' as const,
+    position: 'absolute' as const,
+    left: Math.max(10, xPos),
+    top: yPos,
+    transform: 'translate(20px, -50%)',
+    zIndex: 50
+  };
+
+  const formatTactic = (tactic: string): string => {
+    return tactic
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   return (
     <div 
-      className="fixed bg-[#1A1F2C] border border-purple-500/20 rounded-lg p-4 
-        shadow-xl w-[400px] pointer-events-none z-50"
+      className="absolute bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-5 
+        shadow-xl w-[480px] pointer-events-none font-inter"
       style={tooltipStyle}
     >
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
+      <div className="space-y-4">
+        <div className="flex items-center gap-2.5">
           <div 
-            className="w-2 h-2 rounded-full"
-            style={{ backgroundColor: getSeverityColor(data.severity) }}
+            className="w-3.5 h-3.5 rounded-full animate-pulse shadow-lg"
+            style={{ 
+              backgroundColor: getSeverityColor(data.severity),
+              boxShadow: `0 0 12px ${getSeverityColor(data.severity)}40`
+            }}
           />
-          <span className="text-gray-200 text-sm font-medium">
+          <span className="text-[17px] text-purple-200 font-semibold tracking-wide">
             {(data.severity || 'Unknown').toUpperCase()} Severity Alert
           </span>
         </div>
 
-        <div className="text-gray-100 font-semibold">
+        <div className="text-[15px] text-purple-100 font-medium leading-relaxed">
           {data.title || 'Untitled Alert'}
         </div>
 
-        <div className="grid grid-cols-[100px_1fr] gap-y-1 text-sm">
-          <div className="text-purple-300/70">Risk Score:</div>
-          <div className="text-right text-green-400 font-medium">
-            {data.risk || 'N/A'}
-          </div>
-          <div className="text-purple-300/70">First seen:</div>
-          <div className="text-right text-gray-300">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-[14px] text-purple-300/90 font-medium">Risk Score:</div>
+          <RiskScoreDisplay risk={data.risk} severity={data.severity} />
+          
+          <div className="text-[14px] text-purple-300/90">First seen:</div>
+          <div className="text-right text-[14px] font-medium text-[#CCCCCC]">
             {formatDateTime(data.first_seen || data.firstSeen)}
           </div>
-          <div className="text-purple-300/70">Last seen:</div>
-          <div className="text-right text-gray-300">
+          <div className="text-[14px] text-purple-300/90">Last seen:</div>
+          <div className="text-right text-[14px] font-medium text-[#CCCCCC]">
             {formatDateTime(data.last_seen || data.lastSeen)}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-3 py-0.5 bg-purple-500/20 rounded-md text-xs text-purple-200 font-medium">
+          <span className="px-4 py-1.5 bg-[#6A0DAD] rounded-full text-[13px] text-white font-medium 
+            shadow-[0_0_15px_rgba(106,13,173,0.3)] hover:shadow-[0_0_20px_rgba(106,13,173,0.4)] 
+            transition-shadow duration-300">
             {data.anomaly_count || data.count || 1} anomalies
           </span>
         </div>
 
-        {(data.impacted_computers || data.impactedComputers) && (
-          <div className="space-y-1">
-            <div className="text-purple-300/70 text-sm">Systems:</div>
-            <div className="text-cyan-400 text-sm break-all">
-              {data.impacted_computers || data.impactedComputers}
-            </div>
-          </div>
-        )}
-        
-        {(data.origin_users || data.impactedUsers) && (
-          <div className="space-y-1">
-            <div className="text-purple-300/70 text-sm">Users:</div>
-            <div className="text-cyan-400 text-sm break-all">
-              {data.origin_users || data.impactedUsers}
-            </div>
-          </div>
-        )}
+        <div className="grid grid-cols-2 gap-3">
+          {data.impacted_computers || data.impactedComputers ? (
+            <>
+              <div className="text-[14px] text-purple-300/90 font-medium">Systems:</div>
+              <div className="text-right text-[14px] font-medium text-[#40E0D0] hover:text-[#45E8D8] 
+                transition-colors truncate cursor-pointer border-b border-[#40E0D0]/30 hover:border-[#40E0D0]">
+                {data.impacted_computers || data.impactedComputers}
+              </div>
+            </>
+          ) : null}
+          
+          {data.origin_users || data.impactedUsers ? (
+            <>
+              <div className="text-[14px] text-purple-300/90 font-medium">Users:</div>
+              <div className="text-right text-[14px] font-medium text-[#40E0D0] hover:text-[#45E8D8] 
+                transition-colors truncate cursor-pointer border-b border-[#40E0D0]/30 hover:border-[#40E0D0]">
+                {data.origin_users || data.impactedUsers}
+              </div>
+            </>
+          ) : null}
 
-        {tactics.length > 0 && (
-          <div>
-            <div className="text-purple-200 text-sm font-medium mb-2">MITRE ATT&CK</div>
-            <div className="flex flex-wrap gap-2">
+          {data.source_ips || data.sourceIps ? (
+            <>
+              <div className="text-[13px] text-purple-300/90">Source IP:</div>
+              <div className="text-right text-[13px] font-medium text-purple-200">
+                {data.source_ips || data.sourceIps}
+              </div>
+            </>
+          ) : null}
+        </div>
+
+        {tactics && tactics.length > 0 && (
+          <div className="space-y-2.5">
+            <div className="text-[13px] text-purple-200 font-medium">MITRE ATT&CK</div>
+            <div className="flex flex-wrap gap-1.5">
               {tactics.map((tactic: string, index: number) => (
                 <div 
-                  key={index}
+                  key={`${tactic}-${index}`}
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-purple-500/10 
-                    border border-purple-500/20 text-purple-200 text-xs"
+                    border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-500/20 
+                    transition-colors"
                 >
-                  {getTacticIcon(tactic)}
-                  <span>{tactic}</span>
+                  <TacticIcon tactic={tactic} />
+                  <span className="truncate max-w-[120px]">{formatTactic(tactic)}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {techniques.length > 0 && (
+        {techniques && techniques.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {techniques.map((technique: string, index: number) => (
               <div 
-                key={index}
-                className="px-2 py-1 rounded bg-purple-900/40 text-purple-200 text-xs font-medium"
+                key={`${technique}-${index}`}
+                className="px-2.5 py-1 rounded bg-purple-900/40 
+                  border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-800/40
+                  transition-colors"
               >
-                {technique}
+                {technique.toUpperCase()}
               </div>
             ))}
           </div>
