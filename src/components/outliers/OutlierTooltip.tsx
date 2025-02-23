@@ -20,13 +20,13 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   const getSeverityColor = (severity: string = 'medium') => {
     switch (severity?.toLowerCase()) {
       case 'critical':
-        return '#D32F2F';
+        return '#FF3B30';
       case 'high':
-        return '#FF5722';
+        return '#FF9500';
       case 'medium':
         return '#FFB74D';
       case 'low':
-        return '#66BB6A';
+        return '#34C759';
       default:
         return '#9333EA';
     }
@@ -73,47 +73,50 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
         shadow-xl w-[450px] pointer-events-none"
       style={tooltipStyle}
     >
-      <div className="space-y-3">
+      <div className="space-y-3.5">
         <div className="flex items-center gap-2">
           <div 
             className="w-3 h-3 rounded-full animate-pulse"
             style={{ backgroundColor: getSeverityColor(data.severity) }}
           />
-          <span className="text-purple-300 text-base font-medium">
+          <span className="text-[15px] text-purple-300 font-medium tracking-wide">
             {(data.severity || 'Unknown').toUpperCase()} Severity Alert
           </span>
         </div>
 
-        <div className="text-base text-purple-100 font-medium">
+        <div className="text-[15px] text-purple-100 font-medium">
           {data.title || 'Untitled Alert'}
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="text-purple-300/80">Risk Score:</div>
-          <div className="text-right text-purple-200">
-            {data.risk || 'N/A'}
-          </div>
-          <div className="text-purple-300/80">First seen:</div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="text-[13px] text-purple-300/80 font-medium">Risk Score:</div>
           <div className="text-right">
+            <span className="text-lg font-bold bg-gradient-to-r from-orange-400 via-purple-400 to-pink-400 
+              bg-clip-text text-transparent animate-pulse">
+              {data.risk || 'N/A'}
+            </span>
+          </div>
+          <div className="text-[13px] text-purple-300/80">First seen:</div>
+          <div className="text-right text-[13px] text-purple-200">
             {formatTimestamps(data.first_seen || data.firstSeen)}
           </div>
-          <div className="text-purple-300/80">Last seen:</div>
-          <div className="text-right">
+          <div className="text-[13px] text-purple-300/80">Last seen:</div>
+          <div className="text-right text-[13px] text-purple-200">
             {formatTimestamps(data.last_seen || data.lastSeen)}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 bg-purple-500/10 rounded text-sm text-purple-200">
+          <span className="px-2.5 py-1 bg-purple-500/10 rounded text-[13px] text-purple-200 font-medium">
             {data.anomaly_count || data.count || 1} anomalies
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-sm">
+        <div className="grid grid-cols-2 gap-2">
           {data.impacted_computers || data.impactedComputers ? (
             <>
-              <div className="text-purple-300/80">Systems:</div>
-              <div className="text-right text-purple-200 truncate">
+              <div className="text-[13px] text-purple-300/80">Systems:</div>
+              <div className="text-right text-[13px] font-medium text-blue-300 hover:text-blue-200 transition-colors truncate">
                 {data.impacted_computers || data.impactedComputers}
               </div>
             </>
@@ -121,8 +124,8 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
           
           {data.origin_users || data.impactedUsers ? (
             <>
-              <div className="text-purple-300/80">Users:</div>
-              <div className="text-right text-purple-200 truncate">
+              <div className="text-[13px] text-purple-300/80">Users:</div>
+              <div className="text-right text-[13px] font-medium text-emerald-300 hover:text-emerald-200 transition-colors truncate">
                 {data.origin_users || data.impactedUsers}
               </div>
             </>
@@ -130,8 +133,8 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
           {data.source_ips || data.sourceIps ? (
             <>
-              <div className="text-purple-300/80">Source IP:</div>
-              <div className="text-right text-purple-200">
+              <div className="text-[13px] text-purple-300/80">Source IP:</div>
+              <div className="text-right text-[13px] font-medium text-purple-200">
                 {data.source_ips || data.sourceIps}
               </div>
             </>
@@ -140,13 +143,14 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
         {tactics.length > 0 && (
           <div className="space-y-2">
-            <div className="text-purple-200 text-sm font-medium">MITRE ATT&CK</div>
+            <div className="text-[13px] text-purple-200 font-medium">MITRE ATT&CK</div>
             <div className="flex flex-wrap gap-1.5">
               {tactics.map((tactic: string, index: number) => (
                 <div 
                   key={index}
                   className="flex items-center gap-1.5 px-2 py-1 rounded bg-purple-500/10 
-                    border border-purple-500/20 text-purple-300 text-sm"
+                    border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-500/20 
+                    transition-colors"
                 >
                   {getTacticIcon(tactic)}
                   <span className="truncate max-w-[120px]">{tactic}</span>
@@ -162,7 +166,8 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
               <div 
                 key={index}
                 className="px-2 py-1 rounded bg-purple-900/40 
-                  border border-purple-500/20 text-purple-300 text-sm"
+                  border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-800/40
+                  transition-colors"
               >
                 {technique.toUpperCase()}
               </div>
