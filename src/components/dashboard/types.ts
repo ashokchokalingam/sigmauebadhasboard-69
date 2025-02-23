@@ -1,3 +1,4 @@
+
 export interface Alert {
   id: string;
   title: string;
@@ -17,7 +18,7 @@ export interface Alert {
   task?: string;
   target_domain_name?: string;
   raw?: string | object;
-  total_events?: number;
+  total_events: number;  // Changed from optional to required
   user_impacted: string;
   user_origin?: string;
   tactics?: string;

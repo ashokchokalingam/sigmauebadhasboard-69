@@ -24,9 +24,7 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
   const tactics = safeSplit(event.tags);
   const techniques = tactics.filter(tag => tag.toLowerCase().includes('t1'));
 
-  // Prioritize total_events from the response first
-  const totalEvents = event.total_events || event.instances?.length || 1;
-
+  // Make sure to pass the total_events directly from the event object
   return (
     <div 
       onClick={onClick}
@@ -34,7 +32,7 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
     >
       <TimelineEventHeader 
         ruleLevel={event.rule_level}
-        totalRecords={totalEvents}
+        totalRecords={event.total_events}
         title={event.title}
         description={event.description}
       />
