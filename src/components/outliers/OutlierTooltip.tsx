@@ -1,4 +1,3 @@
-
 import { Shield, Activity, CircleDot, Info } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { formatDateTime } from "@/utils/dateTimeUtils";
@@ -106,16 +105,16 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
         <div className="grid grid-cols-2 gap-4">
           <div className="text-[14px] text-purple-300/90 font-medium">Risk Score:</div>
-          <div className="text-right flex items-center justify-end gap-2">
+          <div className="text-right flex items-center justify-end">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="inline-flex items-center">
+                  <div className="inline-flex items-center gap-1.5">
                     <span className={`text-[19px] font-bold bg-gradient-to-r ${getRiskScoreColor(data.risk)} 
-                      bg-clip-text text-transparent`}>
+                      bg-clip-text text-transparent leading-none`}>
                       {data.risk || 'N/A'}
                     </span>
-                    <Info className="w-4 h-4 ml-1.5 text-purple-400/70" />
+                    <Info className="w-4 h-4 text-purple-400/70" />
                   </div>
                 </TooltipTrigger>
                 <TooltipContent 
@@ -139,7 +138,8 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
         <div className="flex items-center gap-2">
           <span className="px-4 py-1.5 bg-[#6A0DAD] rounded-full text-[13px] text-white font-medium 
-            shadow-lg shadow-purple-900/20">
+            shadow-[0_0_15px_rgba(106,13,173,0.3)] hover:shadow-[0_0_20px_rgba(106,13,173,0.4)] 
+            transition-shadow duration-300">
             {data.anomaly_count || data.count || 1} anomalies
           </span>
         </div>
