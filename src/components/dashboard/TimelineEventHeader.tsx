@@ -53,7 +53,7 @@ const TimelineEventHeader = ({
             {ruleLevel}
           </span>
           <span className="text-sm font-semibold bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full border border-blue-500/30">
-            {totalRecords || 0} events
+            {totalRecords} {totalRecords === 1 ? 'event' : 'events'}
           </span>
         </div>
       </div>

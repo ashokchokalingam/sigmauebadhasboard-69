@@ -1,34 +1,44 @@
 
-import TimelineEventHeader from "./TimelineEventHeader";
-import TimelineEventTimestamps from "./TimelineEventTimestamps";
-import TimelineMitreSection from "./TimelineMitreSection";
 import { Alert } from "./types";
+import TimelineEventHeader from "./TimelineEventHeader";
+import TimelineMitreSection from "./TimelineMitreSection";
+import TimelineEventTimestamps from "./TimelineEventTimestamps";
 
 interface TimelineCardContentProps {
   event: Alert;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
-  return (
-    <div className="p-4" onClick={onClick}>
-      <div className="flex items-center justify-between gap-2 mb-4">
-        <div className="flex-1">
-          <TimelineEventHeader
-            ruleLevel={event.rule_level}
-            totalRecords={event.total_events || 0}
-            title={event.title}
-            description={event.description}
-          />
-        </div>
-      </div>
+  const safeSplit = (value: string | undefined) => {
+    if (!value) return [];
+    return value.split(',').map(t => t.trim()).filter(Boolean);
+  };
 
-      <TimelineEventTimestamps
-        firstSeen={event.first_time_seen || event.system_time}
-        lastSeen={event.last_time_seen || event.system_time}
+  const tactics = safeSplit(event.tags);
+  const techniques = safeSplit(event.techniques);
+
+  return (
+    <div 
+      onClick={onClick}
+      className="p-4 space-y-4"
+    >
+      <TimelineEventHeader 
+        ruleLevel={event.rule_level}
+        totalRecords={event.total_events || 1}
+        title={event.title}
+        description={event.description}
       />
 
-      {event.tags && <TimelineMitreSection tags={event.tags} />}
+      <TimelineMitreSection 
+        tactics={tactics}
+        techniques={techniques}
+      />
+
+      <TimelineEventTimestamps 
+        firstSeen={event.first_time_seen}
+        lastSeen={event.last_time_seen}
+      />
     </div>
   );
 };
