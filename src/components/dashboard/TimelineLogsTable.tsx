@@ -21,13 +21,28 @@ const TimelineLogsTable = ({
 }: TimelineLogsTableProps) => {
   if (!logs || logs.length === 0) return null;
 
+  // Expanded set of columns for more detailed view
+  const expandedColumns = [
+    'system_time',
+    'title',
+    'description',
+    'user_id',
+    'computer_name',
+    'ip_address',
+    'event_id',
+    'provider_name',
+    'rule_level',
+    'task',
+    'tags'
+  ];
+
   return (
     <div className="mt-4">
-      <div className="max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600/10 scrollbar-track-transparent">
+      <div className="max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600/10 scrollbar-track-transparent">
         <Table>
           <thead>
             <tr className="border-b border-slate-800 bg-[#0A0D14]">
-              {visibleColumns.map((column) => (
+              {expandedColumns.map((column) => (
                 <th 
                   key={column} 
                   className="p-3 text-left text-xs font-medium text-slate-400/80 first:pl-4"
@@ -43,10 +58,12 @@ const TimelineLogsTable = ({
                 key={`${log.id || log._id || index}`} 
                 className="border-b border-slate-800/50 hover:bg-slate-800/20 transition-colors"
               >
-                {visibleColumns.map((column) => (
+                {expandedColumns.map((column) => (
                   <td 
                     key={`${log.id || log._id || index}-${column}`} 
-                    className="p-3 text-sm first:pl-4"
+                    className={`p-3 text-sm first:pl-4 ${
+                      column === 'description' ? 'max-w-md whitespace-normal' : ''
+                    }`}
                   >
                     <TableCell 
                       alert={log}
@@ -65,4 +82,3 @@ const TimelineLogsTable = ({
 };
 
 export default TimelineLogsTable;
-
