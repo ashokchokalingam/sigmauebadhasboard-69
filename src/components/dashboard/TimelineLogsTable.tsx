@@ -19,8 +19,8 @@ const TimelineLogsTable = ({
   if (!logs || logs.length === 0) return null;
 
   return (
-    <div className="border-t border-blue-500/20 mt-4 pt-4">
-      <div className="flex items-center justify-between mb-4 px-4">
+    <div className="border-t border-blue-500/20 mt-4">
+      <div className="flex items-center justify-between p-4">
         <h3 className="text-sm font-medium text-blue-100">Detailed Logs</h3>
         <ToggleGroup
           type="single"
@@ -30,21 +30,24 @@ const TimelineLogsTable = ({
           }}
           className="bg-blue-950/50 rounded-md"
         >
-          <ToggleGroupItem value="anomalies" className="px-3 py-2 text-sm">
+          <ToggleGroupItem value="anomalies" className="px-3 py-2 text-xs">
             Anomalies
           </ToggleGroupItem>
-          <ToggleGroupItem value="mloutliers" className="px-3 py-2 text-sm">
+          <ToggleGroupItem value="mloutliers" className="px-3 py-2 text-xs">
             ML Outliers
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
 
-      <div className="max-h-[300px] overflow-y-auto">
+      <div className="max-h-[300px] overflow-y-auto px-4">
         <Table>
-          <thead>
+          <thead className="bg-blue-950/30">
             <tr>
               {visibleColumns.map((column) => (
-                <th key={column} className="px-4 py-2 text-left text-sm font-medium text-blue-300">
+                <th 
+                  key={column} 
+                  className="py-2 px-4 text-left text-xs font-medium text-blue-300 first:rounded-l-md last:rounded-r-md"
+                >
                   {column.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                 </th>
               ))}
@@ -52,9 +55,15 @@ const TimelineLogsTable = ({
           </thead>
           <tbody>
             {logs.map((log, index) => (
-              <tr key={`${log.id || log._id || index}`} className="border-t border-blue-500/20">
+              <tr 
+                key={`${log.id || log._id || index}`} 
+                className="border-t border-blue-500/20 hover:bg-blue-950/30"
+              >
                 {visibleColumns.map((column) => (
-                  <td key={`${log.id || log._id || index}-${column}`} className="px-4 py-2 text-sm text-blue-200">
+                  <td 
+                    key={`${log.id || log._id || index}-${column}`} 
+                    className="px-4 py-2 text-xs text-blue-200"
+                  >
                     {log[column]}
                   </td>
                 ))}
@@ -68,3 +77,4 @@ const TimelineLogsTable = ({
 };
 
 export default TimelineLogsTable;
+
