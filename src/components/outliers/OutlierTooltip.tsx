@@ -96,12 +96,12 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
               {data.risk || 'N/A'}
             </span>
           </div>
-          <div className="text-[13px] text-purple-300/80">First seen:</div>
-          <div className="text-right text-[13px] text-purple-200">
+          <div className="text-[14px] text-purple-300/80">First seen:</div>
+          <div className="text-right text-[15px] font-medium text-cyan-300 hover:text-cyan-200 transition-colors">
             {formatTimestamps(data.first_seen || data.firstSeen)}
           </div>
-          <div className="text-[13px] text-purple-300/80">Last seen:</div>
-          <div className="text-right text-[13px] text-purple-200">
+          <div className="text-[14px] text-purple-300/80">Last seen:</div>
+          <div className="text-right text-[15px] font-medium text-amber-300 hover:text-amber-200 transition-colors">
             {formatTimestamps(data.last_seen || data.lastSeen)}
           </div>
         </div>
