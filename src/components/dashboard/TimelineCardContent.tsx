@@ -24,8 +24,8 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
   const tactics = safeSplit(event.tags);
   const techniques = tactics.filter(tag => tag.toLowerCase().includes('t1'));
 
-  // Calculate total events by summing instances if available, or use total_events, or default to 1
-  const totalEvents = event.instances?.length || event.total_events || 1;
+  // Prioritize total_events from the response first
+  const totalEvents = event.total_events || event.instances?.length || 1;
 
   return (
     <div 
