@@ -1,3 +1,4 @@
+
 import { Shield, Activity, CircleDot, Info } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { formatDateTime } from "@/utils/dateTimeUtils";
@@ -23,10 +24,10 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   if (!data) return null;
 
   const getRiskScoreColor = (risk: number) => {
-    if (risk >= 200) return 'from-[#D32F2F] to-[#FF4D4D]';
-    if (risk >= 100) return 'from-[#FF5722] to-[#FF7043]';
-    if (risk >= 50) return 'from-[#FFB74D] to-[#FFB732]'; // Matching the yellow-orange from the chart
-    return 'from-[#66BB6A] to-[#81C784]';
+    if (risk >= 200) return 'from-[#D32F2F] to-[#FF4444]';
+    if (risk >= 100) return 'from-[#FF9800] to-[#FFA726]';
+    if (risk >= 50) return 'from-[#FFB74D] to-[#FFB732]';
+    return 'from-[#4CAF50] to-[#66BB6A]';
   };
 
   const getSeverityColor = (severity: string = 'medium') => {
@@ -34,11 +35,11 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
       case 'critical':
         return '#D32F2F';
       case 'high':
-        return '#FF5722';
+        return '#FF9800';
       case 'medium':
-        return '#FFB74D'; // Matching the yellow-orange from the chart
+        return '#FFB74D';
       case 'low':
-        return '#66BB6A';
+        return '#4CAF50';
       default:
         return '#9333EA';
     }
