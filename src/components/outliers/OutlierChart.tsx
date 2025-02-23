@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Bar, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 import { ChartDataPoint } from "./types";
@@ -26,11 +27,12 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
     severity: entry.severity,
     title: entry.title,
     description: entry.description,
-    // Ensure tactics and techniques are passed through
+    // Ensure tactics and techniques are passed through with optional chaining
     tactics: entry.tactics?.join(',') || '',
     techniques: entry.techniques?.join(',') || '',
     impactedComputers: entry.impactedComputers?.join(',') || '',
-    impactedUsers: entry.impactedUsers?.join(',') || ''
+    impactedUsers: entry.impactedUsers?.join(',') || '',
+    sourceIps: entry.sourceIps?.join(',') || ''
   }));
 
   const filteredData = processedData.filter(entry => 
@@ -65,7 +67,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
 
   const formatXAxisDate = (timestamp: string) => {
     const date = new Date(timestamp);
-    return format(date, 'MMM d, hh:mm a'); // Changed to 12-hour format with AM/PM
+    return format(date, 'MMM d, hh:mm a');
   };
 
   return (
