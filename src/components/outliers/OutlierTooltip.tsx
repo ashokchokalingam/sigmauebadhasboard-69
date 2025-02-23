@@ -57,16 +57,20 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   };
 
   const xPos = coordinate ? coordinate.x : 0;
+  const yPos = coordinate ? coordinate.y : 0;
+  
   const tooltipStyle = {
-    transform: 'translateY(-50%)',
+    position: 'absolute' as const,
     left: Math.max(10, xPos),
-    position: 'fixed' as const
+    top: yPos,
+    transform: 'translate(20px, -50%)',
+    zIndex: 50
   };
 
   return (
     <div 
-      className="fixed bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
-        shadow-xl w-[450px] pointer-events-none z-50"
+      className="absolute bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
+        shadow-xl w-[450px] pointer-events-none"
       style={tooltipStyle}
     >
       <div className="space-y-3">
