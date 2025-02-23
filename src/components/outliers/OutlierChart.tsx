@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Bar, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 import { ChartDataPoint } from "./types";
@@ -15,9 +14,30 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
     'critical', 'high', 'medium', 'low'
   ]);
 
-  const filteredData = data.filter(entry => 
+  // Process the data to ensure tactics and techniques are included
+  const processedData = data.map(entry => ({
+    ...entry,
+    // Keep all original fields
+    timestamp: entry.timestamp,
+    firstSeen: entry.firstSeen,
+    lastSeen: entry.lastSeen,
+    count: entry.count,
+    risk: entry.risk,
+    severity: entry.severity,
+    title: entry.title,
+    description: entry.description,
+    // Ensure tactics and techniques are passed through
+    tactics: entry.tactics?.join(',') || '',
+    techniques: entry.techniques?.join(',') || '',
+    impactedComputers: entry.impactedComputers?.join(',') || '',
+    impactedUsers: entry.impactedUsers?.join(',') || ''
+  }));
+
+  const filteredData = processedData.filter(entry => 
     selectedSeverities.includes(entry.severity.toLowerCase())
   );
+
+  console.log('Chart processed data:', processedData);
 
   const handleSeverityToggle = (severity: string) => {
     setSelectedSeverities(prev => {
