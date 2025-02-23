@@ -37,8 +37,9 @@ const TimelineLogsTable = ({
           <TimelineTableHeader />
           <TableBody>
             {logs.map((log, index) => (
-              <div key={`log-${log.id || index}`}>
+              <>
                 <TimelineTableRow
+                  key={index}
                   log={log}
                   index={index}
                   isExpanded={expandedRow === index}
@@ -50,7 +51,7 @@ const TimelineLogsTable = ({
                     onClose={() => setExpandedRow(null)}
                   />
                 )}
-              </div>
+              </>
             ))}
           </TableBody>
         </Table>

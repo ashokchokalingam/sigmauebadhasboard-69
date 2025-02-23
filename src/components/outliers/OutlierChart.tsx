@@ -15,31 +15,9 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
     'critical', 'high', 'medium', 'low'
   ]);
 
-  // Process the data to ensure tactics and techniques are included
-  const processedData = data.map(entry => ({
-    ...entry,
-    // Keep all original fields
-    timestamp: entry.timestamp,
-    firstSeen: entry.firstSeen,
-    lastSeen: entry.lastSeen,
-    count: entry.count,
-    risk: entry.risk,
-    severity: entry.severity,
-    title: entry.title,
-    description: entry.description,
-    // Ensure tactics and techniques are passed through with optional chaining
-    tactics: entry.tactics?.join(',') || '',
-    techniques: entry.techniques?.join(',') || '',
-    impactedComputers: entry.impactedComputers?.join(',') || '',
-    impactedUsers: entry.impactedUsers?.join(',') || '',
-    sourceIps: entry.sourceIps?.join(',') || ''
-  }));
-
-  const filteredData = processedData.filter(entry => 
+  const filteredData = data.filter(entry => 
     selectedSeverities.includes(entry.severity.toLowerCase())
   );
-
-  console.log('Chart processed data:', processedData);
 
   const handleSeverityToggle = (severity: string) => {
     setSelectedSeverities(prev => {
@@ -67,7 +45,7 @@ export const OutlierChart = ({ data }: OutlierChartProps) => {
 
   const formatXAxisDate = (timestamp: string) => {
     const date = new Date(timestamp);
-    return format(date, 'MMM d, hh:mm a');
+    return format(date, 'MMM d, hh:mm a'); // Changed to 12-hour format with AM/PM
   };
 
   return (

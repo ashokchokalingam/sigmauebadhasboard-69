@@ -1,9 +1,7 @@
 
-import { Info } from "lucide-react";
+import { Shield, Activity, CircleDot } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { formatDateTime } from "@/utils/dateTimeUtils";
-import { TacticIcon } from "./components/TacticIcon";
-import { RiskScoreDisplay } from "./components/RiskScoreDisplay";
-import { getSeverityColor } from "./utils/colorUtils";
 
 interface TooltipProps {
   active?: boolean;
@@ -15,19 +13,38 @@ interface TooltipProps {
 export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipProps) => {
   if (!active || !payload?.[0]) return null;
 
-  // Get the raw data from the payload
-  const rawData = payload[0].payload;
-  if (!rawData) return null;
+  const data = payload[0].payload;
+  
+  if (!data) return null;
 
-  // Extract data from either the raw format or the chart format
-  const data = {
-    ...rawData,
-    ...rawData.data, // Merge any nested data
+  const getSeverityColor = (severity: string = 'medium') => {
+    switch (severity?.toLowerCase()) {
+      case 'critical':
+        return '#D32F2F';
+      case 'high':
+        return '#FF5722';
+      case 'medium':
+        return '#FFB74D';
+      case 'low':
+        return '#66BB6A';
+      default:
+        return '#9333EA';
+    }
   };
 
-  console.log('Tooltip raw data:', rawData);
-  console.log('Tooltip processed data:', data);
+  const getTacticIcon = (tactic: string) => {
+    switch (tactic?.toLowerCase()) {
+      case 'initial_access':
+      case 'initial-access':
+        return <Shield className="w-3 h-3" />;
+      case 'execution':
+        return <Activity className="w-3 h-3" />;
+      default:
+        return <CircleDot className="w-3 h-3" />;
+    }
+  };
 
+  // Safely split comma-separated strings
   const safeSplit = (value: string | null | undefined): string[] => {
     if (!value || typeof value !== 'string') return [];
     return value.split(',').map(item => item.trim()).filter(Boolean);
@@ -36,76 +53,64 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   const tactics = safeSplit(data.tactics);
   const techniques = safeSplit(data.techniques);
 
-  const xPos = coordinate ? coordinate.x : 0;
-  const yPos = coordinate ? coordinate.y : 0;
-  
-  const tooltipStyle = {
-    position: 'absolute' as const,
-    left: Math.max(10, xPos),
-    top: yPos,
-    transform: 'translate(20px, -50%)',
-    zIndex: 50
+  const formatTimestamps = (date: string) => {
+    return formatDateTime(date);
   };
 
-  const formatTactic = (tactic: string): string => {
-    return tactic
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+  const xPos = coordinate ? coordinate.x : 0;
+  const tooltipStyle = {
+    transform: 'translateY(-50%)',
+    left: Math.max(10, xPos), // Ensure tooltip doesn't go off-screen to the left
+    position: 'fixed' as const
   };
 
   return (
     <div 
-      className="absolute bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-5 
-        shadow-xl w-[480px] pointer-events-none font-inter"
+      className="fixed bg-[#1A1F2C]/95 backdrop-blur-sm border border-purple-500/20 rounded-lg p-4 
+        shadow-xl w-[400px] pointer-events-none z-50"
       style={tooltipStyle}
     >
-      <div className="space-y-4">
-        <div className="flex items-center gap-2.5">
+      <div className="space-y-2.5">
+        <div className="flex items-center gap-2">
           <div 
-            className="w-3.5 h-3.5 rounded-full animate-pulse shadow-lg"
-            style={{ 
-              backgroundColor: getSeverityColor(data.severity),
-              boxShadow: `0 0 12px ${getSeverityColor(data.severity)}40`
-            }}
+            className="w-2.5 h-2.5 rounded-full animate-pulse"
+            style={{ backgroundColor: getSeverityColor(data.severity) }}
           />
-          <span className="text-[17px] text-purple-200 font-semibold tracking-wide">
+          <span className="text-purple-300 text-sm font-medium">
             {(data.severity || 'Unknown').toUpperCase()} Severity Alert
           </span>
         </div>
 
-        <div className="text-[15px] text-purple-100 font-medium leading-relaxed">
+        <div className="text-sm text-purple-100 font-medium">
           {data.title || 'Untitled Alert'}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="text-[14px] text-purple-300/90 font-medium">Risk Score:</div>
-          <RiskScoreDisplay risk={data.risk} severity={data.severity} />
-          
-          <div className="text-[14px] text-purple-300/90">First seen:</div>
-          <div className="text-right text-[14px] font-medium text-[#CCCCCC]">
-            {formatDateTime(data.first_seen || data.firstSeen)}
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="text-purple-300/80">Risk Score:</div>
+          <div className="text-right text-purple-200">
+            {data.risk || 'N/A'}
           </div>
-          <div className="text-[14px] text-purple-300/90">Last seen:</div>
-          <div className="text-right text-[14px] font-medium text-[#CCCCCC]">
-            {formatDateTime(data.last_seen || data.lastSeen)}
+          <div className="text-purple-300/80">First seen:</div>
+          <div className="text-right">
+            {formatTimestamps(data.first_seen || data.firstSeen)}
+          </div>
+          <div className="text-purple-300/80">Last seen:</div>
+          <div className="text-right">
+            {formatTimestamps(data.last_seen || data.lastSeen)}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-4 py-1.5 bg-[#6A0DAD] rounded-full text-[13px] text-white font-medium 
-            shadow-[0_0_15px_rgba(106,13,173,0.3)] hover:shadow-[0_0_20px_rgba(106,13,173,0.4)] 
-            transition-shadow duration-300">
+          <span className="px-2 py-0.5 bg-purple-500/10 rounded text-xs text-purple-200">
             {data.anomaly_count || data.count || 1} anomalies
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2 text-xs">
           {data.impacted_computers || data.impactedComputers ? (
             <>
-              <div className="text-[14px] text-purple-300/90 font-medium">Systems:</div>
-              <div className="text-right text-[14px] font-medium text-[#40E0D0] hover:text-[#45E8D8] 
-                transition-colors truncate cursor-pointer border-b border-[#40E0D0]/30 hover:border-[#40E0D0]">
+              <div className="text-purple-300/80">Systems:</div>
+              <div className="text-right text-purple-200 truncate">
                 {data.impacted_computers || data.impactedComputers}
               </div>
             </>
@@ -113,9 +118,8 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
           
           {data.origin_users || data.impactedUsers ? (
             <>
-              <div className="text-[14px] text-purple-300/90 font-medium">Users:</div>
-              <div className="text-right text-[14px] font-medium text-[#40E0D0] hover:text-[#45E8D8] 
-                transition-colors truncate cursor-pointer border-b border-[#40E0D0]/30 hover:border-[#40E0D0]">
+              <div className="text-purple-300/80">Users:</div>
+              <div className="text-right text-purple-200 truncate">
                 {data.origin_users || data.impactedUsers}
               </div>
             </>
@@ -123,41 +127,39 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
 
           {data.source_ips || data.sourceIps ? (
             <>
-              <div className="text-[13px] text-purple-300/90">Source IP:</div>
-              <div className="text-right text-[13px] font-medium text-purple-200">
+              <div className="text-purple-300/80">Source IP:</div>
+              <div className="text-right text-purple-200">
                 {data.source_ips || data.sourceIps}
               </div>
             </>
           ) : null}
         </div>
 
-        {tactics && tactics.length > 0 && (
-          <div className="space-y-2.5">
-            <div className="text-[13px] text-purple-200 font-medium">MITRE ATT&CK</div>
-            <div className="flex flex-wrap gap-1.5">
+        {tactics.length > 0 && (
+          <div className="space-y-1.5">
+            <div className="text-purple-200 text-xs font-medium">MITRE ATT&CK</div>
+            <div className="flex flex-wrap gap-1">
               {tactics.map((tactic: string, index: number) => (
                 <div 
-                  key={`${tactic}-${index}`}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-purple-500/10 
-                    border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-500/20 
-                    transition-colors"
+                  key={index}
+                  className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-500/10 
+                    border border-purple-500/20 text-purple-300 text-xs"
                 >
-                  <TacticIcon tactic={tactic} />
-                  <span className="truncate max-w-[120px]">{formatTactic(tactic)}</span>
+                  {getTacticIcon(tactic)}
+                  <span className="truncate max-w-[100px]">{tactic}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {techniques && techniques.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
+        {techniques.length > 0 && (
+          <div className="flex flex-wrap gap-1">
             {techniques.map((technique: string, index: number) => (
               <div 
-                key={`${technique}-${index}`}
-                className="px-2.5 py-1 rounded bg-purple-900/40 
-                  border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-800/40
-                  transition-colors"
+                key={index}
+                className="px-1.5 py-0.5 rounded bg-purple-900/40 
+                  border border-purple-500/20 text-purple-300 text-xs"
               >
                 {technique.toUpperCase()}
               </div>

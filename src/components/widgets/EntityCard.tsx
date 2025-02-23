@@ -65,11 +65,11 @@ const EntityCard = ({ entity, entityType, onClick }: EntityCardProps) => {
   return (
     <div
       onClick={onClick}
-      className={`flex items-center justify-between px-4 py-3 rounded-lg
+      className="flex items-center justify-between px-4 py-3 rounded-lg
         bg-[#0A0B0F] hover:bg-[#12131A]
         border border-[#5856D6]/20 hover:border-[#5856D6]/30
         transition-all duration-300 cursor-pointer
-        hover:shadow-lg hover:shadow-[#5856D6]/5`}
+        hover:shadow-lg hover:shadow-[#5856D6]/5"
     >
       <div className="flex items-center gap-3">
         <div className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center

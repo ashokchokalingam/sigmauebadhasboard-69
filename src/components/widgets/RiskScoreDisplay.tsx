@@ -14,25 +14,31 @@ interface RiskScoreDisplayProps {
 }
 
 const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
-  const getScoreStyles = (score: number) => {
-    const baseGradient = "bg-gradient-to-r bg-clip-text text-transparent";
+  const getScoreClasses = (score: number) => {
+    const baseClasses = "font-mono font-bold tabular-nums transition-all leading-none";
     
     if (score >= 150) {
-      return `${baseGradient} from-[#FF3B30] to-[#FF453A] shadow-[0_0_15px_rgba(255,59,48,0.4)] animate-pulse`;
+      return `${baseClasses} text-[20px] text-[#FF3B30]`;
     }
     if (score >= 100) {
-      return `${baseGradient} from-[#FF9500] to-[#FF9F0A] shadow-[0_0_15px_rgba(255,149,0,0.4)] animate-pulse`;
+      return `${baseClasses} text-[20px] text-[#FF9500]`;
     }
     if (score >= 50) {
-      return `${baseGradient} from-[#FFB340] to-[#FFB236]`;
+      return `${baseClasses} text-[20px] text-[#FFB340]`;
     }
-    return `${baseGradient} from-[#34C759] to-[#30D158]`;
+    return `${baseClasses} text-[20px] text-[#34C759]`;
   };
 
   const getShieldStyles = (score: number) => {
-    if (score >= 150) return "text-[#FF3B30]";
-    if (score >= 100) return "text-[#FF9500]";
-    if (score >= 50) return "text-[#FFB340]";
+    if (score >= 150) {
+      return "text-[#FF3B30]";
+    }
+    if (score >= 100) {
+      return "text-[#FF9500]";
+    }
+    if (score >= 50) {
+      return "text-[#FFB340]";
+    }
     return "text-[#34C759]";
   };
 
@@ -59,11 +65,11 @@ const RiskScoreDisplay = memo(({ score, textColor }: RiskScoreDisplayProps) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Shield 
-                  className={`w-5 h-5 transition-all stroke-[2.5] ${getShieldStyles(score)}`}
+                  className={`w-4 h-4 transition-all stroke-[2.5] ${getShieldStyles(score)}`}
                 />
-                <div className={`text-[24px] font-mono font-bold tracking-tight ${getScoreStyles(score)}`}>
+                <div className={getScoreClasses(score)}>
                   {formatScore(score)}
                 </div>
               </div>

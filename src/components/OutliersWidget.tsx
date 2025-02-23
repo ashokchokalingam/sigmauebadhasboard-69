@@ -90,12 +90,9 @@ const OutliersWidget = () => {
           severity: outlier.severity,
           title: outlier.title,
           description: outlier.ml_description,
-          // Process tactics and techniques arrays properly
-          tactics: outlier.tactics?.split(',').map(t => t.trim()).filter(Boolean) || [],
-          techniques: outlier.techniques?.split(',').map(t => t.trim()).filter(Boolean) || [],
-          impactedComputers: outlier.impacted_computers?.split(',').filter(Boolean) || [],
+          tactics: outlier.tactics?.split(',') || [],
+          impactedComputers: outlier.impacted_computers?.split(',') || [],
           impactedUsers: (outlier.origin_users || '').split(',').filter(Boolean),
-          sourceIps: outlier.source_ips?.split(',').filter(Boolean) || []
         };
       }
 
@@ -107,26 +104,7 @@ const OutliersWidget = () => {
           groupedData[timeKey].risk = Math.max(groupedData[timeKey].risk, currentRisk);
         }
       }
-
-      // Merge tactics and techniques if they exist
-      if (outlier.tactics) {
-        const newTactics = outlier.tactics.split(',').map(t => t.trim()).filter(Boolean);
-        groupedData[timeKey].tactics = Array.from(new Set([
-          ...(groupedData[timeKey].tactics || []),
-          ...newTactics
-        ]));
-      }
-
-      if (outlier.techniques) {
-        const newTechniques = outlier.techniques.split(',').map(t => t.trim()).filter(Boolean);
-        groupedData[timeKey].techniques = Array.from(new Set([
-          ...(groupedData[timeKey].techniques || []),
-          ...newTechniques
-        ]));
-      }
     });
-
-    console.log('Processed chart data:', Object.values(groupedData));
 
     return Object.values(groupedData)
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());

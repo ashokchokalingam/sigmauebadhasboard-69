@@ -5,7 +5,7 @@ const TimelineTableHeader = () => {
   return (
     <TableHeader>
       <TableRow>
-        <TableHead className="w-8 px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10" />
+        <TableHead className="w-8 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10" />
         <TableHead className="whitespace-nowrap px-4 py-3 header-gradient text-indigo-300 font-semibold border-b border-indigo-500/10">
           Time
         </TableHead>

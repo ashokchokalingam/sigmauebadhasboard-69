@@ -1,4 +1,3 @@
-
 import React from "react";
 import { AlertTriangle, Computer, User, UserCog } from "lucide-react";
 
@@ -13,22 +12,22 @@ const EntityHeader = ({ totalEntities, isLoading, type }: EntityHeaderProps) => 
     switch (type) {
       case "users-origin":
         return {
-          icon: <User className="h-6 w-6 text-blue-400" />,
+          icon: <User className="h-5 w-5 text-blue-400" />,
           title: "Active Users Origin"
         };
       case "users-impacted":
         return {
-          icon: <UserCog className="h-6 w-6 text-blue-400" />,
+          icon: <UserCog className="h-5 w-5 text-blue-400" />,
           title: "Active Users Impacted"
         };
       case "computers":
         return {
-          icon: <Computer className="h-6 w-6 text-blue-400" />,
+          icon: <Computer className="h-5 w-5 text-blue-400" />,
           title: "Active Computers"
         };
       default:
         return {
-          icon: <AlertTriangle className="h-6 w-6 text-blue-400" />,
+          icon: <AlertTriangle className="h-5 w-5 text-blue-400" />,
           title: "Active Entities"
         };
     }
@@ -40,7 +39,7 @@ const EntityHeader = ({ totalEntities, isLoading, type }: EntityHeaderProps) => 
     <div className="flex items-center justify-between bg-[#0A0B0F]/80 p-4 rounded-lg backdrop-blur-sm border border-blue-500/10">
       <div className="flex items-center gap-2">
         {icon}
-        <span className="text-lg font-semibold text-[#D6BCFA]">
+        <span className="text-base font-medium text-gray-200">
           {title}
         </span>
       </div>

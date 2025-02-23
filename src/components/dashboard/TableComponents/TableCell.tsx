@@ -1,5 +1,5 @@
 
-import { Activity, Tag } from "lucide-react";
+import { Tag, Activity } from "lucide-react";
 import { Alert } from "../types";
 import { Badge } from "@/components/ui/badge";
 import { formatDateTime } from "@/utils/dateTimeUtils";
@@ -13,7 +13,7 @@ import { RuleCell } from "./cells/RuleCell";
 import { TaskCell } from "./cells/TaskCell";
 import { RuleLevelCell } from "./cells/RuleLevelCell";
 import { BaseIconCell } from "./cells/BaseIconCell";
-import { getRiskBadgeColor, getRiskLabel } from "../utils/riskUtils";
+import { getRiskBadgeColor, getRiskLabel } from "./utils/riskUtils";
 
 interface TableCellProps {
   alert: Alert;
@@ -21,12 +21,13 @@ interface TableCellProps {
   onTimelineView: (type: "user" | "computer", id: string) => void;
 }
 
-const TableCellComponent = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
+const TableCell = ({ alert, columnKey, onTimelineView }: TableCellProps) => {
   switch (columnKey) {
     case 'system_time':
+      const formattedTime = formatDateTime(alert.system_time, false);
       return (
         <span className="text-base font-medium whitespace-nowrap">
-          {formatDateTime(alert.system_time, false)}
+          {formattedTime}
         </span>
       );
     case 'user_id':
@@ -87,4 +88,4 @@ const TableCellComponent = ({ alert, columnKey, onTimelineView }: TableCellProps
   }
 };
 
-export default TableCellComponent;
+export default TableCell;

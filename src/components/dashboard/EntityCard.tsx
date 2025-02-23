@@ -43,15 +43,9 @@ const EntityCard = ({
     : null;
 
   const getCardBorderClass = () => {
-    if (score >= 150) return "border-[#FF3B30]/30";
+    if (score >= 150) return "border-[#ea384c]/30";
     if (score >= 100) return "border-[#FF9500]/30";
     return "border-[#5856D6]/20";
-  };
-
-  const getCardShadowClass = () => {
-    if (score >= 150) return "hover:shadow-[0_0_15px_rgba(255,59,48,0.1)]";
-    if (score >= 100) return "hover:shadow-[0_0_15px_rgba(255,149,0,0.1)]";
-    return "hover:shadow-[0_0_15px_rgba(88,86,214,0.05)]";
   };
 
   return (
@@ -59,9 +53,9 @@ const EntityCard = ({
       onClick={onClick}
       className={`flex items-center justify-between px-5 py-3.5 rounded-lg
         bg-[#0A0B0F] hover:bg-[#12131A]
-        border ${getCardBorderClass()}
+        border ${getCardBorderClass()} hover:border-opacity-50
         transition-all duration-300 cursor-pointer
-        ${getCardShadowClass()} group
+        hover:shadow-lg hover:shadow-[#5856D6]/5 group
         mb-3`}
     >
       <div className="flex items-center gap-3 flex-1">

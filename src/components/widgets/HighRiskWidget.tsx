@@ -1,4 +1,3 @@
-
 import { Shield, Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useCallback, useMemo } from "react";
@@ -62,9 +61,9 @@ const HighRiskWidget = ({ entityType, title, apiEndpoint, searchPlaceholder }: H
   return (
     <div className="widget-container">
       <div className="widget-header">
-        <div className="flex items-center gap-2">
-          <Shield className="h-6 w-6 text-[#9b87f5]" />
-          <span className="text-lg font-semibold text-[#D6BCFA]">{title}</span>
+        <div className="widget-title">
+          <Shield className="h-5 w-5 text-[#9b87f5]" />
+          {title}
         </div>
         <div className="widget-count">
           {filteredEntities.length} active

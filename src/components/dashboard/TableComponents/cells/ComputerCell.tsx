@@ -13,7 +13,7 @@ export const ComputerCell = ({ computerName, onTimelineView }: ComputerCellProps
       className="hover:text-blue-400 cursor-pointer truncate text-base font-medium whitespace-nowrap"
       onClick={(e) => {
         e.stopPropagation();
-        onTimelineView("computer", computerName);
+        onTimelineView("computer", computerName || '');
       }}
     >
       {computerName || '-'}

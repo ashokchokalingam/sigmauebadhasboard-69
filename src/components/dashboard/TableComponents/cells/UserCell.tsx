@@ -13,7 +13,7 @@ export const UserCell = ({ userId, onTimelineView }: UserCellProps) => (
       className="hover:text-blue-400 cursor-pointer truncate text-base font-medium whitespace-nowrap"
       onClick={(e) => {
         e.stopPropagation();
-        onTimelineView("user", userId);
+        onTimelineView("user", userId || '');
       }}
     >
       {userId || '-'}

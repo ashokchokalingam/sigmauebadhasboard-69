@@ -1,4 +1,3 @@
-
 @layer components {
   .risk-score-container {
     @apply flex items-center gap-2;
