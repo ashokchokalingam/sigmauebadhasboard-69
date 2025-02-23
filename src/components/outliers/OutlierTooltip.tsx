@@ -15,29 +15,26 @@ interface TooltipProps {
 export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipProps) => {
   if (!active || !payload?.[0]) return null;
 
-  const data = payload[0].payload;
-  
-  if (!data) return null;
+  // Get the raw data from the payload
+  const rawData = payload[0].payload;
+  if (!rawData) return null;
 
-  // Debug the incoming data structure
-  console.log('Raw tooltip data:', data);
+  // Extract data from either the raw format or the chart format
+  const data = {
+    ...rawData,
+    ...rawData.data, // Merge any nested data
+  };
+
+  console.log('Tooltip raw data:', rawData);
+  console.log('Tooltip processed data:', data);
 
   const safeSplit = (value: string | null | undefined): string[] => {
     if (!value || typeof value !== 'string') return [];
-    // Ensure we're getting a clean split by trimming and filtering empty values
-    return value.split(',')
-      .map(item => item.trim())
-      .filter(item => item.length > 0);
+    return value.split(',').map(item => item.trim()).filter(Boolean);
   };
 
-  // Get tactics and techniques from either direct properties or nested ones
-  const tacticsStr = typeof data.tactics === 'string' ? data.tactics : data?.data?.tactics;
-  const techniquesStr = typeof data.techniques === 'string' ? data.techniques : data?.data?.techniques;
-
-  const tactics = safeSplit(tacticsStr);
-  const techniques = safeSplit(techniquesStr);
-
-  console.log('Processed data:', { tactics, techniques, tacticsStr, techniquesStr });
+  const tactics = safeSplit(data.tactics);
+  const techniques = safeSplit(data.techniques);
 
   const xPos = coordinate ? coordinate.x : 0;
   const yPos = coordinate ? coordinate.y : 0;
