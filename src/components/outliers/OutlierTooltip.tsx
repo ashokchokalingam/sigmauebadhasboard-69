@@ -22,26 +22,26 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
   
   if (!data) return null;
 
+  const getRiskScoreColor = (risk: number) => {
+    if (risk >= 200) return 'from-[#D32F2F] to-[#FF4D4D]';
+    if (risk >= 100) return 'from-[#FF5722] to-[#FF7043]';
+    if (risk >= 50) return 'from-[#FFB74D] to-[#FFB732]'; // Matching the yellow-orange from the chart
+    return 'from-[#66BB6A] to-[#81C784]';
+  };
+
   const getSeverityColor = (severity: string = 'medium') => {
     switch (severity?.toLowerCase()) {
       case 'critical':
-        return '#FF3B30';
+        return '#D32F2F';
       case 'high':
-        return '#FF9500';
+        return '#FF5722';
       case 'medium':
-        return '#FFA500';
+        return '#FFB74D'; // Matching the yellow-orange from the chart
       case 'low':
-        return '#34C759';
+        return '#66BB6A';
       default:
         return '#9333EA';
     }
-  };
-
-  const getRiskScoreColor = (risk: number) => {
-    if (risk >= 200) return 'from-[#FF4D4D] to-[#FF6B6B]';
-    if (risk >= 100) return 'from-[#FFA500] to-[#FFB732]';
-    if (risk >= 50) return 'from-[#FFC107] to-[#FFD54F]';
-    return 'from-[#00FF00] to-[#32CD32]';
   };
 
   const getTacticIcon = (tactic: string) => {
@@ -175,39 +175,35 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
           ) : null}
         </div>
 
-        {tactics.length > 0 && (
-          <div className="space-y-2.5">
-            <div className="text-[13px] text-purple-200 font-medium">MITRE ATT&CK</div>
-            <div className="flex flex-wrap gap-1.5">
-              {tactics.map((tactic: string, index: number) => (
-                <div 
-                  key={index}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-purple-500/10 
-                    border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-500/20 
-                    transition-colors"
-                >
-                  {getTacticIcon(tactic)}
-                  <span className="truncate max-w-[120px]">{tactic}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {techniques.length > 0 && (
+        <div className="space-y-2.5">
+          <div className="text-[13px] text-purple-200 font-medium">MITRE ATT&CK</div>
           <div className="flex flex-wrap gap-1.5">
-            {techniques.map((technique: string, index: number) => (
+            {tactics.map((tactic: string, index: number) => (
               <div 
                 key={index}
-                className="px-2.5 py-1 rounded bg-purple-900/40 
-                  border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-800/40
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-purple-500/10 
+                  border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-500/20 
                   transition-colors"
               >
-                {technique.toUpperCase()}
+                {getTacticIcon(tactic)}
+                <span className="truncate max-w-[120px]">{tactic}</span>
               </div>
             ))}
           </div>
-        )}
+        </div>
+
+        <div className="flex flex-wrap gap-1.5">
+          {techniques.map((technique: string, index: number) => (
+            <div 
+              key={index}
+              className="px-2.5 py-1 rounded bg-purple-900/40 
+                border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-800/40
+                transition-colors"
+            >
+              {technique.toUpperCase()}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
