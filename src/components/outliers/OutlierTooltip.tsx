@@ -27,7 +27,7 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     if (risk >= 200) return 'from-[#D32F2F] to-[#FF4444]';
     if (risk >= 100) return 'from-[#FF9800] to-[#FFA726]';
     if (risk >= 50) return 'from-[#FFB74D] to-[#FFB732]';
-    return 'from-[#4CAF50] to-[#66BB6A]';
+    return 'from-[#4ADE80] to-[#22C55E]'; // Updated to match the exact green color shown
   };
 
   const getSeverityColor = (severity: string = 'medium') => {
@@ -39,7 +39,7 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
       case 'medium':
         return '#FFB74D';
       case 'low':
-        return '#4CAF50';
+        return '#4ADE80'; // Updated to match the exact green color shown
       default:
         return '#9333EA';
     }
