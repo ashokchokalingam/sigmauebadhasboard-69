@@ -1,4 +1,3 @@
-
 import { Info } from "lucide-react";
 import { formatDateTime } from "@/utils/dateTimeUtils";
 import { TacticIcon } from "./components/TacticIcon";
@@ -36,6 +35,13 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
     top: yPos,
     transform: 'translate(20px, -50%)',
     zIndex: 50
+  };
+
+  const formatTactic = (tactic: string): string => {
+    return tactic
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   return (
@@ -115,35 +121,39 @@ export const OutlierTooltip = ({ active, payload, label, coordinate }: TooltipPr
           ) : null}
         </div>
 
-        <div className="space-y-2.5">
-          <div className="text-[13px] text-purple-200 font-medium">MITRE ATT&CK</div>
+        {tactics.length > 0 && (
+          <div className="space-y-2.5">
+            <div className="text-[13px] text-purple-200 font-medium">MITRE ATT&CK</div>
+            <div className="flex flex-wrap gap-1.5">
+              {tactics.map((tactic: string, index: number) => (
+                <div 
+                  key={index}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-purple-500/10 
+                    border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-500/20 
+                    transition-colors"
+                >
+                  <TacticIcon tactic={tactic} />
+                  <span className="truncate max-w-[120px]">{formatTactic(tactic)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {techniques.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
-            {tactics.map((tactic: string, index: number) => (
+            {techniques.map((technique: string, index: number) => (
               <div 
                 key={index}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-purple-500/10 
-                  border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-500/20 
+                className="px-2.5 py-1 rounded bg-purple-900/40 
+                  border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-800/40
                   transition-colors"
               >
-                <TacticIcon tactic={tactic} />
-                <span className="truncate max-w-[120px]">{tactic}</span>
+                {technique.toUpperCase()}
               </div>
             ))}
           </div>
-        </div>
-
-        <div className="flex flex-wrap gap-1.5">
-          {techniques.map((technique: string, index: number) => (
-            <div 
-              key={index}
-              className="px-2.5 py-1 rounded bg-purple-900/40 
-                border border-purple-500/20 text-purple-300 text-[13px] hover:bg-purple-800/40
-                transition-colors"
-            >
-              {technique.toUpperCase()}
-            </div>
-          ))}
-        </div>
+        )}
       </div>
     </div>
   );
