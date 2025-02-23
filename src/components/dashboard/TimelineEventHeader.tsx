@@ -15,7 +15,11 @@ const TimelineEventHeader = ({
   title,
   description
 }: TimelineEventHeaderProps) => {
-  console.log('TimelineEventHeader props:', { ruleLevel, totalRecords, title });
+  console.log('TimelineEventHeader props:', { 
+    ruleLevel, 
+    totalRecords,
+    title 
+  });
 
   const getSeverityIcon = () => {
     switch (ruleLevel?.toLowerCase()) {

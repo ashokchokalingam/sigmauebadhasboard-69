@@ -32,7 +32,7 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
         ruleLevel={event.rule_level}
         totalRecords={event.total_events}
         title={event.title}
-        description={event.description}
+        description={event.description || ''}
       />
 
       <TimelineMitreSection 
