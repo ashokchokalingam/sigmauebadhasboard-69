@@ -10,6 +10,12 @@ interface TimelineCardContentProps {
 }
 
 const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
+  console.log('TimelineCardContent event:', {
+    title: event.title,
+    totalEvents: event.total_events,
+    instances: event.instances?.length
+  });
+
   const safeSplit = (value: string | undefined) => {
     if (!value) return [];
     return value.split(',').map(t => t.trim()).filter(Boolean);
@@ -18,6 +24,9 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
   const tactics = safeSplit(event.tags);
   const techniques = tactics.filter(tag => tag.toLowerCase().includes('t1'));
 
+  // Calculate total events considering both total_events and instances
+  const totalEvents = event.total_events || event.instances?.length || 1;
+
   return (
     <div 
       onClick={onClick}
@@ -25,7 +34,7 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
     >
       <TimelineEventHeader 
         ruleLevel={event.rule_level}
-        totalRecords={event.total_events || 1}
+        totalRecords={totalEvents}
         title={event.title}
         description={event.description}
       />
