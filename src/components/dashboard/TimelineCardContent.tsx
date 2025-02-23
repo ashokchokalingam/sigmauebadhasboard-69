@@ -23,6 +23,9 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
   const tactics = safeSplit(event.tags);
   const techniques = tactics.filter(tag => tag.toLowerCase().includes('t1'));
 
+  // Parse total_events as a number
+  const totalEvents = parseInt(String(event.total_events), 10);
+
   return (
     <div 
       onClick={onClick}
@@ -30,7 +33,7 @@ const TimelineCardContent = ({ event, onClick }: TimelineCardContentProps) => {
     >
       <TimelineEventHeader 
         ruleLevel={event.rule_level}
-        totalRecords={Number(event.total_events) || 0}
+        totalRecords={totalEvents}
         title={event.title}
         description={event.description || ''}
       />
